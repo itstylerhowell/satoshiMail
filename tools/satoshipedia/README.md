@@ -32,4 +32,4 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
 * `sources.js`, `sources.css`: the Sources page (`#sources`, from Settings → Archive), listing every source and
   cross-check with live counts. Conversations no longer carry per-source chips; they keep their Satoshipedia chips.
 * `feedback.js`, `feedback.css`: Send feedback (Settings → Help, the About page, the Satoshipedia footer). The form
-  pre-fills a GitHub issue on this repository or an X post to @TylerHowell88; the page itself stores and sends nothing.
+  pre-fills an X post to @TylerHowell88 (one post, 280 characters); the page itself stores and sends nothing.
