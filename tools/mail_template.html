@@ -1029,8 +1029,6 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   --badge-red: #ff6961; --badge-red-ink: #2b0000; --outline: #8e918f;
   --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
 }
-:root[data-density="comfortable"] { --row-h: 56px; }
-:root[data-density="compact"] { --row-h: 36px; }
 
 /* type: Google Sans for labels, tabs, headings and search; Roboto stays for message text */
 .tab, .banner b, .tb .title, .search input, .rail h3, .compose-btn, .dk, .conv-h h1 { font-family: var(--ui-head); }
@@ -1315,7 +1313,7 @@ const ST = (() => {
   s.drafts = Array.isArray(s.drafts) ? s.drafts : [];
   s.sort = s.sort === "old" ? "old" : "new";
   s.theme = ["light", "dark"].includes(s.theme) ? s.theme : "system";
-  s.density = ["comfortable", "compact"].includes(s.density) ? s.density : "default";
+  s.density = "default";
   return s;
 })();
 function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) { /* no storage: state lasts this visit */ } }
@@ -2246,8 +2244,7 @@ const ACTIONS = {
   closelayer() { closeLayer(); },
   settings(el) {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
-    popover(el, `<h4>Density</h4>${r("density", "default", "Default")}${r("density", "comfortable", "Comfortable")}${r("density", "compact", "Compact")}
-      <h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
+    popover(el, `<h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
       <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },

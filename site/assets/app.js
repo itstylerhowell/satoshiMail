@@ -67,7 +67,7 @@ const ST = (() => {
   s.drafts = Array.isArray(s.drafts) ? s.drafts : [];
   s.sort = s.sort === "old" ? "old" : "new";
   s.theme = ["light", "dark"].includes(s.theme) ? s.theme : "system";
-  s.density = ["comfortable", "compact"].includes(s.density) ? s.density : "default";
+  s.density = "default";
   return s;
 })();
 function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) { /* no storage: state lasts this visit */ } }
@@ -998,8 +998,7 @@ const ACTIONS = {
   closelayer() { closeLayer(); },
   settings(el) {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
-    popover(el, `<h4>Density</h4>${r("density", "default", "Default")}${r("density", "comfortable", "Comfortable")}${r("density", "compact", "Compact")}
-      <h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
+    popover(el, `<h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
       <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },

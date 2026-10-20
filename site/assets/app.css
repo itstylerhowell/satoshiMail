@@ -1011,8 +1011,6 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   --badge-red: #ff6961; --badge-red-ink: #2b0000; --outline: #8e918f;
   --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
 }
-:root[data-density="comfortable"] { --row-h: 56px; }
-:root[data-density="compact"] { --row-h: 36px; }
 
 /* type: Google Sans for labels, tabs, headings and search; Roboto stays for message text */
 .tab, .banner b, .tb .title, .search input, .rail h3, .compose-btn, .dk, .conv-h h1 { font-family: var(--ui-head); }

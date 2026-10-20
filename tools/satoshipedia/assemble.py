@@ -105,6 +105,10 @@ src = patch(src, '<h4>Archive</h4><a class="mi" href="#about">${ic("info")} Abou
 src = patch(src, '  if (h === "about") return { view: "about" };', '  if (h === "about") return { view: "about" };\n  if (h === "sources") return { view: "sources" };')
 src = patch(src, 'about: renderAbout }[ROUTE.view]', 'about: renderAbout, sources: renderSources }[ROUTE.view]')
 
+# no density setting: everyone gets the standard 48px rows (a saved choice from before is ignored)
+src = patch(src, '    popover(el, `<h4>Density</h4>${r("density", "default", "Default")}${r("density", "comfortable", "Comfortable")}${r("density", "compact", "Compact")}\n      <h4>Theme</h4>', '    popover(el, `<h4>Theme</h4>')
+src = patch(src, '  s.density = ["comfortable", "compact"].includes(s.density) ? s.density : "default";', '  s.density = "default";')
+
 # ── SEO / performance pass ──
 import re as _re
 DESC = "Every email, forum post and commit by Satoshi Nakamoto in a Gmail-style archive, with Satoshipedia and a map of his connections and timeline, 2008–2011."

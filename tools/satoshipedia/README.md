@@ -12,7 +12,7 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
   in `<script id="wiki-data">`, so `tools/build_mail.py` works unchanged.
 * `map.css`, `map.html`, `map.js`: Satoshi Map, the dock app that visualises everyone Satoshi corresponded with (a radial "clock" ordered by first contact, with a month-by-month scrubber) and his timeline from August 2008 to April 2011. Everything is computed in the browser from the archive.
 * `seo.css`, `seo.js`: page titles, headings, icon rendering and touch-target fixes from the SEO pass.
-* `jlook.css`: the Jmail look: design tokens matched to jmail.world (page ground, 48px rows, overview-style banner,
+* `jlook.css`: the Jmail look: design tokens matched to jmail.world (page ground, 48px rows (no density setting), overview-style banner,
   green "new" pills, red dock badges, frosted-glass dock, Google Sans Flex for UI labels), with dark values.
 * `assemble.py`: the script that originally merged these pieces into `../mail_template.html`, kept for reference.
   To change the encyclopedia now, edit `articles.py`, run `build_wiki.py`, then `../render_page.py`, which
