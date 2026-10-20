@@ -977,3 +977,69 @@ body.in-map .dialog { z-index: 81; }
 input.cbx { width: 20px; height: 20px; }
 sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 
+/* ── Jmail look (design tokens taken from jmail.world, 20 October 2026) ──
+   Same Gmail-style base, tuned: lighter page ground, Google Sans Flex for UI labels,
+   48px rows on white, overview-style banner card, green "new" pills, red dock badges
+   and a frosted-glass dock. Every colour is a token with a dark value. */
+:root {
+  --bg: #f8fafd;
+  --ink: #202124;
+  --line: #edeff1;
+  --info: #f0f4fa;
+  --row-h: 48px;
+  --tab-accent: #1a73e8;
+  --pill-new: #188038; --pill-new-ink: #ffffff;
+  --badge-red: #ff3b30; --badge-red-ink: #ffffff;
+  --chip-muted: #e8eaed; --chip-muted-ink: #5f6368;
+  --glass: rgba(200, 200, 210, .35);
+  --glass-hi: rgba(255, 255, 255, .4);
+  --glass-ring: rgba(0, 0, 0, .08);
+  --glass-tile: #ffffff;
+  --ui-head: "Google Sans Flex", "Google Sans", Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111111; --ink: #e3e3e3; --line: #34373b; --info: #1f2633;
+    --tab-accent: #8ab4f8; --pill-new: #81c995; --pill-new-ink: #0d2818;
+    --badge-red: #ff6961; --badge-red-ink: #2b0000; --chip-muted: #3c4043; --chip-muted-ink: #c4c7c5;
+    --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111111; --ink: #e3e3e3; --line: #34373b; --info: #1f2633;
+  --tab-accent: #8ab4f8; --pill-new: #81c995; --pill-new-ink: #0d2818;
+  --badge-red: #ff6961; --badge-red-ink: #2b0000; --chip-muted: #3c4043; --chip-muted-ink: #c4c7c5;
+  --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
+}
+:root[data-density="comfortable"] { --row-h: 56px; }
+:root[data-density="compact"] { --row-h: 36px; }
+
+/* type: Google Sans for labels, tabs, headings and search; Roboto stays for message text */
+.tab, .banner b, .tb .title, .search input, .rail h3, .compose-btn, .dk, .conv-h h1 { font-family: var(--ui-head); }
+.row .date { font-size: 13px; }
+
+/* rows: white, hairline dividers, 500-weight sender and subject like the reference */
+.row { background: var(--surface); }
+.row .who, .row .subj { font-weight: 500; }
+.row.unread .who, .row.unread .subj { font-weight: 700; }
+
+/* tabs */
+.tab.on { color: var(--tab-accent); }
+.tab.on::after { background: var(--tab-accent); }
+.tab .pill { background: var(--pill-new); color: var(--pill-new-ink); border-radius: 10px; padding: 1px 7px; }
+
+/* the inbox banner as an overview card */
+.banner { margin: 12px 16px 8px; padding: 14px 16px; border-radius: 12px; background: var(--info); line-height: 1.55; }
+.banner > .ms { color: var(--tab-accent); }
+
+/* small grey source chips */
+.lchip.muted, .lchip.src { background: var(--chip-muted); color: var(--chip-muted-ink); }
+
+/* dock: frosted glass */
+.dock { background: var(--glass); border: 0; border-radius: 20px;
+  -webkit-backdrop-filter: blur(40px) saturate(1.8); backdrop-filter: blur(40px) saturate(1.8);
+  box-shadow: inset 0 .5px 0 var(--glass-hi), 0 0 0 .5px var(--glass-ring), 0 8px 24px rgba(0, 0, 0, .10); }
+.dk .tile { border-radius: 9px; background: var(--glass-tile); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.dk:hover { background: color-mix(in srgb, var(--glass-tile) 45%, transparent); }
+.dk .new { background: var(--badge-red); color: var(--badge-red-ink); border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, .2); font-weight: 600; }
+

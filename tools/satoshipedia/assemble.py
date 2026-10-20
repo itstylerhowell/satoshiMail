@@ -29,7 +29,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -112,12 +112,14 @@ META = f"""<meta name="description" content="{DESC}">
 <meta name="twitter:description" content="{DESC}">
 <meta name="twitter:creator" content="@TylerHowell88">"""
 src = patch(src, '<meta name="claude:viewport-fit-sides" content="cover">', '<meta name="claude:viewport-fit-sides" content="cover">\n' + META)
+# Google Sans Flex for UI labels (Jmail look)
+src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap">')
 # fonts no longer block the first paint (the icon font keeps display=block, so icons never flash as words)
 def _nonblocking(m):
     href = m.group(1)
     return f'<link rel="preload" as="style" href="{href}" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link rel="stylesheet" href="{href}"></noscript>'
 src, nfonts = _re.subn(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', _nonblocking, src)
-assert nfonts == 3, nfonts
+assert nfonts == 4, nfonts
 # icons: the glyph name moves to data-i and is drawn by CSS, so it isn't page text
 src = patch(src, 'const ic = (n, cls = "") => `<span class="ms ${cls}" aria-hidden="true">${n}</span>`;', 'const ic = (n, cls = "") => `<span class="ms ${cls}" aria-hidden="true" data-i="${n}"></span>`;')
 def _icon(m):
