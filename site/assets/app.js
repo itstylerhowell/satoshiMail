@@ -1611,7 +1611,7 @@ function wkClose() { setWin("closed"); WK_LAST = null; WK_TITLE = "Main page"; i
 function wkRestore() { location.hash = "#" + (WK_LAST || "wiki"); }
 function wkToggleMax() { WK_MAX = !WK_MAX; try { localStorage.setItem("satoshipedia-max", WK_MAX ? "1" : "0"); } catch (e) {} setWin(WK_STATE); }
 function updateDock() {
-  const v = MAP_OPEN ? "map" : WK_STATE === "open" ? "wiki" : ROUTE.view === "activity" ? "activity" : ROUTE.view === "people" ? "people"
+  const v = MAP_OPEN ? "map" : WK_STATE === "open" ? "wiki" : ROUTE.view === "activity" ? "activity"
     : ROUTE.view === "commits" || (ROUTE.view === "thread" && isCommitId(ROUTE.id)) ? "commits" : "mail";
   document.querySelectorAll("#dock .dk").forEach(d => {
     const on = d.dataset.dock === v;
@@ -1731,16 +1731,6 @@ $("#dock").addEventListener("click", e => {
   const b = e.target.closest(".dk");
   if (!b) return;
   if (b.dataset.dock === "wiki") { e.preventDefault(); if (WK_STATE === "open") wkMinimize(); else wkRestore(); return; }
-  if (b.dataset.dock === "more") {
-    e.preventDefault();
-    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener"><span class="ms" aria-hidden="true" data-i="${icon}"></span>${label}</a>`;
-    const el = popover(b, `<div class="dock-more" role="menu">${a("https://satoshi.nakamotoinstitute.org/", "history_edu", "Satoshi Institute")}${a("https://nakamotoinstitute.org/library/", "local_library", "SNI Library")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotable Satoshi")}${a("https://github.com/lugaxker/nakamoto-archive", "inventory_2", "nakamoto-archive")}${a("https://github.com/bitcoin/bitcoin", "code", "Bitcoin Core")}${a("https://bitcoin.org/bitcoin.pdf", "description", "White paper")}<p class="made-by">${MADE_BY}</p></div>`, "left");
-    const r = b.getBoundingClientRect();
-    el.style.left = Math.max(8, Math.min(r.left + r.width / 2 - el.offsetWidth / 2, innerWidth - el.offsetWidth - 8)) + "px";
-    el.style.top = Math.max(8, r.top - el.offsetHeight - 14) + "px";
-    el.style.transformOrigin = "bottom center";
-    return;
-  }
   // mail apps: if the window is open, the hash change minimizes it
 });
 

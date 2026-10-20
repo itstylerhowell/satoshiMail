@@ -722,8 +722,6 @@ sup.ref a { text-decoration: none; padding: 0 1px; }
 .dk[data-dock="mail"] .tile svg { width: 28px; height: 22px; }
 .dk .tile .ms { font-size: 21px; }
 .dk .tile.code { background: #24292f; color: #fff; box-shadow: inset 0 0 0 1px var(--line); }
-.dk .tile.ppl { background: #1e8e3e; color: #fff; box-shadow: none; }
-.dk .tile.more { background: var(--hover); color: var(--ink-2); box-shadow: none; }
 .dk .tile.cal { grid-template-rows: 11px minmax(0, 1fr); place-items: stretch; text-align: center; }
 .dk .tile.cal small { background: #1a73e8; color: #fff; font: 700 7.5px/11px var(--ui); letter-spacing: .6px; }
 .dk .tile.cal b { font: 500 15px/23px var(--ui); color: var(--ink); }
@@ -743,10 +741,6 @@ sup.ref a { text-decoration: none; padding: 0 1px; }
   @keyframes wkwinout { to { opacity: 0; transform: translateY(40px) scale(.97); } }
   @keyframes wkmin { from { opacity: 0; transform: translateY(16px); } }
 }
-.dock-more { display: grid; grid-template-columns: repeat(3, 92px); gap: 4px; padding: 8px; }
-.dock-more a { display: grid; justify-items: center; gap: 6px; padding: 12px 4px 10px; border-radius: 12px; color: var(--ink-2); text-decoration: none; font-size: 12px; text-align: center; }
-.dock-more a:hover { background: var(--hover); }
-.dock-more .ms { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--hover); color: var(--satoshi); font-size: 22px; }
 
 /* minimized window, docked bottom right like a mail draft */
 .wk-minbar { position: fixed; z-index: 62; right: max(16px, env(safe-area-inset-right, 0px)); bottom: var(--dock-space); display: flex; align-items: center; gap: 2px;
@@ -809,9 +803,6 @@ body.in-wiki .dialog { z-index: 81; }
 .made-by a, .made-by-foot a, .made-by-lead a { color: var(--accent); font-weight: 500; text-decoration: none; }
 .made-by a:hover, .made-by-foot a:hover, .made-by-lead a:hover { text-decoration: underline; }
 .made-by-foot { margin-top: 6px; color: var(--ink-2); }
-.dock-more .made-by { grid-column: 1 / -1; margin: 6px 4px 2px; text-align: center; }
-.dock-more .made-by a { display: inline; padding: 0; color: var(--accent); font-size: 12px; }
-.dock-more .made-by a:hover { background: none; }
 
 /* ── compose jokes ── */
 .dialog:has(.cj) { width: min(460px, calc(100vw - 32px)); }
@@ -1197,8 +1188,6 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   <a class="dk" href="#map" data-dock="map"><span class="tile map"><svg viewBox="0 0 40 40" aria-hidden="true"><g stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"><path d="M20 20 8 9M20 20l13-9M20 20 9 31M20 20l12 11"/></g><circle cx="8" cy="9" r="4" fill="var(--ch-e)"/><circle cx="33" cy="11" r="3.4" fill="var(--ch-p)"/><circle cx="9" cy="31" r="3.6" fill="var(--ch-x)"/><circle cx="32" cy="31" r="4.4" fill="var(--ch-p)"/><circle cx="20" cy="20" r="7.5" fill="#f7931a"/></svg></span><span class="lb">Map</span></a>
   <a class="dk" href="#activity" data-dock="activity"><span class="tile cal"><small id="dkmon">OCT</small><b id="dkday">20</b></span><span class="lb">Activity</span></a>
   <a class="dk" href="#commits" data-dock="commits"><span class="tile code"><span class="ms" aria-hidden="true" data-i="commit"></span></span><span class="lb">Commits</span></a>
-  <a class="dk" href="#people" data-dock="people"><span class="tile ppl"><span class="ms" aria-hidden="true" data-i="group"></span></span><span class="lb">People</span></a>
-  <button class="dk" type="button" data-dock="more" aria-haspopup="menu"><span class="tile more"><span class="ms" aria-hidden="true" data-i="apps"></span></span><span class="lb">More</span></button>
 </nav>
 <div class="beta-note" id="betanote" role="status" hidden>
   <span class="beta-pill static" aria-hidden="true">Beta</span>
@@ -2857,7 +2846,7 @@ function wkClose() { setWin("closed"); WK_LAST = null; WK_TITLE = "Main page"; i
 function wkRestore() { location.hash = "#" + (WK_LAST || "wiki"); }
 function wkToggleMax() { WK_MAX = !WK_MAX; try { localStorage.setItem("satoshipedia-max", WK_MAX ? "1" : "0"); } catch (e) {} setWin(WK_STATE); }
 function updateDock() {
-  const v = MAP_OPEN ? "map" : WK_STATE === "open" ? "wiki" : ROUTE.view === "activity" ? "activity" : ROUTE.view === "people" ? "people"
+  const v = MAP_OPEN ? "map" : WK_STATE === "open" ? "wiki" : ROUTE.view === "activity" ? "activity"
     : ROUTE.view === "commits" || (ROUTE.view === "thread" && isCommitId(ROUTE.id)) ? "commits" : "mail";
   document.querySelectorAll("#dock .dk").forEach(d => {
     const on = d.dataset.dock === v;
@@ -2977,16 +2966,6 @@ $("#dock").addEventListener("click", e => {
   const b = e.target.closest(".dk");
   if (!b) return;
   if (b.dataset.dock === "wiki") { e.preventDefault(); if (WK_STATE === "open") wkMinimize(); else wkRestore(); return; }
-  if (b.dataset.dock === "more") {
-    e.preventDefault();
-    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener"><span class="ms" aria-hidden="true" data-i="${icon}"></span>${label}</a>`;
-    const el = popover(b, `<div class="dock-more" role="menu">${a("https://satoshi.nakamotoinstitute.org/", "history_edu", "Satoshi Institute")}${a("https://nakamotoinstitute.org/library/", "local_library", "SNI Library")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotable Satoshi")}${a("https://github.com/lugaxker/nakamoto-archive", "inventory_2", "nakamoto-archive")}${a("https://github.com/bitcoin/bitcoin", "code", "Bitcoin Core")}${a("https://bitcoin.org/bitcoin.pdf", "description", "White paper")}<p class="made-by">${MADE_BY}</p></div>`, "left");
-    const r = b.getBoundingClientRect();
-    el.style.left = Math.max(8, Math.min(r.left + r.width / 2 - el.offsetWidth / 2, innerWidth - el.offsetWidth - 8)) + "px";
-    el.style.top = Math.max(8, r.top - el.offsetHeight - 14) + "px";
-    el.style.transformOrigin = "bottom center";
-    return;
-  }
   // mail apps: if the window is open, the hash change minimizes it
 });
 
