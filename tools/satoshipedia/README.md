@@ -25,3 +25,8 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
   matching. Checked 20 October 2026: all 567 of its entries are in Satoshi Mail.
   It is embedded in the template as `<script id="satoshin-data">`; `wiki.js` uses it for the "Also in" chip and
   each message's "also on" detail, and `build_site.py` for the links on static conversation pages.
+* `ask.js`, `ask.css`: the AI Overview card above search results. In the claude.ai artifact it asks the viewer's
+  Claude (the `sample` capability) to answer the search from the archive and Satoshipedia only, citing the messages
+  and articles it used, with two read-only tools (search the archive, read an article). It asks nothing until the
+  viewer clicks once. Where AI isn't available (the static site, or a viewer who declines) it shows the matching
+  Satoshipedia summary instead.

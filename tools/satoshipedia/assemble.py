@@ -29,7 +29,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -37,7 +37,7 @@ src = patch(src, '<div id="layer"></div>', '<div id="layer"></div>\n' + (tools /
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -97,6 +97,10 @@ src = patch(src, '<script id="data" type="application/json">', f'<script id="sat
 src = patch(src, '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n',
             '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n      ${(sn => sn ? `<dt>also on:</dt><dd><a href="${esc(sn)}" target="_blank" rel="noopener">${esc(sn.replace(/^https:\\/\\//, ""))}</a></dd>` : "")(SATOSHIN.url(t, i))}\n')
 src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi\'s BitcoinTalk posts and mailing-list emails): every one is here too, and each of those messages links to its page there under its details.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
+
+# AI Overview card above search results (tools/ask.js)
+src = patch(src, '    head = `<div class="chips">${chip("from:me"', '    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me"')
+src = patch(src, '${empty}</div>`;\n  markCursor();\n}', '${empty}</div>`;\n  markCursor();\n  if (model.kind === "search") askMount(r.search);\n}')
 
 # ── SEO / performance pass ──
 import re as _re
