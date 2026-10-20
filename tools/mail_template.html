@@ -308,10 +308,6 @@ mark { background: color-mix(in srgb, var(--star) 55%, transparent); color: inhe
 .pop .mi:hover { background: var(--hover); }
 .pop h4 { margin: 8px 16px 4px; font-size: 12px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: .6px; }
 .pop label.mi input { accent-color: var(--accent); }
-.apps { display: grid; grid-template-columns: repeat(3, 96px); gap: 4px; padding: 8px 12px; }
-.apps a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px; border-radius: 12px; text-decoration: none; color: var(--ink); font-size: 13px; }
-.apps a:hover { background: var(--hover); }
-.apps .ms { font-size: 30px; width: auto; color: var(--accent); }
 .acct { padding: 16px 20px; text-align: center; width: 300px; max-width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .acct .big { width: 72px; height: 72px; font-size: 32px; }
 .adv { padding: 16px 20px; width: min(600px, calc(100vw - 32px)); box-sizing: border-box; display: grid; gap: 4px; }
@@ -1146,7 +1142,6 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
     <button class="ib hide-sm" data-act="random" aria-label="Random conversation" title="Random conversation"><span class="ms" aria-hidden="true" data-i="shuffle"></span></button>
     <button class="ib hide-sm" data-act="help" aria-label="Keyboard shortcuts" title="Keyboard shortcuts"><span class="ms" aria-hidden="true" data-i="help"></span></button>
     <button class="ib" data-act="settings" aria-label="Settings" title="Settings"><span class="ms" aria-hidden="true" data-i="settings"></span></button>
-    <button class="ib hide-sm" data-act="apps" aria-label="Satoshi Nakamoto Institute apps" title="SNI apps"><span class="ms" aria-hidden="true" data-i="apps"></span></button>
     <button class="avatar-btn" data-act="account" aria-label="Account: Satoshi Nakamoto" title="Satoshi Nakamoto">S</button>
   </header>
   <div class="body">
@@ -2259,10 +2254,6 @@ const ACTIONS = {
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
   resetstate() { const before = JSON.stringify(ST); ST.star = {}; ST.read = {}; ST.arch = {}; ST.trash = {}; save(); closeLayer(); render(); snack("Mailbox reset.", () => { Object.assign(ST, JSON.parse(before)); save(); }); },
-  apps(el) {
-    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener">${ic(icon)}${label}</a>`;
-    popover(el, `<div class="apps"><a href="#wiki">${ic("menu_book")}Satoshipedia</a>${a("https://nakamotoinstitute.org/library/", "menu_book", "Library")}${a("https://nakamotoinstitute.org/mempool/", "article", "Mempool")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotes")}${a("https://nakamotoinstitute.org/the-skeptics/", "trending_down", "Skeptics")}${a("https://nakamotoinstitute.org/podcasts/", "podcasts", "Podcasts")}${a("https://satoshi.nakamotoinstitute.org/code/", "code", "Code")}</div>`);
-  },
   account(el) {
     popover(el, `<div class="acct"><div style="font-size:13px;color:var(--ink-2)">satoshi@vistomail.com</div>${avatar("Satoshi", "avatar big")}<div style="font-size:20px">Hi, Satoshi!</div>
       <p style="color:var(--ink-3);font-size:13px;margin:4px 0 8px">Read-only archive from the Satoshi Nakamoto Institute.<br>Last account activity: ${esc(shortDate(LAST_ACTIVE))} (${ago(LAST_ACTIVE)}).</p>

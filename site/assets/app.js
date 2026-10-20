@@ -1004,10 +1004,6 @@ const ACTIONS = {
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
   resetstate() { const before = JSON.stringify(ST); ST.star = {}; ST.read = {}; ST.arch = {}; ST.trash = {}; save(); closeLayer(); render(); snack("Mailbox reset.", () => { Object.assign(ST, JSON.parse(before)); save(); }); },
-  apps(el) {
-    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener">${ic(icon)}${label}</a>`;
-    popover(el, `<div class="apps"><a href="#wiki">${ic("menu_book")}Satoshipedia</a>${a("https://nakamotoinstitute.org/library/", "menu_book", "Library")}${a("https://nakamotoinstitute.org/mempool/", "article", "Mempool")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotes")}${a("https://nakamotoinstitute.org/the-skeptics/", "trending_down", "Skeptics")}${a("https://nakamotoinstitute.org/podcasts/", "podcasts", "Podcasts")}${a("https://satoshi.nakamotoinstitute.org/code/", "code", "Code")}</div>`);
-  },
   account(el) {
     popover(el, `<div class="acct"><div style="font-size:13px;color:var(--ink-2)">satoshi@vistomail.com</div>${avatar("Satoshi", "avatar big")}<div style="font-size:20px">Hi, Satoshi!</div>
       <p style="color:var(--ink-3);font-size:13px;margin:4px 0 8px">Read-only archive from the Satoshi Nakamoto Institute.<br>Last account activity: ${esc(shortDate(LAST_ACTIVE))} (${ago(LAST_ACTIVE)}).</p>

@@ -43,8 +43,11 @@ src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#
 # inbox banner
 src = patch(src, 'is under <a href="#inbox-private">Private</a>.` : ""}</span></p>',
             'is under <a href="#inbox-private">Private</a>.` : ""} Who\'s who and what happened is in <a href="#wiki">Satoshipedia</a>, in the dock below.</span></p>')
-# apps grid tile
-src = patch(src, 'popover(el, `<div class="apps">', 'popover(el, `<div class="apps"><a href="#wiki">${ic("menu_book")}Satoshipedia</a>')
+# no apps grid (the nine dots by the profile picture): the button, its menu and its styles go
+src = patch(src, '    <button class="ib hide-sm" data-act="apps" aria-label="Satoshi Nakamoto Institute apps" title="SNI apps"><span class="ms">apps</span></button>\n', '')
+src = patch(src, '  apps(el) {\n    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener">${ic(icon)}${label}</a>`;\n    popover(el, `<div class="apps">${a("https://nakamotoinstitute.org/library/", "menu_book", "Library")}${a("https://nakamotoinstitute.org/mempool/", "article", "Mempool")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotes")}${a("https://nakamotoinstitute.org/the-skeptics/", "trending_down", "Skeptics")}${a("https://nakamotoinstitute.org/podcasts/", "podcasts", "Podcasts")}${a("https://satoshi.nakamotoinstitute.org/code/", "code", "Code")}</div>`);\n  },\n', '')
+for _rule in (".apps { display: grid;", ".apps a { display: flex;", ".apps a:hover {", ".apps .ms {"):
+    _k = src.index(_rule); src = src[:_k] + src[src.index("\n", _k) + 1:]
 # keyboard: hand keys to the encyclopedia while it is open, and add g w
 kd = '  if ((e.metaKey || e.ctrlKey) && (e.key || "").toLowerCase() === "k") { e.preventDefault(); $("#q").focus(); $("#q").select(); return; }'
 src = patch(src, kd, '  if (document.body.classList.contains("in-map")) { mapKey(e); return; }\n  if (document.body.classList.contains("in-wiki")) { wikiKey(e); return; }\n' + kd)
