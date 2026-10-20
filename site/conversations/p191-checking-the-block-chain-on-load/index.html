@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 3 messages · from 16 August 2010 · with Insti, Satoshi Nakamoto</p>
 <p class="actions"><a class="btn" href="../../#t-p191">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/191/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T20:07:46Z">16 August 2010, 20:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=841.msg9813#msg9813" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T20:07:46Z">16 August 2010, 20:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=841.msg9813#msg9813" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/checking-the-block-chain-on-load" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">SVN rev 139 does a basic check of the block chain after loading.
 
 With this we wouldn&#x27;t have needed to delete blk*.dat, it would have automatically done a reorg back to the fork.  There wasn&#x27;t time to do a careful implementation of this at the time.
@@ -51,7 +51,7 @@ And make a counter so that it reminds you to check every n loads/days.
 or whenever you update the software.
 
 It just seems that needing to recheck the entire block chain will be a very rare event, so rechecking the block chain all the time is overkill.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-18T18:28:28Z">18 August 2010, 18:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=841.msg10082#msg10082" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-18T18:28:28Z">18 August 2010, 18:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=841.msg10082#msg10082" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-checking-the-block-chain-on-load" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">In the next SVN rev, I&#x27;ll make it only go back to the last checkpoint at block 74000.  If we need to correct a problem in the future, we can always make sure it goes back at least as far back as the problem.  Also, I&#x27;m adding code to verify the block index, which means the proof-of-work chain is checked.
 
 Still, the system won&#x27;t be entirely secure against your blk*.dat files.  You are trusting someone if you use a copy of their blk files.</div></article>
@@ -60,7 +60,7 @@ Still, the system won&#x27;t be entirely secure against your blk*.dat files.  Y
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

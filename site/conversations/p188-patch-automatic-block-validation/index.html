@@ -51,7 +51,7 @@ Upon first run with this patch, all blocks will be verified, and any invalid blo
 Note that I may be missing some important steps when deleting the old blocks - in particular, no attempt is made to update the wallet, or to prune stored uncommitted transactions. Review would be helpful.</div></article><article class="msg" id="m1">
 <header><b>bdonlan</b><span class="muted"> · <time datetime="2010-08-16T04:33:10Z">16 August 2010, 04:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=832.msg9673#msg9673" rel="nofollow noopener">original</a></span></header>
 <div class="t">Hmm, it seems I am missing something important - disconnecting transactions which are no longer part of the accepted block chain. I&#x27;m going to have to work on this a bit - the naive approach of simply blasting away all TXNs, then reconnecting things is far too slow, and hits the transaction memory limit.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T15:25:54Z">16 August 2010, 15:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=832.msg9754#msg9754" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T15:25:54Z">16 August 2010, 15:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=832.msg9754#msg9754" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-patch-automatic-block-validation" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">That&#x27;s a difficult approach.
 
 We need to cause a reorg, which will disconnect the invalid chain.
@@ -84,7 +84,7 @@ It would probably be possible to initiate an AddToBlockIndex or Reorganize after
 
     return true;
 }</code></pre></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T17:08:02Z">16 August 2010, 17:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=832.msg9775#msg9775" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T17:08:02Z">16 August 2010, 17:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=832.msg9775#msg9775" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-patch-automatic-block-validation-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 03:25:54 PM</div><div class="t">It would probably be possible to initiate an AddToBlockIndex or Reorganize after the check, but it would require a lot more careful attention.  I probably should break out part of AddToBlockIndex that sets the new best block.  I&#x27;ll probably end up doing that instead of the code below.</div></blockquote><div class="t">This is what I ended up doing in SVN rev 139.
 
 Instead of deleting the bad chain, I added an extra CheckBlock to ConnectBlock so bad blocks can&#x27;t get back into the best chain once they&#x27;re kicked out.</div></article>
@@ -93,7 +93,7 @@ Instead of deleting the bad chain, I added an extra CheckBlock to ConnectBlock s
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

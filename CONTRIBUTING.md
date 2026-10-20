@@ -5,7 +5,7 @@ Thanks for helping. Satoshi Mail is in beta, so issues and pull requests are wel
 ## Ground rules
 
 * **Sources.** Satoshipedia cites only the Satoshi Nakamoto Institute, GitHub
-  (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia and Blocktrainer's archive.
+  (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive and satoshin.name.
   `tools/satoshipedia/build_wiki.py` refuses to build if an article links anywhere else.
   Every claim needs a citation or a link to the message it comes from.
 * **Neutral on identity.** Articles report who has been named as Satoshi, by whom, and

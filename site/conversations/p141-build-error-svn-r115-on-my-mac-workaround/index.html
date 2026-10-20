@@ -40,7 +40,7 @@
 <div class="t">I get:</div><pre><code>/var/folders/n7/n7Do3Krz2RWPeE+1YxvhUU+++TM/-Tmp-//cc8PgHsQ.s:879:suffix or operands invalid for `call&#x27;</code></pre><div class="t">... compiling cryptopp/sha.cpp (latest SVN source) on my Mac (gcc version 4.2.1).
 
 I fixed it by adding -DCRYPTOPP_DISABLE_ASM  to my makefile; perhaps somebody with more experience compiling C++ on a Mac can figure out a better fix.</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-28T21:23:23Z">28 July 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=604.msg6273#msg6273" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-28T21:23:23Z">28 July 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=604.msg6273#msg6273" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-build-error-svn-r115-on-my-mac-workaround" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Was that the only thing I broke in the OSX build?!  Does it actually work after just that one change?
 
 I had to do that for makefile.vc also.  It compiled, but SHA-256 didn&#x27;t work correctly; it returned the same incorrect hash each time.
@@ -55,7 +55,7 @@ I uploaded this makefile.osx change to SVN.  (let me know if that compiles now)
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

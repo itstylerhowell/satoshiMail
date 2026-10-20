@@ -88,7 +88,15 @@ src = patch(src, 'Reset stars, read state and trash</button>', 'Reset stars and 
 
 # Blocktrainer's archive: cross-checked source, mentioned on the About page
 src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer\'s Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Conversations it includes link to it, and where it gives a different date that is noted.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
-src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer. An independent reader, not affiliated with any email provider.')
+src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.')
+
+# satoshin.name ("Satoshi Nakamoto Archive"): which message is which page there, a details row per message, About text
+xref = json.load(open(tools / "satoshin_xref.json"))
+xjson = json.dumps({"site": xref["site"], "checked": xref["checked"], "msgs": xref["msgs"]}, separators=(",", ":"))
+src = patch(src, '<script id="data" type="application/json">', f'<script id="satoshin-data" type="application/json">{xjson}</script>\n<script id="data" type="application/json">')
+src = patch(src, '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n',
+            '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n      ${SATOSHIN.url(t, i) ? `<dt>also on:</dt><dd><a href="${esc(SATOSHIN.url(t, i))}" target="_blank" rel="noopener">${esc(SATOSHIN.url(t, i).replace(/^https:\\/\\//, ""))}</a></dd>` : ""}\n')
+src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi\'s BitcoinTalk posts and mailing-list emails): every one is here too, and each of those messages links to its page there under its details.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
 
 # ── SEO / performance pass ──
 import re as _re

@@ -67,7 +67,7 @@ Patches are at <a href="http://pastebin.com/2e4hfXSS;" rel="nofollow noopener">h
 <blockquote><div class=qh>Quote from: lachesis on August 10, 2010, 03:24:55 PM</div><div class="t">Do you have an updated version of this patch for SVN revision 125? Also, does Bitcoin open the BerkeleyDB as exclusive, precluding the need for a file lock?It does not -- did my own tests.</div></blockquote><div class="t">It does open with DB_PRIVATE.
 
 <a href="http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/C/envopen.html" rel="nofollow noopener">http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/C/envopen.html</a></div></article><article class="msg sat" id="m6">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-12T17:40:20Z">12 September 2010, 17:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=589.msg12483#msg12483" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-12T17:40:20Z">12 September 2010, 17:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=589.msg12483#msg12483" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-running-on-a-port-other-than-8333" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: lachesis on August 10, 2010, 03:24:55 PM</div><div class="t">Also, does Bitcoin open the BerkeleyDB as exclusive, precluding the need for a file lock?It does not -- did my own tests.</div></blockquote><div class="t">Is there a way to open BerkeleyDB exclusive?
 
 DB_PRIVATE is the worst of both worlds.  DB_PRIVATE is not exclusive, but it does make it get screwed up if another process tries to access it at the same time.
@@ -78,7 +78,7 @@ I&#x27;ve dropped the DB_PRIVATE flag in rev 153.</div></article>
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

@@ -147,7 +147,7 @@ My &#x27;stock client&#x27; balance shows as 131.00139787, and my modified clien
 So I guess now, all i need to do is create another wallet, and then send all the &quot;good coins&quot; from my old wallet to my new one (or, i guess... i could just use the same wallet, since my bitcoind won&#x27;t try to send the bad coins, i can just ignore them....)
 
 But yes, I hope the modifications as described by jgarzik (being configurable with cli switches/checkboxes) do make it into mainline - because otherwise it&#x27;s too easy to &#x27;poison&#x27; people&#x27;s wallets with bogus transactions.</div></article><article class="msg sat" id="m20">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-30T16:38:53Z">30 September 2010, 16:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg14714#msg14714" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-30T16:38:53Z">30 September 2010, 16:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg14714#msg14714" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-i-broke-my-wallet-sends-never-confirm-now" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">As you figured out, the root problem is we shouldn&#x27;t be counting or spending transactions until they have at least 1 confirmation.  0/unconfirmed transactions are very much second class citizens.  At most, they are advice that something has been received, but counting them as balance or spending them is premature.
 
 I made changes so they show up in lighter print, with the credit amount in square brackets like [+1.23], and the amount not counted towards your balance and not available for spending.  This doesn&#x27;t apply to transactions you sent, which you implicitly trust, since you wrote them.
@@ -168,12 +168,12 @@ change:
 to:
     if (pcoin-&gt;GetDepthInMainChain() &lt; 1)
         continue;</div></article><article class="msg sat" id="m21">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-30T16:59:00Z">30 September 2010, 16:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg14720#msg14720" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-30T16:59:00Z">30 September 2010, 16:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg14720#msg14720" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-i-broke-my-wallet-sends-never-confirm-now-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">0.3.13 release candidate, please test:
 <a href="http://www.bitcoin.org/download/bitcoin-0.3.13-rc1-win32-setup.exe" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.13-rc1-win32-setup.exe</a></div></article><article class="msg" id="m22">
 <header><b>kermit</b><span class="muted"> · <time datetime="2010-10-02T14:17:40Z">2 October 2010, 14:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg15001#msg15001" rel="nofollow noopener">original</a></span></header>
 <div class="t">So in .13 1 confirm is good enough to pay someone with, but it takes 6 to display &quot;confirmed&quot; in the GUI.   This is inconsistant.  This coin is good enough to pay you with but not good enough for me to accept?  I don&#x27;t know the logic behind the 6, but whatever it is, if its only used to decide which word to display, then is it really  representing anything at all?</div></article><article class="msg sat" id="m23">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-06T16:54:23Z">6 October 2010, 16:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg15672#msg15672" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-06T16:54:23Z">6 October 2010, 16:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1306.msg15672#msg15672" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-i-broke-my-wallet-sends-never-confirm-now-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">That&#x27;s going to be more of a SelectCoins thing.
 
 SVN rev 161 has a refinement to recursively determine if your own unconfirmed transactions can be spent.  This is needed because you should be able to spend your own change right away.
@@ -189,7 +189,7 @@ This version is an improvement if you already had a 0/unconfirmed transaction an
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

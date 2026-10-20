@@ -182,7 +182,7 @@ function wkFoot() {
   $("#wkfoot").innerHTML = `<div>
     <nav><a href="#wiki">Satoshipedia</a><a href="#wiki~about">About</a><a href="#wiki~all">All articles</a><a href="#inbox">Satoshi Mail inbox</a><a href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Wikipedia: Satoshi Nakamoto</a></nav>
     <div class="made-by-foot">${MADE_BY} · <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a> · <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">Open source (MIT) on GitHub</a></div>
-    <div><b>Beta:</b> Satoshi Mail and Satoshipedia are still in development. Satoshipedia is the encyclopedia of Satoshi Mail. Its ${WA.length} articles were written with AI assistance using only the Satoshi Nakamoto Institute, GitHub (nakamoto-archive and the Bitcoin Core repository), bitcoin.org, Blocktrainer's archive and Wikipedia (CC BY-SA 4.0), and link to their sources; check them before relying on a claim. Quotations are from the archive. Updated ${esc(WIKI.updated)}.</div>
+    <div><b>Beta:</b> Satoshi Mail and Satoshipedia are still in development. Satoshipedia is the encyclopedia of Satoshi Mail. Its ${WA.length} articles were written with AI assistance using only the Satoshi Nakamoto Institute, GitHub (nakamoto-archive and the Bitcoin Core repository), bitcoin.org, Blocktrainer's archive, satoshin.name and Wikipedia (CC BY-SA 4.0), and link to their sources; check them before relying on a claim. Quotations are from the archive. Updated ${esc(WIKI.updated)}.</div>
   </div>`;
 }
 function featuredToday() { const f = WA.filter(a => a.featured); return f[dayNum() % f.length]; }
@@ -320,7 +320,7 @@ function renderWikiAbout() {
       <li>His commits, from the <a class="ext" href="https://github.com/bitcoin/bitcoin" target="_blank" rel="noopener">Bitcoin Core repository</a>.</li>
       <li>The white paper and site at <a class="ext" href="https://bitcoin.org/" target="_blank" rel="noopener">bitcoin.org</a>.</li>
       <li>Background facts, summarised from Wikipedia's <a class="ext" href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Satoshi Nakamoto</a> article and related Wikipedia articles (CC BY-SA 4.0).</li></ul>
-    <p>The archive is also cross-checked against <a class="ext" href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's archive</a>; see <a class="wl" href="#wiki-blocktrainer-archive" data-slug="blocktrainer-archive">Blocktrainer archive</a>.</p>
+    <p>The archive is also cross-checked against <a class="ext" href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's archive</a> and <a class="ext" href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>; see <a class="wl" href="#wiki-blocktrainer-archive" data-slug="blocktrainer-archive">Blocktrainer archive</a> and <a class="wl" href="#wiki-satoshin-archive" data-slug="satoshin-archive">Satoshi Nakamoto Archive (satoshin.name)</a>.</p>
     <p>Nothing else is cited: no news sites, blogs or other web pages. Where these sources don't support a detail, the article leaves it out.</p>
     <h2>How articles work</h2>
     <p>Links marked with an envelope open the message in Satoshi Mail; links marked with a commit icon open the commit. Figures marked with an orange dot, and the charts in some articles, are computed live from the archive, so they always match what Satoshi Mail shows.</p>
@@ -625,10 +625,29 @@ const BLOCKTRAINER = {
     "single-emails|Email to Jon Matonis": "Blocktrainer's archive gives a time for this email: 4 March 2010, 08:55 UTC.",
   },
 };
+/* satoshin.name, the "Satoshi Nakamoto Archive" (checked 20 October 2026): 567 of Satoshi's own
+   BitcoinTalk posts and mailing-list emails, each on its own page. Every one is also here; the map
+   below says which message is which page. It has no private emails, P2P Foundation or p2p-research posts. */
+const SATOSHIN = (() => {
+  let x = { msgs: {} };
+  try { x = JSON.parse(document.getElementById("satoshin-data").textContent); } catch (e) {}
+  const base = x.site || "https://satoshin.name/";
+  return {
+    home: base, msgs: x.msgs || {},
+    url(t, i) { const s = this.msgs[t.id + "/" + i]; return s ? base + s : ""; },
+    first(t) { for (let i = 0; i < (t.m || []).length; i++) { const u = this.url(t, i); if (u) return u; } return ""; },
+    count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.msgs[t.id + "/" + i]) n++; return n; },
+  };
+})();
 function sourceChipsFor(t) {
-  if (!t || !t.m || !BLOCKTRAINER.covers(t)) return "";
-  const note = BLOCKTRAINER.dateNote[t.s + "|" + t.t];
-  return `<div class="conv-wiki conv-src">Also in:<a href="${BLOCKTRAINER.url}" target="_blank" rel="noopener" title="Blocktrainer's Satoshi Nakamoto archive, with German translations">${ic("open_in_new")}Blocktrainer archive${BLOCKTRAINER.partial(t) ? " (Satoshi's emails)" : ""}</a>${note ? `<span class="src-note">${ic("event")}${esc(note)}</span>` : ""}</div>`;
+  if (!t || !t.m) return "";
+  const chips = [];
+  if (BLOCKTRAINER.covers(t)) chips.push(`<a href="${BLOCKTRAINER.url}" target="_blank" rel="noopener" title="Blocktrainer's Satoshi Nakamoto archive, with German translations">${ic("open_in_new")}Blocktrainer archive${BLOCKTRAINER.partial(t) ? " (Satoshi's emails)" : ""}</a>`);
+  const sn = SATOSHIN.first(t), n = SATOSHIN.count(t);
+  if (sn) chips.push(`<a href="${esc(sn)}" target="_blank" rel="noopener" title="${n === 1 ? "Satoshi's message here has its own page" : `Satoshi's ${n} messages here each have a page`} on satoshin.name, the Satoshi Nakamoto Archive. This opens the first; each message's details link to its own.">${ic("open_in_new")}satoshin.name${n > 1 ? ` (${n} messages)` : ""}</a>`);
+  if (!chips.length) return "";
+  const note = BLOCKTRAINER.covers(t) && BLOCKTRAINER.dateNote[t.s + "|" + t.t];
+  return `<div class="conv-wiki conv-src">Also in:${chips.join("")}${note ? `<span class="src-note">${ic("event")}${esc(note)}</span>` : ""}</div>`;
 }
 function wikiChipsFor(t) {
   return wikiChipsOnly(t) + sourceChipsFor(t);
@@ -649,7 +668,7 @@ try { BETA_ACK = localStorage.getItem("satoshimail-beta-ack") === "1"; } catch (
 const BETA_INFO = () => `<div class="beta-dlg"><h2><span>Satoshi Mail is in beta</span><button class="ib" data-act="closelayer" aria-label="Close">${ic("close")}</button></h2>
   <p>Satoshi Mail and its encyclopedia, Satoshipedia, are still in development. While they're in beta you may find:</p>
   <ul><li>features that change, move or aren't finished yet;</li><li>bugs, or screens that don't work well on every device;</li><li>articles and data that are still being checked and expanded.</li></ul>
-  <p>The messages come from the Satoshi Nakamoto Institute, nakamoto-archive and the Bitcoin Core repository on GitHub, and bitcoin.org, and are cross-checked against Blocktrainer's archive. Satoshipedia's articles were written with AI assistance and cite Wikipedia and those sources, so check the original before relying on a detail.</p>
+  <p>The messages come from the Satoshi Nakamoto Institute, nakamoto-archive and the Bitcoin Core repository on GitHub, and bitcoin.org, and are cross-checked against Blocktrainer's archive and satoshin.name. Satoshipedia's articles were written with AI assistance and cite Wikipedia and those sources, so check the original before relying on a detail.</p>
   <p class="muted">${MADE_BY} (@TylerHowell88) · Beta · last updated ${esc(WIKI.updated)}</p>
   <div class="end"><button class="pillbtn" data-act="beta-ok">Got it</button></div></div>`;
 ACTIONS.beta = () => { $("#betanote").hidden = true; dialog(BETA_INFO()); };

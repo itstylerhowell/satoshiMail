@@ -29,6 +29,7 @@ tools/
   render_page.py            template + archive JSON → satoshi-mail.html
   build_site.py             satoshi-mail.html → site/
   blocktrainer.py           add Blocktrainer's archive to an sni-data dataset (local use)
+  satoshin.py               add satoshin.name (Satoshi Nakamoto Archive) to an sni-data dataset (local use)
   site-assets/              styles, favicon and share image for the static pages
   satoshipedia/             encyclopedia sources (articles.py), its builder, and the
                             Satoshipedia / Satoshi Map / SEO code merged into the template
@@ -59,7 +60,9 @@ Messages from the [Satoshi Nakamoto Institute](https://satoshi.nakamotoinstitute
 [nakamoto-archive](https://github.com/lugaxker/nakamoto-archive); commits from
 [bitcoin/bitcoin](https://github.com/bitcoin/bitcoin); the white paper from
 [bitcoin.org](https://bitcoin.org/bitcoin.pdf); cross-checked against
-[Blocktrainer's archive](https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive).
+[Blocktrainer's archive](https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive) and
+[satoshin.name](https://satoshin.name/), the Satoshi Nakamoto Archive; messages that are on
+satoshin.name link to their page there.
 Satoshipedia also cites Wikipedia. See [NOTICE.md](NOTICE.md) for what the MIT license
 covers and the terms of the archived material.
 

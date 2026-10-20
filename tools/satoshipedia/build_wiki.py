@@ -17,9 +17,9 @@ SLUGS = {a["slug"]: a for a in ARTICLES}
 ERRORS = []
 
 # Only these sources may be cited or linked: the Satoshi Nakamoto Institute, GitHub
-# (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia and Blocktrainer's archive.
+# (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive and satoshin.name.
 ALLOWED_HOSTS = {"nakamotoinstitute.org", "satoshi.nakamotoinstitute.org", "github.com", "bitcoin.org", "en.wikipedia.org",
-                 "www.blocktrainer.de"}  # Blocktrainer added as a source on 20 October 2026
+                 "www.blocktrainer.de", "satoshin.name"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
 
 
 def check_hosts(where, text):

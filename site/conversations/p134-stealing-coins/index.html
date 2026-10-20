@@ -44,7 +44,7 @@ The flaw would enable anonymous stealing of coins from arbitrary bitcoin address
 I would like bitcoins to succeed, so I&#x27;d rather not jump up and down in public yelling about flaws in public. Is there an appropriate place to discuss these types of issues?</div></article><article class="msg" id="m1">
 <header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-25T17:19:29Z">25 July 2010, 17:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5709#msg5709" rel="nofollow noopener">original</a></span></header>
 <div class="t">It&#x27;s open source software, better to discuss it now than try to keep it a secret for someone else to discover and they may not be willing to share any details.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T17:45:22Z">25 July 2010, 17:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5712#msg5712" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T17:45:22Z">25 July 2010, 17:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5712#msg5712" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-stealing-coins" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">It&#x27;s best if you tell it to me privately so it can be fixed first.
 
 I just e-mailed you my e-mail address.  (or you could PM me here)</div></article><article class="msg" id="m3">
@@ -54,7 +54,7 @@ I just e-mailed you my e-mail address.  (or you could PM me here)</div></articl
 <div class="t">Once it&#x27;s fixed or proven not to work, could you post the details here?  I&#x27;m very curious. =)</div></article><article class="msg" id="m5">
 <header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-25T18:15:05Z">25 July 2010, 18:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5719#msg5719" rel="nofollow noopener">original</a></span></header>
 <div class="t">I think I know what he means, but I was certain that the odds of doing it a bit too random to make an attack out of it.</div></article><article class="msg sat" id="m6">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T19:06:23Z">25 July 2010, 19:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5724#msg5724" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T19:06:23Z">25 July 2010, 19:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5724#msg5724" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-stealing-coins-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Red, thanks for telling me privately first!  Please go ahead and post it (and relieve the suspense for everyone!)
 
 His point is that transactions paid to a Bitcoin Address are only as secure as the hash function.  To make Bitcoin Addresses short, they are a hash of the public key, not the public key itself.  An attacker would only have to break the hash function, not ECDSA.</div></article><article class="msg" id="m7">
@@ -148,7 +148,7 @@ And yes what I&#x27;m saying is **I think** you can think of a public key as two
 But if they are really large non-prime numbers the combination math still works, it is just must faster to break the algorithm.
 
 I&#x27;ll do a little more googling and see if I can substantiate my claims. I was hoping someone could dismiss them out of hand though.</div></article><article class="msg sat" id="m12">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T20:01:40Z">25 July 2010, 20:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5740#msg5740" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T20:01:40Z">25 July 2010, 20:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5740#msg5740" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-stealing-coins-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: knightmb on July 25, 2010, 07:44:02 PM</div><div class="t">If I figure out that Public Key 123456 generates Hash ABCD
 and
 Public Key 654321 also generates Hash ABCD
@@ -173,7 +173,7 @@ He points out that if the public key was required to be a secure one, one which 
 Basically, one would build a rainbow table of weak private keys and then have to compare those to public hashes and then have to hope that someone out there has a hash that happens to be a part of that attack. Not impossible of course, but how feasible even if computers were 100 times faster in 10 years?
 
 [edit] ok, re-read what you wrote, the public key is generated from the private key, not independently. So just finding a weak public key is the issue.</div></article><article class="msg sat" id="m14">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T20:48:01Z">25 July 2010, 20:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5754#msg5754" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T20:48:01Z">25 July 2010, 20:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5754#msg5754" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-stealing-coins-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote</div><div class="t">Here is a paper that claims to find SHA-1 collisions in 2^52 crypto operations. And optimally secure hash would take 2^80 operations. 2^52 time is still large, but it is getting into cluster and botnet range.</div></blockquote><div class="t">2^80 is if you can use a birthday attack.  You can&#x27;t use a birthday attack for this, so the difficulty is the full 2^160 bits.  Although, if you were trying to crack any one of 1 million (2^20) transactions, you could do a partial birthday attack 2^160/2^20 = 2^140.
 
 Bitcoin Addresses are the only place where 160-bit hash is used.  Everything else is SHA-256.  They&#x27;re calculated as:
@@ -208,14 +208,14 @@ My postulation is that if n is arbitrary, and e is one of the common values, the
 (That is the point where I could be totally off base though. Really interested, if a crypto geek knows better than me.)
 
 I did read that the key generation algorithms create p and q such that they are &quot;very likely prime&quot; but it is too much work to know for sure. This leads me to believe non-primes don&#x27;t cause any obvious FAILs. I could be wrong though.</div></article><article class="msg sat" id="m17">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T22:27:36Z">25 July 2010, 22:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5778#msg5778" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T22:27:36Z">25 July 2010, 22:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=571.msg5778#msg5778" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-stealing-coins-5" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Sorry, actually it&#x27;s ECDSA (Elliptic Curve Digital Signature Algorithm) not RSA.  I shouldn&#x27;t have said &quot;prime numbers&quot;.  ECDSA doesn&#x27;t take much time to generate a keypair.</div></article>
 
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p133-bitcoin-0-3-3-released-please-upgrade/">← Bitcoin 0.3.3 released -- PLEASE UPGRADE</a><a rel="next" href="../../conversations/p135-bitcoin-x86-for-windows/">Bitcoin x86 for Windows →</a></nav>
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

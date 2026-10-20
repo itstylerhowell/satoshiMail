@@ -96,13 +96,18 @@ def split_page(page: str) -> dict:
     wiki_end = page.index("</script>", wiki_i) + len("</script>")
     wiki_script = page[wiki_i:wiki_end]
     data_i = page.index('<script id="data"', wiki_end)
+    side = page[wiki_end:data_i].strip()   # other data blocks, e.g. the satoshin.name map
+    sn = {}
+    if '<script id="satoshin-data"' in side:
+        j = side.index('<script id="satoshin-data"')
+        sn = json.loads(side[side.index(">", j) + 1:side.index("</script>", j)])
     data_open_end = page.index(">", data_i) + 1
     data_end = page.index("</script>", data_open_end)
     data_txt = page[data_open_end:data_end]
     app_i = page.index("<script>", data_end) + len("<script>")
     app_end = page.rindex("</script>")
     head = page[:head_end]
-    return {"head": head, "css": css, "markup": markup, "wiki_script": wiki_script,
+    return {"head": head, "css": css, "markup": markup, "wiki_script": wiki_script, "side_scripts": side, "satoshin": sn,
             "data": json.loads(data_txt.replace("<\\/", "</")), "data_txt": data_txt,
             "wiki": json.loads(wiki_script[wiki_script.index(">") + 1:-len("</script>")].replace("<\\/", "</")),
             "app_js": page[app_i:app_end], "page": page}
@@ -115,6 +120,8 @@ class Site:
         self.threads = self.D["threads"]
         self.commits = self.D["commits"]
         self.by_id = {t["id"]: t for t in self.threads}
+        self.satoshin = parts["satoshin"].get("msgs", {})
+        self.satoshin_site = parts["satoshin"].get("site", "https://satoshin.name/")
         self.lists = {k: {"name": n, "long": l} for k, n, l in re.findall(r'"([a-z0-9-]+)":\s*\{ name: "([^"]+)",[^}]*long: "([^"]+)"', parts["app_js"])}
         self.arts = {a["slug"]: a for a in self.W["articles"]}
         self.alias = {}
@@ -219,7 +226,7 @@ class Site:
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a></p>
 </div></footer>
 </body>
 </html>
@@ -297,6 +304,9 @@ class Site:
             note = f'<p class="note">{esc(m["w"])}</p>' if m.get("w") else ""
             to = f' <span class="muted">to {esc(m["to"])}</span>' if m.get("to") else ""
             src = f' · <a href="{esc(m["u"])}" rel="nofollow noopener">original</a>' if m.get("u") else ""
+            sn = self.satoshin.get(f'{t["id"]}/{i}')
+            if sn:
+                src += f' · <a href="{esc(self.satoshin_site + sn)}" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a>'
             msgs.append(f"""<article class="msg{' sat' if m.get('s') else ''}" id="m{i}">
 <header><b>{esc(who)}</b>{to}<span class="muted"> · <time datetime="{iso(m['d'])}">{esc(date)}</time>{src}</span></header>
 {note}{self.render_body(m)}</article>""")
@@ -540,7 +550,7 @@ class Site:
 <li><a href="../satoshipedia/">Satoshipedia</a>: {len(self.W['articles'])} articles on the people and events, linked to the messages they draw on.</li>
 <li><a href="../#map">Satoshi Map</a>: everyone he corresponded with, and his timeline from 2008 to 2011.</li></ul>
 <h2>Sources</h2>
-<p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a>. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
+<p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive; messages that are on satoshin.name link to their page there. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
         self.write("about/", self.page("about/", "About Satoshi Mail – Satoshi Nakamoto's emails, posts and commits",
                    clip(TAGLINE), body, [("About", "about/")], [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Satoshi Mail", "url": self.base + "about/"}],
                    app_href="#about", og_type="website"), priority=0.5)
@@ -611,6 +621,7 @@ class Site:
 {noscript}
 {p['markup'].strip()}
 {p['wiki_script']}
+{p['side_scripts']}
 <script id="data" type="application/json"></script>
 {loader}
 </body>

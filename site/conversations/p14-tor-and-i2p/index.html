@@ -48,7 +48,7 @@ I might setup a couple of nodes in this fashion and post the tunnels on this for
 I support the idea of making BC compatible with TOR and I2P to increase the privacy of the system. I mean: why re-invent the wheel? There are thousands of mix network nodes just sitting there that can be used to enhance BC. Cheesy
 
 Cheers!</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-20T22:05:28Z">20 January 2010, 22:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg113#msg113" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-20T22:05:28Z">20 January 2010, 22:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg113#msg113" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-tor-and-i2p" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I&#x27;ve been thinking about that for a while.  I want to add the backend support for .onion addresses and connecting to them, then go from there.
 
 There aren&#x27;t many .onion addresses in use for anything because the user has to go through a number of steps to create one.  Configure TOR to generate a .onion address, restart TOR, configure it with the generated address.  Perhaps this is intentional to keep TOR so it can&#x27;t be integrated into file sharing programs in any sufficiently automated way.</div></article><article class="msg" id="m2">
@@ -114,7 +114,7 @@ I2P would seem to be a much easier solution to implement to increase a Bitcoins 
 <a href="http://forum.i2p2.de/viewtopic.php?t=3946" rel="nofollow noopener">http://forum.i2p2.de/viewtopic.php?t=3946</a>&amp;sid=213e3cd998db98c4511675ecbba17af4
 
 I&#x27;m also testing JonDonym <a href="http://anonymous-proxy-servers.net/" rel="nofollow noopener">http://anonymous-proxy-servers.net/</a> (only the paid services support socks !) However, they do accept paysafecards which can currently be brought in exchange for Bitcoins. Grin</div></article><article class="msg sat" id="m7">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-04T00:30:50Z">4 February 2010, 00:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg223#msg223" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-04T00:30:50Z">4 February 2010, 00:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg223#msg223" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-tor-and-i2p-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">When using proxy port 9050, it will only make one attempt to connect to IRC, then give up, since it knows it will probably always fail because IRC servers ban all the TOR exit nodes.  If you&#x27;re using another port, it would assume it might be a regular old normal proxy and would keep retrying IRC at longer and longer intervals.  You should not use Polipo or Privoxy as those are http filters and caches that would corrupt Bitcoin&#x27;s messages if they make any changes.  Bitcoin might be trying to overcome it by reconnecting.  You should use port 9050.
 
 As riX says, the &quot;is giving Tor only an IP address. Apps that do DNS...&quot; warnings are nothing to worry about.  Bitcoin doesn&#x27;t use DNS at all in proxy mode.
@@ -125,7 +125,7 @@ Since Bitcoin can&#x27;t get through to IRC through Tor, it doesn&#x27;t know wh
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

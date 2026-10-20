@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 46 messages · from 18 July 2010 · with BitLex, Gavin Andresen, Satoshi Nakamoto, The Madhatter, Vasili Sviridov, gazoakley…</p>
 <p class="actions"><a class="btn" href="../../#t-p123">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/123/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-18T20:49:22Z">18 July 2010, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4059#msg4059" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-18T20:49:22Z">18 July 2010, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4059#msg4059" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/json-rpc-password" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I uploaded to SVN my changes to add a password to JSON-RPC.  If you&#x27;re set up to build, please test it.
 
 The -server switch is replaced with -rpcpw=&lt;password&gt;, which is also used with bitcoind.
@@ -96,7 +96,7 @@ stop &lt;pw&gt;</div></article><article class="msg" id="m1">
 Even better might be to use a key file, then you can use unix permissions to make it readable to only that user, kind of like ssh does.. then the bitcoind could have an &#x27;authorized_keys&#x27; file with the public keys.  Anyway I don&#x27;t mean to be an ass but the command line thing is just a false sense of security.</div></article><article class="msg" id="m2">
 <header><b>martin</b><span class="muted"> · <time datetime="2010-07-19T01:25:12Z">19 July 2010, 01:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4131#msg4131" rel="nofollow noopener">original</a></span></header>
 <div class="t">I&#x27;m afraid I have to agree with laszlo here, using a certificate/keyfile would be far more secure. Saying that, thanks for adding some security to the JSON api Cheesy</div></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-19T04:43:13Z">19 July 2010, 04:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4169#msg4169" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-19T04:43:13Z">19 July 2010, 04:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4169#msg4169" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Right, that is quite a bit better. 
 
 Can you give me any examples of other stuff that does it that way?  (and what the command line looks like)
@@ -127,7 +127,7 @@ E.g. setting.json file might look like:</div><pre><code>{
 Putting the username:password in a settings.json file in the Bitcoin directory aught to work nicely (since Bitcoin can already parse JSON).  And keeping the authentication stuff off the command line and in the HTTP headers instead of the JSON request params is nice and clean.
 
 Long term, the &quot;right&quot; way to do authenticated, secure JSON-RPC is with client-side certificates and https.    But that looks like it would be a lot of work to implement and a big learning curve &lt;<a href="http://it.toolbox.com/blogs/securitymonkey/howto-securing-a-website-with-client-ssl-certificates-11500" rel="nofollow noopener">http://it.toolbox.com/blogs/securitymonkey/howto-securing-a-website-with-client-ssl-certificates-11500</a>&gt; for users to figure out how to generate client-side certificates and how to get both sides of the JSON-RPC connection using them.   And I&#x27;m not even certain a full-blown client certificate solution would solve the problem of malicious Javascript making JSON-RPC requests via XMLHttpRequests to localhost; if the user installed the client certificate in the browser (because maybe there was a nifty JSON-RPC-powered web front-end to controlling Bitcoin), would the browser automatically send the client certificate if a malicious website made requests?</div></article><article class="msg sat" id="m7">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-19T16:20:50Z">19 July 2010, 16:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4268#msg4268" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-19T16:20:50Z">19 July 2010, 16:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4268#msg4268" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">So you drop a settings file in the ~/.bitcoin directory, that sounds better.  In the &quot;no password is set&quot; warning, it could tell you where the file is and what to do.
 
 What is the most popular and common settings file format?
@@ -152,7 +152,7 @@ Like scanning /home/*/.bitcoin folders for a wallet file and provide access by b
 <div class="t">If you&#x27;re using another JSON-RPC client that you wrote you can take care to protect the password, but using the bitcoin binary as the client and passing the password on the command line has the same issue as starting the daemon with it.  It&#x27;s still visible to every user that way.
 
 So both the server and the client mode invocation need to use the file and not accept the password on the command line.  Generally programs like this refuse to start if the mode on the file isn&#x27;t 600 or something like that, because that means other users can read it.</div></article><article class="msg sat" id="m11">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T00:05:20Z">21 July 2010, 00:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4577#msg4577" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T00:05:20Z">21 July 2010, 00:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4577#msg4577" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Still need to know what&#x27;s the most typical settings file format on Linux.  Is there a standard file extension?  I&#x27;ve never seen a settings file using JSON, and it doesn&#x27;t look very human friendly with everything required to be in quotes.  I think what I usually see is like:
 # comment
 setting=value
@@ -164,7 +164,7 @@ When you&#x27;re using bitcoind to issue commands from the command line as a cli
 Gavin pointed out I forgot to increment the column of numbers in CommandLineRPC, so the current -rpcpw= implementation doesn&#x27;t work right from the command line with non-string parameters.  (JSON-RPC is fine)  Still under construction.</div></article><article class="msg" id="m12">
 <header><b>martin</b><span class="muted"> · <time datetime="2010-07-21T00:30:26Z">21 July 2010, 00:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4582#msg4582" rel="nofollow noopener">original</a></span></header>
 <div class="t">You could do worse than using yaml &lt;<a href="http://www.yaml.org/spec/1.2/spec.html" rel="nofollow noopener">http://www.yaml.org/spec/1.2/spec.html</a>&gt; for the settings</div></article><article class="msg sat" id="m13">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T05:51:34Z">21 July 2010, 05:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4646#msg4646" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T05:51:34Z">21 July 2010, 05:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4646#msg4646" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I was researching config file formats, here&#x27;s a comparison.
 
 YAML is massive.  I&#x27;m not sure there&#x27;s a lightweight easy to build library we can integrate into our project.  Seems overkill.
@@ -236,7 +236,7 @@ My vote would be for:
 
 # comment
 key1=value1</div></article><article class="msg sat" id="m17">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T16:07:57Z">21 July 2010, 16:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4758#msg4758" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T16:07:57Z">21 July 2010, 16:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4758#msg4758" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-5" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: gavinandresen on July 21, 2010, 12:11:10 PM</div><div class="t">I just did a quick survey of 20 .conf files in /etc on my debian system, and found:
  1 file used &quot;key value&quot;
  5 used &quot;key=value&quot; </div></blockquote><div class="t">Thanks for that survey!
@@ -261,7 +261,7 @@ longerkey =   this sentence would be this    # &quot;this sentence would be 
       right = justified
 
 The normal syntax should be &quot;key=value&quot;, but you can&#x27;t blame people for the occasional &quot;key = value&quot;.</div></article><article class="msg sat" id="m18">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T17:31:09Z">21 July 2010, 17:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4775#msg4775" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-21T17:31:09Z">21 July 2010, 17:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4775#msg4775" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-6" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">boost::program_options has the same &quot;key=value&quot; format.  Gavin pointed out we can use it in a simple way as a parser without getting into all the esoteric c++ syntax like typed value extraction.  We can use more features if we want later.
 
 Lets go ahead with HTTP basic authentication instead of password as a parameter.</div></article><article class="msg" id="m19">
@@ -290,7 +290,7 @@ I, for one, suggest a noirc (off by default) option and a minimizetotray option,
 <div class="t">I&#x27;ve implemented it so that all the command-line options can also be specified in the bitcoin.conf file.
 
 Options given on the command line override options in the conf file.  But I need to do more testing, especially with the &quot;multiargs&quot; options like &quot;addnode&quot;.</div></article><article class="msg sat" id="m22">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-22T02:34:23Z">22 July 2010, 02:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4928#msg4928" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-22T02:34:23Z">22 July 2010, 02:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg4928#msg4928" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-7" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: gavinandresen on July 22, 2010, 01:11:26 AM</div><div class="t">TODO: dialog box or debug.log warning if no rpc.user/rpc.password is set, explaining how to set.</div></blockquote><div class="t">In many of the contexts of this RPC stuff, you can print to the console with fprintf(stdout, like this:
 #if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
         MyMessageBox(&quot;Warning: rpc password is blank, use -rpcpw=&lt;password&gt;&quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
@@ -305,7 +305,7 @@ One nice side effect: you can prepare for the changes now; create a bitcoin.conf
 Question for everybody:  should I add a section to the wiki page describing, in detail, how to do HTTP Basic authentication?  PHP and Python make is really easy-- just use the <a href="http://user:pass@host:port/" rel="nofollow noopener">http://user:pass@host:port/</a> URL syntax.  I don&#x27;t want to just duplicate the HTTP Basic authentication Wikipedia page.</div></article><article class="msg sat" id="m24">
 <header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T17:07:40Z">23 July 2010, 17:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5337#msg5337" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: gavinandresen on July 23, 2010, 03:11:45 PM</div><div class="t">Question for everybody:  should I add a section to the wiki page describing, in detail, how to do HTTP Basic authentication?  PHP and Python make is really easy-- just use the <a href="http://user:pass@host:port/" rel="nofollow noopener">http://user:pass@host:port/</a> URL syntax.</div></blockquote><div class="t">Yes, I think that would be really good so each dev doesn&#x27;t have to figure it out themselves.  We need a simple example for each of Python, PHP and Java importing the json-rpc library and using it to do a getinfo or something, including doing the http authentication part.</div></article><article class="msg sat" id="m25">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T17:14:31Z">23 July 2010, 17:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5338#msg5338" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T17:14:31Z">23 July 2010, 17:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5338#msg5338" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-8" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">Gavin&#x27;s changes look good.  I think everything is complete.  Here&#x27;s a test build, please test it!
 
 <a href="http://www.bitcoin.org/download/bitcoin-0.3.2.5-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.2.5-win32.zip</a>
@@ -318,7 +318,7 @@ Question for everybody:  should I add a section to the wiki page describing, in
 <blockquote><div class=qh>Quote from: lachesis on July 23, 2010, 06:22:08 PM</div><div class="t">The password definitely shouldn&#x27;t be required.</div></blockquote><div class="t">I strongly disagree; software should be secure by default, and running bitcoind without a password (or bitcoin -server) is definitely NOT secure.
 
 I just don&#x27;t see somebody saying &quot;Man, Bitcoin sucks because I have to add a password to a configuration file before running it as a daemon.&quot;  I can see somebody saying &quot;Man, Bitcoin sucks because I accidently ran it with the -server switch and somebody stole all my money.&quot;</div></article><article class="msg sat" id="m29">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T20:39:03Z">23 July 2010, 20:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5383#msg5383" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T20:39:03Z">23 July 2010, 20:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5383#msg5383" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-9" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I don&#x27;t think authentication should be disabled by default if there&#x27;s no conf file or the config file doesn&#x27;t contain &quot;rpcpassword&quot;, but what if it contains &quot;rpcpassword=&quot;?
 
 I can see both points.
@@ -394,7 +394,7 @@ I usually wrap everything into SSL or IPSec anyway, but digest auth might keep n
 Perhaps we could document a simple stunnel + bitcoin configuration on the wiki then? Under a section called &quot;Securely using bitcoind from remote&quot;?
 
 Just offering my 2c as usual. Tongue</div></article><article class="msg sat" id="m42">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:34:29Z">25 July 2010, 21:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5767#msg5767" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:34:29Z">25 July 2010, 21:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5767#msg5767" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-10" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: lachesis on July 25, 2010, 07:52:35 PM</div><div class="t">I found what appears to be a bug: with a long enough username and password combination, the base64 encoder in bitcoind produces authorization headers that look like this:
 
 ...
@@ -429,21 +429,21 @@ index 72bdc50..703b757 100644
      BIO_free_all(b64);
  
      return result;</code></pre></article><article class="msg sat" id="m44">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:44:16Z">25 July 2010, 21:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5769#msg5769" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:44:16Z">25 July 2010, 21:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5769#msg5769" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-11" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: BitLex on July 25, 2010, 08:45:38 PM</div><div class="t">i got some problems here too trying to get this run on PHP.
 so far i had no luck, neither the wiki-sample (jsonRPCClient trying to fopen(<a href="http://username:password@localhost:8332/" rel="nofollow noopener">http://username:password@localhost:8332/</a>)), nor my curl-sample (using setopt CURLOPT_HTTPAUTH, CURLAUTH_BASIC) seem to work.</div></blockquote><div class="t">That&#x27;s strange, didn&#x27;t someone just say that was supposed to work?  (what library was he using?)  Post if you figure out what wrong.
 
 I hope it&#x27;s not going to put up this much of a fight for all PHP users.
 
 Looks like we&#x27;ve got the Fortran scenario already. </div></article><article class="msg sat" id="m45">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:51:31Z">25 July 2010, 21:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5771#msg5771" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T21:51:31Z">25 July 2010, 21:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=461.msg5771#msg5771" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-json-rpc-password-12" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <blockquote><div class=qh>Quote from: gavinandresen on July 25, 2010, 09:38:19 PM</div><div class="t">Great catch!  Simpler fix is to specify the BIO_FLAGS_BASE64_NO_NL in the rpc.cpp/EncodeBase64 function</div></blockquote><div class="t">SVN rev 111</div></article>
 <aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li></ul></aside>
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p122-md5/">← md5?</a><a rel="next" href="../../conversations/p124-warning-don-t-use-server-or-bitcoind-where-you-web-browse-v0/">Warning: don&#x27;t use -server or bitcoind where you web browse (v0.3.2 and lower) →</a></nav>
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>

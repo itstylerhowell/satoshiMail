@@ -850,7 +850,36 @@ On 20 October 2026 its 4,236 entries were checked against Satoshi Mail's data, a
 It dates Satoshi's email to [[laszlo-hanyecz|Laszlo Hanyecz]] 11 December 2009, where nakamoto-archive's source gives May 2010 ({{mail:single-emails|Email to Laszlo Hanyecz|the email}}). Conversations in Satoshi Mail that it includes link to it.
 """,
  refs={"bt": "[https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive Satoshi Nakamoto’s Emails & Posts: The Full Archive], Blocktrainer. Retrieved 20 October 2026."},
- see=["satoshi-nakamoto-institute", "nakamoto-archive"],
+ see=["satoshi-nakamoto-institute", "nakamoto-archive", "satoshin-archive"],
+),
+dict(
+ slug="satoshin-archive", title="Satoshi Nakamoto Archive (satoshin.name)", kind="topic", img="icon:inventory_2",
+ caption="satoshin.name, a backup copy of Satoshi's public messages",
+ cats=["Archives"],
+ short="satoshin.name, a backup of Satoshi's BitcoinTalk posts and mailing-list emails, one page per message.",
+ featured=False, aliases=["satoshin.name", "Satoshi Nakamoto Archive"], label=None,
+ info=[("Address", "satoshin.name"), ("Created", "January 2020"), ("Entries", "567"), ("Covers", "November 2008 – December 2010"), ("Checked", "20 October 2026")],
+ body="""
+'''Satoshi Nakamoto Archive''' is a website at satoshin.name that keeps a copy of Satoshi Nakamoto's public messages. Its about page says it was created in January 2020 as a backup of Satoshi's messages, in case they were removed from other sources or altered.[^sn-about]
+
+== Contents ==
+The archive has 567 entries, each on its own page, from Satoshi's announcement of the [[bitcoin-white-paper|white paper]] on the Cryptography Mailing List in November 2008 to his last forum posts in December 2010.[^sn] They come from three places:
+* 533 posts on the [[bitcointalk|Bitcoin Forum]];
+* 18 emails to the Cryptography Mailing List, linked to their copies on mail-archive.com;
+* 16 emails to the bitcoin-list mailing list on SourceForge.
+
+Each entry gives the date and time of publication, the category, the sender and a link to the original message, and many list the people mentioned in it. Only Satoshi's own messages are included, not the posts and emails he was replying to.[^sn]
+
+== Compared with this archive ==
+On 20 October 2026 all 567 entries were checked against Satoshi Mail's data, and every one of them is also here. Each of those messages in Satoshi Mail links to its page on satoshin.name from its details, and conversations that include one link to it under the title.
+
+Satoshi Mail has messages that satoshin.name does not: six of Satoshi's BitcoinTalk posts, his posts on the P2P Foundation forum and the p2p-research list, and all of his private emails, which come from [[nakamoto-archive|nakamoto-archive]]. The six forum posts are in the threads ''A few suggestions'', ''Bitcoin crash when sending coins'', ''new binary release?'', ''JSON-RPC password'', ''Internal version number'' and ''BitDNS and Generalizing Bitcoin''.
+
+For the Cryptography Mailing List, the archive's dates are when mail-archive.com received each email, which can be a day or more after it was sent; Satoshi Mail shows the time each email was sent, from the list's own archive.[^sn]
+""",
+ refs={"sn": "[https://satoshin.name/ Satoshi Nakamoto Archive], satoshin.name. Retrieved 20 October 2026.",
+       "sn-about": "[https://satoshin.name/about/ About the Archive], satoshin.name. Retrieved 20 October 2026."},
+ see=["satoshi-nakamoto-institute", "blocktrainer-archive", "nakamoto-archive"],
 ),
 ]
 

@@ -54,7 +54,7 @@ EDIT:  In case people want to see what the documentation on an existing system 
 <blockquote><div class=qh>Quote from: lachesis on July 15, 2010, 11:57:19 PM</div><div class="t">I think that would be cool, but as always, the decision rests with Satoshi, the project lead.</div></blockquote><div class="t">I didn&#x27;t think this would be something people would object to.  Hopefully I hear definitively from Satoshi that it is OK.  I will probably start working on this tonight then (tonight in USA time).  Also, I saw another thread questioning how to send in patches; the stated answer was that we should e-mail them to Satoshi, is this still the preferred method?
 
 -Buck</div></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-16T15:37:00Z">16 July 2010, 15:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3510#msg3510" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-16T15:37:00Z">16 July 2010, 15:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3510#msg3510" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-source-code-documentation" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I like that in libraries for the external API&#x27;s, but you can probably tell from the code that I&#x27;m not a fan of it for interior functions.  Big obligatory comment headers for each function space out the code and make you hesitate about creating a small little function where the comment header would be bigger than the function.  They&#x27;re some trouble for maintenance, as changes to the function then require duplicate changes in the comment header.  I like to keep code compact so you can see more code on the screen at once.
 
 To add them now at this point, what would be written would just be what&#x27;s obvious from looking at the function.
@@ -70,7 +70,7 @@ A second, and perhaps more appealing method would be to utilize the fact that Do
 Finally, whether we use Doxygen or not, I would like to write a &quot;man page&quot; for the program documenting the command-line options it takes.  Where is the command line processed in the code?  I looked at main.cpp and didn&#x27;t see it (in fact I couldn&#x27;t even find the &quot;main&quot; function).
 
 -Buck</div></article><article class="msg sat" id="m5">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-16T17:15:47Z">16 July 2010, 17:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3534#msg3534" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-16T17:15:47Z">16 July 2010, 17:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3534#msg3534" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-source-code-documentation-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">It&#x27;s in init.cpp.
 
 It&#x27;s a wxWidgets app, so it doesn&#x27;t have a main() function.  It may in a little while, since I&#x27;m pretty close to making bitcoind build w/o wxBase.  (it&#x27;ll be in init.cpp)
@@ -115,7 +115,7 @@ Attached to this message you should find a zip file with the patch in it.
 EDIT:  The wiki doesn&#x27;t seem to be sending the registration e-mail so I can log in to edit, is there some problem with the server or something?
 
 -Buck</div></article><article class="msg sat" id="m11">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-17T23:18:30Z">17 July 2010, 23:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3828#msg3828" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-17T23:18:30Z">17 July 2010, 23:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3828#msg3828" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-source-code-documentation-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">I didn&#x27;t realize you were going to document all the intentionally undocumented commands.  They&#x27;re unsupported and not intended to be used by users.
 
 All the user-facing commands are listed in the -? help.</div></article><article class="msg" id="m12">
@@ -129,14 +129,14 @@ The B switches on bold text and the R switches back to regular.  This way peo
 For example, just at the moment someone in IRC is making use of the -printblock command to generate statistics about the block chain that might help us understand the program better (as in how it performs in the real world).  Although the output of this command may change in the future, and therefore we shouldn&#x27;t be building complex frameworks around it, it is nice to know it exists if you need something done as a quick hack.  Also because the program is open source, if someone comes to depend on a certain command line switch they can maintain it.  Eventually what you thought was just a temporary debugging tool make end up being one of the most widely used switches available.
 
 -Buck</div></article><article class="msg sat" id="m13">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-18T15:12:54Z">18 July 2010, 15:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3999#msg3999" rel="nofollow noopener">original</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-18T15:12:54Z">18 July 2010, 15:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=393.msg3999#msg3999" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-source-code-documentation-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
 <div class="t">They&#x27;re only intended for intrepid programmers who read the sourcecode.</div></article>
 
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p107-seticons-icon-bundle-doesn-t-contain-any-suitable-icon/">← &quot;SetIcons(): icon bundle doesn&#x27;t contain any suitable icon&quot;</a><a rel="next" href="../../conversations/p109-request-expected-bitcoins-per-day-display/">Request: expected bitcoins per day display →</a></nav>
 </main>
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
 </div></footer>
 </body>
 </html>
