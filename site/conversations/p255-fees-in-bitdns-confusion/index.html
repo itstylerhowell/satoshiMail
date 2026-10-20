@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fees in BitDNS confusion – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 9 December 2010: Not locktime. There&#x27;s a possible design for far in the future: You intentionally write a double-spend. You write it…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p255-fees-in-bitdns-confusion/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Fees in BitDNS confusion – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 9 December 2010: Not locktime. There&#x27;s a possible design for far in the future: You intentionally write a double-spend. You write it…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p255-fees-in-bitdns-confusion/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Fees in BitDNS confusion – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 9 December 2010: Not locktime. There&#x27;s a possible design for far in the future: You intentionally write a double-spend. You write it…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Fees in BitDNS confusion", "url": "https://satoshimail.pages.dev/conversations/p255-fees-in-bitdns-confusion/", "author": {"@type": "Person", "name": "galeru"}, "datePublished": "2010-12-09T19:45:38Z", "text": "A bunch of the current debate about including BitDNS or BitX makes assumptions that miners will include transactions or not based on some rather fine-grained conditions, while none of the standard code includes any sort of implementation that allows non-programmers to make decisions like that. How will I, the user, figure out what sort of fees have to go into a transaction?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-12-09T19:51:02Z", "text": "For currency transactions, if you notice your transactions taking a long time to confirm, you increase the TX fee. For non-currency transactions, it sounds like there will be some sort of fee schedule. The software that generates these special, non-currency transactions would likely have a user-friendly interface to indicate the cost."}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-12-09T20:51:00Z", "text": "It would be nice if there was some way that using the standard client you might be able to adjust the fee schedule for your own purposes and set \"policies\" for mining blocks and including transactions. I think that is a source of confusion here as no such user interface is currently provided for doing that. Much of this is all theoretical at the moment because it is possible to make transactions \"for free\" and generally get them included in the next block at the moment. I don't see that is…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-12-09T21:08:55Z", "text": "Just wondering about the following example : I broadcast a transaction, sending X coins to some address. Doesn't get included in blocks for a while because I don't include a fee. Do I have a way to cancel it and broadcast it again with a fee this time ?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-12-09T21:41:58Z", "text": "Yes, although I don't think the canceled transaction protocol is necessarily complete in terms of its current implementation. See also: http://www.bitcoin.org/wiki/doku.php?id=bitcoins_draft_spec_0_0_1#tx The \"version\" field allows somebody to send out a new transaction that effectively replaces an existing transaction with perhaps some new data. As long as the transaction hasn't been accepted into a block, in theory you can \"recall\" the transaction and modify the transaction in any way. Like…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-12-09T23:07:04Z", "text": "See the discussion of locktime <http://bitcointalk.org/index.php?topic=1786.msg22119#msg22119> for transaction replacement."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-12-09T23:58:54Z", "text": "Not locktime. There's a possible design for far in the future: You intentionally write a double-spend. You write it with the same inputs and outputs, but this time with a fee. When your double-spend gets into a block, the first spend becomes invalid. The payee does not really notice, because at the moment the new transaction becomes valid, the old one becomes invalid, and the new transaction simply takes its place. It's easier said than implemented. There would be a fair amount of work to make…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Fees in BitDNS confusion", "item": "https://satoshimail.pages.dev/conversations/p255-fees-in-bitdns-confusion/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p255">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Fees in BitDNS confusion</span></div></nav>
+<main class="in">
+<h1>Fees in BitDNS confusion</h1>
+<p class="lead">BitcoinTalk forum · 7 messages · from 9 December 2010 · with RHorning, Satoshi Nakamoto, davout, galeru, jgarzik</p>
+<p class="actions"><a class="btn" href="../../#t-p255">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/255/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>galeru</b><span class="muted"> · <time datetime="2010-12-09T19:45:38Z">9 December 2010, 19:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28669#msg28669" rel="nofollow noopener">original</a></span></header>
+<div class="t">A bunch of the current debate about including BitDNS or BitX makes assumptions that miners will include transactions or not based on some rather fine-grained conditions, while none of the standard code includes any sort of implementation that allows non-programmers to make decisions like that.  How will I, the user, figure out what sort of fees have to go into a transaction?</div></article><article class="msg" id="m1">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-12-09T19:51:02Z">9 December 2010, 19:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28672#msg28672" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: galeru on December 09, 2010, 07:45:38 PM</div><div class="t">A bunch of the current debate about including BitDNS or BitX makes assumptions that miners will include transactions or not based on some rather fine-grained conditions, while none of the standard code includes any sort of implementation that allows non-programmers to make decisions like that.  How will I, the user, figure out what sort of fees have to go into a transaction?</div></blockquote><div class="t">For currency transactions, if you notice your transactions taking a long time to confirm, you increase the TX fee.
+
+For non-currency transactions, it sounds like there will be some sort of fee schedule.  The software that generates these special, non-currency transactions would likely have a user-friendly interface to indicate the cost.</div></article><article class="msg" id="m2">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-12-09T20:51:00Z">9 December 2010, 20:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28693#msg28693" rel="nofollow noopener">original</a></span></header>
+<div class="t">It would be nice if there was some way that using the standard client you might be able to adjust the fee schedule for your own purposes and set &quot;policies&quot; for mining blocks and including transactions.  I think that is a source of confusion here as no such user interface is currently provided for doing that.
+
+Much of this is all theoretical at the moment because it is possible to make transactions &quot;for free&quot; and generally get them included in the next block at the moment.  I don&#x27;t see that is going to be sustainable in the long run, but we&#x27;ll see how that goes.  At the moment, it is important that most people using Bitcoins are simply hoping that the currency succeeds at all and aren&#x27;t interested in making a killing or even a modest profit at it, which is why transaction fees are still mostly non-existent on the network.</div></article><article class="msg" id="m3">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-12-09T21:08:55Z">9 December 2010, 21:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28699#msg28699" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just wondering about the following example :
+I broadcast a transaction, sending X coins to some address.
+Doesn&#x27;t get included in blocks for a while because I don&#x27;t include a fee.
+
+Do I have a way to cancel it and broadcast it again with a fee this time ?</div></article><article class="msg" id="m4">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-12-09T21:41:58Z">9 December 2010, 21:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28704#msg28704" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davout on December 09, 2010, 09:08:55 PM</div><div class="t">Just wondering about the following example :
+I broadcast a transaction, sending X coins to some address.
+Doesn&#x27;t get included in blocks for a while because I don&#x27;t include a fee.
+
+Do I have a way to cancel it and broadcast it again with a fee this time ?</div></blockquote><div class="t">Yes, although I don&#x27;t think the canceled transaction protocol is necessarily complete in terms of its current implementation.
+
+See also: <a href="http://www.bitcoin.org/wiki/doku.php?id=bitcoins_draft_spec_0_0_1#tx" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?id=bitcoins_draft_spec_0_0_1#tx</a>
+
+The &quot;version&quot; field allows somebody to send out a new transaction that effectively replaces an existing transaction with perhaps some new data.  As long as the transaction hasn&#x27;t been accepted into a block, in theory you can &quot;recall&quot; the transaction and modify the transaction in any way.  Like I said, this is incomplete and the exact protocol to pull that off hasn&#x27;t been included into Bitcoin yet.  But it certainly is a possibility and may be a feature in a future version of Bitcoin.
+
+Certainly the ability to &quot;recall&quot; a transaction hasn&#x27;t been implemented yet in the UI, and once the transaction has been accepted into a block the only hope to really kill a transaction after that is to hope that the block doesn&#x27;t get accepted into the main block chain.  Then again, if the transaction has been accepted into a block without fees it shouldn&#x27;t be a problem in terms of recalling the transaction for adding fees either as the issue is moot at that point.</div></article><article class="msg" id="m5">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-12-09T23:07:04Z">9 December 2010, 23:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28719#msg28719" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davout on December 09, 2010, 09:08:55 PM</div><div class="t">Just wondering about the following example :
+I broadcast a transaction, sending X coins to some address.
+Doesn&#x27;t get included in blocks for a while because I don&#x27;t include a fee.
+
+Do I have a way to cancel it and broadcast it again with a fee this time ?</div></blockquote><div class="t">See the discussion of locktime &lt;<a href="http://bitcointalk.org/index.php?topic=1786.msg22119#msg22119" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=1786.msg22119#msg22119</a>&gt; for transaction replacement.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-12-09T23:58:54Z">9 December 2010, 23:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2181.msg28729#msg28729" rel="nofollow noopener">original</a></span></header>
+<div class="t">Not locktime.
+
+There&#x27;s a possible design for far in the future:
+
+You intentionally write a double-spend.  You write it with the same inputs and outputs, but this time with a fee.  When your double-spend gets into a block, the first spend becomes invalid.  The payee does not really notice, because at the moment the new transaction becomes valid, the old one becomes invalid, and the new transaction simply takes its place.
+
+It&#x27;s easier said than implemented.  There would be a fair amount of work to make a client that correctly writes the double-spend, manages the two versions in the wallet until one is chosen, handles all the corner cases.  Every assumption in the existing code is that you&#x27;re not trying to write double-spends.
+
+There would need to be some changes on the Bitcoin Miner side also, to make the possibility to accept a double-spend into the transaction pool, but only strictly if the inputs and outputs match and the transaction fee is higher.  Currently, double-spends are never accepted into the transaction pool, so every node bears witness to which transaction it saw first by working to put it into a block.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p254-version-0-3-18/">← Version 0.3.18</a><a rel="next" href="../../conversations/p256-minimalistic-bitcoin-client-on-d-language/">minimalistic bitcoin client on D language? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

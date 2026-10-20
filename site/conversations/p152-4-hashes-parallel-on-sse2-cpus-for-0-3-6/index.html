@@ -1,0 +1,2432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>4 hashes parallel on SSE2 CPUs for 0.3.6 – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 31 July 2010: That&#x27;s amazing... So are you saying you use 128-bit registers to SIMD four 32-bit data at once? I&#x27;ve wondered about that…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p152-4-hashes-parallel-on-sse2-cpus-for-0-3-6/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="4 hashes parallel on SSE2 CPUs for 0.3.6 – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 31 July 2010: That&#x27;s amazing... So are you saying you use 128-bit registers to SIMD four 32-bit data at once? I&#x27;ve wondered about that…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p152-4-hashes-parallel-on-sse2-cpus-for-0-3-6/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="4 hashes parallel on SSE2 CPUs for 0.3.6 – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 31 July 2010: That&#x27;s amazing... So are you saying you use 128-bit registers to SIMD four 32-bit data at once? I&#x27;ve wondered about that…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "4 hashes parallel on SSE2 CPUs for 0.3.6", "url": "https://satoshimail.pages.dev/conversations/p152-4-hashes-parallel-on-sse2-cpus-for-0-3-6/", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-30T21:23:10Z", "text": "This patch will calculate four hashes on one core using vector instructions. There's a test programm included that validates the new hash function against the old one so it should be correct. The patch is against 0.3.6. Improves khash/s by roughly 115%. http://pastebin.com/XN1JDb53", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-30T21:33:29Z", "text": "I take it that you've already tested the hash limit before performance starts to suffer against the stock code? I'm just curious myself."}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-30T21:47:22Z", "text": "Performance of stock code (as measured by my test/benchmark program) is about 1500khash/s. My code does 3500khash/s. Both figures are for one core. It scales well because I do 128 hashes at once and keep the datastructures small enough to fit in the CPU cache. I have two local collision attacks which will squeeze another 300khash/s out, but they are not stable yet."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-30T21:51:10Z", "text": "Awesome, I'll have to give it a try myself then. Shocked"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-30T22:00:24Z", "text": "Tell me if it works Smiley Donations are welcome. 17asVKkzRGTFvvGH9dMGQaHe78xzfvgSSA"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-31T00:29:20Z", "text": "That's amazing... So are you saying you use 128-bit registers to SIMD four 32-bit data at once? I've wondered about that for a long time, but I didn't think it would be possible due to addition carrying into the neighbour's value."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-31T04:49:33Z", "text": "Darn, it means the next release, the difficulty is going to have to increase to 1000 or so to keep up, LOL Grin"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-31T10:12:38Z", "text": "That's how it works. Four 32 bit values in a 128 bit vector. They're calculated independently, but at the same time. Btw. Why are you using this alignup<16> function when __attribute__ ((aligned (16))) will tell the compiler to align at compiletime?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "em3rgentOrdr"}, "datePublished": "2010-07-31T13:42:48Z", "text": "hmm...I wasn't able to apply the patch (I'm a noobie). Here's the command I ran from bitcoin-0.3.6/src # patch < XN1JDb53.txt Output: 1 out of 1 hunk ignored (Stripping trailing CRs from patch.) patching file main.cpp Hunk #1 FAILED at 2555. Hunk #2 FAILED at 2701. 2 out of 2 hunks FAILED (Stripping trailing CRs from patch.) patching file makefile.unix Hunk #1 FAILED at 45. Hunk #2 FAILED at 58. What's the proper command to type into linux? Or do you have linux binaries?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-31T14:18:03Z", "text": "the mean client would send all generated bitcoins to a certain address Wink @em3rgent0rder: i don't know why it fails, but it should be easy to patch it manually..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-31T17:18:30Z", "text": "It definitely does not apply to the SVN trunk. Maybe tcatm could post the main.cpp itself?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-31T17:40:27Z", "text": "Looks like pastebin.com messes up the patch... diff --git a/cryptopp/sha256.cpp b/cryptopp/sha256.cpp new file mode 100644 index 0000000..15f8be1 --- /dev/null +++ b/cryptopp/sha256.cpp @@ -0,0 +1,443 @@ +#include <string.h> +#include <assert.h> + +#include <xmmintrin.h> +#include <stdint.h> +#include <stdio.h> + +#define NPAR 32 + +static const unsigned int sha256_consts[] = { + 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /* 0 */ + 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, +…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-07-31T19:17:17Z", "text": "Had to manually patch, as I'm not using git for bitcoin and 'patch' doesn't munch this format, I guess. Anyway, got almost double speed on the OSX side, (i5 2.4, now ~2400 from ~1400), but my linux on Q6600 quad 2.4Ghz was pumping ~2500 with 0.3.6 (from source) and now, with the patch it's... ~2400. Need I tweak anything to take advantage on this?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-07-31T20:34:06Z", "text": "ahm, let me correct myself: on the quad core linux, I went from ~4400 with svn trunk @ 119 to ~2400 with the patch... not exactly what I hoped for after the success in OSX."}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-07-31T20:57:49Z", "text": "I noticed the same, I went from about 4300 to 2100 when I tested it on Linux."}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-31T22:38:29Z", "text": "What CPUs are you running it on? Could you send me sha256.o (compiled object of the algorithm)?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-07-31T23:18:07Z", "text": "I'm running on the Intel Q6600 2.4Ghz, how shall I get the file to you?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Mionione"}, "datePublished": "2010-07-31T23:30:11Z", "text": "care with __attribute__ ((aligned (16))) , it doesn't work with local variable, gcc doesn't align the stack"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-07-31T23:37:02Z", "text": "yes. i will look at the assembler code. maybe the compiler did something \"wrong\"."}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-01T00:00:10Z", "text": "Patch against SVN. Maybe it'll work now... diff --git a/cryptopp/sha256.cpp b/cryptopp/sha256.cpp new file mode 100644 index 0000000..6735678 --- /dev/null +++ b/cryptopp/sha256.cpp @@ -0,0 +1,447 @@ +#include <string.h> +#include <assert.h> + +#include <xmmintrin.h> +#include <stdint.h> +#include <stdio.h> + +#define NPAR 32 + +static const unsigned int sha256_consts[] = { + 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /* 0 */ + 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, + 0xd807aa98…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "wereHamster"}, "datePublished": "2010-08-01T10:16:48Z", "text": "Maybe gcc doesn't align the stack, but it can (and automatically does) align variables on the stack."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Mionione"}, "datePublished": "2010-08-01T12:53:40Z", "text": "that's what it is supposed to do, but it doesn't always do it, issues are on gcc bugzilla http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43798 http://gcc.gnu.org/bugzilla/show_bug.cgi?id=16660 http://gcc.gnu.org/bugzilla/show_bug.cgi?id=40838"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-02T00:22:43Z", "text": "No joy against SVN tip here. patching file sha256.cpp patching file main.cpp Hunk #1 FAILED at 2555. Hunk #2 FAILED at 2703. 2 out of 2 hunks FAILED -- saving rejects to file main.cpp.rej patching file makefile.unix Hunk #1 FAILED at 41. Hunk #2 FAILED at 52. Hunk #3 FAILED at 64. 3 out of 3 hunks FAILED -- saving rejects to file makefile.unix.rej patching file test.cpp Trying manually now."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-02T06:57:20Z", "text": "I got the patch knitted in, and I think I did it correctly.. wasn't complicated. Regrettably, the hash rate has decreased by almost half. I'm down from 2071 (stock build, svn tip) to 1150 khash/sec with the patch. It's an Intel Xeon 3 GHz, Linux, with these proc flags: flags : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc pni monitor ds_cpl cid cx16 xtpr Has anyone seen gains? Did I botch it? Missing…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "impossible7"}, "datePublished": "2010-08-02T08:13:11Z", "text": "I have been able to apply the patch against SVN (r121) and I tested it on 2 machines: • on an AMD Opteron 2374 HE running x86_64 linux I got a 105% improvement (!) • on an Intel Core 2 Duo T7300 running x86_64 linux it was 55% slower compared to the stock version (r121) The strange thing is that despite the fact that I have been running it on 6 Opterons (i.e. 6x4=24 cores) for 40 hours with an average rate of 51,000 khash/s, I still haven't generated any blocks. The probability of this (no…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-02T08:47:04Z", "text": "Is it a AMD only optimization perhaps?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "impossible7"}, "datePublished": "2010-08-02T09:00:55Z", "text": "Or a 64-bit only optimization."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-02T09:17:07Z", "text": "With the patch above, I was unable to build the test program. You?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "petree"}, "datePublished": "2010-08-02T09:22:29Z", "text": "The original patch posted is working just fine for me (Opteron 2376), and did double my performance over the stock 0.3.6 client. I was even able to port its minor changes to 0.3.7 successfully, with the same results. Is there a way we can confirm that the variables are being aligned properly? I'm wondering if the Intel procs are less tolerant of misalignment than the AMD's."}, {"@type": "Comment", "author": {"@type": "Person", "name": "impossible7"}, "datePublished": "2010-08-02T09:31:44Z", "text": "Under x86 I had to include cryptopp/obj/cpu.o in the list of object files, otherwise \"make test\" would fail. Under x86_64 I had no such issue. As I said above I did notice an imporvement in performace too, but I am not sure the patched version works correctly. Have you been able to generate any blocks with the patched version?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-02T13:05:48Z", "text": "I'm trying on a Q6600 running 64bit linux (ubuntu server) and it makes things slower there, so not 64bit only. And I'm running on my mac laptop which sports an Intel i5 (also 64 bit OSX 10.6), which great speed improvement there, so not AMD only."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "4 hashes parallel on SSE2 CPUs for 0.3.6", "item": "https://satoshimail.pages.dev/conversations/p152-4-hashes-parallel-on-sse2-cpus-for-0-3-6/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p152">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">4 hashes parallel on SSE2 CPUs for 0.3.6</span></div></nav>
+<main class="in">
+<h1>4 hashes parallel on SSE2 CPUs for 0.3.6</h1>
+<p class="lead">BitcoinTalk forum · 87 messages · from 30 July 2010 · with Cheater, Ground Loop, Mionione, NewLibertyStandard, Satoshi Nakamoto, aceat64…</p>
+<p class="actions"><a class="btn" href="../../#t-p152">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/152/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-30T21:23:10Z">30 July 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6722#msg6722" rel="nofollow noopener">original</a></span></header>
+<div class="t">This patch will calculate four hashes on one core using vector instructions. There&#x27;s a test programm included that validates the new hash function against the old one so it should be correct.
+
+The patch is against 0.3.6. Improves khash/s by roughly 115%.
+
+<a href="http://pastebin.com/XN1JDb53" rel="nofollow noopener">http://pastebin.com/XN1JDb53</a></div></article><article class="msg" id="m1">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T21:33:29Z">30 July 2010, 21:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6725#msg6725" rel="nofollow noopener">original</a></span></header>
+<div class="t">I take it that you&#x27;ve already tested the hash limit before performance starts to suffer against the stock code? I&#x27;m just curious myself.</div></article><article class="msg" id="m2">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-30T21:47:22Z">30 July 2010, 21:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6730#msg6730" rel="nofollow noopener">original</a></span></header>
+<div class="t">Performance of stock code (as measured by my test/benchmark program) is about 1500khash/s.
+My code does 3500khash/s. Both figures are for one core. It scales well because I do 128 hashes at once and keep the datastructures small enough to fit in the CPU cache.
+
+I have two local collision attacks which will squeeze another 300khash/s out, but they are not stable yet.</div></article><article class="msg" id="m3">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T21:51:10Z">30 July 2010, 21:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6732#msg6732" rel="nofollow noopener">original</a></span></header>
+<div class="t">Awesome, I&#x27;ll have to give it a try myself then.  Shocked</div></article><article class="msg" id="m4">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-30T22:00:24Z">30 July 2010, 22:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6736#msg6736" rel="nofollow noopener">original</a></span></header>
+<div class="t">Tell me if it works Smiley
+Donations are welcome. 17asVKkzRGTFvvGH9dMGQaHe78xzfvgSSA </div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-31T00:29:20Z">31 July 2010, 00:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6751#msg6751" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s amazing...
+
+So are you saying you use 128-bit registers to SIMD four 32-bit data at once?  I&#x27;ve wondered about that for a long time, but I didn&#x27;t think it would be possible due to addition carrying into the neighbour&#x27;s value.</div></article><article class="msg" id="m6">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-31T04:49:33Z">31 July 2010, 04:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6777#msg6777" rel="nofollow noopener">original</a></span></header>
+<div class="t">Darn, it means the next release, the difficulty is going to have to increase to 1000 or so to keep up, LOL  Grin</div></article><article class="msg" id="m7">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-31T10:12:38Z">31 July 2010, 10:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6797#msg6797" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 31, 2010, 12:29:20 AM</div><div class="t">That&#x27;s amazing...
+
+So are you saying you use 128-bit registers to SIMD four 32-bit data at once?  I&#x27;ve wondered about that for a long time, but I didn&#x27;t think it would be possible due to addition carrying into the neighbour&#x27;s value.</div></blockquote><div class="t">That&#x27;s how it works. Four 32 bit values in a 128 bit vector. They&#x27;re calculated independently, but at the same time.
+
+Btw. Why are you using this alignup&lt;16&gt; function when __attribute__ ((aligned (16))) will tell the compiler to align at compiletime?</div></article><article class="msg" id="m8">
+<header><b>em3rgentOrdr</b><span class="muted"> · <time datetime="2010-07-31T13:42:48Z">31 July 2010, 13:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6810#msg6810" rel="nofollow noopener">original</a></span></header>
+<div class="t">hmm...I wasn&#x27;t able to apply the patch (I&#x27;m a noobie). Here&#x27;s the command I ran from bitcoin-0.3.6/src # patch &lt; XN1JDb53.txt
+
+Output:
+
+1 out of 1 hunk ignored
+(Stripping trailing CRs from patch.)
+patching file main.cpp
+Hunk #1 FAILED at 2555.
+Hunk #2 FAILED at 2701.
+2 out of 2 hunks FAILED
+(Stripping trailing CRs from patch.)
+patching file makefile.unix
+Hunk #1 FAILED at 45.
+Hunk #2 FAILED at 58.
+
+What&#x27;s the proper command to type into linux?  Or do you have linux binaries?</div></article><article class="msg" id="m9">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-31T14:18:03Z">31 July 2010, 14:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6817#msg6817" rel="nofollow noopener">original</a></span></header>
+<div class="t">the mean client would send all generated bitcoins to a certain address Wink
+
+@em3rgent0rder: i don&#x27;t know why it fails, but it should be easy to patch it manually...</div></article><article class="msg" id="m10">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-31T17:18:30Z">31 July 2010, 17:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6830#msg6830" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: em3rgentOrdr on July 31, 2010, 01:42:48 PM</div><div class="t">hmm...I wasn&#x27;t able to apply the patch (I&#x27;m a noobie). Here&#x27;s the command I ran from bitcoin-0.3.6/src # patch &lt; XN1JDb53.txt
+
+Output:
+
+1 out of 1 hunk ignored
+(Stripping trailing CRs from patch.)
+patching file main.cpp
+Hunk #1 FAILED at 2555.
+Hunk #2 FAILED at 2701.
+2 out of 2 hunks FAILED
+(Stripping trailing CRs from patch.)
+patching file makefile.unix
+Hunk #1 FAILED at 45.
+Hunk #2 FAILED at 58.</div></blockquote><div class="t">It definitely does not apply to the SVN trunk.  Maybe tcatm could post the main.cpp itself?</div></article><article class="msg" id="m11">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-31T17:40:27Z">31 July 2010, 17:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6831#msg6831" rel="nofollow noopener">original</a></span></header>
+<div class="t">Looks like pastebin.com messes up the patch...</div><pre><code>diff --git a/cryptopp/sha256.cpp b/cryptopp/sha256.cpp
+new file mode 100644
+index 0000000..15f8be1
+--- /dev/null
++++ b/cryptopp/sha256.cpp
+@@ -0,0 +1,443 @@
++#include &lt;string.h&gt;
++#include &lt;assert.h&gt;
++
++#include &lt;xmmintrin.h&gt;
++#include &lt;stdint.h&gt;
++#include &lt;stdio.h&gt;
++
++#define NPAR 32
++
++static const unsigned int sha256_consts[] = {
++ 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /*  0 */
++ 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
++ 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, /*  8 */
++ 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
++ 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, /* 16 */
++ 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
++ 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, /* 24 */
++ 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
++ 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, /* 32 */
++ 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
++ 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, /* 40 */
++ 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
++ 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, /* 48 */
++ 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
++ 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, /* 56 */
++ 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
++};
++
++
++static inline __m128i Ch(const __m128i b, const __m128i c, const __m128i d) {
++ return (b &amp; c) ^ (~b &amp; d);
++}
++
++static inline __m128i Maj(const __m128i b, const __m128i c, const __m128i d) {
++ return (b &amp; c) ^ (b &amp; d) ^ (c &amp; d);
++}
++
++static inline __m128i ROTR(__m128i x, const int n) {
++ return _mm_srli_epi32(x, n) | _mm_slli_epi32(x, 32 - n);
++}
++
++static inline __m128i SHR(__m128i x, const int n) {
++ return _mm_srli_epi32(x, n);
++}
++
++/* SHA256 Functions */
++#define BIGSIGMA0_256(x) (ROTR((x), 2) ^ ROTR((x), 13) ^ ROTR((x), 22))
++#define BIGSIGMA1_256(x) (ROTR((x), 6) ^ ROTR((x), 11) ^ ROTR((x), 25))
++#define SIGMA0_256(x)  (ROTR((x), 7) ^ ROTR((x), 18) ^ SHR((x), 3))
++#define SIGMA1_256(x)  (ROTR((x), 17) ^ ROTR((x), 19) ^ SHR((x), 10))
++
++static inline __m128i load_epi32(const unsigned int x0, const unsigned int x1, const unsigned int x2, const unsigned int x3) {
++ return _mm_set_epi32(x0, x1, x2, x3);
++}
++
++static inline unsigned int store32(const __m128i x, int i) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x;
++ return box.ret[i];
++}
++
++static inline void store_epi32(const __m128i x, unsigned int *x0, unsigned int *x1, unsigned int *x2, unsigned int *x3) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x;
++ *x0 = box.ret[3]; *x1 = box.ret[2]; *x2 = box.ret[1]; *x3 = box.ret[0];
++}
++
++static inline __m128i SHA256_CONST(const int i) {
++ return _mm_set1_epi32(sha256_consts[i]);
++}
++
++#define add4(x0, x1, x2, x3) _mm_add_epi32(_mm_add_epi32(_mm_add_epi32(x0, x1), x2), x3)
++#define add5(x0, x1, x2, x3, x4) _mm_add_epi32(add4(x0, x1, x2, x3), x4)
++
++#define SHA256ROUND(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++d = _mm_add_epi32(d, T1);                                           \
++T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 \
++h = _mm_add_epi32(T1, T2);
++
++#define SHA256ROUND_lastd(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++d = _mm_add_epi32(d, T1);                                           
++//T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 
++//h = _mm_add_epi32(T1, T2);
++
++#define SHA256ROUND_last(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 \
++h = _mm_add_epi32(T1, T2);
++
++static inline unsigned int swap(unsigned int value) {
++ __asm__ (&quot;bswap %0&quot; : &quot;=r&quot; (value) : &quot;0&quot; (value));
++ return value;
++}
++
++static inline unsigned int SWAP32(const void *addr) {
++ unsigned int value = (*((unsigned int *)(addr)));
++ __asm__ (&quot;bswap %0&quot; : &quot;=r&quot; (value) : &quot;0&quot; (value));
++ return value;
++}
++
++static inline void dumpreg(__m128i x, char *msg) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x ;
++ printf(&quot;%s %08x %08x %08x %08x&quot;, msg, box.ret[0], box.ret[1], box.ret[2], box.ret[3]);
++}
++
++#if 1
++#define dumpstate(i) printf(&quot;%s: %08x %08x %08x %08x %08x %08x %08x %08x %08x&quot;, \
++  __func__, store32(w0, i), store32(a, i), store32(b, i), store32(c, i), store32(d, i), store32(e, i), store32(f, i), store32(g, i), store32(h, i));
++#else
++#define dumpstate()
++#endif
++void Double_BlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[8][NPAR], const void *init)
++{
++ unsigned int* In = (unsigned int*)pin;
++ unsigned int* Pad = (unsigned int*)pad;
++ unsigned int* hPre = (unsigned int*)pre;
++ unsigned int* hInit = (unsigned int*)init;
++ unsigned int i, j, k;
++
++ /* vectors used in calculation */
++ __m128i w0, w1, w2, w3, w4, w5, w6, w7;
++ __m128i w8, w9, w10, w11, w12, w13, w14, w15;
++ __m128i T1, T2;
++ __m128i a, b, c, d, e, f, g, h;
++
++ /* nonce offset for vector */
++ __m128i offset = load_epi32(0x00000003, 0x00000002, 0x00000001, 0x00000000);
++
++
++ for(k = 0; k&lt;NPAR; k+=4) {
++  w0 = load_epi32(In[0], In[0], In[0], In[0]);
++  w1 = load_epi32(In[1], In[1], In[1], In[1]);
++  w2 = load_epi32(In[2], In[2], In[2], In[2]);
++  w3 = load_epi32(In[3], In[3], In[3], In[3]);
++  w4 = load_epi32(In[4], In[4], In[4], In[4]);
++  w5 = load_epi32(In[5], In[5], In[5], In[5]);
++  w6 = load_epi32(In[6], In[6], In[6], In[6]);
++  w7 = load_epi32(In[7], In[7], In[7], In[7]);
++  w8 = load_epi32(In[8], In[8], In[8], In[8]);
++  w9 = load_epi32(In[9], In[9], In[9], In[9]);
++  w10 = load_epi32(In[10], In[10], In[10], In[10]);
++  w11 = load_epi32(In[11], In[11], In[11], In[11]);
++  w12 = load_epi32(In[12], In[12], In[12], In[12]);
++  w13 = load_epi32(In[13], In[13], In[13], In[13]);
++  w14 = load_epi32(In[14], In[14], In[14], In[14]);
++  w15 = load_epi32(In[15], In[15], In[15], In[15]);
++
++  /* hack nonce into lowest byte of w3 */
++  __m128i k_vec = load_epi32(k, k, k, k);
++  w3 = _mm_add_epi32(w3, offset);
++  w3 = _mm_add_epi32(w3, k_vec);
++
++  a = load_epi32(hPre[0], hPre[0], hPre[0], hPre[0]);
++  b = load_epi32(hPre[1], hPre[1], hPre[1], hPre[1]);
++  c = load_epi32(hPre[2], hPre[2], hPre[2], hPre[2]);
++  d = load_epi32(hPre[3], hPre[3], hPre[3], hPre[3]);
++  e = load_epi32(hPre[4], hPre[4], hPre[4], hPre[4]);
++  f = load_epi32(hPre[5], hPre[5], hPre[5], hPre[5]);
++  g = load_epi32(hPre[6], hPre[6], hPre[6], hPre[6]);
++  h = load_epi32(hPre[7], hPre[7], hPre[7], hPre[7]);
++
++  SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);   
++  SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 13, w13);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 14, w14);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 15, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 16, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 17, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 18, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 19, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 20, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 21, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 22, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 23, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 24, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 25, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 26, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 27, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 28, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 29, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 30, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 31, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 32, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 33, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 34, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 35, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 36, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 37, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 38, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 39, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 40, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 41, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 42, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 43, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 44, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 45, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 46, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 47, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 48, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 49, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 50, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 51, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 52, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 53, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 54, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 55, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 56, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 57, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 58, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 59, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 60, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 61, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 62, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 63, w15);
++
++#define store_load(x, i, dest) \
++  w8 = load_epi32((hPre)[i], (hPre)[i], (hPre)[i], (hPre)[i]); \
++  dest = _mm_add_epi32(w8, x);
++
++  store_load(a, 0, w0);
++  store_load(b, 1, w1);
++  store_load(c, 2, w2);
++  store_load(d, 3, w3);
++  store_load(e, 4, w4);
++  store_load(f, 5, w5);
++  store_load(g, 6, w6);
++  store_load(h, 7, w7);
++
++  w8 = load_epi32(Pad[8], Pad[8], Pad[8], Pad[8]);
++  w9 = load_epi32(Pad[9], Pad[9], Pad[9], Pad[9]);
++  w10 = load_epi32(Pad[10], Pad[10], Pad[10], Pad[10]);
++  w11 = load_epi32(Pad[11], Pad[11], Pad[11], Pad[11]);
++  w12 = load_epi32(Pad[12], Pad[12], Pad[12], Pad[12]);
++  w13 = load_epi32(Pad[13], Pad[13], Pad[13], Pad[13]);
++  w14 = load_epi32(Pad[14], Pad[14], Pad[14], Pad[14]);
++  w15 = load_epi32(Pad[15], Pad[15], Pad[15], Pad[15]);
++
++  a = load_epi32(hInit[0], hInit[0], hInit[0], hInit[0]);
++  b = load_epi32(hInit[1], hInit[1], hInit[1], hInit[1]);
++  c = load_epi32(hInit[2], hInit[2], hInit[2], hInit[2]);
++  d = load_epi32(hInit[3], hInit[3], hInit[3], hInit[3]);
++  e = load_epi32(hInit[4], hInit[4], hInit[4], hInit[4]);
++  f = load_epi32(hInit[5], hInit[5], hInit[5], hInit[5]);
++  g = load_epi32(hInit[6], hInit[6], hInit[6], hInit[6]);
++  h = load_epi32(hInit[7], hInit[7], hInit[7], hInit[7]);
++
++  SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);   
++  SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 13, w13);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 14, w14);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 15, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 16, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 17, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 18, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 19, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 20, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 21, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 22, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 23, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 24, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 25, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 26, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 27, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 28, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 29, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 30, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 31, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 32, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 33, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 34, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 35, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 36, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 37, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 38, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 39, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 40, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 41, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 42, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 43, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 44, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 45, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 46, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 47, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 48, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 49, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 50, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 51, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 52, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 53, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 54, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 55, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 56, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 57, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 58, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 59, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 60, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 61, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 62, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 63, w15);
++
++  /* store resulsts directly in thash */
++#define store_2(x,i)  \
++  w0 = load_epi32((hInit)[i], (hInit)[i], (hInit)[i], (hInit)[i]); \
++  *(__m128i *)&amp;(thash)[i][0+k] = _mm_add_epi32(w0, x);
++
++  store_2(a, 0);
++  store_2(b, 1);
++  store_2(c, 2);
++  store_2(d, 3);
++  store_2(e, 4);
++  store_2(f, 5);
++  store_2(g, 6);
++  store_2(h, 7);
++ }
++
++}
+diff --git a/main.cpp b/main.cpp
+index ddc359a..d30d642 100755
+--- a/main.cpp
++++ b/main.cpp
+@@ -2555,8 +2555,10 @@ inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
+     CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
+ }
+ 
++// !!!! NPAR must match NPAR in cryptopp/sha256.cpp !!!!
++#define NPAR 32
+ 
+-
++extern void Double_BlockSHA256(const void* pin, void* pout, const void *pinit, unsigned int hash[8][NPAR], const void *init2);
+ 
+ 
+ void BitcoinMiner()
+@@ -2701,108 +2703,123 @@ void BitcoinMiner()
+         uint256 hashTarget = CBigNum().SetCompact(pblock-&gt;nBits).getuint256();
+         uint256 hashbuf[2];
+         uint256&amp; hash = *alignup&lt;16&gt;(hashbuf);
++
++        // Cache for NPAR hashes
++        unsigned int thash[8][NPAR];
++
++        unsigned int j;
+         loop
+         {
+-            SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
+-            SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
++          Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
+ 
+-            if (((unsigned short*)&amp;hash)[14] == 0)
++          for(j = 0; j&lt;NPAR; j++) {
++            if (thash[7][j] == 0)
+             {
+-                // Byte swap the result after preliminary check
+-                for (int i = 0; i &lt; sizeof(hash)/4; i++)
+-                    ((unsigned int*)&amp;hash)[i] = ByteReverse(((unsigned int*)&amp;hash)[i]);
+-
+-                if (hash &lt;= hashTarget)
++              // Byte swap the result after preliminary check
++              for (int i = 0; i &lt; sizeof(hash)/4; i++)
++                ((unsigned int*)&amp;hash)[i] = ByteReverse((unsigned int)thash[i][j]);
++
++              if (hash &lt;= hashTarget)
++              {
++                // Double_BlocSHA256 might only calculate parts of the hash.
++                // We&#x27;ll insert the nonce and get the real hash.
++                //pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
++                //hash = pblock-&gt;GetHash();
++
++                pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
++                assert(hash == pblock-&gt;GetHash());
++
++                //// debug print
++                printf(&quot;BitcoinMiner:&quot;);
++                printf(&quot;proof-of-work found    hash: %s  target: %s&quot;, hash.GetHex().c_str(), hashTarget.GetHex().c_str());
++                pblock-&gt;print();
++                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                printf(&quot;generated %s&quot;, FormatMoney(pblock-&gt;vtx[0].vout[0].nValue).c_str());
++
++                SetThreadPriority(THREAD_PRIORITY_NORMAL);
++                CRITICAL_BLOCK(cs_main)
+                 {
+-                    pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce);
+-                    assert(hash == pblock-&gt;GetHash());
+-
+-                        //// debug print
+-                        printf(&quot;BitcoinMiner:&quot;);
+-                        printf(&quot;proof-of-work found    hash: %s  target: %s&quot;, hash.GetHex().c_str(), hashTarget.GetHex().c_str());
+-                        pblock-&gt;print();
+-                        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                        printf(&quot;generated %s&quot;, FormatMoney(pblock-&gt;vtx[0].vout[0].nValue).c_str());
+-
+-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+-                    CRITICAL_BLOCK(cs_main)
+-                    {
+-                        if (pindexPrev == pindexBest)
+-                        {
+-                            // Save key
+-                            if (!AddKey(key))
+-                                return;
+-                            key.MakeNewKey();
+-
+-                            // Track how many getdata requests this block gets
+-                            CRITICAL_BLOCK(cs_mapRequestCount)
+-                                mapRequestCount[pblock-&gt;GetHash()] = 0;
+-
+-                            // Process this block the same as if we had received it from another node
+-                            if (!ProcessBlock(NULL, pblock.release()))
+-                                printf(&quot;ERROR in BitcoinMiner, ProcessBlock, block not accepted&quot;);
+-                        }
+-                    }
+-                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
+-
+-                    Sleep(500);
+-                    break;
++                  if (pindexPrev == pindexBest)
++                  {
++                    // Save key
++                    if (!AddKey(key))
++                      return;
++                    key.MakeNewKey();
++
++                    // Track how many getdata requests this block gets
++                    CRITICAL_BLOCK(cs_mapRequestCount)
++                      mapRequestCount[pblock-&gt;GetHash()] = 0;
++
++                    // Process this block the same as if we had received it from another node
++                    if (!ProcessBlock(NULL, pblock.release()))
++                      printf(&quot;ERROR in BitcoinMiner, ProcessBlock, block not accepted&quot;);
++
++                  }
+                 }
+-            }
++                SetThreadPriority(THREAD_PRIORITY_LOWEST);
+ 
+-            // Update nTime every few seconds
+-            const unsigned int nMask = 0xffff;
+-            if ((++tmp.block.nNonce &amp; nMask) == 0)
++                Sleep(500);
++                break;
++              }
++            }
++          }
++
++          // Update nonce
++          tmp.block.nNonce += NPAR;
++
++          // Update nTime every few seconds
++          const unsigned int nMask = 0xffff;
++          if ((tmp.block.nNonce &amp; nMask) == 0)
++          {
++            // Meter hashes/sec
++            static int64 nTimerStart;
++            static int nHashCounter;
++            if (nTimerStart == 0)
++              nTimerStart = GetTimeMillis();
++            else
++              nHashCounter++;
++            if (GetTimeMillis() - nTimerStart &gt; 4000)
+             {
+-                // Meter hashes/sec
+-                static int64 nTimerStart;
+-                static int nHashCounter;
+-                if (nTimerStart == 0)
+-                    nTimerStart = GetTimeMillis();
+-                else
+-                    nHashCounter++;
++              static CCriticalSection cs;
++              CRITICAL_BLOCK(cs)
++              {
+                 if (GetTimeMillis() - nTimerStart &gt; 4000)
+                 {
+-                    static CCriticalSection cs;
+-                    CRITICAL_BLOCK(cs)
+-                    {
+-                        if (GetTimeMillis() - nTimerStart &gt; 4000)
+-                        {
+-                            double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
+-                            nTimerStart = GetTimeMillis();
+-                            nHashCounter = 0;
+-                            string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+-                            UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
+-                            static int64 nLogTime;
+-                            if (GetTime() - nLogTime &gt; 30 * 60)
+-                            {
+-                                nLogTime = GetTime();
+-                                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                                printf(&quot;hashmeter %3d CPUs %6.0f khash/s&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
+-                            }
+-                        }
+-                    }
++                  double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
++                  nTimerStart = GetTimeMillis();
++                  nHashCounter = 0;
++                  string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
++                  UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                  static int64 nLogTime;
++                  if (GetTime() - nLogTime &gt; 30 * 60)
++                  {
++                    nLogTime = GetTime();
++                    printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                    printf(&quot;hashmeter %3d CPUs %6.0f khash/s&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
++                  }
+                 }
+-
+-                // Check for stop or if block needs to be rebuilt
+-                if (fShutdown)
+-                    return;
+-                if (!fGenerateBitcoins)
+-                    return;
+-                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
+-                    return;
+-                if (vNodes.empty())
+-                    break;
+-                if (tmp.block.nNonce == 0)
+-                    break;
+-                if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
+-                    break;
+-                if (pindexPrev != pindexBest)
+-                    break;
+-
+-                pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+-                tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
++              }
+             }
++
++            // Check for stop or if block needs to be rebuilt
++            if (fShutdown)
++              return;
++            if (!fGenerateBitcoins)
++              return;
++            if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
++              return;
++            if (vNodes.empty())
++              break;
++            if (tmp.block.nNonce == 0)
++              break;
++            if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
++              break;
++            if (pindexPrev != pindexBest)
++              break;
++
++            pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++            tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
++          }
+         }
+     }
+ }
+diff --git a/makefile.unix b/makefile.unix
+index 597a0ea..8fb0aa6 100755
+--- a/makefile.unix
++++ b/makefile.unix
+@@ -45,7 +45,8 @@ OBJS= \
+     obj/rpc.o \
+     obj/init.o \
+     cryptopp/obj/sha.o \
+-    cryptopp/obj/cpu.o
++    cryptopp/obj/cpu.o \
++  cryptopp/obj/sha256.o
+ 
+ 
+ all: bitcoin
+@@ -58,18 +59,20 @@ obj/%.o: %.cpp $(HEADERS) headers.h.gch
+  g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+- g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
++ g++ -c $(CFLAGS) -frename-registers -funroll-all-loops -fomit-frame-pointer  -march=native -msse2 -msse3  -ffast-math -O3 -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+  g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
+ 
+-
+ obj/nogui/%.o: %.cpp $(HEADERS)
+  g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ bitcoind: $(OBJS:obj/%=obj/nogui/%)
+  g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+ 
++test: cryptopp/obj/sha.o cryptopp/obj/sha256.o test.cpp
++   g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++
+ 
+ clean:
+  -rm -f obj/*.o
+diff --git a/test.cpp b/test.cpp
+new file mode 100755
+index 0000000..7cab332
+--- /dev/null
++++ b/test.cpp
+@@ -0,0 +1,237 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++#include &lt;assert.h&gt;
++#include &lt;openssl/ecdsa.h&gt;
++#include &lt;openssl/evp.h&gt;
++#include &lt;openssl/rand.h&gt;
++#include &lt;openssl/sha.h&gt;
++#include &lt;openssl/ripemd.h&gt;
++#include &lt;db_cxx.h&gt;
++#include &lt;stdio.h&gt;
++#include &lt;stdlib.h&gt;
++#include &lt;math.h&gt;
++#include &lt;limits.h&gt;
++#include &lt;float.h&gt;
++#include &lt;assert.h&gt;
++#include &lt;memory&gt;
++#include &lt;iostream&gt;
++#include &lt;sstream&gt;
++#include &lt;string&gt;
++#include &lt;vector&gt;
++#include &lt;list&gt;
++#include &lt;deque&gt;
++#include &lt;map&gt;
++#include &lt;set&gt;
++#include &lt;algorithm&gt;
++#include &lt;numeric&gt;
++#include &lt;boost/foreach.hpp&gt;
++#include &lt;boost/lexical_cast.hpp&gt;
++#include &lt;boost/tuple/tuple.hpp&gt;
++#include &lt;boost/fusion/container/vector.hpp&gt;
++#include &lt;boost/tuple/tuple_comparison.hpp&gt;
++#include &lt;boost/tuple/tuple_io.hpp&gt;
++#include &lt;boost/array.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/filesystem.hpp&gt;
++#include &lt;boost/filesystem/fstream.hpp&gt;
++#include &lt;boost/algorithm/string.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_mutex.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;
++#include &lt;boost/date_time/gregorian/gregorian_types.hpp&gt;
++#include &lt;boost/date_time/posix_time/posix_time_types.hpp&gt;
++#include &lt;sys/resource.h&gt;
++#include &lt;sys/time.h&gt;
++using namespace std;
++using namespace boost;
++#include &quot;cryptopp/sha.h&quot;
++#include &quot;strlcpy.h&quot;
++#include &quot;serialize.h&quot;
++#include &quot;uint256.h&quot;
++#include &quot;bignum.h&quot;
++
++#undef printf
++ template &lt;size_t nBytes, typename T&gt;
++T* alignup(T* p)
++{
++ union
++ {   
++  T* ptr;
++  size_t n;
++ } u;
++ u.ptr = p;
++ u.n = (u.n + (nBytes-1)) &amp; ~(nBytes-1);
++ return u.ptr;
++}
++
++int FormatHashBlocks(void* pbuffer, unsigned int len)
++{
++ unsigned char* pdata = (unsigned char*)pbuffer;
++ unsigned int blocks = 1 + ((len + 8) / 64);
++ unsigned char* pend = pdata + 64 * blocks;
++ memset(pdata + len, 0, 64 * blocks - len);
++ pdata[len] = 0x80;
++ unsigned int bits = len * 8;
++ pend[-1] = (bits &gt;&gt; 0) &amp; 0xff;
++ pend[-2] = (bits &gt;&gt; 8) &amp; 0xff;
++ pend[-3] = (bits &gt;&gt; 16) &amp; 0xff;
++ pend[-4] = (bits &gt;&gt; 24) &amp; 0xff;
++ return blocks;
++}
++
++using CryptoPP::ByteReverse;
++static int detectlittleendian = 1;
++
++#define NPAR 32
++
++extern void Double_BlockSHA256(const void* pin, void* pout, const void *pinit, unsigned int hash[8][NPAR], const void *init2);
++
++using CryptoPP::ByteReverse;
++
++static const unsigned int pSHA256InitState[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
++
++inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
++{
++ memcpy(pstate, pinit, 32);
++ CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
++}
++
++void BitcoinTester(char *filename)
++{
++ printf(&quot;SHA256 test started&quot;);
++
++ struct tmpworkspace
++ {
++  struct unnamed2
++  {
++   int nVersion;
++   uint256 hashPrevBlock;
++   uint256 hashMerkleRoot;
++   unsigned int nTime;
++   unsigned int nBits;
++   unsigned int nNonce;
++  }
++  block;
++  unsigned char pchPadding0[64];
++  uint256 hash1;
++  unsigned char pchPadding1[64];
++ };
++ char tmpbuf[sizeof(tmpworkspace)+16];
++ tmpworkspace&amp; tmp = *(tmpworkspace*)alignup&lt;16&gt;(tmpbuf);
++
++
++ char line[180];
++ ifstream fin(filename);
++ char *p;
++ unsigned long int totalhashes= 0;
++ unsigned long int found = 0;
++ clock_t start, end;
++ unsigned long int cpu_time_used;
++ unsigned int tnonce;
++ start = clock();
++
++ while( fin.getline(line, 180))
++ {
++  string in(line);
++  //printf(&quot;%s&quot;, in.c_str());
++  tmp.block.nVersion       = strtol(in.substr(0,8).c_str(), &amp;p, 16);
++  tmp.block.hashPrevBlock.SetHex(in.substr(8,64));
++  tmp.block.hashMerkleRoot.SetHex(in.substr(64+8,64));
++  tmp.block.nTime          = strtol(in.substr(128+8,8).c_str(), &amp;p, 16);
++  tmp.block.nBits          = strtol(in.substr(128+16,8).c_str(), &amp;p, 16);
++  tnonce = strtol(in.substr(128+24,8).c_str(), &amp;p, 16);
++  tmp.block.nNonce         = tnonce;
++
++  unsigned int nBlocks0 = FormatHashBlocks(&amp;tmp.block, sizeof(tmp.block));
++  unsigned int nBlocks1 = FormatHashBlocks(&amp;tmp.hash1, sizeof(tmp.hash1));
++
++  // Byte swap all the input buffer
++  for (int i = 0; i &lt; sizeof(tmp)/4; i++)
++   ((unsigned int*)&amp;tmp)[i] = ByteReverse(((unsigned int*)&amp;tmp)[i]);
++
++  // Precalc the first half of the first hash, which stays constant
++  uint256 midstatebuf[2];
++  uint256&amp; midstate = *alignup&lt;16&gt;(midstatebuf);
++  SHA256Transform(&amp;midstate, &amp;tmp.block, pSHA256InitState);
++
++
++  uint256 hashTarget = CBigNum().SetCompact(ByteReverse(tmp.block.nBits)).getuint256();
++  // printf(&quot;target %s&quot;, hashTarget.GetHex().c_str());
++  uint256 hash;
++  uint256 hashbuf[2];
++  uint256&amp; refhash = *alignup&lt;16&gt;(hashbuf);
++
++  unsigned int thash[8][NPAR];
++  int done = 0;
++  unsigned int i, j;
++
++  /* reference */
++  SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
++  SHA256Transform(&amp;refhash, &amp;tmp.hash1, pSHA256InitState);
++  for (int i = 0; i &lt; sizeof(refhash)/4; i++)
++   ((unsigned int*)&amp;refhash)[i] = ByteReverse(((unsigned int*)&amp;refhash)[i]);
++
++  //printf(&quot;reference nonce %08x:%s&quot;, tnonce, refhash.GetHex().c_str());
++
++  tmp.block.nNonce = ByteReverse(tnonce) &amp; 0xfffff000;
++
++
++  for(;;)
++  {
++
++   Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
++
++   for(i = 0; i&lt;NPAR; i++) {
++    /* fast hash checking */
++    if(thash[7][i] == 0) {
++   //  printf(&quot;found something... &quot;);
++
++     for(j = 0; j&lt;8; j++) ((unsigned int *)&amp;hash)[j] = ByteReverse((unsigned int)thash[j][i]);
++    // printf(&quot;%s&quot;, hash.GetHex().c_str());
++
++     if (hash &lt;= hashTarget)
++     {
++      found++;
++      if(tnonce == ByteReverse(tmp.block.nNonce + i) ) {
++       if(hash == refhash) {
++        printf(&quot;%lu&quot;, found);
++        totalhashes += NPAR;
++        done = 1;
++       } else {
++        printf(&quot;Hashes do not match!&quot;);
++       }
++      } else {
++       printf(&quot;nonce does not match. %08x != %08x&quot;, tnonce, ByteReverse(tmp.block.nNonce + i));
++      }
++      break;
++     }
++    }
++   }
++   if(done) break;
++
++   tmp.block.nNonce+=NPAR;
++   totalhashes += NPAR;
++   if(tmp.block.nNonce == 0) {
++    printf(&quot;ERROR: Hash not found for:%s&quot;, in.c_str());
++    return;
++   }
++  }
++ }
++ printf(&quot;&quot;);
++ end = clock();
++ cpu_time_used += (unsigned int)(end - start);
++ cpu_time_used /= ((CLOCKS_PER_SEC)/1000);
++ printf(&quot;found solutions = %lu&quot;, found);
++ printf(&quot;total hashes = %lu&quot;, totalhashes);
++ printf(&quot;total time = %lu ms&quot;, cpu_time_used);
++ printf(&quot;average speed: %lu khash/s&quot;, (totalhashes)/cpu_time_used);
++}
++
++int main(int argc, char* argv[]) {
++ if(argc == 2) {
++  BitcoinTester(argv[1]);
++ } else
++  printf(&quot;Missing filename!&quot;);
++ return 0;
++}</code></pre></article><article class="msg" id="m12">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-07-31T19:17:17Z">31 July 2010, 19:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6841#msg6841" rel="nofollow noopener">original</a></span></header>
+<div class="t">Had to manually patch, as I&#x27;m not using git for bitcoin and &#x27;patch&#x27; doesn&#x27;t munch this format, I guess. Anyway, got almost double speed on the OSX side, (i5 2.4, now ~2400 from ~1400), but my linux on Q6600 quad 2.4Ghz was pumping ~2500 with 0.3.6 (from source) and now, with the patch it&#x27;s... ~2400. Need I tweak anything to take advantage on this?</div></article><article class="msg" id="m13">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-07-31T20:34:06Z">31 July 2010, 20:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6850#msg6850" rel="nofollow noopener">original</a></span></header>
+<div class="t">ahm, let me correct myself: on the quad core linux, I went from ~4400 with svn trunk @ 119 to ~2400 with the patch... not exactly what I hoped for after the success in OSX.</div></article><article class="msg" id="m14">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-07-31T20:57:49Z">31 July 2010, 20:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6853#msg6853" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nelisky on July 31, 2010, 08:34:06 PM</div><div class="t">ahm, let me correct myself: on the quad core linux, I went from ~4400 with svn trunk @ 119 to ~2400 with the patch... not exactly what I hoped for after the success in OSX.</div></blockquote><div class="t">I noticed the same, I went from about 4300 to 2100 when I tested it on Linux.</div></article><article class="msg" id="m15">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-31T22:38:29Z">31 July 2010, 22:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6861#msg6861" rel="nofollow noopener">original</a></span></header>
+<div class="t">What CPUs are you running it on? Could you send me sha256.o (compiled object of the algorithm)?</div></article><article class="msg" id="m16">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-07-31T23:18:07Z">31 July 2010, 23:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6866#msg6866" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m running on the Intel Q6600 2.4Ghz, how shall I get the file to you?</div></article><article class="msg" id="m17">
+<header><b>Mionione</b><span class="muted"> · <time datetime="2010-07-31T23:30:11Z">31 July 2010, 23:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6867#msg6867" rel="nofollow noopener">original</a></span></header>
+<div class="t">care with __attribute__ ((aligned (16))) , it doesn&#x27;t work with local variable, gcc doesn&#x27;t align the stack</div></article><article class="msg" id="m18">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-07-31T23:37:02Z">31 July 2010, 23:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6868#msg6868" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nelisky on July 31, 2010, 11:18:07 PM</div><div class="t">I&#x27;m running on the Intel Q6600 2.4Ghz, how shall I get the file to you?</div></blockquote><div class="t">yes. i will look at the assembler code. maybe the compiler did something &quot;wrong&quot;.</div></article><article class="msg" id="m19">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-01T00:00:10Z">1 August 2010, 00:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6869#msg6869" rel="nofollow noopener">original</a></span></header>
+<div class="t">Patch against SVN. Maybe it&#x27;ll work now...</div><pre><code>diff --git a/cryptopp/sha256.cpp b/cryptopp/sha256.cpp
+new file mode 100644
+index 0000000..6735678
+--- /dev/null
++++ b/cryptopp/sha256.cpp
+@@ -0,0 +1,447 @@
++#include &lt;string.h&gt;
++#include &lt;assert.h&gt;
++
++#include &lt;xmmintrin.h&gt;
++#include &lt;stdint.h&gt;
++#include &lt;stdio.h&gt;
++
++#define NPAR 32
++
++static const unsigned int sha256_consts[] = {
++ 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /*  0 */
++ 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
++ 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, /*  8 */
++ 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
++ 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, /* 16 */
++ 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
++ 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, /* 24 */
++ 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
++ 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, /* 32 */
++ 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
++ 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, /* 40 */
++ 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
++ 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, /* 48 */
++ 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
++ 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, /* 56 */
++ 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
++};
++
++
++static inline __m128i Ch(const __m128i b, const __m128i c, const __m128i d) {
++ return (b &amp; c) ^ (~b &amp; d);
++}
++
++static inline __m128i Maj(const __m128i b, const __m128i c, const __m128i d) {
++ return (b &amp; c) ^ (b &amp; d) ^ (c &amp; d);
++}
++
++static inline __m128i ROTR(__m128i x, const int n) {
++ return _mm_srli_epi32(x, n) | _mm_slli_epi32(x, 32 - n);
++}
++
++static inline __m128i SHR(__m128i x, const int n) {
++ return _mm_srli_epi32(x, n);
++}
++
++/* SHA256 Functions */
++#define BIGSIGMA0_256(x) (ROTR((x), 2) ^ ROTR((x), 13) ^ ROTR((x), 22))
++#define BIGSIGMA1_256(x) (ROTR((x), 6) ^ ROTR((x), 11) ^ ROTR((x), 25))
++#define SIGMA0_256(x)  (ROTR((x), 7) ^ ROTR((x), 18) ^ SHR((x), 3))
++#define SIGMA1_256(x)  (ROTR((x), 17) ^ ROTR((x), 19) ^ SHR((x), 10))
++
++static inline __m128i load_epi32(const unsigned int x0, const unsigned int x1, const unsigned int x2, const unsigned int x3) {
++ return _mm_set_epi32(x0, x1, x2, x3);
++}
++
++static inline unsigned int store32(const __m128i x, int i) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x;
++ return box.ret[i];
++}
++
++static inline void store_epi32(const __m128i x, unsigned int *x0, unsigned int *x1, unsigned int *x2, unsigned int *x3) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x;
++ *x0 = box.ret[3]; *x1 = box.ret[2]; *x2 = box.ret[1]; *x3 = box.ret[0];
++}
++
++static inline __m128i SHA256_CONST(const int i) {
++ return _mm_set1_epi32(sha256_consts[i]);
++}
++
++#define add4(x0, x1, x2, x3) _mm_add_epi32(_mm_add_epi32(_mm_add_epi32(x0, x1), x2), x3)
++#define add5(x0, x1, x2, x3, x4) _mm_add_epi32(add4(x0, x1, x2, x3), x4)
++
++#define SHA256ROUND(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++d = _mm_add_epi32(d, T1);                                           \
++T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 \
++h = _mm_add_epi32(T1, T2);
++
++#define SHA256ROUND_lastd(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++d = _mm_add_epi32(d, T1);                                           
++//T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 
++//h = _mm_add_epi32(T1, T2);
++
++#define SHA256ROUND_last(a, b, c, d, e, f, g, h, i, w)                       \
++ T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), SHA256_CONST(i), w); \
++T2 = _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c));                 \
++h = _mm_add_epi32(T1, T2);
++
++static inline unsigned int swap(unsigned int value) {
++ __asm__ (&quot;bswap %0&quot; : &quot;=r&quot; (value) : &quot;0&quot; (value));
++ return value;
++}
++
++static inline unsigned int SWAP32(const void *addr) {
++ unsigned int value = (*((unsigned int *)(addr)));
++ __asm__ (&quot;bswap %0&quot; : &quot;=r&quot; (value) : &quot;0&quot; (value));
++ return value;
++}
++
++static inline void dumpreg(__m128i x, char *msg) {
++ union { unsigned int ret[4]; __m128i x; } box;
++ box.x = x ;
++ printf(&quot;%s %08x %08x %08x %08x&quot;, msg, box.ret[0], box.ret[1], box.ret[2], box.ret[3]);
++}
++
++#if 1
++#define dumpstate(i) printf(&quot;%s: %08x %08x %08x %08x %08x %08x %08x %08x %08x&quot;, \
++  __func__, store32(w0, i), store32(a, i), store32(b, i), store32(c, i), store32(d, i), store32(e, i), store32(f, i), store32(g, i), store32(h, i));
++#else
++#define dumpstate()
++#endif
++void Double_BlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[9][NPAR], const void *init)
++{
++ unsigned int* In = (unsigned int*)pin;
++ unsigned int* Pad = (unsigned int*)pad;
++ unsigned int* hPre = (unsigned int*)pre;
++ unsigned int* hInit = (unsigned int*)init;
++ unsigned int i, j, k;
++
++ /* vectors used in calculation */
++ __m128i w0, w1, w2, w3, w4, w5, w6, w7;
++ __m128i w8, w9, w10, w11, w12, w13, w14, w15;
++ __m128i T1, T2;
++ __m128i a, b, c, d, e, f, g, h;
++  __m128i nonce;
++
++ /* nonce offset for vector */
++ __m128i offset = load_epi32(0x00000003, 0x00000002, 0x00000001, 0x00000000);
++
++
++ for(k = 0; k&lt;NPAR; k+=4) {
++  w0 = load_epi32(In[0], In[0], In[0], In[0]);
++  w1 = load_epi32(In[1], In[1], In[1], In[1]);
++  w2 = load_epi32(In[2], In[2], In[2], In[2]);
++  //w3 = load_epi32(In[3], In[3], In[3], In[3]); nonce will be later hacked into the hash
++  w4 = load_epi32(In[4], In[4], In[4], In[4]);
++  w5 = load_epi32(In[5], In[5], In[5], In[5]);
++  w6 = load_epi32(In[6], In[6], In[6], In[6]);
++  w7 = load_epi32(In[7], In[7], In[7], In[7]);
++  w8 = load_epi32(In[8], In[8], In[8], In[8]);
++  w9 = load_epi32(In[9], In[9], In[9], In[9]);
++  w10 = load_epi32(In[10], In[10], In[10], In[10]);
++  w11 = load_epi32(In[11], In[11], In[11], In[11]);
++  w12 = load_epi32(In[12], In[12], In[12], In[12]);
++  w13 = load_epi32(In[13], In[13], In[13], In[13]);
++  w14 = load_epi32(In[14], In[14], In[14], In[14]);
++  w15 = load_epi32(In[15], In[15], In[15], In[15]);
++
++  /* hack nonce into lowest byte of w3 */
++  nonce = load_epi32(In[3], In[3], In[3], In[3]);
++  __m128i k_vec = load_epi32(k, k, k, k);
++  nonce = _mm_add_epi32(nonce, offset);
++  nonce = _mm_add_epi32(nonce, k_vec);
++    w3 = nonce;
++
++  a = load_epi32(hPre[0], hPre[0], hPre[0], hPre[0]);
++  b = load_epi32(hPre[1], hPre[1], hPre[1], hPre[1]);
++  c = load_epi32(hPre[2], hPre[2], hPre[2], hPre[2]);
++  d = load_epi32(hPre[3], hPre[3], hPre[3], hPre[3]);
++  e = load_epi32(hPre[4], hPre[4], hPre[4], hPre[4]);
++  f = load_epi32(hPre[5], hPre[5], hPre[5], hPre[5]);
++  g = load_epi32(hPre[6], hPre[6], hPre[6], hPre[6]);
++  h = load_epi32(hPre[7], hPre[7], hPre[7], hPre[7]);
++
++  SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);   
++  SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 13, w13);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 14, w14);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 15, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 16, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 17, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 18, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 19, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 20, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 21, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 22, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 23, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 24, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 25, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 26, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 27, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 28, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 29, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 30, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 31, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 32, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 33, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 34, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 35, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 36, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 37, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 38, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 39, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 40, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 41, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 42, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 43, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 44, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 45, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 46, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 47, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 48, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 49, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 50, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 51, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 52, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 53, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 54, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 55, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 56, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 57, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 58, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 59, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 60, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 61, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 62, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 63, w15);
++
++#define store_load(x, i, dest) \
++  w8 = load_epi32((hPre)[i], (hPre)[i], (hPre)[i], (hPre)[i]); \
++  dest = _mm_add_epi32(w8, x);
++
++  store_load(a, 0, w0);
++  store_load(b, 1, w1);
++  store_load(c, 2, w2);
++  store_load(d, 3, w3);
++  store_load(e, 4, w4);
++  store_load(f, 5, w5);
++  store_load(g, 6, w6);
++  store_load(h, 7, w7);
++
++  w8 = load_epi32(Pad[8], Pad[8], Pad[8], Pad[8]);
++  w9 = load_epi32(Pad[9], Pad[9], Pad[9], Pad[9]);
++  w10 = load_epi32(Pad[10], Pad[10], Pad[10], Pad[10]);
++  w11 = load_epi32(Pad[11], Pad[11], Pad[11], Pad[11]);
++  w12 = load_epi32(Pad[12], Pad[12], Pad[12], Pad[12]);
++  w13 = load_epi32(Pad[13], Pad[13], Pad[13], Pad[13]);
++  w14 = load_epi32(Pad[14], Pad[14], Pad[14], Pad[14]);
++  w15 = load_epi32(Pad[15], Pad[15], Pad[15], Pad[15]);
++
++  a = load_epi32(hInit[0], hInit[0], hInit[0], hInit[0]);
++  b = load_epi32(hInit[1], hInit[1], hInit[1], hInit[1]);
++  c = load_epi32(hInit[2], hInit[2], hInit[2], hInit[2]);
++  d = load_epi32(hInit[3], hInit[3], hInit[3], hInit[3]);
++  e = load_epi32(hInit[4], hInit[4], hInit[4], hInit[4]);
++  f = load_epi32(hInit[5], hInit[5], hInit[5], hInit[5]);
++  g = load_epi32(hInit[6], hInit[6], hInit[6], hInit[6]);
++  h = load_epi32(hInit[7], hInit[7], hInit[7], hInit[7]);
++
++  SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);   
++  SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 13, w13);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 14, w14);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 15, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 16, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 17, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 18, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 19, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 20, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 21, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 22, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 23, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 24, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 25, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 26, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 27, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 28, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 29, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 30, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 31, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 32, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 33, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 34, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 35, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 36, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 37, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 38, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 39, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 40, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 41, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 42, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 43, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 44, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 45, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 46, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 47, w15);
++
++  w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 48, w0);
++  w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 49, w1);
++  w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 50, w2);
++  w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 51, w3);
++  w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 52, w4);
++  w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 53, w5);
++  w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 54, w6);
++  w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 55, w7);
++  w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++  SHA256ROUND(a, b, c, d, e, f, g, h, 56, w8);
++  w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++  SHA256ROUND(h, a, b, c, d, e, f, g, 57, w9);
++  w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++  SHA256ROUND(g, h, a, b, c, d, e, f, 58, w10);
++  w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++  SHA256ROUND(f, g, h, a, b, c, d, e, 59, w11);
++  w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++  SHA256ROUND(e, f, g, h, a, b, c, d, 60, w12);
++  w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++  SHA256ROUND(d, e, f, g, h, a, b, c, 61, w13);
++  w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++  SHA256ROUND(c, d, e, f, g, h, a, b, 62, w14);
++  w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++  SHA256ROUND(b, c, d, e, f, g, h, a, 63, w15);
++
++  /* store resulsts directly in thash */
++#define store_2(x,i)  \
++  w0 = load_epi32((hInit)[i], (hInit)[i], (hInit)[i], (hInit)[i]); \
++  *(__m128i *)&amp;(thash)[i][0+k] = _mm_add_epi32(w0, x);
++
++  store_2(a, 0);
++  store_2(b, 1);
++  store_2(c, 2);
++  store_2(d, 3);
++  store_2(e, 4);
++  store_2(f, 5);
++  store_2(g, 6);
++  store_2(h, 7);
++  *(__m128i *)&amp;(thash)[8][0+k] = nonce;
++ }
++
++}
+diff --git a/main.cpp b/main.cpp
+index 0239915..50db1a3 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -2555,8 +2555,10 @@ inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
+     CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
+ }
+ 
++// !!!! NPAR must match NPAR in cryptopp/sha256.cpp !!!!
++#define NPAR 32
+ 
+-
++extern void Double_BlockSHA256(const void* pin, void* pout, const void *pinit, unsigned int hash[9][NPAR], const void *init2);
+ 
+ 
+ void BitcoinMiner()
+@@ -2701,108 +2703,128 @@ void BitcoinMiner()
+         uint256 hashTarget = CBigNum().SetCompact(pblock-&gt;nBits).getuint256();
+         uint256 hashbuf[2];
+         uint256&amp; hash = *alignup&lt;16&gt;(hashbuf);
++
++        // Cache for NPAR hashes
++        unsigned int thash[9][NPAR] __attribute__ ((aligned (16)));
++
++        unsigned int j;
+         loop
+         {
+-            SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
+-            SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
++          Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
+ 
+-            if (((unsigned short*)&amp;hash)[14] == 0)
++          for(j = 0; j&lt;NPAR; j++) {
++            if (thash[7][j] == 0)
+             {
+-                // Byte swap the result after preliminary check
+-                for (int i = 0; i &lt; sizeof(hash)/4; i++)
+-                    ((unsigned int*)&amp;hash)[i] = ByteReverse(((unsigned int*)&amp;hash)[i]);
+-
+-                if (hash &lt;= hashTarget)
++              // Byte swap the result after preliminary check
++              for (int i = 0; i &lt; sizeof(hash)/4; i++)
++                ((unsigned int*)&amp;hash)[i] = ByteReverse((unsigned int)thash[i][j]);
++
++              if (hash &lt;= hashTarget)
++              {
++                // Double_BlocSHA256 might only calculate parts of the hash.
++                // We&#x27;ll insert the nonce and get the real hash.
++                //pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
++                //hash = pblock-&gt;GetHash();
++
++                /* get nonce from hash */
++                pblock-&gt;nNonce = ByteReverse((unsigned int)thash[8][j]);
++                assert(hash == pblock-&gt;GetHash());
++
++                //// debug print
++                printf(&quot;BitcoinMiner:&quot;);
++                printf(&quot;proof-of-work found    hash: %s  target: %s&quot;, hash.GetHex().c_str(), hashTarget.GetHex().c_str());
++                pblock-&gt;print();
++                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                printf(&quot;generated %s&quot;, FormatMoney(pblock-&gt;vtx[0].vout[0].nValue).c_str());
++
++                SetThreadPriority(THREAD_PRIORITY_NORMAL);
++                CRITICAL_BLOCK(cs_main)
+                 {
+-                    pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce);
+-                    assert(hash == pblock-&gt;GetHash());
+-
+-                        //// debug print
+-                        printf(&quot;BitcoinMiner:&quot;);
+-                        printf(&quot;proof-of-work found    hash: %s  target: %s&quot;, hash.GetHex().c_str(), hashTarget.GetHex().c_str());
+-                        pblock-&gt;print();
+-                        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                        printf(&quot;generated %s&quot;, FormatMoney(pblock-&gt;vtx[0].vout[0].nValue).c_str());
+-
+-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+-                    CRITICAL_BLOCK(cs_main)
+-                    {
+-                        if (pindexPrev == pindexBest)
+-                        {
+-                            // Save key
+-                            if (!AddKey(key))
+-                                return;
+-                            key.MakeNewKey();
+-
+-                            // Track how many getdata requests this block gets
+-                            CRITICAL_BLOCK(cs_mapRequestCount)
+-                                mapRequestCount[pblock-&gt;GetHash()] = 0;
+-
+-                            // Process this block the same as if we had received it from another node
+-                            if (!ProcessBlock(NULL, pblock.release()))
+-                                printf(&quot;ERROR in BitcoinMiner, ProcessBlock, block not accepted&quot;);
+-                        }
++                  if (pindexPrev == pindexBest)
++                  {
++                    // Save key
++                    if (!AddKey(key))
++                      return;
++                    key.MakeNewKey();
++
++                    // Track how many getdata requests this block gets
++                    CRITICAL_BLOCK(cs_mapRequestCount)
++                      mapRequestCount[pblock-&gt;GetHash()] = 0;
++
++                    // Process this block the same as if we had received it from another node
++                    if (!ProcessBlock(NULL, pblock.release()))
++                      printf(&quot;ERROR in BitcoinMiner, ProcessBlock, block not accepted&quot;);
++
+                     }
+                     SetThreadPriority(THREAD_PRIORITY_LOWEST);
+ 
+                     Sleep(500);
+                     break;
+                 }
+-            }
++                SetThreadPriority(THREAD_PRIORITY_LOWEST);
+ 
+-            // Update nTime every few seconds
+-            const unsigned int nMask = 0xffff;
+-            if ((++tmp.block.nNonce &amp; nMask) == 0)
++                Sleep(500);
++                break;
++              }
++            }
++          }
++
++          // Update nonce
++          tmp.block.nNonce += NPAR;
++
++          // Update nTime every few seconds
++          const unsigned int nMask = 0xffff;
++          if ((tmp.block.nNonce &amp; nMask) == 0)
++          {
++            // Meter hashes/sec
++            static int64 nTimerStart;
++            static int nHashCounter;
++            if (nTimerStart == 0)
++              nTimerStart = GetTimeMillis();
++            else
++              nHashCounter++;
++            if (GetTimeMillis() - nTimerStart &gt; 4000)
+             {
+-                // Meter hashes/sec
+-                static int64 nTimerStart;
+-                static int nHashCounter;
+-                if (nTimerStart == 0)
+-                    nTimerStart = GetTimeMillis();
+-                else
+-                    nHashCounter++;
++              static CCriticalSection cs;
++              CRITICAL_BLOCK(cs)
++              {
+                 if (GetTimeMillis() - nTimerStart &gt; 4000)
+                 {
+-                    static CCriticalSection cs;
+-                    CRITICAL_BLOCK(cs)
+-                    {
+-                        if (GetTimeMillis() - nTimerStart &gt; 4000)
+-                        {
+-                            double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
+-                            nTimerStart = GetTimeMillis();
+-                            nHashCounter = 0;
+-                            string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+-                            UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
+-                            static int64 nLogTime;
+-                            if (GetTime() - nLogTime &gt; 30 * 60)
+-                            {
+-                                nLogTime = GetTime();
+-                                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                                printf(&quot;hashmeter %3d CPUs %6.0f khash/s&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
+-                            }
+-                        }
+-                    }
++                  double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
++                  nTimerStart = GetTimeMillis();
++                  nHashCounter = 0;
++                  string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
++                  UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                  static int64 nLogTime;
++                  if (GetTime() - nLogTime &gt; 30 * 60)
++                  {
++                    nLogTime = GetTime();
++                    printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                    printf(&quot;hashmeter %3d CPUs %6.0f khash/s&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
++                  }
+                 }
+-
+-                // Check for stop or if block needs to be rebuilt
+-                if (fShutdown)
+-                    return;
+-                if (!fGenerateBitcoins)
+-                    return;
+-                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
+-                    return;
+-                if (vNodes.empty())
+-                    break;
+-                if (tmp.block.nNonce == 0)
+-                    break;
+-                if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
+-                    break;
+-                if (pindexPrev != pindexBest)
+-                    break;
+-
+-                pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+-                tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
++              }
+             }
++
++            // Check for stop or if block needs to be rebuilt
++            if (fShutdown)
++              return;
++            if (!fGenerateBitcoins)
++              return;
++            if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
++              return;
++            if (vNodes.empty())
++              break;
++            if (tmp.block.nNonce == 0)
++              break;
++            if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
++              break;
++            if (pindexPrev != pindexBest)
++              break;
++
++            pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++            tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
++          }
+         }
+     }
+ }
+diff --git a/makefile.unix b/makefile.unix
+index e965287..04dac86 100644
+--- a/makefile.unix
++++ b/makefile.unix
+@@ -41,7 +41,8 @@ OBJS= \
+     obj/rpc.o \
+     obj/init.o \
+     cryptopp/obj/sha.o \
+-    cryptopp/obj/cpu.o
++    cryptopp/obj/cpu.o \
++    cryptopp/obj/sha256.o
+ 
+ 
+ all: bitcoin
+@@ -51,7 +52,7 @@ obj/%.o: %.cpp $(HEADERS)
+  g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+- g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
++ g++ -c $(CFLAGS) -frename-registers -funroll-all-loops -fomit-frame-pointer  -march=native -msse2 -msse3  -ffast-math -O3 -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+  g++ $(CFLAGS) -o $@ $^ $(WXLIBS) $(LIBS)
+@@ -63,6 +64,9 @@ obj/nogui/%.o: %.cpp $(HEADERS)
+ bitcoind: $(OBJS:obj/%=obj/nogui/%)
+  g++ $(CFLAGS) -o $@ $^ $(LIBS)
+ 
++test: cryptopp/obj/sha.o cryptopp/obj/sha256.o test.cpp
++ g++ $(CFLAGS) -o $@ $^ $(LIBS)
++
+ 
+ clean:
+  -rm -f obj/*.o
+diff --git a/test.cpp b/test.cpp
+new file mode 100644
+index 0000000..a55e972
+--- /dev/null
++++ b/test.cpp
+@@ -0,0 +1,221 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++#include &lt;assert.h&gt;
++#include &lt;openssl/ecdsa.h&gt;
++#include &lt;openssl/evp.h&gt;
++#include &lt;openssl/rand.h&gt;
++#include &lt;openssl/sha.h&gt;
++#include &lt;openssl/ripemd.h&gt;
++#include &lt;db_cxx.h&gt;
++#include &lt;stdio.h&gt;
++#include &lt;stdlib.h&gt;
++#include &lt;math.h&gt;
++#include &lt;limits.h&gt;
++#include &lt;float.h&gt;
++#include &lt;assert.h&gt;
++#include &lt;memory&gt;
++#include &lt;iostream&gt;
++#include &lt;sstream&gt;
++#include &lt;string&gt;
++#include &lt;vector&gt;
++#include &lt;list&gt;
++#include &lt;deque&gt;
++#include &lt;map&gt;
++#include &lt;set&gt;
++#include &lt;algorithm&gt;
++#include &lt;numeric&gt;
++#include &lt;boost/foreach.hpp&gt;
++#include &lt;boost/lexical_cast.hpp&gt;
++#include &lt;boost/tuple/tuple.hpp&gt;
++#include &lt;boost/fusion/container/vector.hpp&gt;
++#include &lt;boost/tuple/tuple_comparison.hpp&gt;
++#include &lt;boost/tuple/tuple_io.hpp&gt;
++#include &lt;boost/array.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/filesystem.hpp&gt;
++#include &lt;boost/filesystem/fstream.hpp&gt;
++#include &lt;boost/algorithm/string.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_mutex.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;
++#include &lt;boost/date_time/gregorian/gregorian_types.hpp&gt;
++#include &lt;boost/date_time/posix_time/posix_time_types.hpp&gt;
++#include &lt;sys/resource.h&gt;
++#include &lt;sys/time.h&gt;
++using namespace std;
++using namespace boost;
++#include &quot;cryptopp/sha.h&quot;
++#include &quot;strlcpy.h&quot;
++#include &quot;serialize.h&quot;
++#include &quot;uint256.h&quot;
++#include &quot;bignum.h&quot;
++
++#undef printf
++
++int FormatHashBlocks(void* pbuffer, unsigned int len)
++{
++ unsigned char* pdata = (unsigned char*)pbuffer;
++ unsigned int blocks = 1 + ((len + 8) / 64);
++ unsigned char* pend = pdata + 64 * blocks;
++ memset(pdata + len, 0, 64 * blocks - len);
++ pdata[len] = 0x80;
++ unsigned int bits = len * 8;
++ pend[-1] = (bits &gt;&gt; 0) &amp; 0xff;
++ pend[-2] = (bits &gt;&gt; 8) &amp; 0xff;
++ pend[-3] = (bits &gt;&gt; 16) &amp; 0xff;
++ pend[-4] = (bits &gt;&gt; 24) &amp; 0xff;
++ return blocks;
++}
++
++using CryptoPP::ByteReverse;
++static int detectlittleendian = 1;
++
++#define NPAR 32
++
++extern void Double_BlockSHA256(const void* pin, void* pout, const void *pinit, unsigned int hash[9][NPAR], const void *init2);
++
++using CryptoPP::ByteReverse;
++
++static const unsigned int pSHA256InitState[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
++
++inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
++{
++ memcpy(pstate, pinit, 32);
++ CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
++}
++
++void BitcoinTester(char *filename)
++{
++ printf(&quot;SHA256 test started&quot;);
++
++ struct tmpworkspace
++ {
++  struct unnamed2
++  {
++   int nVersion;
++   uint256 hashPrevBlock;
++   uint256 hashMerkleRoot;
++   unsigned int nTime;
++   unsigned int nBits;
++   unsigned int nNonce;
++  }
++  block;
++  unsigned char pchPadding0[64];
++  uint256 hash1;
++  unsigned char pchPadding1[64];
++ }
++  tmp __attribute__ ((aligned (16)));
++
++ char line[180];
++ ifstream fin(filename);
++ char *p;
++ unsigned long int totalhashes= 0;
++ unsigned long int found = 0;
++ clock_t start, end;
++ unsigned long int cpu_time_used;
++ unsigned int tnonce;
++ start = clock();
++
++ while( fin.getline(line, 180))
++ {
++  string in(line);
++  //printf(&quot;%s&quot;, in.c_str());
++  tmp.block.nVersion       = strtol(in.substr(0,8).c_str(), &amp;p, 16);
++  tmp.block.hashPrevBlock.SetHex(in.substr(8,64));
++  tmp.block.hashMerkleRoot.SetHex(in.substr(64+8,64));
++  tmp.block.nTime          = strtol(in.substr(128+8,8).c_str(), &amp;p, 16);
++  tmp.block.nBits          = strtol(in.substr(128+16,8).c_str(), &amp;p, 16);
++  tnonce = strtol(in.substr(128+24,8).c_str(), &amp;p, 16);
++  tmp.block.nNonce         = tnonce;
++
++  unsigned int nBlocks0 = FormatHashBlocks(&amp;tmp.block, sizeof(tmp.block));
++  unsigned int nBlocks1 = FormatHashBlocks(&amp;tmp.hash1, sizeof(tmp.hash1));
++
++  // Byte swap all the input buffer
++  for (int i = 0; i &lt; sizeof(tmp)/4; i++)
++   ((unsigned int*)&amp;tmp)[i] = ByteReverse(((unsigned int*)&amp;tmp)[i]);
++
++  // Precalc the first half of the first hash, which stays constant
++  uint256 midstate __attribute__ ((aligned(16)));
++  SHA256Transform(&amp;midstate, &amp;tmp.block, pSHA256InitState);
++
++
++  uint256 hashTarget = CBigNum().SetCompact(ByteReverse(tmp.block.nBits)).getuint256();
++  // printf(&quot;target %s&quot;, hashTarget.GetHex().c_str());
++  uint256 hash;
++  uint256 refhash __attribute__ ((aligned(16)));
++
++  unsigned int thash[9][NPAR] __attribute__ ((aligned (16)));
++  int done = 0;
++  unsigned int i, j;
++
++  /* reference */
++  SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
++  SHA256Transform(&amp;refhash, &amp;tmp.hash1, pSHA256InitState);
++  for (int i = 0; i &lt; sizeof(refhash)/4; i++)
++   ((unsigned int*)&amp;refhash)[i] = ByteReverse(((unsigned int*)&amp;refhash)[i]);
++
++  //printf(&quot;reference nonce %08x:%s&quot;, tnonce, refhash.GetHex().c_str());
++
++  tmp.block.nNonce = ByteReverse(tnonce) &amp; 0xfffff000;
++
++
++  for(;;)
++  {
++
++   Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
++
++   for(i = 0; i&lt;NPAR; i++) {
++    /* fast hash checking */
++    if(thash[7][i] == 0) {
++   //  printf(&quot;found something... &quot;);
++
++     for(j = 0; j&lt;8; j++) ((unsigned int *)&amp;hash)[j] = ByteReverse((unsigned int)thash[j][i]);
++    // printf(&quot;%s&quot;, hash.GetHex().c_str());
++
++     if (hash &lt;= hashTarget)
++     {
++      found++;
++      if(tnonce == ByteReverse((unsigned int)thash[8][i]) ) {
++       if(hash == refhash) {
++        printf(&quot;%lu&quot;, found);
++        totalhashes += NPAR;
++        done = 1;
++       } else {
++        printf(&quot;Hashes do not match!&quot;);
++       }
++      } else {
++       printf(&quot;nonce does not match. %08x != %08x&quot;, tnonce, ByteReverse(tmp.block.nNonce + i));
++      }
++      break;
++     }
++    }
++   }
++   if(done) break;
++
++   tmp.block.nNonce+=NPAR;
++   totalhashes += NPAR;
++   if(tmp.block.nNonce == 0) {
++    printf(&quot;ERROR: Hash not found for:%s&quot;, in.c_str());
++    return;
++   }
++  }
++ }
++ printf(&quot;&quot;);
++ end = clock();
++ cpu_time_used += (unsigned int)(end - start);
++ cpu_time_used /= ((CLOCKS_PER_SEC)/1000);
++ printf(&quot;found solutions = %lu&quot;, found);
++ printf(&quot;total hashes = %lu&quot;, totalhashes);
++ printf(&quot;total time = %lu ms&quot;, cpu_time_used);
++ printf(&quot;average speed: %lu khash/s&quot;, (totalhashes)/cpu_time_used);
++}
++
++int main(int argc, char* argv[]) {
++ if(argc == 2) {
++  BitcoinTester(argv[1]);
++ } else
++  printf(&quot;Missing filename!&quot;);
++ return 0;
++}</code></pre></article><article class="msg" id="m20">
+<header><b>wereHamster</b><span class="muted"> · <time datetime="2010-08-01T10:16:48Z">1 August 2010, 10:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6893#msg6893" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Mionione on July 31, 2010, 11:30:11 PM</div><div class="t">care with __attribute__ ((aligned (16))) , it doesn&#x27;t work with local variable, gcc doesn&#x27;t align the stack</div></blockquote><div class="t">Maybe gcc doesn&#x27;t align the stack, but it can (and automatically does) align variables on the stack.</div></article><article class="msg" id="m21">
+<header><b>Mionione</b><span class="muted"> · <time datetime="2010-08-01T12:53:40Z">1 August 2010, 12:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6899#msg6899" rel="nofollow noopener">original</a></span></header>
+<div class="t">that&#x27;s what it is supposed to do, but it doesn&#x27;t always do it, issues are on gcc bugzilla
+
+<a href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43798" rel="nofollow noopener">http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43798</a>
+<a href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=16660" rel="nofollow noopener">http://gcc.gnu.org/bugzilla/show_bug.cgi?id=16660</a>
+<a href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=40838" rel="nofollow noopener">http://gcc.gnu.org/bugzilla/show_bug.cgi?id=40838</a></div></article><article class="msg" id="m22">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-02T00:22:43Z">2 August 2010, 00:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6949#msg6949" rel="nofollow noopener">original</a></span></header>
+<div class="t">No joy against SVN tip here.</div><pre><code>patching file sha256.cpp
+patching file main.cpp
+Hunk #1 FAILED at 2555.
+Hunk #2 FAILED at 2703.
+2 out of 2 hunks FAILED -- saving rejects to file main.cpp.rej
+patching file makefile.unix
+Hunk #1 FAILED at 41.
+Hunk #2 FAILED at 52.
+Hunk #3 FAILED at 64.
+3 out of 3 hunks FAILED -- saving rejects to file makefile.unix.rej
+patching file test.cpp</code></pre><div class="t">Trying manually now.</div></article><article class="msg" id="m23">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-02T06:57:20Z">2 August 2010, 06:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6970#msg6970" rel="nofollow noopener">original</a></span></header>
+<div class="t">I got the patch knitted in, and I think I did it correctly.. wasn&#x27;t complicated.
+
+Regrettably, the hash rate has decreased by almost half.  I&#x27;m down from 2071 (stock build, svn tip) to 1150 khash/sec with the patch.
+
+It&#x27;s an Intel Xeon 3 GHz, Linux, with these proc flags:</div><pre><code>flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc pni monitor ds_cpl cid cx16 xtpr</code></pre><div class="t">Has anyone seen gains?
+
+Did I botch it?  Missing CPU capabilities?  Wrong compiler options?</div></article><article class="msg" id="m24">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-02T08:13:11Z">2 August 2010, 08:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6979#msg6979" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have been able to apply the patch against SVN (r121) and I tested it on 2 machines:
+
+• on an AMD Opteron 2374 HE running x86_64 linux I got a 105% improvement (!)
+
+• on an Intel Core 2 Duo T7300 running x86_64 linux it was 55% slower compared to the stock version (r121)
+
+The strange thing is that despite the fact that I have been running it on 6 Opterons (i.e. 6x4=24 cores) for 40 hours with an average rate of 51,000 khash/s, I still haven&#x27;t generated any blocks. The probability of this (no blocks, 40 hours, 51,000 khash/s and diffuculty=244.2) is 0.09% or 1/1098. Are you sure this thing works correctly and that the reported rate is correct? How do I run the included test program?</div></article><article class="msg" id="m25">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-02T08:47:04Z">2 August 2010, 08:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6984#msg6984" rel="nofollow noopener">original</a></span></header>
+<div class="t">Is it a AMD only optimization perhaps?</div></article><article class="msg" id="m26">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-02T09:00:55Z">2 August 2010, 09:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6985#msg6985" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 02, 2010, 08:47:04 AM</div><div class="t">Is it a AMD only optimization perhaps?</div></blockquote><div class="t">Or a 64-bit only optimization.</div></article><article class="msg" id="m27">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-02T09:17:07Z">2 August 2010, 09:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6986#msg6986" rel="nofollow noopener">original</a></span></header>
+<div class="t">With the patch above, I was unable to build the test program.  You?</div></article><article class="msg" id="m28">
+<header><b>petree</b><span class="muted"> · <time datetime="2010-08-02T09:22:29Z">2 August 2010, 09:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6987#msg6987" rel="nofollow noopener">original</a></span></header>
+<div class="t">The original patch posted is working just fine for me (Opteron 2376), and did double my performance over the stock 0.3.6 client.  I was even able to port its minor changes to 0.3.7 successfully, with the same results.
+
+Is there a way we can confirm that the variables are being aligned properly?  I&#x27;m wondering if the Intel procs are less tolerant of misalignment than the AMD&#x27;s.</div></article><article class="msg" id="m29">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-02T09:31:44Z">2 August 2010, 09:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6988#msg6988" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Ground Loop on August 02, 2010, 09:17:07 AM</div><div class="t">With the patch above, I was unable to build the test program.  You?</div></blockquote><div class="t">Under x86 I had to include cryptopp/obj/cpu.o in the list of object files, otherwise &quot;make test&quot; would fail. Under x86_64 I had no such issue.</div><blockquote><div class=qh>Quote from: petree on August 02, 2010, 09:22:29 AM</div><div class="t">The original patch posted is working just fine for me (Opteron 2376), and did double my performance over the stock 0.3.6 client.  I was even able to port its minor changes to 0.3.7 successfully, with the same results.</div></blockquote><div class="t">As I said above I did notice an imporvement in performace too, but I am not sure the patched version works correctly. Have you been able to generate any blocks with the patched version?</div></article><article class="msg" id="m30">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-02T13:05:48Z">2 August 2010, 13:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg6999#msg6999" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: impossible7 on August 02, 2010, 09:00:55 AM</div><div class="t">&gt; Quote from: knightmb on August 02, 2010, 08:47:04 AM
+&gt; Is it a AMD only optimization perhaps?
+
+Or a 64-bit only optimization.</div></blockquote><div class="t">I&#x27;m trying on a Q6600 running 64bit linux (ubuntu server) and it makes things slower there, so not 64bit only. And I&#x27;m running on my mac laptop which sports an Intel i5 (also 64 bit OSX 10.6), which great speed improvement there, so not AMD only.</div></article><article class="msg" id="m31">
+<header><b>petree</b><span class="muted"> · <time datetime="2010-08-02T16:12:33Z">2 August 2010, 16:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7027#msg7027" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: impossible7 on August 02, 2010, 09:31:44 AM</div><div class="t">&gt; Quote from: Ground Loop on August 02, 2010, 09:17:07 AM
+&gt; With the patch above, I was unable to build the test program.  You?
+
+Under x86 I had to include cryptopp/obj/cpu.o in the list of object files, otherwise &quot;make test&quot; would fail. Under x86_64 I had no such issue.
+
+&gt; Quote from: petree on August 02, 2010, 09:22:29 AM
+&gt; The original patch posted is working just fine for me (Opteron 2376), and did double my performance over the stock 0.3.6 client.  I was even able to port its minor changes to 0.3.7 successfully, with the same results.
+
+As I said above I did notice an imporvement in performace too, but I am not sure the patched version works correctly. Have you been able to generate any blocks with the patched version?</div></blockquote><div class="t">Yes, since applying this patch I&#x27;ve generated 2 blocks.</div></article><article class="msg sat" id="m32">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-02T19:02:46Z">2 August 2010, 19:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7084#msg7084" rel="nofollow noopener">original</a></span></header>
+<div class="t">Is it 2x fast on AMD and 1/2 fast on Intel?</div><blockquote><div class=qh>Quote from: tcatm on July 31, 2010, 10:12:38 AM</div><div class="t">Btw. Why are you using this alignup&lt;16&gt; function when __attribute__ ((aligned (16))) will tell the compiler to align at compiletime?</div></blockquote><div class="t">Tried that, but it doesn&#x27;t work for things on the stack.  I ran some tests.
+
+It doesn&#x27;t even cause an error, it just doesn&#x27;t align it.</div></article><article class="msg" id="m33">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-02T19:15:23Z">2 August 2010, 19:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7086#msg7086" rel="nofollow noopener">original</a></span></header>
+<div class="t">FWIW, there exists -mstackrealign and -mpreferred-stack-boundary=NUM</div></article><article class="msg" id="m34">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-02T20:49:25Z">2 August 2010, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7094#msg7094" rel="nofollow noopener">original</a></span></header>
+<div class="t">After 52 hours of trying with no blocks generated, I give up and I am switching back to the vanilla bitcoin.
+
+The probability of getting no blocks within 52 hours at 51,000 khash/s is 0.011%. So I conclude that the patch doesn&#x27;t work and I am 99.989% confident about that. I hope that tcatm provides some explanation on how to use the supplied test program.</div></article><article class="msg" id="m35">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-02T21:07:56Z">2 August 2010, 21:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7096#msg7096" rel="nofollow noopener">original</a></span></header>
+<div class="t">To use the test program download this file (or generate it yourself from the blockchain): <a href="http://ul.to/hz5wlg" rel="nofollow noopener">http://ul.to/hz5wlg</a>
+The program will try to find the correct nonce in each block and detect if the hash function does work correctly. It&#x27;ll also benchmark the algorithm.
+
+From what I&#x27;ve heard the patch does not work on 32 bit systems. I don&#x27;t know why. I&#x27;ve developed it on an AMD64 machine and it works fine. If it&#x27;s slower on Intel, try to disable Hyperthreading. The big loop in the SSE2 code doesn&#x27;t contain any &quot;normal&quot; x86 except for one jump at the end.
+
+Btw, there&#x27;s a git repo at <a href="http://github.com/tcatm/bitcoin-cruncher/" rel="nofollow noopener">http://github.com/tcatm/bitcoin-cruncher/</a></div></article><article class="msg" id="m36">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-02T23:52:27Z">2 August 2010, 23:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7111#msg7111" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve tried the git branch and results stay the same, almost half of what the vanilla svn can pump out. I&#x27;m running Intel and not AMD, but I am on 64bit:
+
+Linux bah 2.6.32-22-server #33-Ubuntu SMP Wed Apr 28 14:34:48 UTC 2010 x86_64 GNU/Linux
+
+Anything I can try to help and debug this?</div></article><article class="msg" id="m37">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-03T00:21:41Z">3 August 2010, 00:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7115#msg7115" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nelisky on August 02, 2010, 11:52:27 PM</div><div class="t">I&#x27;ve tried the git branch and results stay the same, almost half of what the vanilla svn can pump out. I&#x27;m running Intel and not AMD, but I am on 64bit:
+
+Linux bah 2.6.32-22-server #33-Ubuntu SMP Wed Apr 28 14:34:48 UTC 2010 x86_64 GNU/Linux
+
+Anything I can try to help and debug this?</div></blockquote><div class="t">Can you mail me a copy of cryptopp/obj/sha256.o to tcatm@gawab.com &lt;mailto:tcatm@gawab.com&gt;? I still fear Intels microcode in their CPUs wasn&#x27;t made for such tight loops of SSE code. Have you run the test program? How many khash/s does it crunch?</div></article><article class="msg" id="m38">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-03T00:46:12Z">3 August 2010, 00:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7117#msg7117" rel="nofollow noopener">original</a></span></header>
+<div class="t">datla@bah:~/src/bitcoin/bitcoin-cruncher$ ./test blocks.txt
+SHA256 test started
+70293
+found solutions = 70293
+total hashes = 139463136
+total time = 235480 ms
+average speed: 592 khash/s
+
+I&#x27;ll send you the obj file now</div></article><article class="msg" id="m39">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-03T01:17:53Z">3 August 2010, 01:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7123#msg7123" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for the object!
+
+There are two things I noticed:
+1) The Intel object runs at 3269khash/s on my AMD64 (vs. 3778khash/s) so it&#x27;s less optimized than the AMD64 code.
+
+2) AMD64 moves less data around and does more calculations. Sometimes it even abuses floating point instructions for integers.
+
+Could you drop in my sha256.o from <a href="http://ul.to/2ckndx" rel="nofollow noopener">http://ul.to/2ckndx</a> to cryptopp/obj/, delete test (not the .cpp!!) and recompile test using make -f makefile.unix test (take care it doesn&#x27;t recompile sha256.cpp to sha256.o). Then run test again. It should be using AMD64 code now. Maybe it works better...
+
+If not we&#x27;ve found that AMD64 is about four times faster than Intel at SSE2 integer vector arithmetic. Anyone working on a floating point SHA256 implementation? Wink</div></article><article class="msg" id="m40">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-03T02:04:22Z">3 August 2010, 02:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7131#msg7131" rel="nofollow noopener">original</a></span></header>
+<div class="t">SHA256 test started
+70293
+found solutions = 70293
+total hashes = 139463136
+total time = 222110 ms
+average speed: 627 khash/s
+
+So slightly better, but still far for good... As for AMD vs Intel, on my Mac, which is an intel i5, the performance boost was almost 100%, so maybe some compiler thing? I did have to remove the -arch i386 from makefile.osx to have it build on osx 10.6, but there&#x27;s no such flag on linux&#x27; g++ and I&#x27;m pretty sure the 64bit g++ will not compile 32bit anyway.</div></article><article class="msg" id="m41">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-03T02:21:50Z">3 August 2010, 02:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7134#msg7134" rel="nofollow noopener">original</a></span></header>
+<div class="t">i5 is a different architecture than Core2. Maybe SSE in Core2 is broken and was fixed in i5. That means the original client is close to the fastest you can get on Core2. It&#x27;s not a compiler thing. I compared the output for different architectures and -march=amdfam10 produces the fastest and smallest code. I would be surprised if a longer loop using the same instructions was faster on an older CPU.</div></article><article class="msg" id="m42">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-03T02:23:48Z">3 August 2010, 02:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7135#msg7135" rel="nofollow noopener">original</a></span></header>
+<div class="t">Well, kudos to you for trying. Now if I can just get your code merged with the old cuda version on my macbook pro, I&#x27;ll be a happy camper Smiley</div></article><article class="msg" id="m43">
+<header><b>vess</b><span class="muted"> · <time datetime="2010-08-03T20:36:04Z">3 August 2010, 20:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7325#msg7325" rel="nofollow noopener">original</a></span></header>
+<div class="t">Anyone able to send me a compiled version of this for windows? I&#x27;m interested to try it out on my AMD server.</div></article><article class="msg" id="m44">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-03T21:49:12Z">3 August 2010, 21:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7343#msg7343" rel="nofollow noopener">original</a></span></header>
+<div class="t">I kept running the patched version on 2 machines and the following has happened 5 times: bitcoind crashes and debug.log contains the following:</div><pre><code>proof-of-work found
+  hash: 00000000001c3530e42b2c7e1a20de01436882d0c1de0b63db6be8e6194255dd
+target: 00000000010c5a00000000000000000000000000000000000000000000000000
+CBlock(hash=00000000001c3530, ver=1, hashPrevBlock=0000000000253ab5, hashMerkleRoot=89541f, nTime=1280867359, nBits=1c010c5a, nNonce=3915571979, vtx=2)
+  CTransaction(hash=4fcb8e, ver=1, vin.size=1, vout.size=1, nLockTime=0)
+    CTxIn(COutPoint(000000, -1), coinbase 045a0c011c021b04)
+    CTxOut(nValue=50.00000000, scriptPubKey=0xCE5264238BAC29160CDC9C)
+  CTransaction(hash=8f2466, ver=1, vin.size=1, vout.size=1, nLockTime=0)
+    CTxIn(COutPoint(77aaae, 1), scriptSig=0x01F561A9044BF348CEF6F4)
+    CTxOut(nValue=5.00000000, scriptPubKey=OP_DUP OP_HASH160 0xB13A)
+  vMerkleTree: 4fcb8e 8f2466 89541f
+08/03/10 20:29 generated 50.00
+AddToWallet 4fcb8e  new
+AddToBlockIndex: new best=00000000001c3530  height=72112
+ProcessBlock: ACCEPTED
+sending: inv</code></pre><div class="t">I guess this means that a new block has been generated. But when I restart bitcoind the balance is still zero. When I ask for a list of generated blocks I get the following:</div><pre><code>$ ./bitcoind listgenerated
+[
+    {
+        &quot;value&quot; : 50.00000000000000,
+        &quot;maturesIn&quot; : -1,
+        &quot;accepted&quot; : false,
+        &quot;confirmations&quot; : 0,
+        &quot;genTime&quot; : 1280867359
+    }
+]</code></pre><div class="t">(listgenerated is from the patch at <a href="http://www.alloscomp.com/bitcoin/" rel="nofollow noopener">http://www.alloscomp.com/bitcoin/</a>)
+
+I guess this means that my client produced a block but it crashed before it was able to broadcast it.</div></article><article class="msg" id="m45">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-03T21:53:54Z">3 August 2010, 21:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7345#msg7345" rel="nofollow noopener">original</a></span></header>
+<div class="t">did you run it on 32 bit machines? which version of the patch did you use?</div></article><article class="msg" id="m46">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-03T21:56:47Z">3 August 2010, 21:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7347#msg7347" rel="nofollow noopener">original</a></span></header>
+<div class="t">r121 from the svn patched with the patch from the post #21 running on a Opteron/x86_64</div></article><article class="msg" id="m47">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-03T22:00:35Z">3 August 2010, 22:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7348#msg7348" rel="nofollow noopener">original</a></span></header>
+<div class="t">did it crash with a segfault and can you provide a backtrace (gdb bitcoind; run; bt)?</div></article><article class="msg" id="m48">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-03T23:51:28Z">3 August 2010, 23:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7368#msg7368" rel="nofollow noopener">original</a></span></header>
+<div class="t">I did segfault according to dmesg:</div><pre><code>bitcoind[2469]: segfault at 0 ip 00007fe92c5b3f32 sp 00007fff15e5f6b0 error 4 in libc-2.11.2.so[7fe92c57e000+150000]</code></pre><div class="t">I don&#x27;t have a stack trace.</div></article><article class="msg" id="m49">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-04T00:03:07Z">4 August 2010, 00:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7369#msg7369" rel="nofollow noopener">original</a></span></header>
+<div class="t">Did your kernel write a coredump and if so can you mail me the binary + coredump to tcatm@gawab.com &lt;mailto:tcatm@gawab.com&gt;?</div></article><article class="msg" id="m50">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-04T02:52:17Z">4 August 2010, 02:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7420#msg7420" rel="nofollow noopener">original</a></span></header>
+<div class="t">I modified bitcoind so that it doen&#x27;t fork to the background and now I can debug it with gdb. Next time it crashes gdb will give me a backtrace.</div></article><article class="msg" id="m51">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-04T03:00:49Z">4 August 2010, 03:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7421#msg7421" rel="nofollow noopener">original</a></span></header>
+<div class="t">GDB can also generate coredumps with the command generate-core-file. It might be useful to reconstruct the cause for the segfault. Please note, that the coredump might include your wallet so it&#x27;s probably a good idea to run bitcoind on a seperate datadir.</div></article><article class="msg" id="m52">
+<header><b>vess</b><span class="muted"> · <time datetime="2010-08-04T13:34:44Z">4 August 2010, 13:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7467#msg7467" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just a comment that this would be easier to test if difficulty were set to &#x27;1&#x27; in the client.</div></article><article class="msg" id="m53">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-04T13:43:26Z">4 August 2010, 13:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7470#msg7470" rel="nofollow noopener">original</a></span></header>
+<div class="t">Oh thats easy: Get two nodes on a seperate network and connect them using -connect=other_nodes_ip and a seperate/empty datadir.</div></article><article class="msg" id="m54">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-05T06:40:16Z">5 August 2010, 06:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7641#msg7641" rel="nofollow noopener">original</a></span></header>
+<div class="t">I had 5 machines running today and when I checked back 10 hours later, 4 of them had crashed, in the same way as with the previous times (i.e. right after they had generated a new block but before they broadcasted it).
+
+I created a tarball containing the coredump, backtrace, binary and the sources I used to compile it including the compiled object files. You can get it from here (link removed). Hope that helps.
+
+EDIT: Ok, I just noticed that both your patch and the patch for the getkhps rpc (from <a href="http://www.alloscomp.com/bitcoin/" rel="nofollow noopener">http://www.alloscomp.com/bitcoin/</a>) modify the function BitcoinMiner in main.cpp (which is where the segfault occurs) so this must be the reason for the seqfaults. I will try to test it without the getkhps patch.</div></article><article class="msg" id="m55">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-05T13:35:50Z">5 August 2010, 13:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7668#msg7668" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok I tried again, this time with no extra patches. I just cloned your git tree and compiled it. It still crashes. Here&#x27;s the stack backtrace:</div><pre><code>#0  0x00007ffff710b1b5 in raise () from /lib/libc.so.6
+#1  0x00007ffff710c5e0 in abort () from /lib/libc.so.6
+#2  0x00007ffff71042d1 in __assert_fail () from /lib/libc.so.6
+#3  0x00000000004628de in BitcoinMiner () at main.cpp:2741
+#4  0x0000000000462d70 in ThreadBitcoinMiner (parg=0x391e) at main.cpp:2518
+#5  0x00007ffff6ec3894 in start_thread () from /lib/libpthread.so.0
+#6  0x00007ffff71aa07d in clone () from /lib/libc.so.6</code></pre><div class="t">I have also uploaded here (link removed) the sources with the object files as well as the a core dump and the binary.</div></article><article class="msg" id="m56">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-05T14:06:14Z">5 August 2010, 14:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7669#msg7669" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s not a real crash this time. It&#x27;s an assert that fails in the miner. Most likely assert(hash == pblock-&gt;GetHash());. Can you run the test programm (explained in <a href="http://bitcointalk.org/index.php?topic=648.msg7096#msg7096" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=648.msg7096#msg7096</a>)? If it fails, can you change -march=amdfam10 back to -march=native in makefile.unix, rm cryptopp/obj/*.o and recompile everything? What cpu are you running it on?</div></article><article class="msg" id="m57">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-06T02:49:32Z">6 August 2010, 02:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7774#msg7774" rel="nofollow noopener">original</a></span></header>
+<div class="t">The test program does not fail</div><pre><code>$ ./test ../blocks.txt
+SHA256 test started
+70293
+found solutions = 70293
+total hashes = 139463136
+total time = 63250 ms
+average speed: 2204 khash/s</code></pre><div class="t">Does the test program run on a single thread?
+
+Finally, I have the same problem with both -march=amdfam10 and -march=native. The cpu is a Opteron 2374.</div></article><article class="msg" id="m58">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-06T03:38:53Z">6 August 2010, 03:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7779#msg7779" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yes, test is single threaded. Is there any output on stderr? From the coredumps I can tell that there must be some output.
+
+The problem seems to be hard to debug, though. Is the khash/s you get worth it anymore at 352 difficulty? I&#x27;m only getting a block once a week now. If you want to keep the block chain working, you should use the original client. If you want to gain lots of bitcoins you should use a GPU.</div></article><article class="msg" id="m59">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-06T06:50:03Z">6 August 2010, 06:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7796#msg7796" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 06, 2010, 03:38:53 AM</div><div class="t">&lt;snip&gt; Is the khash/s you get worth it anymore at 352 difficulty? I&#x27;m only getting a block once a week now. If you want to keep the block chain working, you should use the original client. If you want to gain lots of bitcoins you should use a GPU.</div></blockquote><div class="t">When the difficulty changed, the first machine in my group to generate a block was the slowest one running the stock client (800 MHz E-machine) and it hadn&#x27;t generated anything in over a week itself. So I guess every little bit helps, that&#x27;s so many are interested in getting this to work on their machine.</div></article><article class="msg" id="m60">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-06T09:00:52Z">6 August 2010, 09:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7814#msg7814" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s the output on stderr:</div><pre><code>bitcoind: main.cpp:2741: void BitcoinMiner(): Assertion `(&quot;break caught by CRITICAL_BLOCK!&quot;, !fcriticalblockonce)&#x27; failed.</code></pre></article><article class="msg" id="m61">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-06T10:59:18Z">6 August 2010, 10:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7831#msg7831" rel="nofollow noopener">original</a></span></header>
+<div class="t">Oh, that&#x27;s a part in the code my patch doesn&#x27;t touch. You could try to remove line 2741 (CRITICAL_BLOCK(cs_main)).</div></article><article class="msg" id="m62">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-06T11:37:20Z">6 August 2010, 11:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7838#msg7838" rel="nofollow noopener">original</a></span></header>
+<div class="t">CRITICAL_BLOCK is a macro that contains a for loop. The assertion failure indicates that break has been called inside the body of the loop. The only break statement in this block is in line 2762. In the original source file, there is no break statement in this critical block. I think you must remove lines 2759-2762. The is nothing like that in the original main.cpp.</div></article><article class="msg" id="m63">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-06T11:54:04Z">6 August 2010, 11:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg7841#msg7841" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks! That got probably mixed up when I patched the file with an older diff. I fixed the git: <a href="http://github.com/tcatm/bitcoin-cruncher" rel="nofollow noopener">http://github.com/tcatm/bitcoin-cruncher</a></div></article><article class="msg sat" id="m64">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-07T21:16:01Z">7 August 2010, 21:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8145#msg8145" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: impossible7 on August 06, 2010, 11:37:20 AM</div><div class="t">CRITICAL_BLOCK is a macro that contains a for loop. The assertion failure indicates that break has been called inside the body of the loop. The only break statement in this block is in line 2762. In the original source file, there is no break statement in this critical block. I think you must remove lines 2759-2762. The is nothing like that in the original main.cpp.</div></blockquote><div class="t">Sorry about that.  CRITICAL_BLOCK isn&#x27;t perfect.  You have to be careful not to break or continue out of it.  There&#x27;s an assert that catches and warns about break.  I can be criticized for using it, but the syntax would be so much more bloated and error prone without it.
+
+Is there a chance the SSE2 code is slow on Intel because of some quirk that could be worked around?  For instance, if something works but is slow if it&#x27;s not aligned, or thrashing the cache, or one type of instruction that&#x27;s really slow?  I&#x27;m not sure how available it is, but I think Intel used to have a profiler for profiling on a per instruction level.  I guess if tcatm doesn&#x27;t have a system with the slow processor to test with, there&#x27;s not much hope.  But it would be really nice if this was working on most CPUs.</div></article><article class="msg" id="m65">
+<header><b>impossible7</b><span class="muted"> · <time datetime="2010-08-07T22:51:07Z">7 August 2010, 22:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8167#msg8167" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can confirm that the patch now works just fine. I just generated my first 50 BTC with it. And since this patch doubles the speed I think it&#x27;s only fair if I donated half of that to tcatm.</div></article><article class="msg" id="m66">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-07T22:59:55Z">7 August 2010, 22:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8170#msg8170" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: impossible7 on August 07, 2010, 10:51:07 PM</div><div class="t">I can confirm that the patch now works just fine. I just generated my first 50 BTC with it. And since this patch doubles the speed I think it&#x27;s only fair if I donated half of that to tcatm.</div></blockquote><div class="t">That&#x27;s nice to hear. Thanks for the donation and thanks to everyone else who donated!</div></article><article class="msg" id="m67">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-08T06:37:13Z">8 August 2010, 06:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8215#msg8215" rel="nofollow noopener">original</a></span></header>
+<div class="t">I just tried again with the latest version from your github. I&#x27;m still seeing a drop in performance compared to the vanilla source.
+
+My system went from ~7100 to ~4200.
+
+This particular system has dual Intel Xeon Quad-Core CPUs (E5335) @ 2.00GHz.</div></article><article class="msg" id="m68">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-08T11:52:53Z">8 August 2010, 11:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8229#msg8229" rel="nofollow noopener">original</a></span></header>
+<div class="t">It seems to be like this: everything before Core2 will be slower, everything starting with Core2 is faster. Can anyone test the code on an older AMD64? I know there was a change in the way SSE2 instructions are executed in recent architectures.</div></article><article class="msg" id="m69">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-12T12:18:23Z">12 August 2010, 12:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8875#msg8875" rel="nofollow noopener">original</a></span></header>
+<div class="t">Can we implement a speed test, so different hashing engines are tried and the fastest is chosen?</div></article><article class="msg" id="m70">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-12T12:57:58Z">12 August 2010, 12:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8883#msg8883" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 08, 2010, 11:52:53 AM</div><div class="t">It seems to be like this: everything before Core2 will be slower, everything starting with Core2 is faster. Can anyone test the code on an older AMD64? I know there was a change in the way SSE2 instructions are executed in recent architectures.</div></blockquote><div class="t">My Core2Quad (Q6600) slowed down 50%, my i5 improved ~200%, thus I don&#x27;t think what you state is accurate. Maybe starting at some specific Core2?</div></article><article class="msg sat" id="m71">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T22:07:23Z">12 August 2010, 22:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8929#msg8929" rel="nofollow noopener">original</a></span></header>
+<div class="t">That big of a difference in speed, by a factor of 4 or 6, feels like it&#x27;s likely to be some quirky weak spot or instruction that the old chip is slow with.  Unless it&#x27;s a touted feature of the i5 that they made SSE2 six times faster.
+
+A quick summary:
+Xeon Quad        41% slower
+Core 2 Duo        55% slower
+Core 2 Duo        same (vess)
+Core 2 Quad      50% slower
+Core i5            200% faster (nelisky)
+Core i5            100% faster (vess)
+AMD Opteron    105% faster
+
+aceat64:
+My system went from ~7100 to ~4200.
+This particular system has dual Intel Xeon Quad-Core CPUs (E5335) @ 2.00GHz.
+
+impossible7:
+on an Intel Core 2 Duo T7300 running x86_64 linux it was 55% slower compared to the stock version (r121)
+
+nelisky:
+My Core2Quad (Q6600) slowed down 50%,
+my i5 improved ~200%,
+
+impossible7:
+on an AMD Opteron 2374 HE running x86_64 linux I got a 105% improvement (!)</div></article><article class="msg" id="m72">
+<header><b>vess</b><span class="muted"> · <time datetime="2010-08-12T22:09:50Z">12 August 2010, 22:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8930#msg8930" rel="nofollow noopener">original</a></span></header>
+<div class="t">My core i5 doubled in speed. My Core 2 Duo is the same speed. </div></article><article class="msg" id="m73">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-13T00:42:47Z">13 August 2010, 00:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8949#msg8949" rel="nofollow noopener">original</a></span></header>
+<div class="t">Would be interesting to try it out on older AMD64. There&#x27;s been a change that would explain it there:
+<a href="http://developer.amd.com/documentation/articles/pages/682007171.aspx" rel="nofollow noopener">http://developer.amd.com/documentation/articles/pages/682007171.aspx</a>
+
+Maybe Intel did something similiar without announcing it?</div></article><article class="msg" id="m74">
+<header><b>Cheater</b><span class="muted"> · <time datetime="2010-08-13T06:27:23Z">13 August 2010, 06:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg8973#msg8973" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ll just pitch in that Phenom and Phenom II processors doubled (roughly).
+No difference between the two that I can tell.
+
+Sorry I dont have anything older than Phenoms available right now.
+Might be able to access a old X2 in a week.</div></article><article class="msg" id="m75">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-13T21:10:33Z">13 August 2010, 21:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9105#msg9105" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just a question for whoever, trying to wrap up the information in this thread.
+
+Does this:
+
+• 1. Work on 32-bit?
+
+• 2. Patch the SVN (r130 as of current) or Git?
+
+• 3. Compile on CentOS?
+
+If anyone has any answers I would greatly appreciate them.</div></article><article class="msg" id="m76">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-13T21:27:14Z">13 August 2010, 21:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9109#msg9109" rel="nofollow noopener">original</a></span></header>
+<div class="t">1. Does not work on 32-bit (though that&#x27;s not a problem with the algorithm).
+2. Patch is against older SVN. There&#x27;s a git repo at <a href="http://github.com/tcatm/bitcoin-cruncher" rel="nofollow noopener">http://github.com/tcatm/bitcoin-cruncher</a>
+3. Compiles on every 64bit Linux.
+
+It&#x27;s not intended as a replacement for a standard client but for a dedicated bitcoinminer box. I&#x27;m planning a pluggable bitcoinminer someday. But at current difficulty it&#x27;s easier to work for bitcoins than finding faster ways for mining.</div></article><article class="msg" id="m77">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-13T22:27:25Z">13 August 2010, 22:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9121#msg9121" rel="nofollow noopener">original</a></span></header>
+<div class="t">I would really like to have this feature included in an official build  sometimes soon along with an internal speed test to determine which algorithm to use. You can always remove the speed test later once you figure out how to determine whether it will be faster or slower without running the speed test.</div></article><article class="msg" id="m78">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-13T23:17:51Z">13 August 2010, 23:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9128#msg9128" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 13, 2010, 09:27:14 PM</div><div class="t">1. Does not work on 32-bit (though that&#x27;s not a problem with the algorithm).
+2. Patch is against older SVN. There&#x27;s a git repo at <a href="http://github.com/tcatm/bitcoin-cruncher" rel="nofollow noopener">http://github.com/tcatm/bitcoin-cruncher</a>
+3. Compiles on every 64bit Linux.
+
+It&#x27;s not intended as a replacement for a standard client but for a dedicated bitcoinminer box. I&#x27;m planning a pluggable bitcoinminer someday. But at current difficulty it&#x27;s easier to work for bitcoins than finding faster ways for mining.</div></blockquote><div class="t">1. Do we know why it doesn&#x27;t work on 32bit? Is is it because it&#x27;s using 128bits and if so, would it help if we dropped it to 64?
+
+2. Thank you, I will look into implementing it on my 64bit systems.
+3. Excellent to hear. I&#x27;m looking forward to using it.
+
+I was planning on using it on a PE2650 dual proc Xeon @3.2GHz w/HT. I would really like to get this figured out to utilize that system. I am planning one as well. At current difficulty I would agree, except when the system needs to be run anyway and latency isn&#x27;t an issue.</div></article><article class="msg sat" id="m79">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-14T00:49:18Z">14 August 2010, 00:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9145#msg9145" rel="nofollow noopener">original</a></span></header>
+<div class="t">MinGW on Windows has trouble compiling it:
+
+g++ -c -mthreads -O2 -w -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH -I&quot;/boost&quot; -I&quot;/db/build_unix&quot; -I&quot;/openssl/include&quot; -I&quot;/wxwidgets/lib/gcc_lib/mswud&quot; -I&quot;/wxwidgets/include&quot; -msse2 -O3 -o obj/sha256.o sha256.cpp
+
+sha256.cpp: In function `long long int __vector__ Ch(long long int __vector__, long long int __vector__, long long int __vector__)&#x27;:
+sha256.cpp:31: internal compiler error: in perform_integral_promotions, at cp/typeck.c:1454
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See &lt;URL:<a href="http://www.mingw.org/bugs.shtml" rel="nofollow noopener">http://www.mingw.org/bugs.shtml</a>&gt; for instructions.
+make: *** [obj/sha256.o] Error 1</div></article><article class="msg" id="m80">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-14T00:50:28Z">14 August 2010, 00:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9146#msg9146" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sgtstein on August 13, 2010, 11:17:51 PM</div><div class="t">1. Do we know why it doesn&#x27;t work on 32bit? Is is it because it&#x27;s using 128bits and if so, would it help if we dropped it to 64?</div></blockquote><div class="t">No idea, maybe some alignment problem. Someone was trying to figure it out on IRC. I don&#x27;t have a SSE2 capable 32bit system. The additional registers in 64bit mode are also useful. I don&#x27;t know if your PE2650 has a recent enough CPU. You might experience a performance drop of 50% if the CPU is too old.
+
+Btw, did anyone with Intel CPU compare performance with Hyperthreading enabled/disabled? The SSE2 loop keeps the arithmetic units and pipelines pretty busy and I can imagine Hyperthreading might decrease performance.</div></article><article class="msg" id="m81">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-14T00:53:07Z">14 August 2010, 00:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9147#msg9147" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 14, 2010, 12:49:18 AM</div><div class="t">MinGW on Windows has trouble compiling it:
+
+g++ -c -mthreads -O2 -w -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH -I&quot;/boost&quot; -I&quot;/db/build_unix&quot; -I&quot;/openssl/include&quot; -I&quot;/wxwidgets/lib/gcc_lib/mswud&quot; -I&quot;/wxwidgets/include&quot; -msse2 -O3 -o obj/sha256.o sha256.cpp
+
+sha256.cpp: In function `long long int __vector__ Ch(long long int __vector__, long long int __vector__, long long int __vector__)&#x27;:
+sha256.cpp:31: internal compiler error: in perform_integral_promotions, at cp/typeck.c:1454
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See &lt;URL:<a href="http://www.mingw.org/bugs.shtml" rel="nofollow noopener">http://www.mingw.org/bugs.shtml</a>&gt; for instructions.
+make: *** [obj/sha256.o] Error 1</div></blockquote><div class="t">Looks like we&#x27;re triggering a compiler bug in the tree optimizer. Can you try to compile it -O0?</div></article><article class="msg sat" id="m82">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-14T04:22:29Z">14 August 2010, 04:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9159#msg9159" rel="nofollow noopener">original</a></span></header>
+<div class="t">If you haven&#x27;t already, try aligning thash.  It might matter.  Couldn&#x27;t hurt.</div><blockquote><div class=qh>Quote from: tcatm on August 14, 2010, 12:53:07 AM</div><div class="t">Looks like we&#x27;re triggering a compiler bug in the tree optimizer. Can you try to compile it -O0?</div></blockquote><div class="t">No help from -O0, same error.
+
+MinGW is GCC 3.4.5.  Probably the problem.
+
+I&#x27;ll see if I can get a newer version of MinGW.</div></article><article class="msg sat" id="m83">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-14T17:55:37Z">14 August 2010, 17:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9228#msg9228" rel="nofollow noopener">original</a></span></header>
+<div class="t">Got the test working on 32-bit with MinGW GCC 4.5.  Exactly 50% slower than stock with Core 2.</div></article><article class="msg sat" id="m84">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-14T22:06:13Z">14 August 2010, 22:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9278#msg9278" rel="nofollow noopener">original</a></span></header>
+<div class="t">MinGW GCC 4.5.0:
+Crypto++ doesn&#x27;t work, X86_SHA256_HashBlocks() never returns
+I only got 4-way working with test.cpp but not when called by BitcoinMiner
+
+MinGW GCC 4.4.1:
+Crypto++ works
+4-way SIGSEGV
+
+GCC is definitely not aligning __m128i.
+
+Even if we align our own __m128i variables, the compiler may decide to use a __m128i behind the scenes as a temporary variable.
+
+By making our __m128i variables aligned and changing these inlines to defines, I was able to get it to work on 4.4.1 with -O0 only:
+#define Ch(b, c, d)  ((b &amp; c) ^ (~b &amp; d))
+#define Maj(b, c, d)  ((b &amp; c) ^ (b &amp; d) ^ (c &amp; d))
+#define ROTR(x, n) (_mm_srli_epi32(x, n) | _mm_slli_epi32(x, 32 - n))
+#define SHR(x, n)  _mm_srli_epi32(x, n)
+
+But that&#x27;s with -O0.</div></article><article class="msg" id="m85">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-15T03:19:31Z">15 August 2010, 03:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9353#msg9353" rel="nofollow noopener">original</a></span></header>
+<div class="t">Well, reporting back.
+
+I got it to compile by specifying -msse and -msse2 to gcc when compiling. I first was hashing about 692kh/s (50% of SVN r130[1400kh/s]) but recompiled and am now receiving about ~1120kh/s. This is currently the equivalent of using both of my CPUs without HyperThreading, though I can verify that it IS using HyperThreading. With HyperThreading turned off, I get ~1350kh/s. Pretty close to the stock build.
+
+Also, does the git contain the patched and updated code?</div><pre><code>// SVN r130 Using HT.
+08/14/10 19:02 hashmeter   4 CPUs   1392 khash/s
+08/14/10 19:32 hashmeter   4 CPUs   1387 khash/s
+08/14/10 20:02 hashmeter   4 CPUs   1386 khash/s
+08/14/10 20:32 hashmeter   4 CPUs   1380 khash/s
+08/14/10 21:02 hashmeter   4 CPUs   1363 khash/s
+// With -msse -msse2, first run. Using HT.
+08/14/10 21:32 hashmeter   4 CPUs    692 khash/s
+08/14/10 22:06 hashmeter   4 CPUs   1011 khash/s
+08/14/10 22:11 hashmeter   4 CPUs   1104 khash/s
+08/14/10 22:16 hashmeter   4 CPUs   1120 khash/s
+// NOT using HT.
+08/14/10 22:21 hashmeter   2 CPUs   1359 khash/s
+08/14/10 22:26 hashmeter   2 CPUs   1340 khash/s</code></pre><div class="t">Just wanted to tell my story and help with whatever information I could.</div></article><article class="msg sat" id="m86">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T03:40:29Z">15 August 2010, 03:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=648.msg9359#msg9359" rel="nofollow noopener">original</a></span></header>
+<div class="t">On both MinGW GCC 4.4.1 and 4.5.0 I have it working with test.cpp but SIGSEGV when called by BitcoinMiner.  So now it doesn&#x27;t look like it&#x27;s the version of GCC, it&#x27;s something else, maybe just the luck of how the stack is aligned.
+
+I have it working fine on GCC 4.3.3 on Ubuntu 32-bit.
+
+I found the problem with Crypto++ on MinGW 4.5.0.  Here&#x27;s the patch for that:</div><pre><code>--- \old\sha.cpp Mon Jul 26 13:31:11 2010
++++ ew\sha.cpp Sat Aug 14 20:21:08 2010
+@@ -336,7 +336,7 @@
+  ROUND(14, 0, eax, ecx, edi, edx)
+  ROUND(15, 0, ecx, eax, edx, edi)
+ 
+- ASL(1)
++    ASL(label1)   // Bitcoin: fix for MinGW GCC 4.5
+  AS2(add WORD_REG(si), 4*16)
+  ROUND(0, 1, eax, ecx, edi, edx)
+  ROUND(1, 1, ecx, eax, edx, edi)
+@@ -355,7 +355,7 @@
+  ROUND(14, 1, eax, ecx, edi, edx)
+  ROUND(15, 1, ecx, eax, edx, edi)
+  AS2( cmp  WORD_REG(si), K_END)
+- ASJ( jne, 1, b)
++    ASJ(    jne,    label1,  )   // Bitcoin: fix for MinGW GCC 4.5
+ 
+  AS2( mov  WORD_REG(dx), DATA_SAVE)
+  AS2( add  WORD_REG(dx), 64)</code></pre></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p151-a-proposal-for-a-semi-automated-escrow-mechanism/">← A proposal for a semi-automated Escrow mechanism</a><a rel="next" href="../../conversations/p153-webpage-idea-next-predicted-difficulty-change/">Webpage idea: Next predicted difficulty change →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

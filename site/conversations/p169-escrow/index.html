@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Escrow – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 7 August 2010: Here&#x27;s an outline of the kind of escrow transaction that&#x27;s possible in software. This is not implemented and I probably…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p169-escrow/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Escrow – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 7 August 2010: Here&#x27;s an outline of the kind of escrow transaction that&#x27;s possible in software. This is not implemented and I probably…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p169-escrow/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Escrow – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 7 August 2010: Here&#x27;s an outline of the kind of escrow transaction that&#x27;s possible in software. This is not implemented and I probably…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Escrow", "url": "https://satoshimail.pages.dev/conversations/p169-escrow/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-07T20:13:52Z", "text": "Here's an outline of the kind of escrow transaction that's possible in software. This is not implemented and I probably won't have time to implement it soon, but just to let you know what's possible. The basic escrow: The buyer commits a payment to escrow. The seller receives a transaction with the money in escrow, but he can't spend it until the buyer unlocks it. The buyer can release the payment at any time after that, which could be never. This does not allow the buyer to take the money back, but it does give him the option to burn the money out of spite by never releasing it. The seller has the option to release the money back to the buyer. While this system does not guarantee the parties against loss, it takes the profit out of cheating. If the seller doesn't send the goods, he doesn't get paid. The buyer would still be out the money, but at least the seller has no monetary motivation to stiff him. The buyer can't benefit by failing to pay. He can't get the escrow money back. He can't fail to pay due to lack of funds. The seller can see that the funds are committed to his key and can't be sent to anyone else. Now, an economist would say that a fraudulent seller could start negotiating, such as \"release the money and I'll give you half of it back\", but at that point, there would be so little trust and so much spite that negotiation is unlikely. Why on earth would the fraudster keep his word and send you half if he's already breaking his word to steal it? I think for modest amounts, almost everyone would refuse on principle alone.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Tilka"}, "datePublished": "2010-08-07T21:23:28Z", "text": "Cryptography at its finest Cool Could you explain how this would work on a technical basis?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-07T21:25:40Z", "text": "Buyer not having recourse except burning the money will limit the utility, I think."}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-08T02:55:59Z", "text": "Perhaps we could work in a way to do arbitration. If both the buyer and seller agree, the money can be diverted to a 3rd party. That person could then arbitrate and either return the money to the buyer, give it to seller or steal it (obviously you'd want to choose a trustworthy arbitrator)."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-08T03:58:03Z", "text": "That's how online escrow operates today. Buyer and seller agree to let a 3rd party physically hold the money. Buyer and seller both agree to rules that the neutral 3rd party will follow, for transaction resolution / redemption. The neutral third party is the one who disburses funds to one party or the other. This is a pretty decent overview: https://www.escrow.com/solutions/escrow/process.asp Some people might choose to use the bitcoin-specific signed escrow method... but I think the \"burn the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-08T05:49:44Z", "text": "I like Olipro's suggestion is this thread: http://bitcointalk.org/index.php?topic=645.0 The buyer and seller both an equal amount of bitcoins into escrow and the seller can't retrieve both sets until the buyer signs off on it. Optionally if both parties agree the funds are returned to their original owners or both sets are transfered to an agreed upon arbitrator. I deviate from his suggestion that the arbitrator only have control over the buyers half, I think they should have control of both…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nimnul"}, "datePublished": "2010-08-10T17:51:49Z", "text": "The Satoshi solution is good, because if customer can take money back, it will be a big problem to sellers. See current situation with internet credit card payments and chargebacks. Chargebacks are major PITA for sellers, bitcoin must avoid that at all cost Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-10T18:53:57Z", "text": "Ask some real-world business owners if they want to tell their customers about the chance of the money being lost forever, unrecoverable by either party."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-10T20:20:36Z", "text": "Regardless of what the technical options are, I think that an escrow will always need to be, by definition, a trusted entity. I can see the automated workflow being easy enough when things go well: - Buyer sends btc to escrow, stating the recipient address - Seller sees btc in escrow, marked to send to his address - Buyer can release funds to seller - Escrow will automatically do so after x days - Both parties can open a complaint And that's all I would automate. When things go bad, both…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-11T01:30:02Z", "text": "That makes it sound like it might somehow get lost and the parties can't get it even if they want to cooperate. When you pay for something up front, you can't get it back either. Consumers seem comfortable with that. It's no worse than that. Either party always has the option to release it to the other. Then you must also be against the common system of payment up front, where the customer loses. Payment up front: customer loses, and the thief gets the money. Simple escrow: customer loses, but…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Escrow", "item": "https://satoshimail.pages.dev/conversations/p169-escrow/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p169">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Escrow</span></div></nav>
+<main class="in">
+<h1>Escrow</h1>
+<p class="lead">BitcoinTalk forum · 10 messages · from 7 August 2010 · with Satoshi Nakamoto, Tilka, aceat64, jgarzik, nelisky, nimnul</p>
+<p class="actions"><a class="btn" href="../../#t-p169">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/169/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-07T20:13:52Z">7 August 2010, 20:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8140#msg8140" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s an outline of the kind of escrow transaction that&#x27;s possible in software.  This is not implemented and I probably won&#x27;t have time to implement it soon, but just to let you know what&#x27;s possible.
+
+The basic escrow: The buyer commits a payment to escrow. The seller receives a transaction with the money in escrow, but he can&#x27;t spend it until the buyer unlocks it. The buyer can release the payment at any time after that, which could be never. This does not allow the buyer to take the money back, but it does give him the option to burn the money out of spite by never releasing it. The seller has the option to release the money back to the buyer.
+
+While this system does not guarantee the parties against loss, it takes the profit out of cheating.
+
+If the seller doesn&#x27;t send the goods, he doesn&#x27;t get paid. The buyer would still be out the money, but at least the seller has no monetary motivation to stiff him.
+
+The buyer can&#x27;t benefit by failing to pay. He can&#x27;t get the escrow money back. He can&#x27;t fail to pay due to lack of funds. The seller can see that the funds are committed to his key and can&#x27;t be sent to anyone else.
+
+Now, an economist would say that a fraudulent seller could start negotiating, such as &quot;release the money and I&#x27;ll give you half of it back&quot;, but at that point, there would be so little trust and so much spite that negotiation is unlikely. Why on earth would the fraudster keep his word and send you half if he&#x27;s already breaking his word to steal it? I think for modest amounts, almost everyone would refuse on principle alone.</div></article><article class="msg" id="m1">
+<header><b>Tilka</b><span class="muted"> · <time datetime="2010-08-07T21:23:28Z">7 August 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8147#msg8147" rel="nofollow noopener">original</a></span></header>
+<div class="t">Cryptography at its finest Cool
+
+Could you explain how this would work on a technical basis?</div></article><article class="msg" id="m2">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-07T21:25:40Z">7 August 2010, 21:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8148#msg8148" rel="nofollow noopener">original</a></span></header>
+<div class="t">Buyer not having recourse except burning the money will limit the utility, I think.</div></article><article class="msg" id="m3">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-08T02:55:59Z">8 August 2010, 02:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8189#msg8189" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 07, 2010, 09:25:40 PM</div><div class="t">Buyer not having recourse except burning the money will limit the utility, I think.</div></blockquote><div class="t">Perhaps we could work in a way to do arbitration. If both the buyer and seller agree, the money can be diverted to a 3rd party. That person could then arbitrate and either return the money to the buyer, give it to seller or steal it (obviously you&#x27;d want to choose a trustworthy arbitrator).</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-08T03:58:03Z">8 August 2010, 03:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8204#msg8204" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: aceat64 on August 08, 2010, 02:55:59 AM</div><div class="t">&gt; Quote from: jgarzik on August 07, 2010, 09:25:40 PM
+&gt; Buyer not having recourse except burning the money will limit the utility, I think.
+
+Perhaps we could work in a way to do arbitration. If both the buyer and seller agree, the money can be diverted to a 3rd party. That person could then arbitrate and either return the money to the buyer, give it to seller or steal it (obviously you&#x27;d want to choose a trustworthy arbitrator).</div></blockquote><div class="t">That&#x27;s how online escrow operates today.  Buyer and seller agree to let a 3rd party physically hold the money.  Buyer and seller both agree to rules that the neutral 3rd party will follow, for transaction resolution / redemption.  The neutral third party is the one who disburses funds to one party or the other.
+
+This is a pretty decent overview: <a href="https://www.escrow.com/solutions/escrow/process.asp" rel="nofollow noopener">https://www.escrow.com/solutions/escrow/process.asp</a>
+
+Some people might choose to use the bitcoin-specific signed escrow method...  but I think the &quot;burn the money&quot; recourse serves as a incentive to avoid bitcoin escrow entirely, rather than an incentive to use bitcoin escrow honestly.</div></article><article class="msg" id="m5">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-08T05:49:44Z">8 August 2010, 05:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8213#msg8213" rel="nofollow noopener">original</a></span></header>
+<div class="t">I like Olipro&#x27;s suggestion is this thread: <a href="http://bitcointalk.org/index.php?topic=645.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=645.0</a>
+
+The buyer and seller both an equal amount of bitcoins into escrow and the seller can&#x27;t retrieve both sets until the buyer signs off on it. Optionally if both parties agree the funds are returned to their original owners or both sets are transfered to an agreed upon arbitrator. I deviate from his suggestion that the arbitrator only have control over the buyers half, I think they should have control of both so that both parties still have a bitcoin stake in the issue.</div></article><article class="msg" id="m6">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-10T17:51:49Z">10 August 2010, 17:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8561#msg8561" rel="nofollow noopener">original</a></span></header>
+<div class="t">The Satoshi solution is good, because if customer can take money back, it will be a big problem to sellers. See current situation with internet credit card payments and chargebacks. Chargebacks are major PITA for sellers, bitcoin must avoid that at all cost Smiley</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-10T18:53:57Z">10 August 2010, 18:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8566#msg8566" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nimnul on August 10, 2010, 05:51:49 PM</div><div class="t">The Satoshi solution is good, because if customer can take money back, it will be a big problem to sellers. See current situation with internet credit card payments and chargebacks. Chargebacks are major PITA for sellers, bitcoin must avoid that at all cost Smiley</div></blockquote><div class="t">Ask some real-world business owners if they want to tell their customers about the chance of the money being lost forever, unrecoverable by either party.</div></article><article class="msg" id="m8">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-10T20:20:36Z">10 August 2010, 20:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8585#msg8585" rel="nofollow noopener">original</a></span></header>
+<div class="t">Regardless of what the technical options are, I think that an escrow will always need to be, by definition, a trusted entity. I can see the automated workflow being easy enough when things go well:
+
+  - Buyer sends btc to escrow, stating the recipient address
+  - Seller sees btc in escrow, marked to send to his address
+  - Buyer can release funds to seller
+  - Escrow will automatically do so after x days
+  - Both parties can open a complaint
+
+And that&#x27;s all I would automate. When things go bad, both parties should have a fee to pay to the escrow (that fee may be paid in advance to open account there?) so everyone looses something. Then the escrow will just have to mediate.
+
+Because there&#x27;s a fee *and* a human intermediary, the chances of successful fraud will probably not be economically interesting in the long run. Someone already trusted would make the ideal person for this, and maybe for a small fee some of us &#x27;common guys&#x27; could help assert allegations from either side, if we are local to them.
+
+But the money burning solution, while great at preventing economically viable fraud, does nothing to prevent revenge and actually makes everyone loose if one side is dishonest. I would certainly not endorse that.</div></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-11T01:30:02Z">11 August 2010, 01:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=750.msg8649#msg8649" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 10, 2010, 06:53:57 PM</div><div class="t">Ask some real-world business owners if they want to tell their customers about the chance of the money being lost forever, unrecoverable by either party.</div></blockquote><div class="t">That makes it sound like it might somehow get lost and the parties can&#x27;t get it even if they want to cooperate.
+
+When you pay for something up front, you can&#x27;t get it back either.  Consumers seem comfortable with that.  It&#x27;s no worse than that.
+
+Either party always has the option to release it to the other.</div><blockquote><div class=qh>Quote from: nelisky on August 10, 2010, 08:20:36 PM</div><div class="t">But the money burning solution, while great at preventing economically viable fraud, does nothing to prevent revenge and actually makes everyone loose if one side is dishonest. I would certainly not endorse that.</div></blockquote><div class="t">Then you must also be against the common system of payment up front, where the customer loses.
+
+Payment up front: customer loses, and the thief gets the money.
+Simple escrow: customer loses, but the thief doesn&#x27;t get the money either.
+
+Are you guys saying payment up front is better, because at least the thief gets the money, so at least someone gets it?
+
+Imagine someone stole something from you.  You can&#x27;t get it back, but if you could, if it had a kill switch that could be remote triggered, would you do it?  Would it be a good thing for thieves to know that everything you own has a kill switch and if they steal it, it&#x27;ll be useless to them, although you still lose it too?  If they give it back, you can re-activate it.
+
+Imagine if gold turned to lead when stolen.  If the thief gives it back, it turns to gold again.
+
+It still seems to me the problem may be one of presenting it the right way.  For one thing, not being so blunt about &quot;money burning&quot; for the purposes of game theory discussion.  The money is never truly burned.  You have the option to release it at any time forever.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p168-latency-and-locality/">← latency and locality</a><a rel="next" href="../../conversations/p170-bitcoin-generation-broken-in-0-3-8-64-bit/">bitcoin generation broken in 0.3.8?  (64-bit) →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

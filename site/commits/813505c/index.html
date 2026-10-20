@@ -1,0 +1,1538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>added a subset of Crypto++ 5.6.0… (r114) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/813505c/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="added a subset of Crypto++ 5.6.0… (r114) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/813505c/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="added a subset of Crypto++ 5.6.0… (r114) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3, thanks BlackEye for figuring out the alignment problem", "url": "https://satoshimail.pages.dev/commits/813505c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-27T18:14:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/813505cc1313b7e191b787f93e573acb91fa1464"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "added a subset of Crypto++ 5.6.0 with…", "item": "https://satoshimail.pages.dev/commits/813505c/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c813505cc13">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">added a subset of Crypto++ 5.6.0 with…</span></div></nav>
+<main class="in">
+<h1>added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3, thanks BlackEye for figuring out the alignment problem</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 27 July 2010 · SVN r114 · release v0.3.10 · 23 files, +6,085 −893</p>
+<p class="actions"><a class="btn" href="../../#t-c813505cc13">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/813505cc1313b7e191b787f93e573acb91fa1464" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>cryptopp/License.txt</code></summary><pre><code>@@ -0,0 +1,67 @@
++Compilation Copyright (c) 1995-2009 by Wei Dai.  All rights reserved.
++This copyright applies only to this software distribution package 
++as a compilation, and does not imply a copyright on any particular 
++file in the package.
++
++The following files are copyrighted by their respective original authors,
++and their use is subject to additional licenses included in these files.
++
++mars.cpp - Copyright 1998 Brian Gladman.
++
++All other files in this compilation are placed in the public domain by
++Wei Dai and other contributors.
++
++I would like to thank the following authors for placing their works into
++the public domain:
++
++Joan Daemen - 3way.cpp
++Leonard Janke - cast.cpp, seal.cpp
++Steve Reid - cast.cpp
++Phil Karn - des.cpp
++Andrew M. Kuchling - md2.cpp, md4.cpp
++Colin Plumb - md5.cpp
++Seal Woods - rc6.cpp
++Chris Morgan - rijndael.cpp
++Paulo Baretto - rijndael.cpp, skipjack.cpp, square.cpp
++Richard De Moliner - safer.cpp
++Matthew Skala - twofish.cpp
++Kevin Springle - camellia.cpp, shacal2.cpp, ttmac.cpp, whrlpool.cpp, ripemd.cpp
++
++Permission to use, copy, modify, and distribute this compilation for
++any purpose, including commercial applications, is hereby granted
++without fee, subject to the following restrictions:
++
++1. Any copy or modification of this compilation in any form, except
++in object code form as part of an application software, must include
++the above copyright notice and this license.
++
++2. Users of this software agree that any modification or extension
++they provide to Wei Dai will be considered public domain and not
++copyrighted unless it includes an explicit copyright notice.
++
++3. Wei Dai makes no warranty or representation that the operation of the
++software in this compilation will be error-free, and Wei Dai is under no
++obligation to provide any services, by way of maintenance, update, or
++otherwise.  THE SOFTWARE AND ANY DOCUMENTATION ARE PROVIDED &quot;AS IS&quot;
++WITHOUT EXPRESS OR IMPLIED WARRANTY INCLUDING, BUT NOT LIMITED TO,
++THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++PURPOSE. IN NO EVENT WILL WEI DAI OR ANY OTHER CONTRIBUTOR BE LIABLE FOR
++DIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES, EVEN IF
++ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
++
++4. Users will not use Wei Dai or any other contributor&#x27;s name in any 
++publicity or advertising, without prior written consent in each case.
++
++5. Export of this software from the United States may require a
++specific license from the United States Government.  It is the
++responsibility of any person or organization contemplating export
++to obtain such a license before exporting.
++
++6. Certain parts of this software may be protected by patents.  It
++is the users&#x27; responsibility to obtain the appropriate
++licenses before using those parts.
++
++If this compilation is used in object code form in an application
++software, acknowledgement of the author is not required but would be
++appreciated. The contribution of any useful modifications or extensions
++to Wei Dai is not required but would also be appreciated.</code></pre></details><details><summary><code>cryptopp/Readme.txt</code></summary><pre><code>@@ -0,0 +1,429 @@
++Crypto++: a C++ Class Library of Cryptographic Schemes
++Version 5.6.0 (3/15/2009)
++
++Crypto++ Library is a free C++ class library of cryptographic schemes.
++Currently the library contains the following algorithms:
++
++                   algorithm type  name
++
++ authenticated encryption schemes  GCM, CCM, EAX
++ 
++        high speed stream ciphers  Panama, Sosemanuk, Salsa20, XSalsa20
++
++           AES and AES candidates  AES (Rijndael), RC6, MARS, Twofish, Serpent,
++                                   CAST-256
++
++                                   IDEA, Triple-DES (DES-EDE2 and DES-EDE3),
++              other block ciphers  Camellia, SEED, RC5, Blowfish, TEA, XTEA,
++                                   Skipjack, SHACAL-2
++
++  block cipher modes of operation  ECB, CBC, CBC ciphertext stealing (CTS),
++                                   CFB, OFB, counter mode (CTR)
++
++     message authentication codes  VMAC, HMAC, CMAC, CBC-MAC, DMAC, 
++                                   Two-Track-MAC
++
++                                   SHA-1, SHA-2 (SHA-224, SHA-256, SHA-384, and
++                   hash functions  SHA-512), Tiger, WHIRLPOOL, RIPEMD-128,
++                                   RIPEMD-256, RIPEMD-160, RIPEMD-320
++
++                                   RSA, DSA, ElGamal, Nyberg-Rueppel (NR),
++          public-key cryptography  Rabin, Rabin-Williams (RW), LUC, LUCELG,
++                                   DLIES (variants of DHAES), ESIGN
++
++   padding schemes for public-key  PKCS#1 v2.0, OAEP, PSS, PSSR, IEEE P1363
++                          systems  EMSA2 and EMSA5
++
++                                   Diffie-Hellman (DH), Unified Diffie-Hellman
++            key agreement schemes  (DH2), Menezes-Qu-Vanstone (MQV), LUCDIF,
++                                   XTR-DH
++
++      elliptic curve cryptography  ECDSA, ECNR, ECIES, ECDH, ECMQV
++
++          insecure or obsolescent  MD2, MD4, MD5, Panama Hash, DES, ARC4, SEAL
++algorithms retained for backwards  3.0, WAKE, WAKE-OFB, DESX (DES-XEX3), RC2,
++     compatibility and historical  SAFER, 3-WAY, GOST, SHARK, CAST-128, Square
++                            value
++
++Other features include:
++
++  * pseudo random number generators (PRNG): ANSI X9.17 appendix C, RandomPool
++  * password based key derivation functions: PBKDF1 and PBKDF2 from PKCS #5,
++    PBKDF from PKCS #12 appendix B
++  * Shamir&#x27;s secret sharing scheme and Rabin&#x27;s information dispersal algorithm
++    (IDA)
++  * fast multi-precision integer (bignum) and polynomial operations
++  * finite field arithmetics, including GF(p) and GF(2^n)
++  * prime number generation and verification
++  * useful non-cryptographic algorithms
++      + DEFLATE (RFC 1951) compression/decompression with gzip (RFC 1952) and
++        zlib (RFC 1950) format support
++      + hex, base-32, and base-64 coding/decoding
++      + 32-bit CRC and Adler32 checksum
++  * class wrappers for these operating system features (optional):
++      + high resolution timers on Windows, Unix, and Mac OS
++      + Berkeley and Windows style sockets
++      + Windows named pipes
++      + /dev/random, /dev/urandom, /dev/srandom
++      + Microsoft&#x27;s CryptGenRandom on Windows
++  * A high level interface for most of the above, using a filter/pipeline
++    metaphor
++  * benchmarks and validation testing
++  * x86, x86-64 (x64), MMX, and SSE2 assembly code for the most commonly used
++    algorithms, with run-time CPU feature detection and code selection
++  * some versions are available in FIPS 140-2 validated form
++
++You are welcome to use it for any purpose without paying me, but see
++License.txt for the fine print.
++
++The following compilers are supported for this release. Please visit
++http://www.cryptopp.com the most up to date build instructions and porting notes.
++
++  * MSVC 6.0 - 2008
++  * GCC 3.3 - 4.3
++  * C++Builder 2009
++  * Intel C++ Compiler 9 - 11
++  * Sun Studio 12 (CC 5.9)
++
++*** Important Usage Notes ***
++
++1. If a constructor for A takes a pointer to an object B (except primitive
++types such as int and char), then A owns B and will delete B at A&#x27;s
++destruction.  If a constructor for A takes a reference to an object B,
++then the caller retains ownership of B and should not destroy it until
++A no longer needs it. 
++
++2. Crypto++ is thread safe at the class level. This means you can use
++Crypto++ safely in a multithreaded application, but you must provide
++synchronization when multiple threads access a common Crypto++ object.
++
++*** MSVC-Specific Information ***
++
++On Windows, Crypto++ can be compiled into 3 forms: a static library
++including all algorithms, a DLL with only FIPS Approved algorithms, and
++a static library with only algorithms not in the DLL.
++(FIPS Approved means Approved according to the FIPS 140-2 standard.)
++The DLL may be used by itself, or it may be used together with the second
++form of the static library. MSVC project files are included to build
++all three forms, and sample applications using each of the three forms
++are also included.
++
++To compile Crypto++ with MSVC, open the &quot;cryptest.dsw&quot; (for MSVC 6 and MSVC .NET 
++2003) or &quot;cryptest.sln&quot; (for MSVC .NET 2005) workspace file and build one or 
++more of the following projects:
++
++cryptdll - This builds the DLL. Please note that if you wish to use Crypto++
++  as a FIPS validated module, you must use a pre-built DLL that has undergone
++  the FIPS validation process instead of building your own.
++dlltest - This builds a sample application that only uses the DLL.
++cryptest Non-DLL-Import Configuration - This builds the full static library
++  along with a full test driver.
++cryptest DLL-Import Configuration - This builds a static library containing
++  only algorithms not in the DLL, along with a full test driver that uses
++  both the DLL and the static library.
++
++To use the Crypto++ DLL in your application, #include &quot;dll.h&quot; before including
++any other Crypto++ header files, and place the DLL in the same directory as
++your .exe file. dll.h includes the line #pragma comment(lib, &quot;cryptopp&quot;)
++so you don&#x27;t have to explicitly list the import library in your project
++settings. To use a static library form of Crypto++, specify it as
++an additional library to link with in your project settings.
++In either case you should check the compiler options to
++make sure that the library and your application are using the same C++
++run-time libraries and calling conventions.
++
++*** DLL Memory Management ***
++
++Because it&#x27;s possible for the Crypto++ DLL to delete objects allocated 
++by the calling application, they must use the same C++ memory heap. Three 
++methods are provided to achieve this.
++1.  The calling application can tell Crypto++ what heap to use. This method 
++    is required when the calling application uses a non-standard heap.
++2.  Crypto++ can tell the calling application what heap to use. This method 
++    is required when the calling application uses a statically linked C++ Run 
++    Time Library. (Method 1 does not work in this case because the Crypto++ DLL 
++    is initialized before the calling application&#x27;s heap is initialized.)
++3.  Crypto++ can automatically use the heap provided by the calling application&#x27;s 
++    dynamically linked C++ Run Time Library. The calling application must
++    make sure that the dynamically linked C++ Run Time Library is initialized
++    before Crypto++ is loaded. (At this time it is not clear if it is possible
++    to control the order in which DLLs are initialized on Windows 9x machines,
++    so it might be best to avoid using this method.)
++
++When Crypto++ attaches to a new process, it searches all modules loaded 
++into the process space for exported functions &quot;GetNewAndDeleteForCryptoPP&quot; 
++and &quot;SetNewAndDeleteFromCryptoPP&quot;. If one of these functions is found, 
++Crypto++ uses methods 1 or 2, respectively, by calling the function. 
++Otherwise, method 3 is used. 
++
++*** GCC-Specific Information ***
++
++A makefile is included for you to compile Crypto++ with GCC. Make sure
++you are using GNU Make and GNU ld. The make process will produce two files,
++libcryptopp.a and cryptest.exe. Run &quot;cryptest.exe v&quot; for the validation
++suite.
++
++*** Documentation and Support ***
++
++Crypto++ is documented through inline comments in header files, which are
++processed through Doxygen to produce an HTML reference manual. You can find
++a link to the manual from http://www.cryptopp.com. Also at that site is
++the Crypto++ FAQ, which you should browse through before attempting to 
++use this library, because it will likely answer many of questions that
++may come up.
++
++If you run into any problems, please try the Crypto++ mailing list.
++The subscription information and the list archive are available on
++http://www.cryptopp.com. You can also email me directly by visiting
++http://www.weidai.com, but you will probably get a faster response through
++the mailing list.
++
++*** History ***
++
++1.0 - First public release.  Withdrawn at the request of RSA DSI.
++    - included Blowfish, BBS, DES, DH, Diamond, DSA, ElGamal, IDEA,
++      MD5, RC4, RC5, RSA, SHA, WAKE, secret sharing, DEFLATE compression
++    - had a serious bug in the RSA key generation code.
++
++1.1 - Removed RSA, RC4, RC5
++    - Disabled calls to RSAREF&#x27;s non-public functions
++    - Minor bugs fixed
++
++2.0 - a completely new, faster multiprecision integer class
++    - added MD5-MAC, HAVAL, 3-WAY, TEA, SAFER, LUC, Rabin, BlumGoldwasser,
++      elliptic curve algorithms
++    - added the Lucas strong probable primality test
++    - ElGamal encryption and signature schemes modified to avoid weaknesses
++    - Diamond changed to Diamond2 because of key schedule weakness
++    - fixed bug in WAKE key setup
++    - SHS class renamed to SHA
++    - lots of miscellaneous optimizations
++
++2.1 - added Tiger, HMAC, GOST, RIPE-MD160, LUCELG, LUCDIF, XOR-MAC,
++      OAEP, PSSR, SHARK
++    - added precomputation to DH, ElGamal, DSA, and elliptic curve algorithms
++    - added back RC5 and a new RSA
++    - optimizations in elliptic curves over GF(p)
++    - changed Rabin to use OAEP and PSSR
++    - changed many classes to allow copy constructors to work correctly
++    - improved exception generation and handling
++
++2.2 - added SEAL, CAST-128, Square
++    - fixed bug in HAVAL (padding problem)
++    - fixed bug in triple-DES (decryption order was reversed)
++    - fixed bug in RC5 (couldn&#x27;t handle key length not a multiple of 4)
++    - changed HMAC to conform to RFC-2104 (which is not compatible
++      with the original HMAC)
++    - changed secret sharing and information dispersal to use GF(2^32)
++      instead of GF(65521)
++    - removed zero knowledge prover/verifier for graph isomorphism
++    - removed several utility classes in favor of the C++ standard library
++
++2.3 - ported to EGCS
++    - fixed incomplete workaround of min/max conflict in MSVC
++
++3.0 - placed all names into the &quot;CryptoPP&quot; namespace
++    - added MD2, RC2, RC6, MARS, RW, DH2, MQV, ECDHC, CBC-CTS
++    - added abstract base classes PK_SimpleKeyAgreementDomain and
++      PK_AuthenticatedKeyAgreementDomain
++    - changed DH and LUCDIF to implement the PK_SimpleKeyAgreementDomain
++      interface and to perform domain parameter and key validation
++    - changed interfaces of PK_Signer and PK_Verifier to sign and verify
++      messages instead of message digests
++    - changed OAEP to conform to PKCS#1 v2.0
++    - changed benchmark code to produce HTML tables as output
++    - changed PSSR to track IEEE P1363a
++    - renamed ElGamalSignature to NR and changed it to track IEEE P1363
++    - renamed ECKEP to ECMQVC and changed it to track IEEE P1363
++    - renamed several other classes for clarity
++    - removed support for calling RSAREF
++    - removed option to compile old SHA (SHA-0)
++    - removed option not to throw exceptions
++
++3.1 - added ARC4, Rijndael, Twofish, Serpent, CBC-MAC, DMAC
++    - added interface for querying supported key lengths of symmetric ciphers
++      and MACs
++    - added sample code for RSA signature and verification
++    - changed CBC-CTS to be compatible with RFC 2040
++    - updated SEAL to version 3.0 of the cipher specification
++    - optimized multiprecision squaring and elliptic curves over GF(p)
++    - fixed bug in MARS key setup
++    - fixed bug with attaching objects to Deflator
++
++3.2 - added DES-XEX3, ECDSA, DefaultEncryptorWithMAC
++    - renamed DES-EDE to DES-EDE2 and TripleDES to DES-EDE3
++    - optimized ARC4
++    - generalized DSA to allow keys longer than 1024 bits
++    - fixed bugs in GF2N and ModularArithmetic that can cause calculation errors
++    - fixed crashing bug in Inflator when given invalid inputs
++    - fixed endian bug in Serpent
++    - fixed padding bug in Tiger
++
++4.0 - added Skipjack, CAST-256, Panama, SHA-2 (SHA-256, SHA-384, and SHA-512),
++      and XTR-DH
++    - added a faster variant of Rabin&#x27;s Information Dispersal Algorithm (IDA)
++    - added class wrappers for these operating system features:
++      - high resolution timers on Windows, Unix, and MacOS
++      - Berkeley and Windows style sockets
++      - Windows named pipes
++      - /dev/random and /dev/urandom on Linux and FreeBSD
++      - Microsoft&#x27;s CryptGenRandom on Windows
++    - added support for SEC 1 elliptic curve key format and compressed points
++    - added support for X.509 public key format (subjectPublicKeyInfo) for
++      RSA, DSA, and elliptic curve schemes
++    - added support for DER and OpenPGP signature format for DSA
++    - added support for ZLIB compressed data format (RFC 1950)
++    - changed elliptic curve encryption to use ECIES (as defined in SEC 1)
++    - changed MARS key schedule to reflect the latest specification
++    - changed BufferedTransformation interface to support multiple channels
++      and messages
++    - changed CAST and SHA-1 implementations to use public domain source code
++    - fixed bug in StringSource
++    - optmized multi-precision integer code for better performance
++
++4.1 - added more support for the recommended elliptic curve parameters in SEC 2
++    - added Panama MAC, MARC4
++    - added IV stealing feature to CTS mode
++    - added support for PKCS #8 private key format for RSA, DSA, and elliptic
++      curve schemes
++    - changed Deflate, MD5, Rijndael, and Twofish to use public domain code
++    - fixed a bug with flushing compressed streams
++    - fixed a bug with decompressing stored blocks
++    - fixed a bug with EC point decompression using non-trinomial basis
++    - fixed a bug in NetworkSource::GeneralPump()
++    - fixed a performance issue with EC over GF(p) decryption
++    - fixed syntax to allow GCC to compile without -fpermissive
++    - relaxed some restrictions in the license
++
++4.2 - added support for longer HMAC keys
++    - added MD4 (which is not secure so use for compatibility purposes only)</code></pre></details><details><summary><code>cryptopp/config.h</code></summary><pre><code>@@ -0,0 +1,455 @@
++#ifndef CRYPTOPP_CONFIG_H
++#define CRYPTOPP_CONFIG_H
++
++// ***************** Important Settings ********************
++
++// define this if running on a big-endian CPU
++#if !defined(IS_LITTLE_ENDIAN) &amp;&amp; (defined(__BIG_ENDIAN__) || defined(__sparc) || defined(__sparc__) || defined(__hppa__) || defined(__mips__) || (defined(__MWERKS__) &amp;&amp; !defined(__INTEL__)))
++#	define IS_BIG_ENDIAN
++#endif
++
++// define this if running on a little-endian CPU
++// big endian will be assumed if IS_LITTLE_ENDIAN is not defined
++#ifndef IS_BIG_ENDIAN
++#	define IS_LITTLE_ENDIAN
++#endif
++
++// define this if you want to disable all OS-dependent features,
++// such as sockets and OS-provided random number generators
++// #define NO_OS_DEPENDENCE
++
++// Define this to use features provided by Microsoft&#x27;s CryptoAPI.
++// Currently the only feature used is random number generation.
++// This macro will be ignored if NO_OS_DEPENDENCE is defined.
++#define USE_MS_CRYPTOAPI
++
++// Define this to 1 to enforce the requirement in FIPS 186-2 Change Notice 1 that only 1024 bit moduli be used
++#ifndef DSA_1024_BIT_MODULUS_ONLY
++#	define DSA_1024_BIT_MODULUS_ONLY 1
++#endif
++
++// ***************** Less Important Settings ***************
++
++// define this to retain (as much as possible) old deprecated function and class names
++// #define CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
++
++#define GZIP_OS_CODE 0
++
++// Try this if your CPU has 256K internal cache or a slow multiply instruction
++// and you want a (possibly) faster IDEA implementation using log tables
++// #define IDEA_LARGECACHE
++
++// Define this if, for the linear congruential RNG, you want to use
++// the original constants as specified in S.K. Park and K.W. Miller&#x27;s
++// CACM paper.
++// #define LCRNG_ORIGINAL_NUMBERS
++
++// choose which style of sockets to wrap (mostly useful for cygwin which has both)
++#define PREFER_BERKELEY_STYLE_SOCKETS
++// #define PREFER_WINDOWS_STYLE_SOCKETS
++
++// set the name of Rijndael cipher, was &quot;Rijndael&quot; before version 5.3
++#define CRYPTOPP_RIJNDAEL_NAME &quot;AES&quot;
++
++// ***************** Important Settings Again ********************
++// But the defaults should be ok.
++
++// namespace support is now required
++#ifdef NO_NAMESPACE
++#	error namespace support is now required
++#endif
++
++// Define this to workaround a Microsoft CryptoAPI bug where
++// each call to CryptAcquireContext causes a 100 KB memory leak.
++// Defining this will cause Crypto++ to make only one call to CryptAcquireContext.
++#define WORKAROUND_MS_BUG_Q258000
++
++#ifdef CRYPTOPP_DOXYGEN_PROCESSING
++// Avoid putting &quot;CryptoPP::&quot; in front of everything in Doxygen output
++#	define CryptoPP
++#	define NAMESPACE_BEGIN(x)
++#	define NAMESPACE_END
++// Get Doxygen to generate better documentation for these typedefs
++#	define DOCUMENTED_TYPEDEF(x, y) class y : public x {};
++#else
++#	define NAMESPACE_BEGIN(x) namespace x {
++#	define NAMESPACE_END }
++#	define DOCUMENTED_TYPEDEF(x, y) typedef x y;
++#endif
++#define ANONYMOUS_NAMESPACE_BEGIN namespace {
++#define USING_NAMESPACE(x) using namespace x;
++#define DOCUMENTED_NAMESPACE_BEGIN(x) namespace x {
++#define DOCUMENTED_NAMESPACE_END }
++
++// What is the type of the third parameter to bind?
++// For Unix, the new standard is ::socklen_t (typically unsigned int), and the old standard is int.
++// Unfortunately there is no way to tell whether or not socklen_t is defined.
++// To work around this, TYPE_OF_SOCKLEN_T is a macro so that you can change it from the makefile.
++#ifndef TYPE_OF_SOCKLEN_T
++#	if defined(_WIN32) || defined(__CYGWIN__)
++#		define TYPE_OF_SOCKLEN_T int
++#	else
++#		define TYPE_OF_SOCKLEN_T ::socklen_t
++#	endif
++#endif
++
++#if defined(__CYGWIN__) &amp;&amp; defined(PREFER_WINDOWS_STYLE_SOCKETS)
++#	define __USE_W32_SOCKETS
++#endif
++
++typedef unsigned char byte;		// put in global namespace to avoid ambiguity with other byte typedefs
++
++NAMESPACE_BEGIN(CryptoPP)
++
++typedef unsigned short word16;
++typedef unsigned int word32;
++
++#if defined(_MSC_VER) || defined(__BORLANDC__)
++	typedef unsigned __int64 word64;
++	#define W64LIT(x) x##ui64
++#else
++	typedef unsigned long long word64;
++	#define W64LIT(x) x##ULL
++#endif
++
++// define large word type, used for file offsets and such
++typedef word64 lword;
++const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
++
++#ifdef __GNUC__
++	#define CRYPTOPP_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
++#endif
++
++// define hword, word, and dword. these are used for multiprecision integer arithmetic
++// Intel compiler won&#x27;t have _umul128 until version 10.0. See http://softwarecommunity.intel.com/isn/Community/en-US/forums/thread/30231625.aspx
++#if (defined(_MSC_VER) &amp;&amp; (!defined(__INTEL_COMPILER) || __INTEL_COMPILER &gt;= 1000) &amp;&amp; (defined(_M_X64) || defined(_M_IA64))) || (defined(__DECCXX) &amp;&amp; defined(__alpha__)) || (defined(__INTEL_COMPILER) &amp;&amp; defined(__x86_64__)) || (defined(__SUNPRO_CC) &amp;&amp; defined(__x86_64__))
++	typedef word32 hword;
++	typedef word64 word;
++#else
++	#define CRYPTOPP_NATIVE_DWORD_AVAILABLE
++	#if defined(__alpha__) || defined(__ia64__) || defined(_ARCH_PPC64) || defined(__x86_64__) || defined(__mips64) || defined(__sparc64__)
++		#if defined(__GNUC__) &amp;&amp; !defined(__INTEL_COMPILER) &amp;&amp; !(CRYPTOPP_GCC_VERSION == 40001 &amp;&amp; defined(__APPLE__)) &amp;&amp; CRYPTOPP_GCC_VERSION &gt;= 30400
++			// GCC 4.0.1 on MacOS X is missing __umodti3 and __udivti3
++			// mode(TI) division broken on amd64 with GCC earlier than GCC 3.4
++			typedef word32 hword;
++			typedef word64 word;
++			typedef __uint128_t dword;
++			typedef __uint128_t word128;
++			#define CRYPTOPP_WORD128_AVAILABLE
++		#else
++			// if we&#x27;re here, it means we&#x27;re on a 64-bit CPU but we don&#x27;t have a way to obtain 128-bit multiplication results
++			typedef word16 hword;
++			typedef word32 word;
++			typedef word64 dword;
++		#endif
++	#else
++		// being here means the native register size is probably 32 bits or less
++		#define CRYPTOPP_BOOL_SLOW_WORD64 1
++		typedef word16 hword;
++		typedef word32 word;
++		typedef word64 dword;
++	#endif
++#endif
++#ifndef CRYPTOPP_BOOL_SLOW_WORD64
++	#define CRYPTOPP_BOOL_SLOW_WORD64 0
++#endif
++
++const unsigned int WORD_SIZE = sizeof(word);
++const unsigned int WORD_BITS = WORD_SIZE * 8;
++
++NAMESPACE_END
++
++#ifndef CRYPTOPP_L1_CACHE_LINE_SIZE
++	// This should be a lower bound on the L1 cache line size. It&#x27;s used for defense against timing attacks.
++	#if defined(_M_X64) || defined(__x86_64__)
++		#define CRYPTOPP_L1_CACHE_LINE_SIZE 64
++	#else
++		// L1 cache line size is 32 on Pentium III and earlier
++		#define CRYPTOPP_L1_CACHE_LINE_SIZE 32
++	#endif
++#endif
++
++#if defined(_MSC_VER)
++	#if _MSC_VER == 1200
++		#include &lt;malloc.h&gt;
++	#endif
++	#if _MSC_VER &gt; 1200 || defined(_mm_free)
++		#define CRYPTOPP_MSVC6PP_OR_LATER		// VC 6 processor pack or later
++	#else
++		#define CRYPTOPP_MSVC6_NO_PP			// VC 6 without processor pack
++	#endif
++#endif
++
++#ifndef CRYPTOPP_ALIGN_DATA
++	#if defined(CRYPTOPP_MSVC6PP_OR_LATER)
++		#define CRYPTOPP_ALIGN_DATA(x) __declspec(align(x))
++	#elif defined(__GNUC__)
++		#define CRYPTOPP_ALIGN_DATA(x) __attribute__((aligned(x)))
++	#else
++		#define CRYPTOPP_ALIGN_DATA(x)
++	#endif
++#endif
++
++#ifndef CRYPTOPP_SECTION_ALIGN16
++	#if defined(__GNUC__) &amp;&amp; !defined(__APPLE__)
++		// the alignment attribute doesn&#x27;t seem to work without this section attribute when -fdata-sections is turned on
++		#define CRYPTOPP_SECTION_ALIGN16 __attribute__((section (&quot;CryptoPP_Align16&quot;)))
++	#else
++		#define CRYPTOPP_SECTION_ALIGN16
++	#endif
++#endif
++
++#if defined(_MSC_VER) || defined(__fastcall)
++	#define CRYPTOPP_FASTCALL __fastcall
++#else
++	#define CRYPTOPP_FASTCALL
++#endif
++
++// VC60 workaround: it doesn&#x27;t allow typename in some places
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &lt; 1300)
++#define CPP_TYPENAME
++#else
++#define CPP_TYPENAME typename
++#endif
++
++// VC60 workaround: can&#x27;t cast unsigned __int64 to float or double
++#if defined(_MSC_VER) &amp;&amp; !defined(CRYPTOPP_MSVC6PP_OR_LATER)
++#define CRYPTOPP_VC6_INT64 (__int64)
++#else
++#define CRYPTOPP_VC6_INT64
++#endif
++
++#ifdef _MSC_VER
++#define CRYPTOPP_NO_VTABLE __declspec(novtable)
++#else
++#define CRYPTOPP_NO_VTABLE
++#endif
++
++#ifdef _MSC_VER
++	// 4231: nonstandard extension used : &#x27;extern&#x27; before template explicit instantiation
++	// 4250: dominance
++	// 4251: member needs to have dll-interface
++	// 4275: base needs to have dll-interface
++	// 4660: explicitly instantiating a class that&#x27;s already implicitly instantiated
++	// 4661: no suitable definition provided for explicit template instantiation request
++	// 4786: identifer was truncated in debug information
++	// 4355: &#x27;this&#x27; : used in base member initializer list
++	// 4910: &#x27;__declspec(dllexport)&#x27; and &#x27;extern&#x27; are incompatible on an explicit instantiation
++#	pragma warning(disable: 4231 4250 4251 4275 4660 4661 4786 4355 4910)
++#endif
++
++#ifdef __BORLANDC__
++// 8037: non-const function called for const object. needed to work around BCB2006 bug
++#	pragma warn -8037
++#endif
++
++#if (defined(_MSC_VER) &amp;&amp; _MSC_VER &lt;= 1300) || defined(__MWERKS__) || defined(_STLPORT_VERSION)
++#define CRYPTOPP_DISABLE_UNCAUGHT_EXCEPTION
++#endif
++
++#ifndef CRYPTOPP_DISABLE_UNCAUGHT_EXCEPTION
++#define CRYPTOPP_UNCAUGHT_EXCEPTION_AVAILABLE
++#endif
++
++#ifdef CRYPTOPP_DISABLE_X86ASM		// for backwards compatibility: this macro had both meanings
++#define CRYPTOPP_DISABLE_ASM
++#define CRYPTOPP_DISABLE_SSE2
++#endif
++
++#if !defined(CRYPTOPP_DISABLE_ASM) &amp;&amp; ((defined(_MSC_VER) &amp;&amp; defined(_M_IX86)) || (defined(__GNUC__) &amp;&amp; (defined(__i386__) || defined(__x86_64__))))
++	#define CRYPTOPP_X86_ASM_AVAILABLE
++
++	#if !defined(CRYPTOPP_DISABLE_SSE2) &amp;&amp; (defined(CRYPTOPP_MSVC6PP_OR_LATER) || CRYPTOPP_GCC_VERSION &gt;= 30300)
++		#define CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE 1
++	#else
++		#define CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE 0
++	#endif
++
++	// SSSE3 was actually introduced in GNU as 2.17, which was released 6/23/2006, but we can&#x27;t tell what version of binutils is installed.
++	// GCC 4.1.2 was released on 2/13/2007, so we&#x27;ll use that as a proxy for the binutils version.
++	#if !defined(CRYPTOPP_DISABLE_SSSE3) &amp;&amp; (_MSC_VER &gt;= 1400 || CRYPTOPP_GCC_VERSION &gt;= 40102)
++		#define CRYPTOPP_BOOL_SSSE3_ASM_AVAILABLE 1
++	#else
++		#define CRYPTOPP_BOOL_SSSE3_ASM_AVAILABLE 0
++	#endif
++#endif
++
++#if !defined(CRYPTOPP_DISABLE_ASM) &amp;&amp; defined(_MSC_VER) &amp;&amp; defined(_M_X64)
++	#define CRYPTOPP_X64_MASM_AVAILABLE
++#endif
++
++#if !defined(CRYPTOPP_DISABLE_ASM) &amp;&amp; defined(__GNUC__) &amp;&amp; defined(__x86_64__)
++	#define CRYPTOPP_X64_ASM_AVAILABLE
++#endif
++
++#if !defined(CRYPTOPP_DISABLE_SSE2) &amp;&amp; (defined(CRYPTOPP_MSVC6PP_OR_LATER) || defined(__SSE2__))
++	#define CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE 1
++#else
++	#define CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE 0
++#endif
++
++#if CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE || CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE || defined(CRYPTOPP_X64_MASM_AVAILABLE)
++	#define CRYPTOPP_BOOL_ALIGN16_ENABLED 1
++#else
++	#define CRYPTOPP_BOOL_ALIGN16_ENABLED 0
++#endif
++
++// how to allocate 16-byte aligned memory (for SSE2)
++#if defined(CRYPTOPP_MSVC6PP_OR_LATER)
++	#define CRYPTOPP_MM_MALLOC_AVAILABLE</code></pre></details><details><summary><code>cryptopp/cpu.cpp</code></summary><pre><code>@@ -0,0 +1,199 @@
++// cpu.cpp - written and placed in the public domain by Wei Dai
++
++#include &quot;pch.h&quot;
++
++#ifndef CRYPTOPP_IMPORTS
++
++#include &quot;cpu.h&quot;
++#include &quot;misc.h&quot;
++#include &lt;algorithm&gt;
++
++#ifdef __GNUC__
++#include &lt;signal.h&gt;
++#include &lt;setjmp.h&gt;
++#endif
++
++#ifdef CRYPTOPP_MSVC6PP_OR_LATER
++#include &lt;emmintrin.h&gt;
++#endif
++
++NAMESPACE_BEGIN(CryptoPP)
++
++#ifdef CRYPTOPP_X86_ASM_AVAILABLE
++
++#ifndef _MSC_VER
++typedef void (*SigHandler)(int);
++
++static jmp_buf s_jmpNoCPUID;
++static void SigIllHandlerCPUID(int)
++{
++	longjmp(s_jmpNoCPUID, 1);
++}
++#endif
++
++bool CpuId(word32 input, word32 *output)
++{
++#ifdef _MSC_VER
++    __try
++	{
++		__asm
++		{
++			mov eax, input
++			cpuid
++			mov edi, output
++			mov [edi], eax
++			mov [edi+4], ebx
++			mov [edi+8], ecx
++			mov [edi+12], edx
++		}
++	}
++    __except (1)
++	{
++		return false;
++    }
++	return true;
++#else
++	SigHandler oldHandler = signal(SIGILL, SigIllHandlerCPUID);
++	if (oldHandler == SIG_ERR)
++		return false;
++
++	bool result = true;
++	if (setjmp(s_jmpNoCPUID))
++		result = false;
++	else
++	{
++		__asm__
++		(
++			// save ebx in case -fPIC is being used
++#if CRYPTOPP_BOOL_X86
++			&quot;push %%ebx; cpuid; mov %%ebx, %%edi; pop %%ebx&quot;
++#else
++			&quot;pushq %%rbx; cpuid; mov %%ebx, %%edi; popq %%rbx&quot;
++#endif
++			: &quot;=a&quot; (output[0]), &quot;=D&quot; (output[1]), &quot;=c&quot; (output[2]), &quot;=d&quot; (output[3])
++			: &quot;a&quot; (input)
++		);
++	}
++
++	signal(SIGILL, oldHandler);
++	return result;
++#endif
++}
++
++#ifndef _MSC_VER
++static jmp_buf s_jmpNoSSE2;
++static void SigIllHandlerSSE2(int)
++{
++	longjmp(s_jmpNoSSE2, 1);
++}
++#endif
++
++#elif _MSC_VER &gt;= 1400 &amp;&amp; CRYPTOPP_BOOL_X64
++
++bool CpuId(word32 input, word32 *output)
++{
++	__cpuid((int *)output, input);
++	return true;
++}
++
++#endif
++
++#ifdef CRYPTOPP_CPUID_AVAILABLE
++
++static bool TrySSE2()
++{
++#if CRYPTOPP_BOOL_X64
++	return true;
++#elif defined(_MSC_VER)
++    __try
++	{
++#if CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE
++        AS2(por xmm0, xmm0)        // executing SSE2 instruction
++#elif CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE
++		__mm128i x = _mm_setzero_si128();
++		return _mm_cvtsi128_si32(x) == 0;
++#endif
++	}
++    __except (1)
++	{
++		return false;
++    }
++	return true;
++#elif defined(__GNUC__)
++	SigHandler oldHandler = signal(SIGILL, SigIllHandlerSSE2);
++	if (oldHandler == SIG_ERR)
++		return false;
++
++	bool result = true;
++	if (setjmp(s_jmpNoSSE2))
++		result = false;
++	else
++	{
++#if CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE
++		__asm __volatile (&quot;por %xmm0, %xmm0&quot;);
++#elif CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE
++		__mm128i x = _mm_setzero_si128();
++		result = _mm_cvtsi128_si32(x) == 0;
++#endif
++	}
++
++	signal(SIGILL, oldHandler);
++	return result;
++#else
++	return false;
++#endif
++}
++
++bool g_x86DetectionDone = false;
++bool g_hasISSE = false, g_hasSSE2 = false, g_hasSSSE3 = false, g_hasMMX = false, g_isP4 = false;
++word32 g_cacheLineSize = CRYPTOPP_L1_CACHE_LINE_SIZE;
++
++void DetectX86Features()
++{
++	word32 cpuid[4], cpuid1[4];
++	if (!CpuId(0, cpuid))
++		return;
++	if (!CpuId(1, cpuid1))
++		return;
++
++	g_hasMMX = (cpuid1[3] &amp; (1 &lt;&lt; 23)) != 0;
++	if ((cpuid1[3] &amp; (1 &lt;&lt; 26)) != 0)
++		g_hasSSE2 = TrySSE2();
++	g_hasSSSE3 = g_hasSSE2 &amp;&amp; (cpuid1[2] &amp; (1&lt;&lt;9));
++
++	if ((cpuid1[3] &amp; (1 &lt;&lt; 25)) != 0)
++		g_hasISSE = true;
++	else
++	{
++		word32 cpuid2[4];
++		CpuId(0x080000000, cpuid2);
++		if (cpuid2[0] &gt;= 0x080000001)
++		{
++			CpuId(0x080000001, cpuid2);
++			g_hasISSE = (cpuid2[3] &amp; (1 &lt;&lt; 22)) != 0;
++		}
++	}
++
++	std::swap(cpuid[2], cpuid[3]);
++	if (memcmp(cpuid+1, &quot;GenuineIntel&quot;, 12) == 0)
++	{
++		g_isP4 = ((cpuid1[0] &gt;&gt; 8) &amp; 0xf) == 0xf;
++		g_cacheLineSize = 8 * GETBYTE(cpuid1[1], 1);
++	}
++	else if (memcmp(cpuid+1, &quot;AuthenticAMD&quot;, 12) == 0)
++	{
++		CpuId(0x80000005, cpuid);
++		g_cacheLineSize = GETBYTE(cpuid[2], 0);
++	}
++
++	if (!g_cacheLineSize)
++		g_cacheLineSize = CRYPTOPP_L1_CACHE_LINE_SIZE;
++
++	g_x86DetectionDone = true;
++}
++
++#endif
++
++NAMESPACE_END
++
++#endif</code></pre></details><details><summary><code>cryptopp/cpu.h</code></summary><pre><code>@@ -0,0 +1,263 @@
++#ifndef CRYPTOPP_CPU_H
++#define CRYPTOPP_CPU_H
++
++#ifdef CRYPTOPP_GENERATE_X64_MASM
++
++#define CRYPTOPP_X86_ASM_AVAILABLE
++#define CRYPTOPP_BOOL_X64 1
++#define CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE 1
++#define NAMESPACE_END
++
++#else
++
++#include &quot;config.h&quot;
++
++#ifdef CRYPTOPP_MSVC6PP_OR_LATER
++	#include &lt;emmintrin.h&gt;
++#endif
++
++NAMESPACE_BEGIN(CryptoPP)
++
++#if defined(CRYPTOPP_X86_ASM_AVAILABLE) || (_MSC_VER &gt;= 1400 &amp;&amp; CRYPTOPP_BOOL_X64)
++
++#define CRYPTOPP_CPUID_AVAILABLE
++
++// these should not be used directly
++extern CRYPTOPP_DLL bool g_x86DetectionDone;
++extern CRYPTOPP_DLL bool g_hasSSE2;
++extern CRYPTOPP_DLL bool g_hasISSE;
++extern CRYPTOPP_DLL bool g_hasMMX;
++extern CRYPTOPP_DLL bool g_hasSSSE3;
++extern CRYPTOPP_DLL bool g_isP4;
++extern CRYPTOPP_DLL word32 g_cacheLineSize;
++CRYPTOPP_DLL void CRYPTOPP_API DetectX86Features();
++
++CRYPTOPP_DLL bool CRYPTOPP_API CpuId(word32 input, word32 *output);
++
++#if CRYPTOPP_BOOL_X64
++inline bool HasSSE2()	{return true;}
++inline bool HasISSE()	{return true;}
++inline bool HasMMX()	{return true;}
++#else
++
++inline bool HasSSE2()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_hasSSE2;
++}
++
++inline bool HasISSE()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_hasISSE;
++}
++
++inline bool HasMMX()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_hasMMX;
++}
++
++#endif
++
++inline bool HasSSSE3()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_hasSSSE3;
++}
++
++inline bool IsP4()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_isP4;
++}
++
++inline int GetCacheLineSize()
++{
++	if (!g_x86DetectionDone)
++		DetectX86Features();
++	return g_cacheLineSize;
++}
++
++#else
++
++inline int GetCacheLineSize()
++{
++	return CRYPTOPP_L1_CACHE_LINE_SIZE;
++}
++
++inline bool HasSSSE3()	{return false;}
++inline bool IsP4()		{return false;}
++
++// assume MMX and SSE2 if intrinsics are enabled
++#if CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE || CRYPTOPP_BOOL_X64
++inline bool HasSSE2()	{return true;}
++inline bool HasISSE()	{return true;}
++inline bool HasMMX()	{return true;}
++#else
++inline bool HasSSE2()	{return false;}
++inline bool HasISSE()	{return false;}
++inline bool HasMMX()	{return false;}
++#endif
++
++#endif		// #ifdef CRYPTOPP_X86_ASM_AVAILABLE || _MSC_VER &gt;= 1400
++
++#endif
++
++#ifdef CRYPTOPP_GENERATE_X64_MASM
++	#define AS1(x) x*newline*
++	#define AS2(x, y) x, y*newline*
++	#define AS3(x, y, z) x, y, z*newline*
++	#define ASS(x, y, a, b, c, d) x, y, a*64+b*16+c*4+d*newline*
++	#define ASL(x) label##x:*newline*
++	#define ASJ(x, y, z) x label##y*newline*
++	#define ASC(x, y) x label##y*newline*
++	#define AS_HEX(y) 0##y##h
++#elif defined(__GNUC__)
++	// define these in two steps to allow arguments to be expanded
++	#define GNU_AS1(x) #x &quot;;&quot;
++	#define GNU_AS2(x, y) #x &quot;, &quot; #y &quot;;&quot;
++	#define GNU_AS3(x, y, z) #x &quot;, &quot; #y &quot;, &quot; #z &quot;;&quot;
++	#define GNU_ASL(x) &quot;\n&quot; #x &quot;:&quot;
++	#define GNU_ASJ(x, y, z) #x &quot; &quot; #y #z &quot;;&quot;
++	#define AS1(x) GNU_AS1(x)
++	#define AS2(x, y) GNU_AS2(x, y)
++	#define AS3(x, y, z) GNU_AS3(x, y, z)
++	#define ASS(x, y, a, b, c, d) #x &quot;, &quot; #y &quot;, &quot; #a &quot;*64+&quot; #b &quot;*16+&quot; #c &quot;*4+&quot; #d &quot;;&quot;
++	#define ASL(x) GNU_ASL(x)
++	#define ASJ(x, y, z) GNU_ASJ(x, y, z)
++	#define ASC(x, y) #x &quot; &quot; #y &quot;;&quot;
++	#define CRYPTOPP_NAKED
++	#define AS_HEX(y) 0x##y
++#else
++	#define AS1(x) __asm {x}
++	#define AS2(x, y) __asm {x, y}
++	#define AS3(x, y, z) __asm {x, y, z}
++	#define ASS(x, y, a, b, c, d) __asm {x, y, _MM_SHUFFLE(a, b, c, d)}
++	#define ASL(x) __asm {label##x:}
++	#define ASJ(x, y, z) __asm {x label##y}
++	#define ASC(x, y) __asm {x label##y}
++	#define CRYPTOPP_NAKED __declspec(naked)
++	#define AS_HEX(y) 0x##y
++#endif
++
++#define IF0(y)
++#define IF1(y) y
++
++#ifdef CRYPTOPP_GENERATE_X64_MASM
++#define ASM_MOD(x, y) ((x) MOD (y))
++#define XMMWORD_PTR XMMWORD PTR
++#else
++// GNU assembler doesn&#x27;t seem to have mod operator
++#define ASM_MOD(x, y) ((x)-((x)/(y))*(y))
++// GAS 2.15 doesn&#x27;t support XMMWORD PTR. it seems necessary only for MASM
++#define XMMWORD_PTR
++#endif
++
++#if CRYPTOPP_BOOL_X86
++	#define AS_REG_1 ecx
++	#define AS_REG_2 edx
++	#define AS_REG_3 esi
++	#define AS_REG_4 edi
++	#define AS_REG_5 eax
++	#define AS_REG_6 ebx
++	#define AS_REG_7 ebp
++	#define AS_REG_1d ecx
++	#define AS_REG_2d edx
++	#define AS_REG_3d esi
++	#define AS_REG_4d edi
++	#define AS_REG_5d eax
++	#define AS_REG_6d ebx
++	#define AS_REG_7d ebp
++	#define WORD_SZ 4
++	#define WORD_REG(x)	e##x
++	#define WORD_PTR DWORD PTR
++	#define AS_PUSH_IF86(x) AS1(push e##x)
++	#define AS_POP_IF86(x) AS1(pop e##x)
++	#define AS_JCXZ jecxz
++#elif CRYPTOPP_BOOL_X64
++	#ifdef CRYPTOPP_GENERATE_X64_MASM
++		#define AS_REG_1 rcx
++		#define AS_REG_2 rdx
++		#define AS_REG_3 r8
++		#define AS_REG_4 r9
++		#define AS_REG_5 rax
++		#define AS_REG_6 r10
++		#define AS_REG_7 r11
++		#define AS_REG_1d ecx
++		#define AS_REG_2d edx
++		#define AS_REG_3d r8d
++		#define AS_REG_4d r9d
++		#define AS_REG_5d eax
++		#define AS_REG_6d r10d
++		#define AS_REG_7d r11d
++	#else
++		#define AS_REG_1 rdi
++		#define AS_REG_2 rsi
++		#define AS_REG_3 rdx
++		#define AS_REG_4 rcx
++		#define AS_REG_5 r8
++		#define AS_REG_6 r9
++		#define AS_REG_7 r10
++		#define AS_REG_1d edi
++		#define AS_REG_2d esi
++		#define AS_REG_3d edx
++		#define AS_REG_4d ecx
++		#define AS_REG_5d r8d
++		#define AS_REG_6d r9d
++		#define AS_REG_7d r10d
++	#endif
++	#define WORD_SZ 8
++	#define WORD_REG(x)	r##x
++	#define WORD_PTR QWORD PTR
++	#define AS_PUSH_IF86(x)
++	#define AS_POP_IF86(x)
++	#define AS_JCXZ jrcxz
++#endif
++
++// helper macro for stream cipher output
++#define AS_XMM_OUTPUT4(labelPrefix, inputPtr, outputPtr, x0, x1, x2, x3, t, p0, p1, p2, p3, increment)\
++	AS2(	test	inputPtr, inputPtr)\
++	ASC(	jz,		labelPrefix##3)\
++	AS2(	test	inputPtr, 15)\
++	ASC(	jnz,	labelPrefix##7)\
++	AS2(	pxor	xmm##x0, [inputPtr+p0*16])\
++	AS2(	pxor	xmm##x1, [inputPtr+p1*16])\
++	AS2(	pxor	xmm##x2, [inputPtr+p2*16])\
++	AS2(	pxor	xmm##x3, [inputPtr+p3*16])\
++	AS2(	add		inputPtr, increment*16)\
++	ASC(	jmp,	labelPrefix##3)\
++	ASL(labelPrefix##7)\
++	AS2(	movdqu	xmm##t, [inputPtr+p0*16])\
++	AS2(	pxor	xmm##x0, xmm##t)\
++	AS2(	movdqu	xmm##t, [inputPtr+p1*16])\
++	AS2(	pxor	xmm##x1, xmm##t)\
++	AS2(	movdqu	xmm##t, [inputPtr+p2*16])\
++	AS2(	pxor	xmm##x2, xmm##t)\
++	AS2(	movdqu	xmm##t, [inputPtr+p3*16])\
++	AS2(	pxor	xmm##x3, xmm##t)\
++	AS2(	add		inputPtr, increment*16)\
++	ASL(labelPrefix##3)\
++	AS2(	test	outputPtr, 15)\
++	ASC(	jnz,	labelPrefix##8)\
++	AS2(	movdqa	[outputPtr+p0*16], xmm##x0)\
++	AS2(	movdqa	[outputPtr+p1*16], xmm##x1)\
++	AS2(	movdqa	[outputPtr+p2*16], xmm##x2)\
++	AS2(	movdqa	[outputPtr+p3*16], xmm##x3)\
++	ASC(	jmp,	labelPrefix##9)\
++	ASL(labelPrefix##8)\
++	AS2(	movdqu	[outputPtr+p0*16], xmm##x0)\
++	AS2(	movdqu	[outputPtr+p1*16], xmm##x1)\
++	AS2(	movdqu	[outputPtr+p2*16], xmm##x2)\
++	AS2(	movdqu	[outputPtr+p3*16], xmm##x3)\
++	ASL(labelPrefix##9)\
++	AS2(	add		outputPtr, increment*16)
++
++NAMESPACE_END
++
++#endif</code></pre></details><details><summary><code>cryptopp/cryptlib.h</code></summary><pre><code>@@ -0,0 +1,1668 @@
++// cryptlib.h - written and placed in the public domain by Wei Dai
++/*! \file
++ 	This file contains the declarations for the abstract base
++	classes that provide a uniform interface to this library.
++*/
++
++/*!	\mainpage Crypto++ Library 5.6.0 API Reference
++&lt;dl&gt;
++&lt;dt&gt;Abstract Base Classes&lt;dd&gt;
++	cryptlib.h
++&lt;dt&gt;Authenticated Encryption&lt;dd&gt;
++	AuthenticatedSymmetricCipherDocumentation
++&lt;dt&gt;Symmetric Ciphers&lt;dd&gt;
++	SymmetricCipherDocumentation
++&lt;dt&gt;Hash Functions&lt;dd&gt;
++	SHA1, SHA224, SHA256, SHA384, SHA512, Tiger, Whirlpool, RIPEMD160, RIPEMD320, RIPEMD128, RIPEMD256, Weak1::MD2, Weak1::MD4, Weak1::MD5
++&lt;dt&gt;Non-Cryptographic Checksums&lt;dd&gt;
++	CRC32, Adler32
++&lt;dt&gt;Message Authentication Codes&lt;dd&gt;
++	VMAC, HMAC, CBC_MAC, CMAC, DMAC, TTMAC, GCM (GMAC)
++&lt;dt&gt;Random Number Generators&lt;dd&gt;
++	NullRNG(), LC_RNG, RandomPool, BlockingRng, NonblockingRng, AutoSeededRandomPool, AutoSeededX917RNG, DefaultAutoSeededRNG
++&lt;dt&gt;Password-based Cryptography&lt;dd&gt;
++	PasswordBasedKeyDerivationFunction
++&lt;dt&gt;Public Key Cryptosystems&lt;dd&gt;
++	DLIES, ECIES, LUCES, RSAES, RabinES, LUC_IES
++&lt;dt&gt;Public Key Signature Schemes&lt;dd&gt;
++	DSA, GDSA, ECDSA, NR, ECNR, LUCSS, RSASS, RSASS_ISO, RabinSS, RWSS, ESIGN
++&lt;dt&gt;Key Agreement&lt;dd&gt;
++	#DH, DH2, #MQV, ECDH, ECMQV, XTR_DH
++&lt;dt&gt;Algebraic Structures&lt;dd&gt;
++	Integer, PolynomialMod2, PolynomialOver, RingOfPolynomialsOver,
++	ModularArithmetic, MontgomeryRepresentation, GFP2_ONB,
++	GF2NP, GF256, GF2_32, EC2N, ECP
++&lt;dt&gt;Secret Sharing and Information Dispersal&lt;dd&gt;
++	SecretSharing, SecretRecovery, InformationDispersal, InformationRecovery
++&lt;dt&gt;Compression&lt;dd&gt;
++	Deflator, Inflator, Gzip, Gunzip, ZlibCompressor, ZlibDecompressor
++&lt;dt&gt;Input Source Classes&lt;dd&gt;
++	StringSource, ArraySource, FileSource, SocketSource, WindowsPipeSource, RandomNumberSource
++&lt;dt&gt;Output Sink Classes&lt;dd&gt;
++	StringSinkTemplate, ArraySink, FileSink, SocketSink, WindowsPipeSink, RandomNumberSink
++&lt;dt&gt;Filter Wrappers&lt;dd&gt;
++	StreamTransformationFilter, HashFilter, HashVerificationFilter, SignerFilter, SignatureVerificationFilter
++&lt;dt&gt;Binary to Text Encoders and Decoders&lt;dd&gt;
++	HexEncoder, HexDecoder, Base64Encoder, Base64Decoder, Base32Encoder, Base32Decoder
++&lt;dt&gt;Wrappers for OS features&lt;dd&gt;
++	Timer, Socket, WindowsHandle, ThreadLocalStorage, ThreadUserTimer
++&lt;dt&gt;FIPS 140 related&lt;dd&gt;
++	fips140.h
++&lt;/dl&gt;
++
++In the FIPS 140-2 validated DLL version of Crypto++, only the following implementation class are available.
++&lt;dl&gt;
++&lt;dt&gt;Block Ciphers&lt;dd&gt;
++	AES, DES_EDE2, DES_EDE3, SKIPJACK
++&lt;dt&gt;Cipher Modes (replace template parameter BC with one of the block ciphers above)&lt;dd&gt;
++	ECB_Mode\&lt;BC\&gt;, CTR_Mode\&lt;BC\&gt;, CBC_Mode\&lt;BC\&gt;, CFB_FIPS_Mode\&lt;BC\&gt;, OFB_Mode\&lt;BC\&gt;
++&lt;dt&gt;Hash Functions&lt;dd&gt;
++	SHA1, SHA224, SHA256, SHA384, SHA512
++&lt;dt&gt;Public Key Signature Schemes (replace template parameter H with one of the hash functions above)&lt;dd&gt;
++	RSASS\&lt;PKCS1v15, H\&gt;, RSASS\&lt;PSS, H\&gt;, RSASS_ISO\&lt;H\&gt;, RWSS\&lt;P1363_EMSA2, H\&gt;, DSA, ECDSA\&lt;ECP, H\&gt;, ECDSA\&lt;EC2N, H\&gt;
++&lt;dt&gt;Message Authentication Codes (replace template parameter H with one of the hash functions above)&lt;dd&gt;
++	HMAC\&lt;H\&gt;, CBC_MAC\&lt;DES_EDE2\&gt;, CBC_MAC\&lt;DES_EDE3\&gt;
++&lt;dt&gt;Random Number Generators&lt;dd&gt;
++	DefaultAutoSeededRNG (AutoSeededX917RNG\&lt;AES\&gt;)
++&lt;dt&gt;Key Agreement&lt;dd&gt;
++	#DH
++&lt;dt&gt;Public Key Cryptosystems&lt;dd&gt;
++	RSAES\&lt;OAEP\&lt;SHA1\&gt; \&gt;
++&lt;/dl&gt;
++
++&lt;p&gt;This reference manual is a work in progress. Some classes are still lacking detailed descriptions.
++&lt;p&gt;Click &lt;a href=&quot;CryptoPPRef.zip&quot;&gt;here&lt;/a&gt; to download a zip archive containing this manual.
++&lt;p&gt;Thanks to Ryan Phillips for providing the Doxygen configuration file
++and getting me started with this manual.
++*/
++
++#ifndef CRYPTOPP_CRYPTLIB_H
++#define CRYPTOPP_CRYPTLIB_H
++
++#include &quot;config.h&quot;
++#include &quot;stdcpp.h&quot;
++
++NAMESPACE_BEGIN(CryptoPP)
++
++// forward declarations
++class Integer;
++class RandomNumberGenerator;
++class BufferedTransformation;
++
++//! used to specify a direction for a cipher to operate in (encrypt or decrypt)
++enum CipherDir {ENCRYPTION, DECRYPTION};
++
++//! used to represent infinite time
++const unsigned long INFINITE_TIME = ULONG_MAX;
++
++// VC60 workaround: using enums as template parameters causes problems
++template &lt;typename ENUM_TYPE, int VALUE&gt;
++struct EnumToType
++{
++	static ENUM_TYPE ToEnum() {return (ENUM_TYPE)VALUE;}
++};
++
++enum ByteOrder {LITTLE_ENDIAN_ORDER = 0, BIG_ENDIAN_ORDER = 1};
++typedef EnumToType&lt;ByteOrder, LITTLE_ENDIAN_ORDER&gt; LittleEndian;
++typedef EnumToType&lt;ByteOrder, BIG_ENDIAN_ORDER&gt; BigEndian;
++
++//! base class for all exceptions thrown by Crypto++
++class CRYPTOPP_DLL Exception : public std::exception
++{
++public:
++	//! error types
++	enum ErrorType {
++		//! a method is not implemented
++		NOT_IMPLEMENTED,
++		//! invalid function argument
++		INVALID_ARGUMENT,
++		//! BufferedTransformation received a Flush(true) signal but can&#x27;t flush buffers
++		CANNOT_FLUSH,
++		//! data integerity check (such as CRC or MAC) failed
++		DATA_INTEGRITY_CHECK_FAILED,
++		//! received input data that doesn&#x27;t conform to expected format
++		INVALID_DATA_FORMAT,
++		//! error reading from input device or writing to output device
++		IO_ERROR,
++		//! some error not belong to any of the above categories
++		OTHER_ERROR
++	};
++
++	explicit Exception(ErrorType errorType, const std::string &amp;s) : m_errorType(errorType), m_what(s) {}
++	virtual ~Exception() throw() {}
++	const char *what() const throw() {return (m_what.c_str());}
++	const std::string &amp;GetWhat() const {return m_what;}
++	void SetWhat(const std::string &amp;s) {m_what = s;}
++	ErrorType GetErrorType() const {return m_errorType;}
++	void SetErrorType(ErrorType errorType) {m_errorType = errorType;}
++
++private:
++	ErrorType m_errorType;
++	std::string m_what;
++};
++
++//! exception thrown when an invalid argument is detected
++class CRYPTOPP_DLL InvalidArgument : public Exception
++{
++public:
++	explicit InvalidArgument(const std::string &amp;s) : Exception(INVALID_ARGUMENT, s) {}
++};
++
++//! exception thrown when input data is received that doesn&#x27;t conform to expected format
++class CRYPTOPP_DLL InvalidDataFormat : public Exception
++{
++public:
++	explicit InvalidDataFormat(const std::string &amp;s) : Exception(INVALID_DATA_FORMAT, s) {}
++};
++
++//! exception thrown by decryption filters when trying to decrypt an invalid ciphertext
++class CRYPTOPP_DLL InvalidCiphertext : public InvalidDataFormat
++{
++public:
++	explicit InvalidCiphertext(const std::string &amp;s) : InvalidDataFormat(s) {}
++};
++
++//! exception thrown by a class if a non-implemented method is called
++class CRYPTOPP_DLL NotImplemented : public Exception
++{
++public:
++	explicit NotImplemented(const std::string &amp;s) : Exception(NOT_IMPLEMENTED, s) {}
++};
++
++//! exception thrown by a class when Flush(true) is called but it can&#x27;t completely flush its buffers
++class CRYPTOPP_DLL CannotFlush : public Exception
++{
++public:
++	explicit CannotFlush(const std::string &amp;s) : Exception(CANNOT_FLUSH, s) {}
++};
++
++//! error reported by the operating system
++class CRYPTOPP_DLL OS_Error : public Exception
++{
++public:
++	OS_Error(ErrorType errorType, const std::string &amp;s, const std::string&amp; operation, int errorCode)
++		: Exception(errorType, s), m_operation(operation), m_errorCode(errorCode) {}
++	~OS_Error() throw() {}
++
++	// the operating system API that reported the error
++	const std::string &amp; GetOperation() const {return m_operation;}
++	// the error code return by the operating system
++	int GetErrorCode() const {return m_errorCode;}
++
++protected:
++	std::string m_operation;
++	int m_errorCode;
++};
++
++//! used to return decoding results
++struct CRYPTOPP_DLL DecodingResult
++{
++	explicit DecodingResult() : isValidCoding(false), messageLength(0) {}
++	explicit DecodingResult(size_t len) : isValidCoding(true), messageLength(len) {}
++
++	bool operator==(const DecodingResult &amp;rhs) const {return isValidCoding == rhs.isValidCoding &amp;&amp; messageLength == rhs.messageLength;}
++	bool operator!=(const DecodingResult &amp;rhs) const {return !operator==(rhs);}
++
++	bool isValidCoding;
++	size_t messageLength;
++
++#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
++	operator size_t() const {return isValidCoding ? messageLength : 0;}
++#endif
++};
++
++//! interface for retrieving values given their names
++/*! \note This class is used to safely pass a variable number of arbitrarily typed arguments to functions
++	and to read values from keys and crypto parameters.
++	\note To obtain an object that implements NameValuePairs for the purpose of parameter
++	passing, use the MakeParameters() function.
++	\note To get a value from NameValuePairs, you need to know the name and the type of the value. 
++	Call GetValueNames() on a NameValuePairs object to obtain a list of value names that it supports.
++	Then look at the Name namespace documentation to see what the type of each value is, or
++	alternatively, call GetIntValue() with the value name, and if the type is not int, a
++	ValueTypeMismatch exception will be thrown and you can get the actual type from the exception object.
++*/
++class CRYPTOPP_NO_VTABLE NameValuePairs
++{
++public:
++	virtual ~NameValuePairs() {}
++
++	//! exception thrown when trying to retrieve a value using a different type than expected
++	class CRYPTOPP_DLL ValueTypeMismatch : public InvalidArgument
++	{
++	public:
++		ValueTypeMismatch(const std::string &amp;name, const std::type_info &amp;stored, const std::type_info &amp;retrieving)
++			: InvalidArgument(&quot;NameValuePairs: type mismatch for &#x27;&quot; + name + &quot;&#x27;, stored &#x27;&quot; + stored.name() + &quot;&#x27;, trying to retrieve &#x27;&quot; + retrieving.name() + &quot;&#x27;&quot;)
++			, m_stored(stored), m_retrieving(retrieving) {}
++
++		const std::type_info &amp; GetStoredTypeInfo() const {return m_stored;}
++		const std::type_info &amp; GetRetrievingTypeInfo() const {return m_retrieving;}
++
++	private:
++		const std::type_info &amp;m_stored;
++		const std::type_info &amp;m_retrieving;
++	};
++
++	//! get a copy of this object or a subobject of it
++	template &lt;class T&gt;
++	bool GetThisObject(T &amp;object) const
++	{
++		return GetValue((std::string(&quot;ThisObject:&quot;)+typeid(T).name()).c_str(), object);
++	}
++
++	//! get a pointer to this object, as a pointer to T
++	template &lt;class T&gt;
++	bool GetThisPointer(T *&amp;p) const
++	{
++		return GetValue((std::string(&quot;ThisPointer:&quot;)+typeid(T).name()).c_str(), p);
++	}
++
++	//! get a named value, returns true if the name exists
++	template &lt;class T&gt;
++	bool GetValue(const char *name, T &amp;value) const
++	{
++		return GetVoidValue(name, typeid(T), &amp;value);
++	}
++
++	//! get a named value, returns the default if the name doesn&#x27;t exist
++	template &lt;class T&gt;
++	T GetValueWithDefault(const char *name, T defaultValue) const
++	{
++		GetValue(name, defaultValue);
++		return defaultValue;
++	}
++
++	//! get a list of value names that can be retrieved
++	CRYPTOPP_DLL std::string GetValueNames() const
++		{std::string result; GetValue(&quot;ValueNames&quot;, result); return result;}
++
++	//! get a named value with type int
++	/*! used to ensure we don&#x27;t accidentally try to get an unsigned int
++		or some other type when we mean int (which is the most common case) */
++	CRYPTOPP_DLL bool GetIntValue(const char *name, int &amp;value) const
++		{return GetValue(name, value);}
++
++	//! get a named value with type int, with default
++	CRYPTOPP_DLL int GetIntValueWithDefault(const char *name, int defaultValue) const
++		{return GetValueWithDefault(name, defaultValue);}
++
++	//! used by derived classes to check for type mismatch
++	CRYPTOPP_DLL static void CRYPTOPP_API ThrowIfTypeMismatch(const char *name, const std::type_info &amp;stored, const std::type_info &amp;retrieving)
++		{if (stored != retrieving) throw ValueTypeMismatch(name, stored, retrieving);}
++
++	template &lt;class T&gt;
++	void GetRequiredParameter(const char *className, const char *name, T &amp;value) const
++	{
++		if (!GetValue(name, value))
++			throw InvalidArgument(std::string(className) + &quot;: missing required parameter &#x27;&quot; + name + &quot;&#x27;&quot;);
++	}
++</code></pre></details><details><summary><code>cryptopp/iterhash.h</code></summary><pre><code>@@ -0,0 +1,29 @@
++#ifndef CRYPTOPP_ITERHASH_H
++#define CRYPTOPP_ITERHASH_H
++
++#include &quot;secblock.h&quot;
++
++NAMESPACE_BEGIN(CryptoPP)
++
++// *** trimmed down dependency from iterhash.h ***
++template &lt;class T_HashWordType, class T_Endianness, unsigned int T_BlockSize, unsigned int T_StateSize, class T_Transform, unsigned int T_DigestSize = 0, bool T_StateAligned = false&gt;
++class CRYPTOPP_NO_VTABLE IteratedHashWithStaticTransform
++{
++public:
++	CRYPTOPP_CONSTANT(DIGESTSIZE = T_DigestSize ? T_DigestSize : T_StateSize)
++	unsigned int DigestSize() const {return DIGESTSIZE;};
++    typedef T_HashWordType HashWordType;
++    CRYPTOPP_CONSTANT(BLOCKSIZE = T_BlockSize)
++
++protected:
++	IteratedHashWithStaticTransform() {this-&gt;Init();}
++	void HashEndianCorrectedBlock(const T_HashWordType *data) {T_Transform::Transform(this-&gt;m_state, data);}
++	void Init() {T_Transform::InitState(this-&gt;m_state);}
++
++	T_HashWordType* StateBuf() {return this-&gt;m_state;}
++	FixedSizeAlignedSecBlock&lt;T_HashWordType, T_BlockSize/sizeof(T_HashWordType), T_StateAligned&gt; m_state;
++};
++
++NAMESPACE_END
++
++#endif</code></pre></details><details><summary><code>cryptopp/misc.h</code></summary><pre><code>@@ -0,0 +1,1134 @@
++#ifndef CRYPTOPP_MISC_H
++#define CRYPTOPP_MISC_H
++
++#include &quot;cryptlib.h&quot;
++#include &quot;smartptr.h&quot;
++#include &lt;string.h&gt;		// for memcpy and memmove
++
++#ifdef _MSC_VER
++	#include &lt;stdlib.h&gt;
++	#if _MSC_VER &gt;= 1400
++		// VC2005 workaround: disable declarations that conflict with winnt.h
++		#define _interlockedbittestandset CRYPTOPP_DISABLED_INTRINSIC_1
++		#define _interlockedbittestandreset CRYPTOPP_DISABLED_INTRINSIC_2
++		#define _interlockedbittestandset64 CRYPTOPP_DISABLED_INTRINSIC_3
++		#define _interlockedbittestandreset64 CRYPTOPP_DISABLED_INTRINSIC_4
++		#include &lt;intrin.h&gt;
++		#undef _interlockedbittestandset
++		#undef _interlockedbittestandreset
++		#undef _interlockedbittestandset64
++		#undef _interlockedbittestandreset64
++		#define CRYPTOPP_FAST_ROTATE(x) 1
++	#elif _MSC_VER &gt;= 1300
++		#define CRYPTOPP_FAST_ROTATE(x) ((x) == 32 | (x) == 64)
++	#else
++		#define CRYPTOPP_FAST_ROTATE(x) ((x) == 32)
++	#endif
++#elif (defined(__MWERKS__) &amp;&amp; TARGET_CPU_PPC) || \
++	(defined(__GNUC__) &amp;&amp; (defined(_ARCH_PWR2) || defined(_ARCH_PWR) || defined(_ARCH_PPC) || defined(_ARCH_PPC64) || defined(_ARCH_COM)))
++	#define CRYPTOPP_FAST_ROTATE(x) ((x) == 32)
++#elif defined(__GNUC__) &amp;&amp; (CRYPTOPP_BOOL_X64 || CRYPTOPP_BOOL_X86)	// depend on GCC&#x27;s peephole optimization to generate rotate instructions
++	#define CRYPTOPP_FAST_ROTATE(x) 1
++#else
++	#define CRYPTOPP_FAST_ROTATE(x) 0
++#endif
++
++#ifdef __BORLANDC__
++#include &lt;mem.h&gt;</code></pre></details><details><summary><code>cryptopp/pch.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/secblock.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/simple.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/smartptr.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/stdcpp.h</code></summary><pre><code></code></pre></details><details><summary><code>main.cpp</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code></code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code></code></pre></details><details><summary><code>sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>sha.h</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/9f35575/">← tcatm&#x27;s cached SHA256 state idea, about 70% faster…</a><a rel="next" href="../../commits/f79751c/">better IsInitialBlockDownload →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

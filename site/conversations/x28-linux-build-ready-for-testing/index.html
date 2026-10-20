@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linux build ready for testing – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 8 November 2009: The Linux build is ready for testing on the network. It seems solid. I sent the executable as an attachment in the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x28-linux-build-ready-for-testing/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Linux build ready for testing – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 8 November 2009: The Linux build is ready for testing on the network. It seems solid. I sent the executable as an attachment in the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x28-linux-build-ready-for-testing/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Linux build ready for testing – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 8 November 2009: The Linux build is ready for testing on the network. It seems solid. I sent the executable as an attachment in the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Linux build ready for testing", "url": "https://satoshimail.pages.dev/conversations/x28-linux-build-ready-for-testing/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-08T05:52:11Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-08T05:52:11Z", "text": "The Linux build is ready for testing on the network. It seems solid. I sent the executable as an attachment in the previous e-mail, but if the mail server didn't let it through (it's 12MB), you can download it here: http://rapidshare.com/files/303914158/linux-0.1.6-test1.tar.bz2.html"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-11-08T09:50:44Z", "text": "That's great! A major waypoint reached. Seems to work fine here."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-08T17:39:39Z", "text": "In the debug.log, it requests the block list, receives the block list, then begins uploading the list of blocks requested. It doesn't receive the blocks, but it didn't run long enough for me to be sure it would have had time yet. Everything else looks normal. How long did you run it? It could take a few minutes to start downloading the blocks. Especially if you're on a cable modem, the uplink can be much lower bandwidth so it would take some time to upload the block request list. If you run it…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-09T01:23:59Z", "text": "About how long did it take to start? It could be the node that you happened to request from is slow. The slow start is consistent with the slow download speed. I'd like to look at your current debug.log file and try to understand what's going. It might just be a really slow connection on the other side, or maybe something's wrong and failed and retried. Taking too long could confuse other users. Martti, how long did it take to start downloading blocks when you ran it, and how fast did it…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-09T05:42:59Z", "text": "Thanks for that, I see what happened. Because the first one was slow, it ended up requesting the blocks from everybody else, which only bogged everything down. I can fix this, I just need to think a while about the right way. There's no risk in shutting down while there are unconfirmed. When you make a transaction or new block, it immediately broadcasts it to the network. After that, the increasing #/confirmed number is just monitoring the outcome. There's nothing your node does during that…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-11-09T08:32:08Z", "text": "Started very quickly when I got connected and downloaded quicker than my Windows PC, which has a slower CPU. I'll have to focus on a school project (coincidentally C++ coding) for about a month now, so I don't have that much time for active developing until December. Let's keep contact anyway."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-09T19:30:53Z", "text": "You really don't want to keep running in Wine, you're getting database errors (db.log). You probably developed these rituals of transferring to a fresh install to cope with database corruption. If there is a way to lose unconfirmed blocks, it would have to be the database errors. Any problems you find in the Linux build can be fixed. The Wine incompatibility deep inside Berkeley DB is unfixable. I think GCC 4.3.3 on the Linux build optimized the SHA-256 code better than the old GCC 3.4.5 on…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-09T19:41:11Z", "text": "You got a lot done with the Linux build, autostart, minimize to tray, setup and everything, it's really appreciated. Good luck on your C++ project."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Linux build ready for testing", "item": "https://satoshimail.pages.dev/conversations/x28-linux-build-ready-for-testing/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x28">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Linux build ready for testing</span></div></nav>
+<main class="in">
+<h1>Linux build ready for testing</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 8 messages · from 8 November 2009 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x28">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;, Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-08T05:52:11Z">8 November 2009, 05:52 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-63" rel="nofollow noopener">original</a></span></header>
+<div class="t">The Linux build is ready for testing on the network.  It seems solid.  I
+sent the executable as an attachment in the previous e-mail, but if the
+mail server didn&#x27;t let it through (it&#x27;s 12MB), you can download it here:
+<a href="http://rapidshare.com/files/303914158/linux-0.1.6-test1.tar.bz2.html" rel="nofollow noopener">http://rapidshare.com/files/303914158/linux-0.1.6-test1.tar.bz2.html</a></div></article><article class="msg" id="m1">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-11-08T09:50:44Z">8 November 2009, 09:50 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-64" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s great! A major waypoint reached. Seems to work fine here.</div><blockquote><div class="t">The Linux build is ready for testing on the network.  It seems solid.
+I sent the executable as an attachment in the previous e-mail, but if
+the mail server didn&#x27;t let it through (it&#x27;s 12MB), you can download it
+here:
+<a href="http://rapidshare.com/files/303914158/linux-0.1.6-test1.tar.bz2.html" rel="nofollow noopener">http://rapidshare.com/files/303914158/linux-0.1.6-test1.tar.bz2.html</a></div></blockquote></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-08T17:39:39Z">8 November 2009, 17:39 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-66" rel="nofollow noopener">original</a></span></header>
+<div class="t">In the debug.log, it requests the block list, receives the block list,
+then begins uploading the list of blocks requested.  It doesn&#x27;t receive
+the blocks, but it didn&#x27;t run long enough for me to be sure it would
+have had time yet.  Everything else looks normal.
+
+How long did you run it?  It could take a few minutes to start
+downloading the blocks.  Especially if you&#x27;re on a cable modem, the
+uplink can be much lower bandwidth so it would take some time to upload
+the block request list.
+
+If you run it again and it still doesn&#x27;t download blocks, keep it
+running for several hours at least and then send me the debug.log.  That
+should give it time for my node to connect to you and I could see what
+it says on my side and correlate it with your debug.log.
+
+You&#x27;re right about the minimize on close option, there&#x27;s no reason that
+can&#x27;t be separate.  Martti originally had it separate and I made it a
+sub-option, my bad.  I&#x27;ll change it back.</div><blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">That is what I meant. The blocks displayed in the status bar did not
+increase at all while i ran the program. I have attached my debug.log.
+
+A good way for you to test the tray icon in Gnome is to remove the
+notification area and then add it back. If the icon is still displayed
+after adding the notification back, then it&#x27;s working correctly.
+
+I generally set application preferences to not minimize to the tray, but
+to close to the tray. And I keep the application minimized. That way I
+don&#x27;t accidentally close the program and still have the convenience of
+being able to open the application from the tray. (I don&#x27;t display open
+windows in the &#x27;task bar&#x27; but I have an icon that if clicked displays
+open windows as sub-menu items.) Then if the tray icon disappears, I go
+into the settings disable and re-enable the tray icon setting to get it
+to reappear. That&#x27;s currently not possible with the bitcoin preferences
+because the close to tray check mark can not be enabled without the
+minimize to tray check box being enabled.
+
+On Sun, Nov 8, 2009 at 9:08 AM, Satoshi Nakamoto &lt;satoshin@gmx.com
+&lt;mailto:satoshin@gmx.com&gt;&gt; wrote:
+
+    Liberty Standard wrote:
+
+        I downloaded it and it runs. It and it is using plenty of CPU,
+        so I think it&#x27;s working properly. It has not downloaded
+        previously generated blocks. Is that a bug or a new feature?
+
+    If you mean the blocks count in the status bar isn&#x27;t working its way
+    up to around 26600, then that&#x27;s a bug, you should send me your
+    debug.log. (which is at ~/.bitcoin/debug.log)
+
+        The system tray in Gnome is not very reliable. Sometimes an icon
+        will disappear leaving no way to get back to the program. I have
+        verified that this can happen with bitcoin. It would be nice if
+        starting bitcoin while it&#x27;s already running would just bring up
+        the GUI of the already running bitcoin process.
+
+    We haven&#x27;t figured out how to find and bring up the existing running
+    program yet on Linux like it does on Windows.  Given what you say, I
+    should at least turn off the minimize to tray option initially by
+    default.</div></blockquote></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-09T01:23:59Z">9 November 2009, 01:23 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-68" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">Ok, blocks have now started to increase. It definitely takes longer for
+them to start increasing than with the Windows version. Also, I think
+they might be increasing at a slower rate than in with the Windows
+version. Is there perhaps debugging enabled in the Linux build that you
+sent me? Block are increasing at about 15 blocks per second (eyeball
+estimate while looking at a clock). I didn&#x27;t time how fast they
+increased in the Windows version, but it seems like it was much faster.</div></blockquote><div class="t">About how long did it take to start?  It could be the node that you
+happened to request from is slow.  The slow start is consistent with the
+slow download speed.
+
+I&#x27;d like to look at your current debug.log file and try to understand
+what&#x27;s going.  It might just be a really slow connection on the other
+side, or maybe something&#x27;s wrong and failed and retried.  Taking too
+long could confuse other users.
+
+Martti, how long did it take to start downloading blocks when you ran
+it, and how fast did it download?</div><blockquote><div class="t">    When I launch bitcoin and the bitcoin port is not available, I get
+    the following messages to the command line. I don&#x27;t get those
+    messages when the bitcoin port is available. Would it be possible
+    for bitcoin to pick another port if the default port is taken? The
+    same think sometimes happens to me with my BitTorrent client. When I
+    restart it, my previously open port is closed. All I have to do is
+    change the port and it starts working again.
+
+    /usr/lib/gio/modules/libgvfsdbus.so: wrong ELF class: ELFCLASS64
+    Failed to load module: /usr/lib/gio/modules/libgvfsdbus.so
+    /usr/lib/gio/modules/libgioremote-volume-monitor.so: wrong ELF
+    class: ELFCLASS64
+    Failed to load module:
+    /usr/lib/gio/modules/libgioremote-volume-monitor.so
+    /usr/lib/gio/modules/libgiogconf.so: wrong ELF class: ELFCLASS64
+    Failed to load module: /usr/lib/gio/modules/libgiogconf.so</div></blockquote><div class="t">It already uses SO_REUSEADDR so it can bind to the port if it&#x27;s in
+TIME_WAIT state after being closed.  The only time it should fail to
+bind is when the program really is already running.  It&#x27;s important that
+two copies of Bitcoin not run on the same machine at once because they
+would be modifying the database at the same time.  There is never any
+need to run two on one machine as coin generation will now use multiple
+processors automatically.
+
+I&#x27;m not sure what those lib errors are, I&#x27;ll do some searching.</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-09T05:42:59Z">9 November 2009, 05:42 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-69" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for that, I see what happened.  Because the first one was slow,
+it ended up requesting the blocks from everybody else, which only bogged
+everything down.  I can fix this, I just need to think a while about the
+right way.
+
+There&#x27;s no risk in shutting down while there are unconfirmed.  When you
+make a transaction or new block, it immediately broadcasts it to the
+network.  After that, the increasing #/confirmed number is just
+monitoring the outcome.  There&#x27;s nothing your node does during that time
+to promote the acceptance.
+
+Now that I think about it, when you close Bitcoin, it closes the main
+window immediately but in the background continues running to finish an
+orderly flush and shutdown of the database.  Before I implemented that,
+it was annoying having a dead hung unresponsive window hanging around.
+Until it finishes the orderly shutdown in the background, the port would
+be locked, and this is an important protection to make sure another copy
+can&#x27;t touch the database until it&#x27;s done.  I haven&#x27;t seen the shutdown
+take more than a few seconds.
+
+In Wine, there&#x27;s no way for the Windows version to do SO_REUSEADDR, so
+that would add 60 seconds (on my system) of TIME_WAIT after the port is
+closed.
+
+If you need to transfer between two copies, you could send it to the
+other&#x27;s bitcoin address.  The receiving copy doesn&#x27;t have to be online
+at the time.
+
+The command line to use a different data directory is
+bitcoin -datadir=&lt;directory&gt;
+
+For example, on Linux, the default directory is (don&#x27;t use ~)
+bitcoin -datadir=/home/yourusername/.bitcoin
+
+You shouldn&#x27;t normally have any need to use this switch.  It still won&#x27;t
+let you run two instances at once.</div><blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">On Mon, Nov 9, 2009 at 3:23 AM, Satoshi Nakamoto &lt;satoshin@gmx.com
+&lt;mailto:satoshin@gmx.com&gt;&gt; wrote:
+
+    Liberty Standard wrote:
+
+        Ok, blocks have now started to increase. It definitely takes
+        longer for them to start increasing than with the Windows
+        version. Also, I think they might be increasing at a slower rate
+        than in with the Windows version. Is there perhaps debugging
+        enabled in the Linux build that you sent me? Block are
+        increasing at about 15 blocks per second (eyeball estimate while
+        looking at a clock). I didn&#x27;t time how fast they increased in
+        the Windows version, but it seems like it was much faster.
+
+    About how long did it take to start?  It could be the node that you
+    happened to request from is slow.  The slow start is consistent with
+    the slow download speed.
+
+It took about a half hour for it to start incrementing quickly.
+Interestingly, the CPU usage increased before it started to increment
+steadily and then lowered when it started to increment steadily.
+Although this time the block incremented to 2 within the first few
+minutes. I have not yet generated any bitcoins. I&#x27;ll wait for as long as
+I have patience to generate a bitcoin, but if none are created by the
+time I lose patience, I&#x27;m going to move back to the wine version.
+
+    I&#x27;d like to look at your current debug.log file and try to
+    understand what&#x27;s going.  It might just be a really slow connection
+    on the other side, or maybe something&#x27;s wrong and failed and
+    retried.  Taking too long could confuse other users.
+
+I&#x27;ve included my current debug.log.
+
+    Martti, how long did it take to start downloading blocks when you
+    ran it, and how fast did it download?
+
+           When I launch bitcoin and the bitcoin port is not available,
+        I get
+           the following messages to the command line. I don&#x27;t get those
+           messages when the bitcoin port is available. Would it be possible
+           for bitcoin to pick another port if the default port is
+        taken? The
+           same think sometimes happens to me with my BitTorrent client.
+        When I
+           restart it, my previously open port is closed. All I have to
+        do is
+           change the port and it starts working again.
+
+           /usr/lib/gio/modules/libgvfsdbus.so: wrong ELF class: ELFCLASS64
+           Failed to load module: /usr/lib/gio/modules/libgvfsdbus.so
+           /usr/lib/gio/modules/libgioremote-volume-monitor.so: wrong ELF
+           class: ELFCLASS64
+           Failed to load module:
+           /usr/lib/gio/modules/libgioremote-volume-monitor.so
+           /usr/lib/gio/modules/libgiogconf.so: wrong ELF class: ELFCLASS64
+           Failed to load module: /usr/lib/gio/modules/libgiogconf.so
+
+    It already uses SO_REUSEADDR so it can bind to the port if it&#x27;s in
+    TIME_WAIT state after being closed.  The only time it should fail to
+    bind is when the program really is already running.  It&#x27;s important
+    that two copies of Bitcoin not run on the same machine at once
+    because they would be modifying the database at the same time.
+     There is never any need to run two on one machine as coin
+    generation will now use multiple processors automatically.
+
+The reason I run two instances at the same time is to transfer bitcoins
+from one bitcoin instance to another. They of course would need to be
+accessing different data directories. Perhaps that could be specified as
+a command line argument. I currently have to move my bitcoin data folder
+to a virtual machine to do this. Shutting down bitcoin and restarting it
+with a different data directory is a poor solution because shutting down
+bitcoin while there are unconfirmed bitcoins risks losing those bitcoins.
+
+Bitcoin was definitely not running when i get the busy port error. The
+process closes quickly and reliably from my experience, but it takes
+anywhere from 30 seconds to 3 minutes (estimation from memory) for the
+port to become available again. It occurred while switching from bitcoin
+0.1.5 in Wine to the Linux build and again while switching from the
+Linux build to bitcoin 0.1.5 in Wine.
+
+Another thing that I noticed is that the about dialog text does not fit
+correctly and it cannot be resized.
+
+    I&#x27;m not sure what those lib errors are, I&#x27;ll do some searching.</div></blockquote></article><article class="msg" id="m5">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-11-09T08:32:08Z">9 November 2009, 08:32 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-70" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Martti, how long did it take to start downloading blocks when you ran
+it, and how fast did it download?</div></blockquote><div class="t">Started very quickly when I got connected and downloaded quicker than
+my Windows PC, which has a slower CPU.
+
+I&#x27;ll have to focus on a school project (coincidentally C++ coding) for
+about a month now, so I don&#x27;t have that much time for active
+developing until December. Let&#x27;s keep contact anyway.</div><blockquote><div class="t">Liberty Standard wrote:
+&gt; Ok, blocks have now started to increase. It definitely takes longer
+&gt;  for them to start increasing than with the Windows version. Also,
+&gt; I  think they might be increasing at a slower rate than in with the
+&gt;  Windows version. Is there perhaps debugging enabled in the Linux
+&gt; build that you sent me? Block are increasing at about 15 blocks per
+&gt;  second (eyeball estimate while looking at a clock). I didn&#x27;t time
+&gt; how fast they increased in the Windows version, but it seems like
+&gt; it was much faster.
+
+About how long did it take to start?  It could be the node that you
+happened to request from is slow.  The slow start is consistent with
+the slow download speed.
+
+I&#x27;d like to look at your current debug.log file and try to understand
+what&#x27;s going.  It might just be a really slow connection on the other
+side, or maybe something&#x27;s wrong and failed and retried.  Taking too
+long could confuse other users.
+
+Martti, how long did it take to start downloading blocks when you ran
+it, and how fast did it download?
+
+&gt;    When I launch bitcoin and the bitcoin port is not available, I get
+&gt;    the following messages to the command line. I don&#x27;t get those
+&gt;    messages when the bitcoin port is available. Would it be possible
+&gt;    for bitcoin to pick another port if the default port is taken? The
+&gt;    same think sometimes happens to me with my BitTorrent client. When I
+&gt;    restart it, my previously open port is closed. All I have to do is
+&gt;    change the port and it starts working again.
+&gt;
+&gt;    /usr/lib/gio/modules/libgvfsdbus.so: wrong ELF class: ELFCLASS64
+&gt;    Failed to load module: /usr/lib/gio/modules/libgvfsdbus.so
+&gt;    /usr/lib/gio/modules/libgioremote-volume-monitor.so: wrong ELF
+&gt;    class: ELFCLASS64
+&gt;    Failed to load module:
+&gt;    /usr/lib/gio/modules/libgioremote-volume-monitor.so
+&gt;    /usr/lib/gio/modules/libgiogconf.so: wrong ELF class: ELFCLASS64
+&gt;    Failed to load module: /usr/lib/gio/modules/libgiogconf.so
+
+It already uses SO_REUSEADDR so it can bind to the port if it&#x27;s in
+TIME_WAIT state after being closed.  The only time it should fail to
+bind is when the program really is already running.  It&#x27;s important
+that two copies of Bitcoin not run on the same machine at once because
+they would be modifying the database at the same time.  There is never
+any need to run two on one machine as coin generation will now use
+multiple processors automatically.
+
+I&#x27;m not sure what those lib errors are, I&#x27;ll do some searching.</div></blockquote></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-09T19:30:53Z">9 November 2009, 19:30 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-71" rel="nofollow noopener">original</a></span></header>
+<div class="t">You really don&#x27;t want to keep running in Wine, you&#x27;re getting database
+errors (db.log).  You probably developed these rituals of transferring
+to a fresh install to cope with database corruption.  If there is a way
+to lose unconfirmed blocks, it would have to be the database errors.
+Any problems you find in the Linux build can be fixed.  The Wine
+incompatibility deep inside Berkeley DB is unfixable.
+
+I think GCC 4.3.3 on the Linux build optimized the SHA-256 code better
+than the old GCC 3.4.5 on Windows.  When I was looking for the best
+SHA-256 code, there was a lot of hand tuned highly optimized SHA1 code
+available, but not so much for SHA-256 yet.  I should see if I can
+upgrade MinGW to 4.3.x to get them on a level playing field.</div><blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">Everyone that contributed to making this Linux build really did a great
+job! Thanks for the hard work. It has started maturing some bitcoins, so
+I&#x27;m going to continue to run the Linux client for the time being until I
+decide whether it&#x27;s at least as good or better at generating coins than
+the Windows version running in Wine.
+
+On Mon, Nov 9, 2009 at 8:59 AM, Liberty Standard
+&lt;newlibertystandard@gmail.com &lt;mailto:newlibertystandard@gmail.com&gt;&gt; wrote:
+
+    Another instance when I would like to run multiple instances is when
+    I upgrade bitcoin. I will uncheck the generate coin check box in the
+    outdated bitcoin, launch and start generating coins in the new
+    bitcoin using a separate data directory, then when the old
+    application&#x27;s coins have matured I will send them to the new
+    application and then close the old application. I prefer do do clean
+    installs rather than upgrading while maintaining old data.
+
+    On Mon, Nov 9, 2009 at 7:42 AM, Satoshi Nakamoto &lt;satoshin@gmx.com
+    &lt;mailto:satoshin@gmx.com&gt;&gt; wrote:
+
+        Thanks for that, I see what happened.  Because the first one was
+        slow, it ended up requesting the blocks from everybody else,
+        which only bogged everything down.  I can fix this, I just need
+        to think a while about the right way.
+
+        There&#x27;s no risk in shutting down while there are unconfirmed.
+         When you make a transaction or new block, it immediately
+        broadcasts it to the network.  After that, the increasing
+        #/confirmed number is just monitoring the outcome.  There&#x27;s
+        nothing your node does during that time to promote the acceptance.</div></blockquote></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-11-09T19:41:11Z">9 November 2009, 19:41 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-72" rel="nofollow noopener">original</a></span></header>
+<div class="t">You got a lot done with the Linux build, autostart, minimize to tray,
+setup and everything, it&#x27;s really appreciated.  Good luck on your C++
+project.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I&#x27;ll have to focus on a school project (coincidentally C++ coding) for
+about a month now, so I don&#x27;t have that much time for active developing
+until December. Let&#x27;s keep contact anyway.</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x27-linux-build-ready-for-testing-attached/">← Linux build ready for testing (attached)</a><a rel="next" href="../../conversations/x29-re-linux-dead-sockets-problem/">Re: Linux - dead sockets problem →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

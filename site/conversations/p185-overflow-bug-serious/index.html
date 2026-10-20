@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>overflow bug SERIOUS – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 15 August 2010: Here&#x27;s the preliminary change. Look right? I have more changes to make, this isn&#x27;t all of it. Will SVN shortly. bool…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p185-overflow-bug-serious/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="overflow bug SERIOUS – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 15 August 2010: Here&#x27;s the preliminary change. Look right? I have more changes to make, this isn&#x27;t all of it. Will SVN shortly. bool…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p185-overflow-bug-serious/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="overflow bug SERIOUS – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 15 August 2010: Here&#x27;s the preliminary change. Look right? I have more changes to make, this isn&#x27;t all of it. Will SVN shortly. bool…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "overflow bug SERIOUS", "url": "https://satoshimail.pages.dev/conversations/p185-overflow-bug-serious/", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-15T19:04:11Z", "text": "seems a block at height 74638 has expoited a bug in the net. It uses an integer overflow to make a negative total transaction. The two transaction outputs are: out Value:92233720368.54(7ffffffffff85ee0) out Value:92233720368.54(7ff ffffffff85ee0) We need a fix asap Edit: (satoshi) 0.3.10 patch download links here: http://bitcointalk.org/index.php?topic=827.0", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "kencausey"}, "datePublished": "2010-08-15T19:25:58Z", "text": "Original post: http://bitcointalk.org/index.php?topic=822.0"}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T20:26:44Z", "text": "Whether to stop generating depends on the possible solution. If there are ever bad blocks, I can imagine an officially patched Bitcoin could be hard coded to exclude bad transactions contained in the block chain so that although the bad transactions would still be sitting in the chain, they would be ignored. I recommend people keep on generating if you were previously generating but be cautious about transactions until we hear back from Satoshi. The recommendation…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-15T20:39:42Z", "text": "Until there is a better fix... after a very small amount of testing this seems to work: --- a/main.h +++ b/main.h @@ -473,8 +473,12 @@ public: // Check for negative values foreach(const CTxOut& txout, vout) + { if (txout.nValue < 0) return error(\"CTransaction::CheckTransaction() : txout.nValue negative\"); + if (txout.nValue > 21000000*COIN) + return error(\"CTransaction::CheckTransaction() : txout.nValue over-max\"); + } if (IsCoinBase()) { @@ -520,6 +524,8 @@ public: int64 nValueOut = 0…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-15T20:42:49Z", "text": "Or the same patch from your github, http://gist.github.com/525921 which gives us the raw patch that can be applied directly, http://gist.github.com/raw/525921/fe2ad7583f0dd2444caa0b3e24d750bf45cac11b/Quick%20fix%20block%2074652 EDIT: I was unable to patch directly using this, perhaps CRLF problems. I applied your changes manually, and uploaded the result here: http://yyz.us/bitcoin/patch.bitcoin-gavin-overflow-quick-fix"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T20:59:09Z", "text": "Here's the preliminary change. Look right? I have more changes to make, this isn't all of it. Will SVN shortly. bool CheckTransaction() const { // Basic checks that don't depend on any context if (vin.empty() || vout.empty()) return error(\"CTransaction::CheckTransaction() : vin or vout empty\"); // Check for negative and overflow values int64 nTotal = 0; foreach(const CTxOut& txout, vout) { if (txout.nValue < 0) return error(\"CTransaction::CheckTransaction() : txout.nValue negative\"); if…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T21:06:45Z", "text": "It would help if people stop generating. We will probably need to re-do a branch around the current one, and the less you generate the faster that will be. A first patch will be in SVN rev 132. It's not uploaded yet. I'm pushing some other misc changes out of the way first, then I'll upload the patch for this."}, {"@type": "Comment", "author": {"@type": "Person", "name": "kencausey"}, "datePublished": "2010-08-15T21:09:53Z", "text": "I'm afraid the community is just too big and distributed now to expect much in the way of voluntary quick action on anything, especially generation which I'm sure many have on automatic and largely unmoderated."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-15T21:10:33Z", "text": "Looks good to me. Can you easily hardcode a check for the bad block's hash at startup and orphan it and subsequent blocks if they're on the best-block chain? It's painful to have to re-download all or most of the chain to fix this..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T21:15:18Z", "text": "Or just a quick re-verification of all blocks. After all, it is 5x faster <http://bitcointalk.org/index.php?topic=550.0> than it used t be. Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T21:23:55Z", "text": "Once you have an update, you could download knightmb's block chain. You'll want one that's old enough that it ends before block 74000 so the most recent security lockin will check it. Can someone find the link for that?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-08-15T21:26:09Z", "text": "http://knightmb.dyndns.org/files/bitcoin/blocks/"}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T21:29:08Z", "text": "I prefer to just re-download them. Block verification after the patch but before everyone upgrades is going to be SLOW! It'll probably cause the next difficulty adjustment to decrease significantly. Of course everyone will probably have upgraded by the time the next adjustment rolls around, so we'll probably roll through it relatively quickly."}, {"@type": "Comment", "author": {"@type": "Person", "name": "kencausey"}, "datePublished": "2010-08-15T21:36:30Z", "text": "Edit: Hmm, I see there is an info file included which might just clue me in. How about explaining to us stupid newbies what we would do with the blockchain once we download it?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-15T21:38:41Z", "text": "It means replacing files in the bitcoin data directory. It is not recommended, unless you know what you're doing. Easiest and safest way is to backup wallet.dat then redownload everything."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T21:40:19Z", "text": "Patch is uploaded to SVN rev 132! For now, recommended steps: 1) Shut down. 2) Download knightmb's blk files. (replace your blk0001.dat and blkindex.dat files) 3) Upgrade. 4) It should start out with less than 74000 blocks. Let it redownload the rest. If you don't want to use knightmb's files, you could just delete your blk*.dat files, but it's going to be a lot of load on the network if everyone is downloading the whole block index at once. I'll build releases shortly."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T21:40:31Z", "text": "While Bitcoin is not running, you put it in your Bitcoin data directory. ~/.bitcoin on Linux. If you want to re-download the whole chain, you just delete the file from the data directory while Bitcoin is not running. I'm going to be move my blk00x.dat files and blkindex.dat file out of by data directory and restart the client. Those are the correct files, right? Edit: I'll also backup the whole directory, like I usually do before upgrades."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-15T21:50:57Z", "text": "Anybody wanna volunteer to create blk*.dat for block chain <= 64637 ? Maybe the official binaries could simply ship a known-good block chain, to save time and bandwidth?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T22:05:11Z", "text": "Will the bug fix include the 4-way SSE2 patch <http://bitcointalk.org/index.php?topic=820.msg9452#msg9452> of 0.3.9 rc2? Thanks for letting me know that it is included <http://bitcointalk.org/index.php?topic=823.msg9557#msg9557>, theymos. Please release another release candidate when you have a moment if it is not included. Only the blocks including and after the invalid block are invalid. All previous blocks are valid."}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-08-15T22:06:02Z", "text": "Only this aberrant transaction and coins generated after it in the block chain will be removed. All other transactions will continue to exist. It's included."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-15T22:13:43Z", "text": "Oh, yeah, just noticed this topic. I can't remember when those block chains were snapshot, but I'll update it to be more descriptive (like block 64,000, etc.) Good thing I keep those around. Grin My web server sits on a fiber, so it won't be a big deal everyone starts to download those files at once (at least for the more technical people). [edit] Shutting down all the remaining servers and super-nodes I left running. Hope that helps."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-08-15T22:17:25Z", "text": "knightmb, do you still have any of your monster network available to turn on to help build the new valid chain?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-15T22:18:17Z", "text": "Not anymore, was shutdown on the last day of the month for July, all I have left are about a 2 dozen servers, but near nothing of what I had before."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T22:27:26Z", "text": "Here's something for your Signature if you're interested. [i][color=red][b]*** WARNING ***[/b][/color] DO NOT TRUST ANY TRANSACTIONS THAT HAPPENED AFTER 15.08.2010 17:05 UTC (block 74638). We are investigating a problem. ([url=http://bit.ly/afalQU]more[/url])[/i] I shortened the URL since the signature can only contain 300 characters. Also, can we get some color on the news warning? It's not very noticeable."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-15T22:30:23Z", "text": "I can build a block chain to the desired number using a combo of the old block chain and a client with the latest block chain (minus the bad stuff), what number should I shot for?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "kencausey"}, "datePublished": "2010-08-15T22:31:07Z", "text": "74637 is the last good block"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-15T22:34:03Z", "text": "Ok, good, I've relabeled the old block chain on my site, I'll try to get as close to that number as I can. Basically, I'm just loading up two clients, one with the old chain, another with the sorta bad chain at the end. I'm going to let the first client get as close to the number as I can before stopping it. Then snapshot off that block chain. Since it does about 500 at a time, I'll probably be able to get it close to 74,501"}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitLex"}, "datePublished": "2010-08-15T22:35:48Z", "text": "i'v got one of a w7-machine count 74602, if that helps."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-15T22:44:55Z", "text": "So long as a the person who creates it has a patched client and downloads the whole chain, optimally from another computer on their local network, then it should stop at the right place automatically."}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitLex"}, "datePublished": "2010-08-15T22:52:47Z", "text": "He didn't, he said \"you'll want one\", not that it needs to be, a little different. and if \"..Only the blocks including and after the invalid block are invalid. All previous blocks are valid..\", it doesn't need to be before 74000. just wanted to save knightmb some time, but yours is bigger than mine anyway. Grin"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T22:58:08Z", "text": "Don't update the block chain download. When you take someone's block chain download, you don't want it right up to the end. A somewhat old one is better so it can download and verify the most recent blocks. tcatm's 4-way SSE2 SHA-256 is in the file sha256.cpp and already uploaded a few revs ago. I just now uploaded rev 134 which is the makefile.unix that enables building with it on Linux. If you build rev 134 on Linux now you'll get the -4way switch. If you have problems building because of…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "overflow bug SERIOUS", "item": "https://satoshimail.pages.dev/conversations/p185-overflow-bug-serious/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p185">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">overflow bug SERIOUS</span></div></nav>
+<main class="in">
+<h1>overflow bug SERIOUS</h1>
+<p class="lead">BitcoinTalk forum · 68 messages · from 15 August 2010 · with BitLex, Gavin Andresen, GoldRush, Ground Loop, HostFat, Insti…</p>
+<p class="actions"><a class="btn" href="../../#t-p185">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/185/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-15T19:04:11Z">15 August 2010, 19:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9494#msg9494" rel="nofollow noopener">original</a></span></header>
+<div class="t">seems a block at height 74638 has expoited a bug in the net. It uses an integer overflow to make a negative total transaction. The two transaction outputs are:
+
+ out Value:92233720368.54(7ffffffffff85ee0) out Value:92233720368.54(7ff
+ffffffff85ee0)
+
+We need a fix asap
+
+Edit:
+(satoshi)
+0.3.10 patch download links here:
+<a href="http://bitcointalk.org/index.php?topic=827.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=827.0</a></div></article><article class="msg" id="m1">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T19:25:58Z">15 August 2010, 19:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9500#msg9500" rel="nofollow noopener">original</a></span></header>
+<div class="t">Original post: <a href="http://bitcointalk.org/index.php?topic=822.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=822.0</a></div></article><article class="msg" id="m2">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T20:26:44Z">15 August 2010, 20:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9518#msg9518" rel="nofollow noopener">original</a></span></header>
+<div class="t">Whether to stop generating depends on the possible solution. If there are ever bad blocks, I can imagine an officially patched Bitcoin could be hard coded to exclude bad transactions contained in the block chain so that although the bad transactions would still be sitting in the chain, they would be ignored. I recommend people keep on generating if you were previously generating but be cautious about transactions until we hear back from Satoshi.
+
+The recommendation &lt;<a href="http://bitcointalk.org/index.php?topic=823.msg9531#msg9531" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=823.msg9531#msg9531</a>&gt; is to stop generating.</div></article><article class="msg" id="m3">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-15T20:39:42Z">15 August 2010, 20:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9524#msg9524" rel="nofollow noopener">original</a></span></header>
+<div class="t">Until there is a better fix... after a very small amount of testing this seems to work:</div><pre><code>--- a/main.h
++++ b/main.h
+@@ -473,8 +473,12 @@ public:
+ 
+         // Check for negative values
+         foreach(const CTxOut&amp; txout, vout)
++ {
+             if (txout.nValue &lt; 0)
+                 return error(&quot;CTransaction::CheckTransaction() : txout.nValue negative&quot;);
++ if (txout.nValue &gt; 21000000*COIN)
++ return error(&quot;CTransaction::CheckTransaction() : txout.nValue over-max&quot;);
++ }
+ 
+         if (IsCoinBase())
+         {
+@@ -520,6 +524,8 @@ public:
+         int64 nValueOut = 0;
+         foreach(const CTxOut&amp; txout, vout)
+         {
++ if (txout.nValue &gt; 21000000*COIN)
++ continue; // ignore over-max-value...
+             if (txout.nValue &lt; 0)
+                 throw runtime_error(&quot;CTransaction::GetValueOut() : negative value&quot;);
+             nValueOut += txout.nValue;</code></pre><div class="t">You&#x27;ll need to re-download the part of the block chain before the bad block-- remove the blkindex.dat and blk0001.dat files.   I started with knightmb&#x27;s blockchain &lt;<a href="http://knightmb.dyndns.org/files/bitcoin/blocks/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/blocks/</a>&gt; snapshot.</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-15T20:42:49Z">15 August 2010, 20:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9526#msg9526" rel="nofollow noopener">original</a></span></header>
+<div class="t">Or the same patch from your github, <a href="http://gist.github.com/525921" rel="nofollow noopener">http://gist.github.com/525921</a> which gives us the raw patch that can be applied directly,
+<a href="http://gist.github.com/raw/525921/fe2ad7583f0dd2444caa0b3e24d750bf45cac11b/Quick%20fix%20block%2074652" rel="nofollow noopener">http://gist.github.com/raw/525921/fe2ad7583f0dd2444caa0b3e24d750bf45cac11b/Quick%20fix%20block%2074652</a>
+
+EDIT:  I was unable to patch directly using this, perhaps CRLF problems.
+
+I applied your changes manually, and uploaded the result here: <a href="http://yyz.us/bitcoin/patch.bitcoin-gavin-overflow-quick-fix" rel="nofollow noopener">http://yyz.us/bitcoin/patch.bitcoin-gavin-overflow-quick-fix</a></div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T20:59:09Z">15 August 2010, 20:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9530#msg9530" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s the preliminary change.  Look right?  I have more changes to make, this isn&#x27;t all of it.  Will SVN shortly.</div><pre><code>    bool CheckTransaction() const
+    {
+        // Basic checks that don&#x27;t depend on any context
+        if (vin.empty() || vout.empty())
+            return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
+
+        // Check for negative and overflow values
+        int64 nTotal = 0;
+        foreach(const CTxOut&amp; txout, vout)
+        {
+            if (txout.nValue &lt; 0)
+                return error(&quot;CTransaction::CheckTransaction() : txout.nValue negative&quot;);
+            if (txout.nValue &gt; 21000000 * COIN)
+                return error(&quot;CTransaction::CheckTransaction() : txout.nValue too high&quot;);
+            nTotal += txout.nValue;
+            if (nTotal &gt; 21000000 * COIN)
+                return error(&quot;CTransaction::CheckTransaction() : txout total too high&quot;);
+        }
+
+        if (IsCoinBase())
+        {
+            if (vin[0].scriptSig.size() &lt; 2 || vin[0].scriptSig.size() &gt; 100)
+                return error(&quot;CTransaction::CheckTransaction() : coinbase script size&quot;);
+        }
+        else
+        {
+            foreach(const CTxIn&amp; txin, vin)
+                if (txin.prevout.IsNull())
+                    return error(&quot;CTransaction::CheckTransaction() : prevout is null&quot;);
+        }
+
+        return true;
+    }</code></pre><div class="t">Don&#x27;t sticky the topic, nobody looks up there.  There&#x27;ll be enough posts to bump.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:06:45Z">15 August 2010, 21:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9531#msg9531" rel="nofollow noopener">original</a></span></header>
+<div class="t">It would help if people stop generating.  We will probably need to re-do a branch around the current one, and the less you generate the faster that will be.
+
+A first patch will be in SVN rev 132.  It&#x27;s not uploaded yet.  I&#x27;m pushing some other misc changes out of the way first, then I&#x27;ll upload the patch for this.</div></article><article class="msg" id="m7">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T21:09:53Z">15 August 2010, 21:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9533#msg9533" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m afraid the community is just too big and distributed now to expect much in the way of voluntary quick action on anything, especially generation which I&#x27;m sure many have on automatic and largely unmoderated.</div></article><article class="msg" id="m8">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-15T21:10:33Z">15 August 2010, 21:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9534#msg9534" rel="nofollow noopener">original</a></span></header>
+<div class="t">Looks good to me.
+
+Can you easily hardcode a check for the bad block&#x27;s hash at startup and orphan it and subsequent blocks if they&#x27;re on the best-block chain?
+It&#x27;s painful to have to re-download all or most of the chain to fix this...</div></article><article class="msg" id="m9">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T21:15:18Z">15 August 2010, 21:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9535#msg9535" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on August 15, 2010, 09:10:33 PM</div><div class="t">Looks good to me.
+
+Can you easily hardcode a check for the bad block&#x27;s hash at startup and orphan it and subsequent blocks if they&#x27;re on the best-block chain?
+It&#x27;s painful to have to re-download all or most of the chain to fix this...</div></blockquote><div class="t">Or just a quick re-verification of all blocks. After all, it is 5x faster &lt;<a href="http://bitcointalk.org/index.php?topic=550.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=550.0</a>&gt; than it used t be. Wink</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:23:55Z">15 August 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9539#msg9539" rel="nofollow noopener">original</a></span></header>
+<div class="t">Once you have an update, you could download knightmb&#x27;s block chain.  You&#x27;ll want one that&#x27;s old enough that it ends before block 74000 so the most recent security lockin will check it.  Can someone find the link for that?  </div></article><article class="msg" id="m11">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-08-15T21:26:09Z">15 August 2010, 21:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9540#msg9540" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 15, 2010, 09:23:55 PM</div><div class="t">Once you have an update, you could download knightmb&#x27;s block chain.  You&#x27;ll want one that&#x27;s old enough that it ends before block 74000 so the most recent security lockin will check it.  Can someone find the link for that? </div></blockquote><div class="t"><a href="http://knightmb.dyndns.org/files/bitcoin/blocks/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/blocks/</a></div></article><article class="msg" id="m12">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T21:29:08Z">15 August 2010, 21:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9543#msg9543" rel="nofollow noopener">original</a></span></header>
+<div class="t">I prefer to just re-download them.
+
+Block verification after the patch but before everyone upgrades is going to be SLOW! It&#x27;ll probably cause the next difficulty adjustment to decrease significantly. Of course everyone will probably have upgraded by the time the next adjustment rolls around, so we&#x27;ll probably roll through it relatively quickly.</div></article><article class="msg" id="m13">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T21:36:30Z">15 August 2010, 21:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9545#msg9545" rel="nofollow noopener">original</a></span></header>
+<div class="t">Edit: Hmm, I see there is an info file included which might just clue me in.
+
+How about explaining to us stupid newbies what we would do with the blockchain once we download it?</div></article><article class="msg" id="m14">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-15T21:38:41Z">15 August 2010, 21:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9547#msg9547" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: kencausey on August 15, 2010, 09:36:30 PM</div><div class="t">How about explaining to us stupid newbies what we would do with the blockchain once we download it?</div></blockquote><div class="t">It means replacing files in the bitcoin data directory.  It is not recommended, unless you know what you&#x27;re doing.
+
+Easiest and safest way is to backup wallet.dat then redownload everything.</div></article><article class="msg sat" id="m15">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:40:19Z">15 August 2010, 21:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9548#msg9548" rel="nofollow noopener">original</a></span></header>
+<div class="t">Patch is uploaded to SVN rev 132!
+
+For now, recommended steps:
+1) Shut down.
+2) Download knightmb&#x27;s blk files.  (replace your blk0001.dat and blkindex.dat files)
+3) Upgrade.
+4) It should start out with less than 74000 blocks. Let it redownload the rest.
+
+If you don&#x27;t want to use knightmb&#x27;s files, you could just delete your blk*.dat files, but it&#x27;s going to be a lot of load on the network if everyone is downloading the whole block index at once.
+
+I&#x27;ll build releases shortly. </div></article><article class="msg" id="m16">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T21:40:31Z">15 August 2010, 21:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9549#msg9549" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: kencausey on August 15, 2010, 09:36:30 PM</div><div class="t">How about explaining to us stupid newbies what we would do with the blockchain once we download it?</div></blockquote><div class="t">While Bitcoin is not running, you put it in your Bitcoin data directory. ~/.bitcoin on Linux. If you want to re-download the whole chain, you just delete the file from the data directory while Bitcoin is not running.
+
+I&#x27;m going to be move my blk00x.dat files and blkindex.dat file out of by data directory and restart the client. Those are the correct files, right?
+
+Edit: I&#x27;ll also backup the whole directory, like I usually do before upgrades.</div></article><article class="msg" id="m17">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-15T21:50:57Z">15 August 2010, 21:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9553#msg9553" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 15, 2010, 09:40:19 PM</div><div class="t">If you don&#x27;t want to use knightmb&#x27;s files, you could just delete your blk*.dat files, but it&#x27;s going to be a lot of load on the network if everyone is downloading the whole block index at once.</div></blockquote><div class="t">Anybody wanna volunteer to create blk*.dat for block chain &lt;= 64637 ?
+
+Maybe the official binaries could simply ship a known-good block chain, to save time and bandwidth?</div></article><article class="msg" id="m18">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T22:05:11Z">15 August 2010, 22:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9556#msg9556" rel="nofollow noopener">original</a></span></header>
+<div class="t">Will the bug fix include the 4-way SSE2 patch &lt;<a href="http://bitcointalk.org/index.php?topic=820.msg9452#msg9452" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=820.msg9452#msg9452</a>&gt; of 0.3.9 rc2? Thanks for letting me know that it is included &lt;<a href="http://bitcointalk.org/index.php?topic=823.msg9557#msg9557" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=823.msg9557#msg9557</a>&gt;, theymos. Please release another release candidate when you have a moment if it is not included.</div><blockquote><div class=qh>Quote from: davidonpda on August 15, 2010, 10:02:05 PM</div><div class="t">What about the transactions from 74000 to the invalid block. Are those all invalid now as well?</div></blockquote><div class="t">Only the blocks including and after the invalid block are invalid. All previous blocks are valid.</div></article><article class="msg" id="m19">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-08-15T22:06:02Z">15 August 2010, 22:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9557#msg9557" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 15, 2010, 10:02:05 PM</div><div class="t">What about the transactions from 74000 to the invalid block. Are those all invalid now as well?</div></blockquote><div class="t">Only this aberrant transaction and coins generated after it in the block chain will be removed. All other transactions will continue to exist.</div><blockquote><div class=qh>Quote from: NewLibertyStandard</div><div class="t">Will the bug fix include the 4-way SSE2 patch included in 0.3.9rc2?</div></blockquote><div class="t">It&#x27;s included.</div></article><article class="msg" id="m20">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T22:13:43Z">15 August 2010, 22:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9558#msg9558" rel="nofollow noopener">original</a></span></header>
+<div class="t">Oh, yeah, just noticed this topic. I can&#x27;t remember when those block chains were snapshot, but I&#x27;ll update it to be more descriptive (like block 64,000, etc.)
+
+Good thing I keep those around.  Grin
+
+My web server sits on a fiber, so it won&#x27;t be a big deal everyone starts to download those files at once (at least for the more technical people).
+
+[edit] Shutting down all the remaining servers and super-nodes I left running. Hope that helps.</div></article><article class="msg" id="m21">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-15T22:17:25Z">15 August 2010, 22:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9560#msg9560" rel="nofollow noopener">original</a></span></header>
+<div class="t">knightmb, do you still have any of your monster network available to turn on to help build the new valid chain?</div></article><article class="msg" id="m22">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T22:18:17Z">15 August 2010, 22:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9561#msg9561" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 15, 2010, 10:17:25 PM</div><div class="t">knightmb, do you still have any of your monster network available to turn on to help build the new valid chain?</div></blockquote><div class="t">Not anymore, was shutdown on the last day of the month for July, all I have left are about a 2 dozen servers, but near nothing of what I had before.</div></article><article class="msg" id="m23">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T22:27:26Z">15 August 2010, 22:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9563#msg9563" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s something for your Signature if you&#x27;re interested.</div><pre><code>[i][color=red][b]*** WARNING ***[/b][/color]  DO NOT TRUST ANY TRANSACTIONS THAT HAPPENED AFTER 15.08.2010 17:05 UTC (block 74638). We are investigating a problem. ([url=http://bit.ly/afalQU]more[/url])[/i]</code></pre><div class="t">I shortened the URL since the signature can only contain 300 characters. Also, can we get some color on the news warning? It&#x27;s not very noticeable.</div></article><article class="msg" id="m24">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T22:30:23Z">15 August 2010, 22:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9564#msg9564" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can build a block chain to the desired number using a combo of the old block chain and a client with the latest block chain (minus the bad stuff), what number should I shot for?</div></article><article class="msg" id="m25">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T22:31:07Z">15 August 2010, 22:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9565#msg9565" rel="nofollow noopener">original</a></span></header>
+<div class="t">74637 is the last good block</div></article><article class="msg" id="m26">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T22:34:03Z">15 August 2010, 22:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9566#msg9566" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: kencausey on August 15, 2010, 10:31:07 PM</div><div class="t">74637 is the last good block</div></blockquote><div class="t">Ok, good, I&#x27;ve relabeled the old block chain on my site, I&#x27;ll try to get as close to that number as I can. Basically, I&#x27;m just loading up two clients, one with the old chain, another with the sorta bad chain at the end. I&#x27;m going to let the first client get as close to the number as I can before stopping it. Then snapshot off that block chain. Since it does about 500 at a time, I&#x27;ll probably be able to get it close to 74,501</div></article><article class="msg" id="m27">
+<header><b>BitLex</b><span class="muted"> · <time datetime="2010-08-15T22:35:48Z">15 August 2010, 22:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9567#msg9567" rel="nofollow noopener">original</a></span></header>
+<div class="t">i&#x27;v got one of a w7-machine count 74602, if that helps.</div></article><article class="msg" id="m28">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T22:44:55Z">15 August 2010, 22:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9570#msg9570" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 15, 2010, 10:41:29 PM</div><div class="t">I already said that I have it right at 74637.
+
+Satoshi said it needs to be before 74,000</div></blockquote><div class="t">So long as a the person who creates it has a patched client and downloads the whole chain, optimally from another computer on their local network, then it should stop at the right place automatically.</div></article><article class="msg" id="m29">
+<header><b>BitLex</b><span class="muted"> · <time datetime="2010-08-15T22:52:47Z">15 August 2010, 22:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9571#msg9571" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 15, 2010, 10:41:29 PM</div><div class="t">Satoshi said it needs to be before 74,000</div></blockquote><div class="t">He didn&#x27;t, he said &quot;you&#x27;ll want one&quot;, not that it needs to be, a little different.
+and if &quot;..Only the blocks including and after the invalid block are invalid. All previous blocks are valid..&quot;, it doesn&#x27;t need to be before 74000.
+
+just wanted to save knightmb some time, but yours is bigger than mine anyway.  Grin</div></article><article class="msg sat" id="m30">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T22:58:08Z">15 August 2010, 22:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9573#msg9573" rel="nofollow noopener">original</a></span></header>
+<div class="t">Don&#x27;t update the block chain download.  When you take someone&#x27;s block chain download, you don&#x27;t want it right up to the end.  A somewhat old one is better so it can download and verify the most recent blocks.
+
+tcatm&#x27;s 4-way SSE2 SHA-256 is in the file sha256.cpp and already uploaded a few revs ago.
+
+I just now uploaded rev 134 which is the makefile.unix that enables building with it on Linux.  If you build rev 134 on Linux now you&#x27;ll get the -4way switch.
+
+If you have problems building because of it, then edit makefile.unix and:
+- remove -DFOURWAYSSE2
+- remove obj/sha256.o from the end of these lines:
+bitcoin: $(OBJS) obj/ui.o obj/uibase.o obj/sha256.o
+bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha256.o
+
+The 0.3.10 linux build will have the -4way option when I build it.
+
+Here are the patch downloads for Windows:
+
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip</a>
+
+SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe
+SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip
+
+Steps:
+1) Shut down.
+2) Download knightmb&#x27;s blk files and replace your blk0001.dat and blkindex.dat files.
+<a href="http://knightmb.dyndns.org/files/bitcoin/blocks/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/blocks/</a>
+<a href="http://rapidshare.com/files/413168038/BitcoinBlocks.torrent" rel="nofollow noopener">http://rapidshare.com/files/413168038/BitcoinBlocks.torrent</a>
+3) Upgrade to 0.3.10.
+4) It should start out with less than 74000 blocks and redownload the rest.
+
+Or if you don&#x27;t want to mess with downloading blk files, you can just do this:
+
+1) Shut down.
+2) Delete (or move) blk*.dat
+3) Upgrade to 0.3.10.
+4) It redownloads all blocks, probably take about an hour.</div></article><article class="msg" id="m31">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T22:59:04Z">15 August 2010, 22:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9574#msg9574" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, a little confusing  Huh
+
+So I don&#x27;t need to create one, or do I need to take what you guys already have and just throw it up on the FTP?
+
+Can you dump block data from a windows machine onto a Linux/Mac machine?
+
+[edit] Just saw your post, I&#x27;ll build one to less than 74,000 then, should at least save you technical people a few minutes of downloading the new chain.  Wink</div></article><article class="msg" id="m32">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-15T22:59:31Z">15 August 2010, 22:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9575#msg9575" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can&#x27;t stand the suspense! Do any Jr. Members or higher happen to have an unofficial SVN rev 134 Linux 64-bit build compiled that they&#x27;d be willing to share? Yeah, I know the official build is about to be released in a few minutes. It&#x27;s not terribly important.
+
+Edit: Updated the SVN version number as per satoshi&#x27;s comment a moment ago.
+
+Ah, never mind. Since the SVN version was just updated and the Windows builds were just released, I&#x27;ll wait. Embarrassed</div></article><article class="msg sat" id="m33">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:17:24Z">15 August 2010, 23:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9576#msg9576" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 15, 2010, 10:59:04 PM</div><div class="t">[edit] Just saw your post, I&#x27;ll build one to less than 74,000 then, should at least save you technical people a few minutes of downloading the new chain.  Wink</div></blockquote><div class="t">Just leave the old one alone!  Older is better.  What block number is it?  Anywhere from 60000-74000 is good.  The one that you&#x27;ve had available for a while has been vetted and is the best choice.</div></article><article class="msg" id="m34">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T23:18:34Z">15 August 2010, 23:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9577#msg9577" rel="nofollow noopener">original</a></span></header>
+<div class="t">I just used your old file knightmb and on a rather old system it didn&#x27;t take me very long to catch up, so I&#x27;m inclined to say &quot;don&#x27;t bother&quot;.</div></article><article class="msg" id="m35">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-08-15T23:21:06Z">15 August 2010, 23:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9578#msg9578" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 15, 2010, 11:17:24 PM</div><div class="t">What block number is it?</div></blockquote><div class="t">It&#x27;s around 67k. It only took me about 3 minutes to get to the current block.</div></article><article class="msg" id="m36">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-08-15T23:32:43Z">15 August 2010, 23:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9582#msg9582" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think that you should add something about this: <a href="http://bitcointalk.org/index.php?topic=259.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=259.0</a>
+There must be a label on the client that show a warning message if needed Smiley
+Now everyone have always to check the website, and I think that this is bad.</div></article><article class="msg" id="m37">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T23:35:39Z">15 August 2010, 23:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9583#msg9583" rel="nofollow noopener">original</a></span></header>
+<div class="t">Cool, works for me!  Grin</div></article><article class="msg sat" id="m38">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:36:10Z">15 August 2010, 23:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9584#msg9584" rel="nofollow noopener">original</a></span></header>
+<div class="t">Starting at 67000 is perfect.  
+
+Yeah, at the moment you&#x27;ll stop at 74638.  It should start slowly creeping up as more nodes upgrade and generate.
+
+Linux build links below.
+
+The Linux version includes tcatm&#x27;s 4-way SSE2 SHA-256 that makes generating faster on i5 and AMD CPU&#x27;s.  Use the &quot;-4way&quot; switch to enable it and check if it&#x27;s faster for you.
+
+Download links:
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-linux.tar.gz" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-linux.tar.gz</a>
+
+SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe
+SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip
+SHA1 e3fda1ddb31b0d5c35156cacd80dee6ea6ae6423 bitcoin-0.3.10-linux.tar.gz</div></article><article class="msg sat" id="m39">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:37:07Z">15 August 2010, 23:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9586#msg9586" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Joozero on August 15, 2010, 11:32:43 PM</div><div class="t">I think that you should add something about this: <a href="http://bitcointalk.org/index.php?topic=259.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=259.0</a>
+There must be a label on the client that show a warning message if needed Smiley
+Now everyone have always to check the website, and I think that this is bad.</div></blockquote><div class="t">Agree, wanted to do that for a long time, haven&#x27;t had time to do it.
+
+For now, you could also subscribe to the bitcoin-list mailing list.  It rarely gets used except for announcements like this and major new versions.
+
+Subscribe/unsubscribe page:
+<a href="http://lists.sourceforge.net/mailman/listinfo/bitcoin-list" rel="nofollow noopener">http://lists.sourceforge.net/mailman/listinfo/bitcoin-list</a></div></article><article class="msg" id="m40">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T23:37:40Z">15 August 2010, 23:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9587#msg9587" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 15, 2010, 11:17:24 PM</div><div class="t">&gt; Quote from: knightmb on August 15, 2010, 10:59:04 PM
+&gt; [edit] Just saw your post, I&#x27;ll build one to less than 74,000 then, should at least save you technical people a few minutes of downloading the new chain.  Wink
+Just leave the old one alone!  Older is better.  What block number is it?  Anywhere from 60000-74000 is good.  The one that you&#x27;ve had available for a while has been vetted and is the best choice.</div></blockquote><div class="t">I&#x27;ve put the block number with the file, so you&#x27;ll know exactly where each stops at. 
+
+BitCoinBlocks_Linux_67309.zip
+BitCoinBlocks_Windows_67300.zip
+
+I&#x27;ve leave them be. Glad to know I could help  Smiley</div></article><article class="msg" id="m41">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T23:45:26Z">15 August 2010, 23:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9588#msg9588" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 15, 2010, 11:31:37 PM</div><div class="t">... It already is on block 74638. I assume that means that block is now a good one?</div></blockquote><div class="t">I had some confusion on this myself and got clarification in #bitcoin-dev:
+
+The bad block was number 74638, the last good one was 74637.  The numbers start at 0, so when your client shows there are 74638 blocks then that means you have up to block number 74637, the last good one.</div></article><article class="msg" id="m42">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-08-15T23:47:58Z">15 August 2010, 23:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9589#msg9589" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote</div><div class="t">Agree, wanted to do that for a long time, haven&#x27;t had time to do it.
+
+For now, you could also subscribe to the bitcoin-list mailing list.  It rarely gets used except for announcements like this and major new versions.
+
+Subscribe/unsubscribe page:
+<a href="http://lists.sourceforge.net/mailman/listinfo/bitcoin-list" rel="nofollow noopener">http://lists.sourceforge.net/mailman/listinfo/bitcoin-list</a></div></blockquote><div class="t">Good Cheesy
+
+Anyway I usually check the website, I was thinking to a solution for newbie-users ( that they are more to come on future )
+A small bug can be a big problem with a network with a lot of newbie and/or not-informed users. ( and none of them will ever give a look to a source like this: <a href="http://lists.sourceforge.net/mailman/listinfo/bitcoin-list" rel="nofollow noopener">http://lists.sourceforge.net/mailman/listinfo/bitcoin-list</a> Tongue )
+
+( sorry for my english, I hope you are still understanding me Grin )</div></article><article class="msg" id="m43">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T23:59:36Z">15 August 2010, 23:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9595#msg9595" rel="nofollow noopener">original</a></span></header>
+<div class="t">Updated and combined instructions:
+
+1.  Stop generating immediately, close your current client if you have not updated to 0.3.10.
+
+2.  Download 0.3.10:
+
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32-setup.exe</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-win32.zip</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.10-linux.tar.gz" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.10-linux.tar.gz</a>
+
+SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe
+SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip
+SHA1 e3fda1ddb31b0d5c35156cacd80dee6ea6ae6423 bitcoin-0.3.10-linux.tar.gz
+
+3. (optional)  Download a previously known good blockchain:
+
+<a href="http://knightmb.dyndns.org/files/bitcoin/blocks/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/blocks/</a>
+<a href="http://rapidshare.com/files/413168038/BitcoinBlocks.torrent" rel="nofollow noopener">http://rapidshare.com/files/413168038/BitcoinBlocks.torrent</a>
+
+and replace your blk0001.dat and blkindex.dat files with those from the relevant download for your platform.
+
+3b.  If you don&#x27;t download, delete or move the blk0001.dat and blkindex.dat files.
+
+4.  Start 0.3.10 and watch it catch up to block 74637 and beyond and help restart things.
+
+Edit:
+Edit 2: Add more explanation
+
+4b.  Currently the network has a combination of good and bad nodes (those running versions older than 0.3.10).  If you only connect to nodes running old versions, you will be stuck at 74638 blocks.  You can fix this by running the client with the options &quot;-addnode=75.158.131.108 -addnode=99.27.237.13 -addnode=76.235.234.64 -addnode=74.137.15.169 -addnode=68.68.99.14&quot;.  This specifically connects you to a number of &#x27;known good&#x27; nodes and ensures that you receive transactions generated within the network of updated clients.  As the number of out of date clients in the network decreases, this will become unnecessary.  If you want more nodes or just different ones, you can find a larger list at <a href="http://www.bitcoin.org/wiki/doku.php?do=show" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?do=show</a>&amp;id=74638_nodes .</div></article><article class="msg" id="m44">
+<header><b>BitLex</b><span class="muted"> · <time datetime="2010-08-16T00:12:36Z">16 August 2010, 00:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9602#msg9602" rel="nofollow noopener">original</a></span></header>
+<div class="t">my forwarded node counts 74642 as i type (36conn.),
+3 other nodes are still at 74638 (8conn. each)</div></article><article class="msg" id="m45">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T00:20:59Z">16 August 2010, 00:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9606#msg9606" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ya know, in a way, this actually temporarily decreases the difficulty to generate blocks until everyone upgrades. Yeah, it&#x27;ll be slower, but that just gives each client more time to try to generate the difficult hash.</div></article><article class="msg" id="m46">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-16T00:29:55Z">16 August 2010, 00:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9609#msg9609" rel="nofollow noopener">original</a></span></header>
+<div class="t">Question about fallout:  I had a transaction that I submitted after the bad block, using the bad block chain.
+
+What is the status of that transaction?
+From what I can tell, my (updated) sending client wallet shows the deducted amount.
+
+Will it get reincorporated into the fixed chain, and will the recipient be able to spend it?</div></article><article class="msg" id="m47">
+<header><b>kosovito</b><span class="muted"> · <time datetime="2010-08-16T00:39:17Z">16 August 2010, 00:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9615#msg9615" rel="nofollow noopener">original</a></span></header>
+<div class="t">I did all steps, now my client is 0.3.10 and it stopped at block 74638. Is all fine?</div></article><article class="msg sat" id="m48">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:00:45Z">16 August 2010, 01:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9623#msg9623" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Ground Loop on August 16, 2010, 12:29:55 AM</div><div class="t">Question about fallout:  I had a transaction that I submitted after the bad block, using the bad block chain.
+
+What is the status of that transaction?
+From what I can tell, my (updated) sending client wallet shows the deducted amount.
+
+Will it get reincorporated into the fixed chain, and will the recipient be able to spend it?</div></blockquote><div class="t">Right, it will get reincorporated into the fixed chain.  The transaction won&#x27;t disappear, it&#x27;ll still be visible on both sides, but the confirmation count will jump back to 0 and start counting up again.
+
+It&#x27;s only if you generated a block in the bad chain after block 74638 that the 50 BTC from that will disappear.  Any blocks in the bad chain wouldn&#x27;t have matured yet. </div></article><article class="msg sat" id="m49">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:02:24Z">16 August 2010, 01:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9624#msg9624" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: kosovito on August 16, 2010, 12:39:17 AM</div><div class="t">I did all steps, now my client is 0.3.10 and it stopped at block 74638. Is all fine?</div></blockquote><div class="t">If you still show 74638 blocks then you aren&#x27;t connected to any 0.3.10 nodes.  
+
+For today, try adding these parameters: 
+-addnode=75.158.131.108 -addnode=99.27.237.13 -addnode=68.68.99.14
+
+See
+<a href="http://bitcointalk.org/index.php?topic=828" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=828</a></div></article><article class="msg" id="m50">
+<header><b>GoldRush</b><span class="muted"> · <time datetime="2010-08-16T01:02:35Z">16 August 2010, 01:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9625#msg9625" rel="nofollow noopener">original</a></span></header>
+<div class="t">Most people running clients are not reading this message thread.  So...  Silly questions:
+
+1) How will this continue to affect version 3.8.1 (pre-catastrophe) clients with bad block chain?
+2) How will this affect clients that upgrade to 3.8.10 but don&#x27;t remove their block chain files?</div></article><article class="msg" id="m51">
+<header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-16T01:06:13Z">16 August 2010, 01:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9627#msg9627" rel="nofollow noopener">original</a></span></header>
+<div class="t">I added the addnode options and info about the &#x27;stuck at 74638 blocks&#x27; issue at <a href="http://bitcointalk.org/index.php?topic=823.msg9595#msg9595" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=823.msg9595#msg9595</a></div></article><article class="msg sat" id="m52">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:12:05Z">16 August 2010, 01:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9628#msg9628" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: trebronics on August 16, 2010, 01:02:35 AM</div><div class="t">Most people running clients are not reading this message thread.  So...  Silly questions:
+
+1) How will this continue to affect version 3.8.1 (pre-catastrophe) clients with bad block chain?
+2) How will this affect clients that upgrade to 3.8.10 but don&#x27;t remove their block chain files?</div></blockquote><div class="t">1) Once more than 50% of the node power is upgraded and the good chain overtakes the bad, the 0.3.10 nodes will make it hard for any bad transactions to get any confirmations.
+2) If you didn&#x27;t remove your blk*.dat files, you&#x27;re not helping to contribute to that 50%, and you&#x27;ll still show bad transactions until the good chain overtakes the bad chain.</div></article><article class="msg" id="m53">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-16T02:02:07Z">16 August 2010, 02:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9632#msg9632" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 12:20:59 AM</div><div class="t">Ya know, in a way, this actually temporarily decreases the difficulty to generate blocks until everyone upgrades. Yeah, it&#x27;ll be slower, but that just gives each client more time to try to generate the difficult hash.</div></blockquote><div class="t">Of course, this happened right after the difficulty kicked up to 511.7, so all these new &quot;good&quot; blocks will have to contend with that.  And a good chunk of the network grind power is off on the wrong chain, so new blocks may take a lot longer than 10min to find.  At what point will the balancing figure this out and possibly kick the difficulty back down again?</div></article><article class="msg sat" id="m54">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:16:10Z">16 August 2010, 02:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9642#msg9642" rel="nofollow noopener">original</a></span></header>
+<div class="t">The bad chain is also slowed down as more nodes upgrade.
+
+We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were uploaded about 2 and 3 hours ago.  Of the nodes I&#x27;m connected to, more than half are already 0.3.10.  I would say we probably already have more power than the bad chain.</div></article><article class="msg" id="m55">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-16T02:22:05Z">16 August 2010, 02:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9644#msg9644" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m chucking as much CPU at this as I can.  Yeah, bit of an unfair advantage I guess until everyone upgrades.  Lips sealed
+My wife&#x27;s PC already generated 2 of the new blocks (LOL), luck is on her side I guess.</div></article><article class="msg" id="m56">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-16T02:28:57Z">16 August 2010, 02:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9646#msg9646" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 02:16:10 AM</div><div class="t">... Of the nodes I&#x27;m connected to, more than half are already 0.3.10. ...</div></blockquote><div class="t">That&#x27;s great news! How did you figure that out, though? I was considering writing a client specially tailored to put itself out there and try to get as many people to connect as possible, then survey their versions and write out a log (in addition to all the normal bitcoin stuff).</div></article><article class="msg sat" id="m57">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:38:21Z">16 August 2010, 02:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9648#msg9648" rel="nofollow noopener">original</a></span></header>
+<div class="t">On Windows, findstr /c:&quot;version message&quot; debug.log
+
+It looks like the bad chain was on block 74678 recently.  Can&#x27;t wait to overtake it.
+
+On the stats at <a href="http://nullvoid.org/bitcoin/statistix.php" rel="nofollow noopener">http://nullvoid.org/bitcoin/statistix.php</a>  there&#x27;s been 5 blocks per hour in the last 3 hours.  We had a difficulty adjustment about a day ago that should have put it back to 6 blocks per hour.</div></article><article class="msg" id="m58">
+<header><b>bdonlan</b><span class="muted"> · <time datetime="2010-08-16T02:39:55Z">16 August 2010, 02:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9649#msg9649" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 02:16:10 AM</div><div class="t">The bad chain is also slowed down as more nodes upgrade.
+
+We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were uploaded about 2 and 3 hours ago.  Of the nodes I&#x27;m connected to, more than half are already 0.3.10.  I would say we probably already have more power than the bad chain.</div></blockquote><div class="t">I think it&#x27;d probably be a good idea still to come out with another version that rejects connections from older versions - otherwise the network might remain rather fragmented for a while. :/</div></article><article class="msg" id="m59">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-08-16T02:50:00Z">16 August 2010, 02:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9652#msg9652" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: kencausey on August 15, 2010, 11:59:36 PM</div><div class="t">4b.  Currently the network has a combination of good and bad nodes (those running versions older than 0.3.10).  If you only connect to nodes running old versions, you will be stuck at 74638 blocks.  You can fix this by running the client with the options &quot;-addnode=75.158.131.108 -addnode=99.27.237.13 -addnode=76.235.234.64 -addnode=74.137.15.169 -addnode=68.68.99.14&quot;</div></blockquote><div class="t"><a href="http://www.bitcoin.org/wiki/doku.php?do=show" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?do=show</a>&amp;id=74638_nodes</div></article><article class="msg" id="m60">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T03:09:52Z">16 August 2010, 03:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9657#msg9657" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bdonlan on August 16, 2010, 02:39:55 AM</div><div class="t">&gt; Quote from: satoshi on August 16, 2010, 02:16:10 AM
+&gt; The bad chain is also slowed down as more nodes upgrade.
+&gt;
+&gt; We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were uploaded about 2 and 3 hours ago.  Of the nodes I&#x27;m connected to, more than half are already 0.3.10.  I would say we probably already have more power than the bad chain.
+I think it&#x27;d probably be a good idea still to come out with another version that rejects connections from older versions - otherwise the network might remain rather fragmented for a while. :/</div></blockquote><div class="t">We want to keep the older clients connected so that when the correct chain overtakes the incorrect chain, they will switch back to the correct chain. Although I don&#x27;t know the specifics of how far back in the chain the old chain will accept a branched chain.</div></article><article class="msg" id="m61">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-16T03:57:39Z">16 August 2010, 03:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9668#msg9668" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 03:09:52 AM</div><div class="t">&gt; Quote from: bdonlan on August 16, 2010, 02:39:55 AM
+&gt; &gt; Quote from: satoshi on August 16, 2010, 02:16:10 AM
+&gt; &gt; The bad chain is also slowed down as more nodes upgrade.
+&gt; &gt;
+&gt; &gt; We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were uploaded about 2 and 3 hours ago.  Of the nodes I&#x27;m connected to, more than half are already 0.3.10.  I would say we probably already have more power than the bad chain.
+&gt; I think it&#x27;d probably be a good idea still to come out with another version that rejects connections from older versions - otherwise the network might remain rather fragmented for a while. :/
+We want to keep the older clients connected so that when the correct chain overtakes the incorrect chain, they will switch back to the correct chain. Although I don&#x27;t know the specifics of how far back in the chain the old chain will accept a branched chain.</div></blockquote><div class="t">The old clients should accept it all the way back to the last snapshot of release, so this being found so quickly and so long after the last release, it should work in theory. Here&#x27;s a good test of the theory  Grin</div></article><article class="msg" id="m62">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-16T05:07:50Z">16 August 2010, 05:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9682#msg9682" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 01:00:45 AM</div><div class="t">&gt; Quote from: Ground Loop on August 16, 2010, 12:29:55 AM
+&gt; Question about fallout:  I had a transaction that I submitted after the bad block, using the bad block chain.
+&gt;
+&gt; What is the status of that transaction?
+&gt; From what I can tell, my (updated) sending client wallet shows the deducted amount.
+&gt;
+&gt; Will it get reincorporated into the fixed chain, and will the recipient be able to spend it?
+Right, it will get reincorporated into the fixed chain.  The transaction won&#x27;t disappear, it&#x27;ll still be visible on both sides, but the confirmation count will jump back to 0 and start counting up again.
+
+It&#x27;s only if you generated a block in the bad chain after block 74638 that the 50 BTC from that will disappear.  Any blocks in the bad chain wouldn&#x27;t have matured yet.</div></blockquote><div class="t">Interesting.. fascinating to watch this work its way through the bowels of the system.
+It was block 73746 that I generated.
+    CTxOut(nValue=50.00000000, scriptPubKey=0x8DDD5C7DADB2D43AC5F186)
+08/12/10 02:35 generated 50.00
+
+And I sent 49.00 of it to 19Nzg21hQQDAY5GTdTTuUVPA4MaE7AusXz (using the broken chain)
+
+Now I&#x27;m waiting for that node to figure out it was received, and it&#x27;s using the new chain.</div></article><article class="msg sat" id="m63">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T12:59:38Z">16 August 2010, 12:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9734#msg9734" rel="nofollow noopener">original</a></span></header>
+<div class="t">It looks like we overtook the bad chain somewhere around 74689.  0.3.9 and lower nodes have been responding with the current block number for some hours now.
+
+That means it&#x27;s no longer necessary to delete blk*.dat before upgrading.  You can just upgrade and it&#x27;ll reorg away the bad block chain.
+
+Thanks to everyone for the quick response!</div></article><article class="msg" id="m64">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-08-16T14:35:10Z">16 August 2010, 14:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9746#msg9746" rel="nofollow noopener">original</a></span></header>
+<div class="t">Would it be useful to have RPC command to chop off the tail of the chain manually,
+instead of removind and redownloading the whole chain?</div></article><article class="msg" id="m65">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-08-16T22:13:00Z">16 August 2010, 22:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9833#msg9833" rel="nofollow noopener">original</a></span></header>
+<div class="t">So at this point, would a client that has not upgraded also have the correct chain?</div></article><article class="msg" id="m66">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T22:15:32Z">16 August 2010, 22:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9834#msg9834" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: laszlo on August 16, 2010, 10:13:00 PM</div><div class="t">So at this point, would a client that has not upgraded also have the correct chain?</div></blockquote><div class="t">Yes. The only exception would be if an unpatched client made another fake transaction and managed to verify it. They would be able to spread that fake block to a few other nodes that haven&#x27;t upgraded, but the upgraded clients seem to have more power than the unpatched clients, so the bad link would not last long and would not be spread by upgraded clients.</div></article><article class="msg sat" id="m67">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T22:54:55Z">16 August 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9841#msg9841" rel="nofollow noopener">original</a></span></header>
+<div class="t">Un-upgraded nodes have the correct chain most of the time, but they are still trying to include the overflow transaction in every block, so they&#x27;re continually trying to fork and generate invalid blocks.  If an old version node is restarted, its transaction pool is emptied, so it may generate valid blocks for a while until the transaction gets broadcast again.  0.3.9 and lower nodes still must upgrade.
+
+The SVN now has the code we needed to automatically reorg the block chain without having to delete the blk*.dat files manually.  I knew I couldn&#x27;t write that code fast and carefully enough yesterday, so I went with the quick manual option.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li><li><a href="../../satoshipedia/value-overflow-incident/">Value overflow incident</a> <span class="muted">The August 2010 bug that created over 184 billion bitcoins, fixed within hours.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p184-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0-3-10/">← tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in 0.3.10</a><a rel="next" href="../../conversations/p186-version-0-3-10-block-74638-overflow-patch/">Version 0.3.10 - block 74638 overflow PATCH! →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

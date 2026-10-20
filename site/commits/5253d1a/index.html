@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>strip out unfinished product… (r64) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/5253d1a/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="strip out unfinished product… (r64) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/5253d1a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="strip out unfinished product… (r64) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "strip out unfinished product, review and market stuff, enable _() instead of wxT() in uiproject.fbp so it uses wxGetTranslation for the wxFormBuilder generated part of the UI", "url": "https://satoshimail.pages.dev/commits/5253d1a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-15T04:03:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/5253d1ab77fab1995ede03fb934edd67f1359ba8"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "strip out unfinished product, review…", "item": "https://satoshimail.pages.dev/commits/5253d1a/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c5253d1ab77">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">strip out unfinished product, review…</span></div></nav>
+<main class="in">
+<h1>strip out unfinished product, review and market stuff, enable _() instead of wxT() in uiproject.fbp so it uses wxGetTranslation for the wxFormBuilder generated part of the UI</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 February 2010 · SVN r64 · release v0.2.2 · 18 files, +127 −8,464</p>
+<p class="actions"><a class="btn" href="../../#t-c5253d1ab77">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/5253d1ab77fab1995ede03fb934edd67f1359ba8" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -507,27 +507,6 @@ bool LoadAddresses()
+ 
+ 
+ 
+-//
+-// CReviewDB
+-//
+-
+-bool CReviewDB::ReadReviews(uint256 hash, vector&lt;CReview&gt;&amp; vReviews)
+-{
+-    vReviews.size(); // msvc workaround, just need to do anything with vReviews
+-    return Read(make_pair(string(&quot;reviews&quot;), hash), vReviews);
+-}
+-
+-bool CReviewDB::WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews)
+-{
+-    return Write(make_pair(string(&quot;reviews&quot;), hash), vReviews);
+-}
+-
+-
+-
+-
+-
+-
+-
+ //
+ // CWalletDB
+ //</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -285,45 +285,6 @@ public:
+ 
+ 
+ 
+-class CReviewDB : public CDB
+-{
+-public:
+-    CReviewDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;reviews.dat&quot;, pszMode) { }
+-private:
+-    CReviewDB(const CReviewDB&amp;);
+-    void operator=(const CReviewDB&amp;);
+-public:
+-    bool ReadUser(uint256 hash, CUser&amp; user)
+-    {
+-        return Read(make_pair(string(&quot;user&quot;), hash), user);
+-    }
+-
+-    bool WriteUser(uint256 hash, const CUser&amp; user)
+-    {
+-        return Write(make_pair(string(&quot;user&quot;), hash), user);
+-    }
+-
+-    bool ReadReviews(uint256 hash, vector&lt;CReview&gt;&amp; vReviews);
+-    bool WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews);
+-};
+-
+-
+-
+-
+-
+-class CMarketDB : public CDB
+-{
+-public:
+-    CMarketDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;market.dat&quot;, pszMode) { }
+-private:
+-    CMarketDB(const CMarketDB&amp;);
+-    void operator=(const CMarketDB&amp;);
+-};
+-
+-
+-
+-
+-
+ class CAddrDB : public CDB
+ {
+ public:</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -99,7 +99,6 @@ using namespace boost;
+ #include &quot;net.h&quot;
+ #include &quot;irc.h&quot;
+ #include &quot;main.h&quot;
+-#include &quot;market.h&quot;
+ #include &quot;rpc.h&quot;
+ #include &quot;uibase.h&quot;
+ #include &quot;ui.h&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1706,10 +1706,8 @@ bool AlreadyHave(CTxDB&amp; txdb, const CInv&amp; inv)
+ {
+     switch (inv.type)
+     {
+-    case MSG_TX:        return mapTransactions.count(inv.hash) || txdb.ContainsTx(inv.hash);
+-    case MSG_BLOCK:     return mapBlockIndex.count(inv.hash) || mapOrphanBlocks.count(inv.hash);
+-    case MSG_REVIEW:    return true;
+-    case MSG_PRODUCT:   return mapProducts.count(inv.hash);
++    case MSG_TX:    return mapTransactions.count(inv.hash) || txdb.ContainsTx(inv.hash);
++    case MSG_BLOCK: return mapBlockIndex.count(inv.hash) || mapOrphanBlocks.count(inv.hash);
+     }
+     // Don&#x27;t know what it is, just say we already got one
+     return true;
+@@ -2108,24 +2106,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     }
+ 
+ 
+-    else if (strCommand == &quot;review&quot;)
+-    {
+-        CDataStream vMsg(vRecv);
+-        CReview review;
+-        vRecv &gt;&gt; review;
+-
+-        CInv inv(MSG_REVIEW, review.GetHash());
+-        pfrom-&gt;AddInventoryKnown(inv);
+-
+-        if (review.AcceptReview())
+-        {
+-            // Relay the original message as-is in case it&#x27;s a higher version than we know how to parse
+-            RelayMessage(inv, vMsg);
+-            mapAlreadyAskedFor.erase(inv);
+-        }
+-    }
+-
+-
+     else if (strCommand == &quot;block&quot;)
+     {
+         auto_ptr&lt;CBlock&gt; pblock(new CBlock);</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -25,7 +25,7 @@ LIBS= \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
+ WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
+ CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -50,9 +50,6 @@ obj/net.o: net.cpp                  $(HEADERS)
+ obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+ obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+@@ -73,7 +70,7 @@ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp
+ 
+ 
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+         obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o \
+         obj/ui_res.o
+ </code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -60,9 +60,6 @@ obj/net.o: net.cpp                  $(HEADERS)
+ obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+ obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+@@ -80,7 +77,7 @@ obj/rpc.o: rpc.cpp                  $(HEADERS)
+ 
+ 
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+         obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -60,9 +60,6 @@ obj/net.o: net.cpp                  $(HEADERS)
+ obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+ obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+@@ -80,7 +77,7 @@ obj/rpc.o: rpc.cpp                  $(HEADERS)
+ 
+ 
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+         obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -23,7 +23,7 @@ LIBS= \
+     kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
+ WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
+ CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -45,9 +45,6 @@ obj\net.obj: net.cpp          $(HEADERS)
+ obj\main.obj: main.cpp        $(HEADERS) sha.h
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\market.obj: market.cpp    $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
+-
+ obj\ui.obj: ui.cpp            $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+@@ -68,7 +65,7 @@ obj\ui.res: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp r
+ 
+ 
+ 
+-OBJS=obj\util.obj obj\script.obj obj\db.obj obj\net.obj obj\main.obj obj\market.obj \
++OBJS=obj\util.obj obj\script.obj obj\db.obj obj\net.obj obj\main.obj \
+     obj\ui.obj obj\uibase.obj obj\sha.obj obj\irc.obj obj\rpc.obj \
+     obj\ui.res
+ </code></pre></details><details><summary><code>market.cpp</code></summary><pre><code>@@ -1,264 +0,0 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+-#include &quot;headers.h&quot;
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-//
+-// Global state variables
+-//
+-
+-//// later figure out how these are persisted
+-map&lt;uint256, CProduct&gt; mapMyProducts;
+-
+-
+-
+-
+-map&lt;uint256, CProduct&gt; mapProducts;
+-CCriticalSection cs_mapProducts;
+-
+-bool AdvertInsert(const CProduct&amp; product)
+-{
+-    uint256 hash = product.GetHash();
+-    bool fNew = false;
+-    bool fUpdated = false;
+-
+-    CRITICAL_BLOCK(cs_mapProducts)
+-    {
+-        // Insert or find existing product
+-        pair&lt;map&lt;uint256, CProduct&gt;::iterator, bool&gt; item = mapProducts.insert(make_pair(hash, product));
+-        CProduct* pproduct = &amp;(*(item.first)).second;
+-        fNew = item.second;
+-
+-        // Update if newer
+-        if (product.nSequence &gt; pproduct-&gt;nSequence)
+-        {
+-            *pproduct = product;
+-            fUpdated = true;
+-        }
+-    }
+-
+-    //if (fNew)
+-    //    NotifyProductAdded(hash);
+-    //else if (fUpdated)
+-    //    NotifyProductUpdated(hash);
+-
+-    return (fNew || fUpdated);
+-}
+-
+-void AdvertErase(const CProduct&amp; product)
+-{
+-    uint256 hash = product.GetHash();
+-    CRITICAL_BLOCK(cs_mapProducts)
+-        mapProducts.erase(hash);
+-    //NotifyProductDeleted(hash);
+-}
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-template&lt;typename T&gt;
+-unsigned int Union(T&amp; v1, T&amp; v2)
+-{
+-    // v1 = v1 union v2
+-    // v1 and v2 must be sorted
+-    // returns the number of elements added to v1
+-
+-    ///// need to check that this is equivalent, then delete this comment
+-    //vector&lt;unsigned short&gt; vUnion(v1.size() + v2.size());
+-    //vUnion.erase(set_union(v1.begin(), v1.end(),
+-    //                       v2.begin(), v2.end(),
+-    //                       vUnion.begin()),
+-    //             vUnion.end());
+-
+-    T vUnion;
+-    vUnion.reserve(v1.size() + v2.size());
+-    set_union(v1.begin(), v1.end(),
+-              v2.begin(), v2.end(),
+-              back_inserter(vUnion));
+-    unsigned int nAdded = vUnion.size() - v1.size();
+-    if (nAdded &gt; 0)
+-        v1 = vUnion;
+-    return nAdded;
+-}
+-
+-void CUser::AddAtom(unsigned short nAtom, bool fOrigin)
+-{
+-    // Ignore duplicates
+-    if (binary_search(vAtomsIn.begin(), vAtomsIn.end(), nAtom) ||
+-        find(vAtomsNew.begin(), vAtomsNew.end(), nAtom) != vAtomsNew.end())
+-        return;
+-
+-    //// instead of zero atom, should change to free atom that propagates,
+-    //// limited to lower than a certain value like 5 so conflicts quickly
+-    // The zero atom never propagates,
+-    // new atoms always propagate through the user that created them
+-    if (nAtom == 0 || fOrigin)
+-    {
+-        vector&lt;unsigned short&gt; vTmp(1, nAtom);
+-        Union(vAtomsIn, vTmp);
+-        if (fOrigin)
+-            vAtomsOut.push_back(nAtom);
+-        return;
+-    }
+-
+-    vAtomsNew.push_back(nAtom);
+-
+-    if (vAtomsNew.size() &gt;= nFlowthroughRate || vAtomsOut.empty())
+-    {
+-        // Select atom to flow through to vAtomsOut
+-        vAtomsOut.push_back(vAtomsNew[GetRand(vAtomsNew.size())]);
+-
+-        // Merge vAtomsNew into vAtomsIn
+-        sort(vAtomsNew.begin(), vAtomsNew.end());
+-        Union(vAtomsIn, vAtomsNew);
+-        vAtomsNew.clear();
+-    }
+-}
+-
+-bool AddAtomsAndPropagate(uint256 hashUserStart, const vector&lt;unsigned short&gt;&amp; vAtoms, bool fOrigin)
+-{
+-    CReviewDB reviewdb;
+-    map&lt;uint256, vector&lt;unsigned short&gt; &gt; pmapPropagate[2];
+-    pmapPropagate[0][hashUserStart] = vAtoms;
+-
+-    for (int side = 0; !pmapPropagate[side].empty(); side = 1 - side)
+-    {
+-        map&lt;uint256, vector&lt;unsigned short&gt; &gt;&amp; mapFrom = pmapPropagate[side];
+-        map&lt;uint256, vector&lt;unsigned short&gt; &gt;&amp; mapTo = pmapPropagate[1 - side];
+-
+-        for (map&lt;uint256, vector&lt;unsigned short&gt; &gt;::iterator mi = mapFrom.begin(); mi != mapFrom.end(); ++mi)
+-        {
+-            const uint256&amp; hashUser = (*mi).first;
+-            const vector&lt;unsigned short&gt;&amp; vReceived = (*mi).second;
+-
+-            ///// this would be a lot easier on the database if it put the new atom at the beginning of the list,
+-            ///// so the change would be right next to the vector size.
+-
+-            // Read user
+-            CUser user;
+-            reviewdb.ReadUser(hashUser, user);
+-            unsigned int nIn = user.vAtomsIn.size();
+-            unsigned int nNew = user.vAtomsNew.size();
+-            unsigned int nOut = user.vAtomsOut.size();
+-
+-            // Add atoms received
+-            foreach(unsigned short nAtom, vReceived)
+-                user.AddAtom(nAtom, fOrigin);
+-            fOrigin = false;
+-
+-            // Don&#x27;t bother writing to disk if no changes
+-            if (user.vAtomsIn.size() == nIn &amp;&amp; user.vAtomsNew.size() == nNew)
+-                continue;
+-
+-            // Propagate
+-            if (user.vAtomsOut.size() &gt; nOut)
+-                foreach(const uint256&amp; hash, user.vLinksOut)
+-                    mapTo[hash].insert(mapTo[hash].end(), user.vAtomsOut.begin() + nOut, user.vAtomsOut.end());
+-
+-            // Write back
+-            if (!reviewdb.WriteUser(hashUser, user))
+-                return false;
+-        }
+-        mapFrom.clear();
+-    }
+-    return true;
+-}
+-
+-
+-
+-
+-
+-
+-bool CReview::AcceptReview()
+-{
+-    // Timestamp
+-    nTime = GetTime();
+-
+-    // Check signature
+-    if (!CKey::Verify(vchPubKeyFrom, GetSigHash(), vchSig))
+-        return false;
+-
+-    CReviewDB reviewdb;
+-
+-    // Add review text to recipient
+-    vector&lt;CReview&gt; vReviews;
+-    reviewdb.ReadReviews(hashTo, vReviews);
+-    vReviews.push_back(*this);
+-    if (!reviewdb.WriteReviews(hashTo, vReviews))
+-        return false;
+-
+-    // Add link from sender
+-    CUser user;
+-    uint256 hashFrom = Hash(vchPubKeyFrom.begin(), vchPubKeyFrom.end());
+-    reviewdb.ReadUser(hashFrom, user);
+-    user.vLinksOut.push_back(hashTo);
+-    if (!reviewdb.WriteUser(hashFrom, user))
+-        return false;
+-
+-    reviewdb.Close();
+-
+-    // Propagate atoms to recipient
+-    vector&lt;unsigned short&gt; vZeroAtom(1, 0);
+-    if (!AddAtomsAndPropagate(hashTo, user.vAtomsOut.size() ? user.vAtomsOut : vZeroAtom, false))
+-        return false;
+-
+-    return true;
+-}
+-
+-
+-
+-
+-
+-bool CProduct::CheckSignature()
+-{
+-    return (CKey::Verify(vchPubKeyFrom, GetSigHash(), vchSig));
+-}
+-
+-bool CProduct::CheckProduct()
+-{
+-    if (!CheckSignature())
+-        return false;
+-
+-    // Make sure it&#x27;s a summary product
+-    if (!mapDetails.empty() || !vOrderForm.empty())
+-        return false;
+-
+-    // Look up seller&#x27;s atom count
+-    CReviewDB reviewdb(&quot;r&quot;);
+-    CUser user;
+-    reviewdb.ReadUser(GetUserHash(), user);
+-    nAtoms = user.GetAtomCount();
+-    reviewdb.Close();
+-
+-    ////// delme, this is now done by AdvertInsert
+-    //// Store to memory
+-    //CRITICAL_BLOCK(cs_mapProducts)
+-    //    mapProducts[GetHash()] = *this;
+-
+-    return true;
+-}</code></pre></details><details><summary><code>market.h</code></summary><pre><code>@@ -1,182 +0,0 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+-class CUser;
+-class CReview;
+-class CProduct;
+-
+-static const unsigned int nFlowthroughRate = 2;
+-
+-
+-
+-
+-bool AdvertInsert(const CProduct&amp; product);
+-void AdvertErase(const CProduct&amp; product);
+-bool AddAtomsAndPropagate(uint256 hashUserStart, const vector&lt;unsigned short&gt;&amp; vAtoms, bool fOrigin);
+-
+-
+-
+-
+-
+-
+-
+-
+-class CUser
+-{
+-public:
+-    vector&lt;unsigned short&gt; vAtomsIn;
+-    vector&lt;unsigned short&gt; vAtomsNew;
+-    vector&lt;unsigned short&gt; vAtomsOut;
+-    vector&lt;uint256&gt; vLinksOut;
+-
+-    CUser()
+-    {
+-    }
+-
+-    IMPLEMENT_SERIALIZE
+-    (
+-        if (!(nType &amp; SER_GETHASH))
+-            READWRITE(nVersion);
+-        READWRITE(vAtomsIn);
+-        READWRITE(vAtomsNew);
+-        READWRITE(vAtomsOut);
+-        READWRITE(vLinksOut);
+-    )
+-
+-    void SetNull()
+-    {
+-        vAtomsIn.clear();
+-        vAtomsNew.clear();
+-        vAtomsOut.clear();
+-        vLinksOut.clear();
+-    }
+-
+-    uint256 GetHash() const { return SerializeHash(*this); }
+-
+-
+-    int GetAtomCount() const
+-    {
+-        return (vAtomsIn.size() + vAtomsNew.size());
+-    }
+-
+-    void AddAtom(unsigned short nAtom, bool fOrigin);
+-};
+-
+-
+-
+-
+-
+-
+-
+-class CReview
+-{
+-public:
+-    int nVersion;
+-    uint256 hashTo;
+-    map&lt;string, string&gt; mapValue;
+-    vector&lt;unsigned char&gt; vchPubKeyFrom;
+-    vector&lt;unsigned char&gt; vchSig;
+-
+-    // memory only
+-    unsigned int nTime;
+-    int nAtoms;
+-
+-
+-    CReview()
+-    {
+-        nVersion = 1;
+-        hashTo = 0;
+-        nTime = 0;
+-        nAtoms = 0;
+-    }
+-
+-    IMPLEMENT_SERIALIZE
+-    (
+-        READWRITE(this-&gt;nVersion);
+-        nVersion = this-&gt;nVersion;
+-        if (!(nType &amp; SER_DISK))
+-            READWRITE(hashTo);
+-        READWRITE(mapValue);
+-        READWRITE(vchPubKeyFrom);
+-        if (!(nType &amp; SER_GETHASH))
+-            READWRITE(vchSig);
+-    )
+-
+-    uint256 GetHash() const { return SerializeHash(*this); }
+-    uint256 GetSigHash() const { return SerializeHash(*this, SER_GETHASH|SER_SKIPSIG); }
+-    uint256 GetUserHash() const { return Hash(vchPubKeyFrom.begin(), vchPubKeyFrom.end()); }
+-
+-
+-    bool AcceptReview();
+-};
+-
+-
+-
+-
+-
+-
+-
+-class CProduct
+-{
+-public:
+-    int nVersion;
+-    CAddress addr;
+-    map&lt;string, string&gt; mapValue;
+-    map&lt;string, string&gt; mapDetails;
+-    vector&lt;pair&lt;string, string&gt; &gt; vOrderForm;
+-    unsigned int nSequence;
+-    vector&lt;unsigned char&gt; vchPubKeyFrom;
+-    vector&lt;unsigned char&gt; vchSig;
+-
+-    // disk only
+-    int nAtoms;
+-
+-    // memory only
+-    set&lt;unsigned int&gt; setSources;
+-
+-    CProduct()
+-    {
+-        nVersion = 1;
+-        nAtoms = 0;
+-        nSequence = 0;
+-    }
+-
+-    IMPLEMENT_SERIALIZE
+-    (
+-        READWRITE(this-&gt;nVersion);
+-        nVersion = this-&gt;nVersion;
+-        READWRITE(addr);
+-        READWRITE(mapValue);
+-        if (!(nType &amp; SER_GETHASH))
+-        {
+-            READWRITE(mapDetails);
+-            READWRITE(vOrderForm);
+-            READWRITE(nSequence);
+-        }
+-        READWRITE(vchPubKeyFrom);
+-        if (!(nType &amp; SER_GETHASH))
+-            READWRITE(vchSig);
+-        if (nType &amp; SER_DISK)
+-            READWRITE(nAtoms);
+-    )
+-
+-    uint256 GetHash() const { return SerializeHash(*this); }
+-    uint256 GetSigHash() const { return SerializeHash(*this, SER_GETHASH|SER_SKIPSIG); }
+-    uint256 GetUserHash() const { return Hash(vchPubKeyFrom.begin(), vchPubKeyFrom.end()); }
+-
+-
+-    bool CheckSignature();
+-    bool CheckProduct();
+-};
+-
+-
+-
+-
+-
+-
+-
+-
+-extern map&lt;uint256, CProduct&gt; mapProducts;
+-extern CCriticalSection cs_mapProducts;
+-extern map&lt;uint256, CProduct&gt; mapMyProducts;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -381,11 +381,6 @@ void CNode::CancelSubscribe(unsigned int nChannel)
+             foreach(CNode* pnode, vNodes)
+                 if (pnode != this)
+                     pnode-&gt;PushMessage(&quot;sub-cancel&quot;, nChannel);
+-
+-        // Clear memory, no longer subscribed
+-        if (nChannel == MSG_PRODUCT)
+-            CRITICAL_BLOCK(cs_mapProducts)
+-                mapProducts.clear();
+     }
+ }
+ 
+@@ -497,10 +492,6 @@ void CNode::Cleanup()
+     // All of a nodes broadcasts and subscriptions are automatically torn down
+     // when it goes down, so a node has to stay up to keep its broadcast going.
+ 
+-    CRITICAL_BLOCK(cs_mapProducts)
+-        for (map&lt;uint256, CProduct&gt;::iterator mi = mapProducts.begin(); mi != mapProducts.end();)
+-            AdvertRemoveSource(this, MSG_PRODUCT, 0, (*(mi++)).second);
+-
+     // Cancel subscriptions
+     for (unsigned int nChannel = 0; nChannel &lt; vfSubscribe.size(); nChannel++)
+         if (vfSubscribe[nChannel])</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -341,9 +341,6 @@ enum
+ {
+     MSG_TX = 1,
+     MSG_BLOCK,
+-    MSG_REVIEW,
+-    MSG_PRODUCT,
+-    MSG_TABLE,
+ };
+ 
+ static const char* ppszTypeName[] =
+@@ -351,9 +348,6 @@ static const char* ppszTypeName[] =
+     &quot;ERROR&quot;,
+     &quot;tx&quot;,
+     &quot;block&quot;,
+-    &quot;review&quot;,
+-    &quot;product&quot;,
+-    &quot;table&quot;,
+ };
+ 
+ class CInv</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 201;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,22 +7,15 @@
+ #include &lt;crtdbg.h&gt;
+ #endif
+ 
+-void ThreadRequestProductDetails(void* parg);
+-void ThreadRandSendTest(void* parg);
+ bool GetStartOnSystemStartup();
+ void SetStartOnSystemStartup(bool fAutoStart);
+ 
+ 
+ 
+ DEFINE_EVENT_TYPE(wxEVT_UITHREADCALL)
+-DEFINE_EVENT_TYPE(wxEVT_REPLY1)
+-DEFINE_EVENT_TYPE(wxEVT_REPLY2)
+-DEFINE_EVENT_TYPE(wxEVT_REPLY3)
+ 
+ CMainFrame* pframeMain = NULL;
+ CMyTaskBarIcon* ptaskbaricon = NULL;
+-bool fRandSendTest = false;
+-void RandSend();
+ extern int g_isPainting;
+ bool fClosedToTray = false;
+ 
+@@ -210,93 +203,6 @@ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style
+ 
+ 
+ 
+-//////////////////////////////////////////////////////////////////////////////
+-//
+-// Custom events
+-//
+-// If this code gets used again, it should be replaced with something like UIThreadCall
+-
+-set&lt;void*&gt; setCallbackAvailable;
+-CCriticalSection cs_setCallbackAvailable;
+-
+-void AddCallbackAvailable(void* p)
+-{
+-    CRITICAL_BLOCK(cs_setCallbackAvailable)
+-        setCallbackAvailable.insert(p);
+-}
+-
+-void RemoveCallbackAvailable(void* p)
+-{
+-    CRITICAL_BLOCK(cs_setCallbackAvailable)
+-        setCallbackAvailable.erase(p);
+-}
+-
+-bool IsCallbackAvailable(void* p)
+-{
+-    CRITICAL_BLOCK(cs_setCallbackAvailable)
+-        return setCallbackAvailable.count(p);
+-    return false;
+-}
+-
+-template&lt;typename T&gt;
+-void AddPendingCustomEvent(wxEvtHandler* pevthandler, int nEventID, const T pbeginIn, const T pendIn)
+-{
+-    // Need to rewrite with something like UIThreadCall
+-    // I&#x27;m tired of maintaining this hack that&#x27;s only called by unfinished unused code.
+-    assert((&quot;Unimplemented&quot;, 0));
+-    //if (!pevthandler)
+-    //    return;
+-    //
+-    //const char* pbegin = (pendIn != pbeginIn) ? &amp;pbeginIn[0] : NULL;
+-    //const char* pend = pbegin + (pendIn - pbeginIn) * sizeof(pbeginIn[0]);
+-    //wxCommandEvent event(nEventID);
+-    //wxString strData(wxChar(0), (pend - pbegin) / sizeof(wxChar) + 1);
+-    //memcpy(&amp;strData[0], pbegin, pend - pbegin);
+-    //event.SetString(strData);
+-    //event.SetInt(pend - pbegin);
+-    //
+-    //pevthandler-&gt;AddPendingEvent(event);
+-}
+-
+-template&lt;class T&gt;
+-void AddPendingCustomEvent(wxEvtHandler* pevthandler, int nEventID, const T&amp; obj)
+-{
+-    CDataStream ss;
+-    ss &lt;&lt; obj;
+-    AddPendingCustomEvent(pevthandler, nEventID, ss.begin(), ss.end());
+-}
+-
+-void AddPendingReplyEvent1(void* pevthandler, CDataStream&amp; vRecv)
+-{
+-    if (IsCallbackAvailable(pevthandler))
+-        AddPendingCustomEvent((wxEvtHandler*)pevthandler, wxEVT_REPLY1, vRecv.begin(), vRecv.end());
+-}
+-
+-void AddPendingReplyEvent2(void* pevthandler, CDataStream&amp; vRecv)
+-{
+-    if (IsCallbackAvailable(pevthandler))
+-        AddPendingCustomEvent((wxEvtHandler*)pevthandler, wxEVT_REPLY2, vRecv.begin(), vRecv.end());
+-}
+-
+-void AddPendingReplyEvent3(void* pevthandler, CDataStream&amp; vRecv)
+-{
+-    if (IsCallbackAvailable(pevthandler))
+-        AddPendingCustomEvent((wxEvtHandler*)pevthandler, wxEVT_REPLY3, vRecv.begin(), vRecv.end());
+-}
+-
+-CDataStream GetStreamFromEvent(const wxCommandEvent&amp; event)
+-{
+-    wxString strData = event.GetString();
+-    const char* pszBegin = strData.c_str();
+-    return CDataStream(pszBegin, pszBegin + event.GetInt(), SER_NETWORK);
+-}
+-
+-
+-
+-
+-
+-
+-
+ //////////////////////////////////////////////////////////////////////////////
+ //
+ // CMainFrame
+@@ -1180,16 +1086,6 @@ void CMainFrame::OnMouseEventsAddress(wxMouseEvent&amp; event)
+     event.Skip();
+ }
+ 
+-void CMainFrame::OnButtonCopy(wxCommandEvent&amp; event)
+-{
+-    // Copy address box to clipboard
+-    if (wxTheClipboard-&gt;Open())
+-    {
+-        wxTheClipboard-&gt;SetData(new wxTextDataObject(m_textCtrlAddress-&gt;GetValue()));
+-        wxTheClipboard-&gt;Close();
+-    }
+-}
+-
+ void CMainFrame::OnButtonChange(wxCommandEvent&amp; event)
+ {
+     CYourAddressDialog dialog(this, string(m_textCtrlAddress-&gt;GetValue()));
+@@ -1208,6 +1104,16 @@ void CMainFrame::OnButtonChange(wxCommandEvent&amp; event)
+     }
+ }
+ 
++void CMainFrame::OnButtonCopy(wxCommandEvent&amp; event)
++{
++    // Copy address box to clipboard
++    if (wxTheClipboard-&gt;Open())
++    {
++        wxTheClipboard-&gt;SetData(new wxTextDataObject(m_textCtrlAddress-&gt;GetValue()));
++        wxTheClipboard-&gt;Close();
++    }
++}
++
+ void CMainFrame::OnListItemActivated(wxListEvent&amp; event)
+ {
+     uint256 hash((string)GetItemText(m_listCtrl, event.GetIndex(), 1));
+@@ -1228,28 +1134,6 @@ void CMainFrame::OnListItemActivated(wxListEvent&amp; event)
+     //pdialog-&gt;Show();
+ }
+ 
+-void CMainFrame::OnListItemActivatedProductsSent(wxListEvent&amp; event)
+-{
+-    CProduct&amp; product = *(CProduct*)event.GetItem().GetData();
+-    CEditProductDialog* pdialog = new CEditProductDialog(this);
+-    pdialog-&gt;SetProduct(product);
+-    pdialog-&gt;Show();
+-}
+-
+-void CMainFrame::OnListItemActivatedOrdersSent(wxListEvent&amp; event)
+-{
+-    CWalletTx&amp; order = *(CWalletTx*)event.GetItem().GetData();
+-    CViewOrderDialog* pdialog = new CViewOrderDialog(this, order, false);
+-    pdialog-&gt;Show();
+-}
+-
+-void CMainFrame::OnListItemActivatedOrdersReceived(wxListEvent&amp; event)
+-{
+-    CWalletTx&amp; order = *(CWalletTx*)event.GetItem().GetData();
+-    CViewOrderDialog* pdialog = new CViewOrderDialog(this, order, true);
+-    pdialog-&gt;Show();
+-}
+-
+ 
+ 
+ 
+@@ -2525,800 +2409,6 @@ void CAddressBookDialog::OnClose(wxCloseEvent&amp; event)
+ 
+ 
+ 
+-//////////////////////////////////////////////////////////////////////////////
+-//
+-// CProductsDialog
+-//
+-
+-bool CompareIntStringPairBestFirst(const pair&lt;int, string&gt;&amp; item1, const pair&lt;int, string&gt;&amp; item2)
+-{
+-    return (item1.first &gt; item2.first);
+-}
+-
+-CProductsDialog::CProductsDialog(wxWindow* parent) : CProductsDialogBase(parent)
+-{
+-    // Init column headers
+-    m_listCtrl-&gt;InsertColumn(0, &quot;Title&quot;,  wxLIST_FORMAT_LEFT, 200);
+-    m_listCtrl-&gt;InsertColumn(1, &quot;Price&quot;,  wxLIST_FORMAT_LEFT, 80);
+-    m_listCtrl-&gt;InsertColumn(2, &quot;Seller&quot;, wxLIST_FORMAT_LEFT, 80);
+-    m_listCtrl-&gt;InsertColumn(3, &quot;Stars&quot;,  wxLIST_FORMAT_LEFT, 50);
+-    m_listCtrl-&gt;InsertColumn(4, &quot;Power&quot;,  wxLIST_FORMAT_LEFT, 50);
+-
+-    // Tally top categories
+-    map&lt;string, int&gt; mapTopCategories;
+-    CRITICAL_BLOCK(cs_mapProducts)
+-        for (map&lt;uint256, CProduct&gt;::iterator mi = mapProducts.begin(); mi != mapProducts.end(); ++mi)
+-            mapTopCategories[(*mi).second.mapValue[&quot;category&quot;]]++;
+-
+-    // Sort top categories
+-    vector&lt;pair&lt;int, string&gt; &gt; vTopCategories;
+-    for (map&lt;string, int&gt;::iterator mi = mapTopCategories.begin(); mi != mapTopCategories.end(); ++mi)
+-        vTopCategories.push_back(make_pair((*mi).second, (*mi).first));
+-    sort(vTopCategories.begin(), vTopCategories.end(), CompareIntStringPairBestFirst);
+-
+-    // Fill categories combo box
+-    int nLimit = 250;
+-    for (vector&lt;pair&lt;int, string&gt; &gt;::iterator it = vTopCategories.begin(); it != vTopCategories.end() &amp;&amp; nLimit-- &gt; 0; ++it)
+-        m_comboBoxCategory-&gt;Append((*it).second);
+-
+-    // Fill window with initial search
+-    //wxCommandEvent event;
+-    //OnButtonSearch(event);
+-}
+-
+-void CProductsDialog::OnCombobox(wxCommandEvent&amp; event)
+-{
+-    OnButtonSearch(event);
+-}
+-
+-bool CompareProductsBestFirst(const CProduct* p1, const CProduct* p2)
+-{
+-    return (p1-&gt;nAtoms &gt; p2-&gt;nAtoms);
+-}
+-
+-void CProductsDialog::OnButtonSearch(wxCommandEvent&amp; event)
+-{
+-    string strCategory = (string)m_comboBoxCategory-&gt;GetValue();
+-    string strSearch = (string)m_textCtrlSearch-&gt;GetValue();
+-
+-    // Search products
+-    vector&lt;CProduct*&gt; vProductsFound;
+-    CRITICAL_BLOCK(cs_mapProducts)
+-    {
+-        for (map&lt;uint256, CProduct&gt;::iterator mi = mapProducts.begin(); mi != mapProducts.end(); ++mi)
+-        {
+-            CProduct&amp; product = (*mi).second;
+-            if (product.mapValue[&quot;category&quot;].find(strCategory) != -1)
+-            {
+-                if (product.mapValue[&quot;title&quot;].find(strSearch) != -1 ||
+-                    product.mapValue[&quot;description&quot;].find(strSearch) != -1 ||
+-                    product.mapValue[&quot;seller&quot;].find(strSearch) != -1)
+-                {
+-                    vProductsFound.push_back(&amp;product);
+-                }
+-            }
+-        }
+-    }
+-
+-    // Sort
+-    sort(vProductsFound.begin(), vProductsFound.end(), CompareProductsBestFirst);
+-
+-    // Display
+-    foreach(CProduct* pproduct, vProductsFound)
+-    {
+-        InsertLine(m_listCtrl,
+-                   pproduct-&gt;mapValue[&quot;title&quot;],
+-                   pproduct-&gt;mapValue[&quot;price&quot;],
+-                   pproduct-&gt;mapValue[&quot;seller&quot;],
+-                   pproduct-&gt;mapValue[&quot;stars&quot;],
+-                   itostr(pproduct-&gt;nAtoms));
+-    }
+-}
+-
+-void CProductsDialog::OnListItemActivated(wxListEvent&amp; event)
+-{
+-    // Doubleclick opens product
+-    CViewProductDialog* pdialog = new CViewProductDialog(this, m_vProduct[event.GetIndex()]);
+-    pdialog-&gt;Show();
+-}
+-
+-
+-
+-
+-
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-//
+-// CEditProductDialog
+-//
+-
+-CEditProductDialog::CEditProductDialog(wxWindow* parent) : CEditProductDialogBase(parent)
+-{
+-    m_textCtrlLabel[0 ] = m_textCtrlLabel0;
+-    m_textCtrlLabel[1 ] = m_textCtrlLabel1;
+-    m_textCtrlLabel[2 ] = m_textCtrlLabel2;
+-    m_textCtrlLabel[3 ] = m_textCtrlLabel3;
+-    m_textCtrlLabel[4 ] = m_textCtrlLabel4;
+-    m_textCtrlLabel[5 ] = m_textCtrlLabel5;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -6,12 +6,6 @@
+ 
+ 
+ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+-DECLARE_EVENT_TYPE(wxEVT_REPLY1, -1)
+-DECLARE_EVENT_TYPE(wxEVT_REPLY2, -1)
+-DECLARE_EVENT_TYPE(wxEVT_REPLY3, -1)
+-
+-
+-
+ 
+ extern map&lt;string, string&gt; mapArgs;
+ 
+@@ -57,8 +51,8 @@ protected:
+     void OnButtonAddressBook(wxCommandEvent&amp; event);
+     void OnSetFocusAddress(wxFocusEvent&amp; event);
+     void OnMouseEventsAddress(wxMouseEvent&amp; event);
+-    void OnButtonCopy(wxCommandEvent&amp; event);
+     void OnButtonChange(wxCommandEvent&amp; event);
++    void OnButtonCopy(wxCommandEvent&amp; event);
+     void OnListColBeginDrag(wxListEvent&amp; event);
+     void OnListItemActivated(wxListEvent&amp; event);
+     void OnListItemActivatedProductsSent(wxListEvent&amp; event);
+@@ -263,138 +257,6 @@ public:
+ 
+ 
+ 
+-class CProductsDialog : public CProductsDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnKeyDown(wxKeyEvent&amp; event) { HandleCtrlA(event); }
+-    void OnCombobox(wxCommandEvent&amp; event);
+-    void OnButtonSearch(wxCommandEvent&amp; event);
+-    void OnListItemActivated(wxListEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CProductsDialog(wxWindow* parent);
+-
+-    // Custom
+-    vector&lt;CProduct&gt; m_vProduct;
+-};
+-
+-
+-
+-class CEditProductDialog : public CEditProductDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnKeyDown(wxKeyEvent&amp; event) { HandleCtrlA(event); }
+-    void OnButtonDel0(wxCommandEvent&amp; event);
+-    void OnButtonDel1(wxCommandEvent&amp; event);
+-    void OnButtonDel2(wxCommandEvent&amp; event);
+-    void OnButtonDel3(wxCommandEvent&amp; event);
+-    void OnButtonDel4(wxCommandEvent&amp; event);
+-    void OnButtonDel5(wxCommandEvent&amp; event);
+-    void OnButtonDel6(wxCommandEvent&amp; event);
+-    void OnButtonDel7(wxCommandEvent&amp; event);
+-    void OnButtonDel8(wxCommandEvent&amp; event);
+-    void OnButtonDel9(wxCommandEvent&amp; event);
+-    void OnButtonDel10(wxCommandEvent&amp; event);
+-    void OnButtonDel11(wxCommandEvent&amp; event);
+-    void OnButtonDel12(wxCommandEvent&amp; event);
+-    void OnButtonDel13(wxCommandEvent&amp; event);
+-    void OnButtonDel14(wxCommandEvent&amp; event);
+-    void OnButtonDel15(wxCommandEvent&amp; event);
+-    void OnButtonDel16(wxCommandEvent&amp; event);
+-    void OnButtonDel17(wxCommandEvent&amp; event);
+-    void OnButtonDel18(wxCommandEvent&amp; event);
+-    void OnButtonDel19(wxCommandEvent&amp; event);
+-    void OnButtonAddField(wxCommandEvent&amp; event);
+-    void OnButtonSend(wxCommandEvent&amp; event);
+-    void OnButtonPreview(wxCommandEvent&amp; event);
+-    void OnButtonCancel(wxCommandEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CEditProductDialog(wxWindow* parent);
+-
+-    // Custom
+-    enum { FIELDS_MAX = 20 };
+-    wxTextCtrl* m_textCtrlLabel[FIELDS_MAX];
+-    wxTextCtrl* m_textCtrlField[FIELDS_MAX];
+-    wxButton*   m_buttonDel[FIELDS_MAX];
+-
+-    void LayoutAll();
+-    void ShowLine(int i, bool fShow=true);
+-    void OnButtonDel(wxCommandEvent&amp; event, int n);
+-    void SetProduct(const CProduct&amp; productIn);
+-    void GetProduct(CProduct&amp; product);
+-
+-};
+-
+-
+-
+-class CViewProductDialog : public CViewProductDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnButtonSubmitForm(wxCommandEvent&amp; event);
+-    void OnButtonCancelForm(wxCommandEvent&amp; event);
+-    void OnButtonBack(wxCommandEvent&amp; event);
+-    void OnButtonNext(wxCommandEvent&amp; event);
+-    void OnButtonCancel(wxCommandEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CViewProductDialog(wxWindow* parent, const CProduct&amp; productIn);
+-    ~CViewProductDialog();
+-
+-    // Custom
+-    CProduct product;
+-    enum { FIELDS_MAX = 20 };
+-    wxStaticText* m_staticTextLabel[FIELDS_MAX];
+-    wxTextCtrl*   m_textCtrlField[FIELDS_MAX];
+-    wxChoice*     m_choiceField[FIELDS_MAX];
+-
+-    void GetOrder(CWalletTx&amp; order);
+-    void UpdateProductDisplay(bool fDetails);
+-    void OnReply1(wxCommandEvent&amp; event);
+-};
+-
+-
+-
+-class CViewOrderDialog : public CViewOrderDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnButtonOK(wxCommandEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CViewOrderDialog(wxWindow* parent, CWalletTx order, bool fReceived);
+-
+-    // Custom
+-    bool fReceived;
+-};
+-
+-
+-
+-class CEditReviewDialog : public CEditReviewDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnKeyDown(wxKeyEvent&amp; event) { HandleCtrlA(event); }
+-    void OnButtonSubmit(wxCommandEvent&amp; event);
+-    void OnButtonCancel(wxCommandEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CEditReviewDialog(wxWindow* parent);
+-
+-    // Custom
+-    void GetReview(CReview&amp; review);
+-};
+-
+-
+-
+ class CGetTextFromUserDialog : public CGetTextFromUserDialogBase
+ {
+ protected:
+@@ -430,6 +292,8 @@ public:
+             m_textCtrl2-&gt;SetValue(strValue2);
+             SetSize(wxDefaultCoord, 180);
+         }
++        if (!fWindows)
++            SetSize(1.14 * GetSize().GetWidth(), 1.14 * GetSize().GetHeight());
+     }
+ 
+     // Custom</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -27,39 +27,39 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	m_menuFile = new wxMenu();
+ 	wxMenuItem* m_menuFileExit;
+-	m_menuFileExit = new wxMenuItem( m_menuFile, wxID_ANY, wxString( wxT(&quot;E&amp;xit&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuFileExit = new wxMenuItem( m_menuFile, wxID_ANY, wxString( _(&quot;E&amp;xit&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuFile-&gt;Append( m_menuFileExit );
+ 	
+-	m_menubar-&gt;Append( m_menuFile, wxT(&quot;&amp;File&quot;) );
++	m_menubar-&gt;Append( m_menuFile, _(&quot;&amp;File&quot;) );
+ 	
+ 	m_menuView = new wxMenu();
+ 	wxMenuItem* m_menuViewShowGenerated;
+-	m_menuViewShowGenerated = new wxMenuItem( m_menuView, wxID_VIEWSHOWGENERATED, wxString( wxT(&quot;&amp;Show Generated Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
++	m_menuViewShowGenerated = new wxMenuItem( m_menuView, wxID_VIEWSHOWGENERATED, wxString( _(&quot;&amp;Show Generated Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
+ 	m_menuView-&gt;Append( m_menuViewShowGenerated );
+ 	
+-	m_menubar-&gt;Append( m_menuView, wxT(&quot;&amp;View&quot;) );
++	m_menubar-&gt;Append( m_menuView, _(&quot;&amp;View&quot;) );
+ 	
+ 	m_menuOptions = new wxMenu();
+ 	wxMenuItem* m_menuOptionsGenerateBitcoins;
+-	m_menuOptionsGenerateBitcoins = new wxMenuItem( m_menuOptions, wxID_OPTIONSGENERATEBITCOINS, wxString( wxT(&quot;&amp;Generate Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
++	m_menuOptionsGenerateBitcoins = new wxMenuItem( m_menuOptions, wxID_OPTIONSGENERATEBITCOINS, wxString( _(&quot;&amp;Generate Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
+ 	m_menuOptions-&gt;Append( m_menuOptionsGenerateBitcoins );
+ 	
+ 	wxMenuItem* m_menuOptionsChangeYourAddress;
+-	m_menuOptionsChangeYourAddress = new wxMenuItem( m_menuOptions, wxID_ANY, wxString( wxT(&quot;&amp;Change Your Address...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuOptionsChangeYourAddress = new wxMenuItem( m_menuOptions, wxID_ANY, wxString( _(&quot;&amp;Change Your Address...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsChangeYourAddress );
+ 	
+ 	wxMenuItem* m_menuOptionsOptions;
+-	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_MENUOPTIONSOPTIONS, wxString( wxT(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_MENUOPTIONSOPTIONS, wxString( _(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsOptions );
+ 	
+-	m_menubar-&gt;Append( m_menuOptions, wxT(&quot;&amp;Options&quot;) );
++	m_menubar-&gt;Append( m_menuOptions, _(&quot;&amp;Options&quot;) );
+ 	
+ 	m_menuHelp = new wxMenu();
+ 	wxMenuItem* m_menuHelpAbout;
+-	m_menuHelpAbout = new wxMenuItem( m_menuHelp, wxID_ANY, wxString( wxT(&quot;&amp;About...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuHelpAbout = new wxMenuItem( m_menuHelp, wxID_ANY, wxString( _(&quot;&amp;About...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuHelp-&gt;Append( m_menuHelpAbout );
+ 	
+-	m_menubar-&gt;Append( m_menuHelp, wxT(&quot;&amp;Help&quot;) );
++	m_menubar-&gt;Append( m_menuHelp, _(&quot;&amp;Help&quot;) );
+ 	
+ 	this-&gt;SetMenuBar( m_menubar );
+ 	
+@@ -68,8 +68,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_toolBar-&gt;SetToolSeparation( 1 );
+ 	m_toolBar-&gt;SetFont( wxFont( wxNORMAL_FONT-&gt;GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+ 	
+-	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, wxT(&quot;&amp;Send Coins&quot;), wxBitmap( send20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+-	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, wxT(&quot;&amp;Address Book&quot;), wxBitmap( addressbook20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, _(&quot;&amp;Send Coins&quot;), wxBitmap( send20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, _(&quot;&amp;Address Book&quot;), wxBitmap( addressbook20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+ 	m_toolBar-&gt;Realize();
+ 	
+ 	m_statusBar = this-&gt;CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
+@@ -84,7 +84,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer85;
+ 	bSizer85 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_staticText32 = new wxStaticText( this, wxID_ANY, wxT(&quot;Your Bitcoin Address:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText32 = new wxStaticText( this, wxID_ANY, _(&quot;Your Bitcoin Address:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText32-&gt;Wrap( -1 );
+ 	bSizer85-&gt;Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
+ 	
+@@ -93,13 +93,13 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	bSizer85-&gt;Add( m_textCtrlAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+ 	
+-	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+-	bSizer85-&gt;Add( m_buttonCopy, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
++	m_buttonNew = new wxButton( this, wxID_BUTTONCHANGE, _(&quot;&amp;New...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_buttonNew-&gt;Hide();
+ 	
+-	m_button91 = new wxButton( this, wxID_BUTTONCHANGE, wxT(&quot;C&amp;hange...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_button91-&gt;Hide();
++	bSizer85-&gt;Add( m_buttonNew, 0, wxRIGHT, 5 );
+ 	
+-	bSizer85-&gt;Add( m_button91, 0, wxRIGHT, 5 );
++	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, _(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
++	bSizer85-&gt;Add( m_buttonCopy, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+ 	
+ 	
+ 	bSizer85-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+@@ -113,7 +113,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer66;
+ 	bSizer66 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_staticText41 = new wxStaticText( m_panel14, wxID_ANY, wxT(&quot;Balance:&quot;), wxDefaultPosition, wxSize( -1,15 ), 0 );
++	m_staticText41 = new wxStaticText( m_panel14, wxID_ANY, _(&quot;Balance:&quot;), wxDefaultPosition, wxSize( -1,15 ), 0 );
+ 	m_staticText41-&gt;Wrap( -1 );
+ 	bSizer66-&gt;Add( m_staticText41, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+ 	
+@@ -132,7 +132,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	bSizer3-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+-	wxString m_choiceFilterChoices[] = { wxT(&quot; All&quot;), wxT(&quot; Sent&quot;), wxT(&quot; Received&quot;), wxT(&quot; In Progress&quot;) };
++	wxString m_choiceFilterChoices[] = { _(&quot; All&quot;), _(&quot; Sent&quot;), _(&quot; Received&quot;), _(&quot; In Progress&quot;) };
+ 	int m_choiceFilterNChoices = sizeof( m_choiceFilterChoices ) / sizeof( wxString );
+ 	m_choiceFilter = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxSize( 110,-1 ), m_choiceFilterNChoices, m_choiceFilterChoices, 0 );
+ 	m_choiceFilter-&gt;SetSelection( 0 );
+@@ -191,8 +191,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
++	m_buttonNew-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_buttonCopy-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+-	m_button91-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+@@ -243,8 +243,8 @@ CMainFrameBase::~CMainFrameBase()
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
++	m_buttonNew-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_buttonCopy-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+-	m_button91-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+@@ -268,7 +268,7 @@ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, con
+ 	wxBoxSizer* bSizer65;
+ 	bSizer65 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, _(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer65-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer64-&gt;Add( bSizer65, 0, wxALIGN_RIGHT, 5 );
+@@ -311,7 +311,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer69-&gt;Add( 0, 16, 0, wxEXPAND, 5 );
+ 	
+-	m_staticText32 = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;Optional transaction fee you give to the nodes that process your transactions.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText32 = new wxStaticText( m_panelMain, wxID_ANY, _(&quot;Optional transaction fee you give to the nodes that process your transactions.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText32-&gt;Wrap( -1 );
+ 	m_staticText32-&gt;Hide();
+ 	
+@@ -320,7 +320,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	wxBoxSizer* bSizer56;
+ 	bSizer56 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_staticText31 = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;Transaction fee:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText31 = new wxStaticText( m_panelMain, wxID_ANY, _(&quot;Transaction fee:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText31-&gt;Wrap( -1 );
+ 	m_staticText31-&gt;Hide();
+ 	
+@@ -336,35 +336,35 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	wxBoxSizer* bSizer71;
+ 	bSizer71 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_checkBoxLimitProcessors = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Limit coin generation to&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxLimitProcessors = new wxCheckBox( m_panelMain, wxID_ANY, _(&quot;&amp;Limit coin generation to&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer71-&gt;Add( m_checkBoxLimitProcessors, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+ 	m_spinCtrlLimitProcessors = new wxSpinCtrl( m_panelMain, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxSP_ARROW_KEYS, 1, 999, 1 );
+ 	bSizer71-&gt;Add( m_spinCtrlLimitProcessors, 0, wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+-	m_staticText35 = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;processors&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText35 = new wxStaticText( m_panelMain, wxID_ANY, _(&quot;processors&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText35-&gt;Wrap( -1 );
+ 	bSizer71-&gt;Add( m_staticText35, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+ 	bSizer69-&gt;Add( bSizer71, 0, 0, 5 );
+ 	
+-	m_checkBoxStartOnSystemStartup = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Start Bitcoin on system startup&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxStartOnSystemStartup = new wxCheckBox( m_panelMain, wxID_ANY, _(&quot;&amp;Start Bitcoin on system startup&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer69-&gt;Add( m_checkBoxStartOnSystemStartup, 0, wxALL, 5 );
+ 	
+-	m_checkBoxMinimizeToTray = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Minimize to the tray instead of the taskbar&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxMinimizeToTray = new wxCheckBox( m_panelMain, wxID_ANY, _(&quot;&amp;Minimize to the tray instead of the taskbar&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer69-&gt;Add( m_checkBoxMinimizeToTray, 0, wxALL, 5 );
+ 	
+-	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;M&amp;inimize to the tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, _(&quot;M&amp;inimize to the tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer69-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	wxBoxSizer* bSizer102;
+ 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_checkBoxUseProxy = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Connect through socks4 proxy: &quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxUseProxy = new wxCheckBox( m_panelMain, wxID_ANY, _(&quot;&amp;Connect through socks4 proxy: &quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer102-&gt;Add( m_checkBoxUseProxy, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+@@ -376,7 +376,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer103-&gt;Add( 18, 0, 0, 0, 5 );
+ 	
+-	m_staticTextProxyIP = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;Proxy &amp;IP:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextProxyIP = new wxStaticText( m_panelMain, wxID_ANY, _(&quot;Proxy &amp;IP:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextProxyIP-&gt;Wrap( -1 );
+ 	bSizer103-&gt;Add( m_staticTextProxyIP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+@@ -384,7 +384,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	m_textCtrlProxyIP-&gt;SetMaxLength( 15 ); 
+ 	bSizer103-&gt;Add( m_textCtrlProxyIP, 0, wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+-	m_staticTextProxyPort = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot; &amp;Port:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextProxyPort = new wxStaticText( m_panelMain, wxID_ANY, _(&quot; &amp;Port:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextProxyPort-&gt;Wrap( -1 );
+ 	bSizer103-&gt;Add( m_staticTextProxyPort, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+@@ -406,19 +406,19 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer64-&gt;Add( 0, 16, 0, wxEXPAND, 5 );
+ 	
+-	m_staticText321 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;Test panel 2 for future expansion&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText321 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;Test panel 2 for future expansion&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText321-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText321, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+-	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;Let&#x27;s not start multiple pages until the first page is filled up&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;Let&#x27;s not start multiple pages until the first page is filled up&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText69-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText69, 0, wxALL, 5 );
+ 	
+-	m_staticText70 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText70 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText70-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText70, 0, wxALL, 5 );
+ 	
+-	m_staticText71 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText71 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText71-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText71, 0, wxALL, 5 );
+ 	
+@@ -437,13 +437,13 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	wxBoxSizer* bSizer58;
+ 	bSizer58 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, _(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer58-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	m_buttonCancel = new wxButton( this, wxID_CANCEL, _(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer58-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonApply = new wxButton( this, wxID_APPLY, wxT(&quot;&amp;Apply&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	m_buttonApply = new wxButton( this, wxID_APPLY, _(&quot;&amp;Apply&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer58-&gt;Add( m_buttonApply, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer55-&gt;Add( bSizer58, 0, wxALIGN_RIGHT, 5 );
+@@ -504,13 +504,13 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	wxBoxSizer* bSizer64;
+ 	bSizer64 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_staticText40 = new wxStaticText( this, wxID_ANY, wxT(&quot;Bitcoin &quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText40 = new wxStaticText( this, wxID_ANY, _(&quot;Bitcoin &quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText40-&gt;Wrap( -1 );
+ 	m_staticText40-&gt;SetFont( wxFont( 10, 74, 90, 92, false, wxT(&quot;Tahoma&quot;) ) );
+ 	
+ 	bSizer64-&gt;Add( m_staticText40, 0, wxALIGN_BOTTOM|wxTOP|wxBOTTOM|wxLEFT, 5 );
+ 	
+-	m_staticTextVersion = new wxStaticText( this, wxID_ANY, wxT(&quot;version&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextVersion = new wxStaticText( this, wxID_ANY, _(&quot;version&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextVersion-&gt;Wrap( -1 );
+ 	m_staticTextVersion-&gt;SetFont( wxFont( 10, 74, 90, 90, false, wxT(&quot;Tahoma&quot;) ) );
+ 	
+@@ -521,7 +521,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextMain = new wxStaticText( this, wxID_ANY, wxT(&quot;Copyright © 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright © 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextMain-&gt;Wrap( -1 );
+ 	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
+ 	
+@@ -538,7 +538,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer61-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, _(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer61-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
+@@ -577,7 +577,7 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	
+ 	fgSizer1-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, wxT(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, _(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextInstructions-&gt;Wrap( -1 );
+ 	fgSizer1-&gt;Add( m_staticTextInstructions, 0, wxTOP|wxRIGHT|wxLEFT, 5 );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/64a474a/">← renamed a few rpc methods</a><a rel="next" href="../../commits/2b63e68/">fix mingw makefile to use correct wxWidgets include, this… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

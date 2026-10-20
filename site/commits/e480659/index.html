@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>all builds are now with… (r66) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e480659/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="all builds are now with… (r66) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e480659/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="all builds are now with… (r66) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language translation file locale/<lang>/LC_MESSAGES/bitcoin.mo -- version 0.2.2", "url": "https://satoshimail.pages.dev/commits/e480659/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-17T17:22:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e4806597650d8a17f1da7a5b5501eb367ea786fc"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "all builds are now with…", "item": "https://satoshimail.pages.dev/commits/e480659/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce480659765">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">all builds are now with…</span></div></nav>
+<main class="in">
+<h1>all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language translation file locale/&lt;lang&gt;/LC_MESSAGES/bitcoin.mo -- version 0.2.2</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 17 February 2010 · SVN r66 · release v0.2.2 · 18 files, +428 −609</p>
+<p class="actions"><a class="btn" href="../../#t-ce480659765">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e4806597650d8a17f1da7a5b5501eb367ea786fc" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -29,11 +29,11 @@ Dependencies
+ ------------
+ Libraries you need to download separately and build:
+ 
+-              default path   download
+-wxWidgets      \wxwidgets     prebuilt: http://wxpack.sourceforge.net
+-OpenSSL        \openssl       http://www.openssl.org/source/
+-Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+-Boost          \boost         http://www.boost.org/users/download/
++             default path  download
++wxWidgets-2.9  \wxwidgets   http://www.wxwidgets.org/downloads/
++OpenSSL        \openssl     http://www.openssl.org/source/
++Berkeley DB    \db          http://www.oracle.com/technology/software/products/berkeley-db/index.html
++Boost          \boost       http://www.boost.org/users/download/
+ 
+ Their licenses:
+ wxWidgets      LGPL 2.1 with very liberal exceptions
+@@ -43,10 +43,10 @@ Boost          MIT-like license
+ 
+ Versions used in this release:
+ MinGW GCC    3.4.5
+-wxWidgets    2.8.9
++wxWidgets    2.9.0
+ OpenSSL      0.9.8k
+ Berkeley DB  4.7.25.NC
+-Boost        1.34.1
++Boost        1.42.1
+ 
+ 
+ Notes
+@@ -59,6 +59,14 @@ The release is built with GCC and then &quot;strip bitcoin.exe&quot; to strip the debug
+ symbols, which reduces the executable size by about 90%.
+ 
+ 
++wxWidgets
++---------
++cd \wxwidgets\build\msw
++make -f makefile.gcc
++ or
++nmake -f makefile.vc
++
++
+ OpenSSL
+ -------
+ Bitcoin does not use any encryption.  If you want to do a no-everything
+@@ -104,5 +112,5 @@ download bjam.exe from
+ http://sourceforge.net/project/showfiles.php?group_id=7586&amp;package_id=72941
+ cd \boost
+ bjam toolset=gcc --build-type=complete stage
+-or
++ or
+ bjam toolset=msvc --build-type=complete stage</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -20,15 +20,11 @@ sudo apt-get install libdb4.7-dev
+ sudo apt-get install libdb4.7++-dev
+ sudo apt-get install libboost-dev
+ 
+-The release was built with wxWidgets 2.8.9 ansi on 32-bit.  The current
+-sourcecode can be built on 64-bit with wxWidgets 2.9.0.
++We&#x27;re now using wxWidgets 2.9, which uses UTF-8.
+ 
+-There is currently no libwxgtk2.8-ansi-dev debian package for Karmic.
+-libwxgtk2.8-dev is the &quot;unicode&quot; build, but for wxWidgets 2.8 &quot;unicode&quot;
+-means wchar, not UTF-8.  wchar wxString doesn&#x27;t convert to std::string.
+-We haven&#x27;t been able to compile the 2.8 versions on 64-bit.
+-
+-wxWidgets 2.9 is UTF-8 and compiles on 64-bit.
++There isn&#x27;t currently a debian package of wxWidgets we can use.  The 2.8
++packages for Karmic are UTF-16 unicode and won&#x27;t work for us, and we&#x27;ve had
++trouble building 2.8 on 64-bit.
+ 
+ You need to download wxWidgets from http://www.wxwidgets.org/downloads/
+ and build it yourself.  See the build instructions and configure parameters
+@@ -42,9 +38,9 @@ Boost          MIT-like license
+ Versions used in this release:
+ GCC          4.3.3
+ OpenSSL      0.9.8k
+-wxWidgets    2.8.9
++wxWidgets    2.9.0
+ Berkeley DB  4.7.25.NC
+-Boost        1.40.0
++Boost        1.38.0
+ 
+ 
+ Notes
+@@ -59,7 +55,9 @@ symbols, which reduces the executable size by about 90%.
+ 
+ wxWidgets
+ ---------
+-cd /usr/local/wxWidgets-2.8.9 or 2.9.0
++cd /usr/local
++tar -xzvf wxWidgets-2.9.0.tar.gz
++cd /usr/local/wxWidgets-2.9.0
+ mkdir buildgtk
+ cd buildgtk
+ ../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
+@@ -72,7 +70,7 @@ ldconfig
+ Boost
+ -----
+ If you want to build Boost yourself,
+-cd /usr/local/boost_1_40_0
++cd /usr/local/boost_1_42_0
+ su
+ ./bootstrap.sh
+ ./bjam install</code></pre></details><details><summary><code>locale/readme.txt</code></summary><pre><code>@@ -0,0 +1,5 @@
++put bitcoin.po and bitcoin.mo files at:
++locale/&lt;langcode&gt;/LC_MESSAGES/bitcoin.mo and .po
++
++.po is the sourcefile
++.mo is the compiled translation</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1460,27 +1460,13 @@ bool ScanMessageStart(Stream&amp; s)
+ 
+ bool CheckDiskSpace(int64 nAdditionalBytes)
+ {
+-#ifdef __WXMSW__
+-    uint64 nFreeBytesAvailable = 0;     // bytes available to caller
+-    uint64 nTotalNumberOfBytes = 0;     // bytes on disk
+-    uint64 nTotalNumberOfFreeBytes = 0; // free bytes on disk
+-    if (!GetDiskFreeSpaceEx(GetDataDir().c_str(),
+-            (PULARGE_INTEGER)&amp;nFreeBytesAvailable,
+-            (PULARGE_INTEGER)&amp;nTotalNumberOfBytes,
+-            (PULARGE_INTEGER)&amp;nTotalNumberOfFreeBytes))
+-    {
+-        printf(&quot;ERROR: GetDiskFreeSpaceEx() failed\n&quot;);
+-        return true;
+-    }
+-#else
+     uint64 nFreeBytesAvailable = filesystem::space(GetDataDir()).available;
+-#endif
+ 
+     // Check for 15MB because database could create another 10MB log file at any time
+     if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
+-        ThreadSafeMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
++        ThreadSafeMessageBox(_(&quot;Warning: Disk space is low  &quot;), &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+         CreateThread(Shutdown, NULL);
+         return false;
+     }
+@@ -2962,16 +2948,16 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+         {
+             string strError;
+             if (nValue + nFeeRequired &gt; GetBalance())
+-                strError = strprintf(&quot;Error: This is an oversized transaction that requires a transaction fee of %s  &quot;, FormatMoney(nFeeRequired).c_str());
++                strError = strprintf(_(&quot;Error: This is an oversized transaction that requires a transaction fee of %s  &quot;), FormatMoney(nFeeRequired).c_str());
+             else
+-                strError = &quot;Error: Transaction creation failed  &quot;;
++                strError = _(&quot;Error: Transaction creation failed  &quot;);
+             printf(&quot;SendMoney() : %s&quot;, strError.c_str());
+             return strError;
+         }
+         if (!CommitTransactionSpent(wtxNew, key))
+         {
+             printf(&quot;SendMoney() : Error finalizing transaction&quot;);
+-            return &quot;Error finalizing transaction&quot;;
++            return _(&quot;Error finalizing transaction&quot;);
+         }
+ 
+         // Track how many getdata requests our transaction gets
+@@ -2985,7 +2971,7 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+         {
+             // This must not fail. The transaction has already been signed and recorded.
+             printf(&quot;SendMoney() : Error: Transaction not valid&quot;);
+-            return &quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;;
++            return _(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;);
+         }
+         wtxNew.RelayWalletTransaction();
+     }
+@@ -2999,14 +2985,14 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+ {
+     // Check amount
+     if (nValue &lt;= 0)
+-        return &quot;Invalid amount&quot;;
++        return _(&quot;Invalid amount&quot;);
+     if (nValue + nTransactionFee &gt; GetBalance())
+-        return &quot;You don&#x27;t have enough money&quot;;
++        return _(&quot;You don&#x27;t have enough money&quot;);
+ 
+     // Parse bitcoin address
+     CScript scriptPubKey;
+     if (!scriptPubKey.SetBitcoinAddress(strAddress))
+-        return &quot;Invalid bitcoin address&quot;;
++        return _(&quot;Invalid bitcoin address&quot;);
+ 
+     return SendMoney(scriptPubKey, nValue, wtxNew);
+ }</code></pre></details><details><summary><code>makefile</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -3,27 +3,30 @@
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
+-ifneq &quot;$(BUILD)&quot; &quot;release&quot;
+-BUILD=debug
+-endif
+-endif
+-ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+-D=d
+-DEBUGFLAGS=-g -D__WXDEBUG__
+-endif
++# for wxWidgets-2.8.x, search and replace &quot;mswud&quot;-&gt;&quot;mswd&quot; and &quot;29u&quot;-&gt;&quot;28&quot;
+ 
++INCLUDEPATHS= \
++ -I&quot;/boost&quot; \
++ -I&quot;/db/build_unix&quot; \
++ -I&quot;/openssl/include&quot; \
++ -I&quot;/wxwidgets/lib/gcc_lib/mswud&quot; \
++ -I&quot;/wxwidgets/include&quot;
+ 
++LIBPATHS= \
++ -L&quot;/boost/stage/lib&quot; \
++ -L&quot;/db/build_unix&quot; \
++ -L&quot;/openssl/out&quot; \
++ -L&quot;/wxwidgets/lib/gcc_lib&quot;
+ 
+-INCLUDEPATHS=-I&quot;/boost&quot; -I&quot;/db/build_unix&quot; -I&quot;/openssl/include&quot; -I&quot;/wxwidgets/lib/gcc_lib/mswd&quot; -I&quot;/wxwidgets/include&quot;
+-LIBPATHS=-L&quot;/boost/stage/lib&quot; -L&quot;/db/build_unix&quot; -L&quot;/openssl/out&quot; -L&quot;/wxwidgets/lib/gcc_lib&quot;
+ LIBS= \
+  -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d \
+  -l db_cxx \
+  -l eay32 \
+- -l wxmsw28$(D)_richtext -l wxmsw28$(D)_html -l wxmsw28$(D)_core -l wxmsw28$(D)_adv -l wxbase28$(D) -l wxtiff$(D) -l wxjpeg$(D) -l wxpng$(D) -l wxzlib$(D) -l wxregex$(D) -l wxexpat$(D) \
++ -l wxmsw29ud_html -l wxmsw29ud_core -l wxmsw29ud_adv -l wxbase29ud -l wxtiffd -l wxjpegd -l wxpngd -l wxzlibd \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
++
+ WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
++DEBUGFLAGS=-g -D__WXDEBUG__
+ CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,17 +3,6 @@
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
+-ifneq &quot;$(BUILD)&quot; &quot;release&quot;
+-BUILD=debug
+-endif
+-endif
+-ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+-D=d
+-DEBUGFLAGS=-g -D__WXDEBUG__
+-endif
+-
+-
+ 
+ INCLUDEPATHS= \
+  -I&quot;/usr/include&quot; \
+@@ -28,12 +17,13 @@ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system-mt -l boost_filesystem-mt \
+    -l db_cxx \
+-   -l wx_gtk2u$(D)-2.9 \
++   -l wx_gtk2ud-2.9 \
+  -Wl,-Bdynamic \
+    -l crypto \
+    -l gtk-x11-2.0 -l gthread-2.0 -l SM
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
++DEBUGFLAGS=-g -D__WXDEBUG__
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ </code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -1,88 +0,0 @@
+-# Copyright (c) 2009-2010 Satoshi Nakamoto
+-# Distributed under the MIT/X11 software license, see the accompanying
+-# file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+-
+-ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
+-ifneq &quot;$(BUILD)&quot; &quot;release&quot;
+-BUILD=debug
+-endif
+-endif
+-ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+-D=d
+-DEBUGFLAGS=-g -D__WXDEBUG__
+-endif
+-
+-
+-
+-INCLUDEPATHS= \
+- -I&quot;/usr/include&quot; \
+- -I&quot;/usr/local/include/wx-2.8&quot; \
+- -I&quot;/usr/local/lib/wx/include/gtk2-ansi-debug-static-2.8&quot;
+-
+-LIBPATHS= \
+- -L&quot;/usr/lib&quot; \
+- -L&quot;/usr/local/lib&quot;
+-
+-LIBS= \
+- -Wl,-Bstatic \
+-   -l boost_system -l boost_filesystem \
+-   -l db_cxx \
+-   -l wx_gtk2$(D)-2.8 \
+- -Wl,-Bdynamic \
+-   -l crypto \
+-   -l gtk-x11-2.0 -l gthread-2.0 -l SM
+-
+-WXDEFS=-D__WXGTK__ -DNOPCH
+-CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+-
+-
+-
+-all: bitcoin
+-
+-
+-headers.h.gch: headers.h            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/util.o: util.cpp                $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/script.o: script.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/db.o: db.cpp                    $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/net.o: net.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/main.o: main.cpp                $(HEADERS) sha.h
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/ui.o: ui.cpp                    $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/uibase.o: uibase.cpp            uibase.h
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/sha.o: sha.cpp                  sha.h
+-	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+-
+-obj/irc.o: irc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/rpc.o: rpc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-
+-
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+-
+-bitcoin: headers.h.gch $(OBJS)
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+-
+-clean:
+-	-rm obj/*
+-	-rm headers.h.gch</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -3,26 +3,31 @@
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-!IF &quot;$(BUILD)&quot; != &quot;debug&quot; &amp;&amp; &quot;$(BUILD)&quot; != &quot;release&quot;
+-BUILD=debug
+-!ENDIF
+-!IF &quot;$(BUILD)&quot; == &quot;debug&quot;
+-D=d
+-DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
+-!ENDIF
++# for wxWidgets-2.8.x, search and replace &quot;mswud&quot;-&gt;&quot;mswd&quot; and &quot;29u&quot;-&gt;&quot;28&quot;
+ 
++INCLUDEPATHS= \
++  /I&quot;/boost&quot; \
++  /I&quot;/db/build_windows&quot; \
++  /I&quot;/openssl/include&quot; \
++  /I&quot;/wxwidgets/lib/vc_lib/mswud&quot; \
++  /I&quot;/wxwidgets/include&quot;
+ 
++LIBPATHS= \
++  /LIBPATH:&quot;/boost/stage/lib&quot; \
++  /LIBPATH:&quot;/db/build_windows/debug&quot; \
++  /LIBPATH:&quot;/openssl/out&quot; \
++  /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
+ 
+-INCLUDEPATHS=/I&quot;/boost&quot; /I&quot;/db/build_windows&quot; /I&quot;/openssl/include&quot; /I&quot;/wxwidgets/lib/vc_lib/mswd&quot; /I&quot;/wxwidgets/include&quot;
+-LIBPATHS=/LIBPATH:&quot;/boost/stage/lib&quot; /LIBPATH:&quot;/db/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/openssl/out&quot; /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
+ LIBS= \
+-    libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib \
+-    libdb47s$(D).lib \
+-    libeay32.lib \
+-    wxmsw28$(D)_richtext.lib wxmsw28$(D)_html.lib wxmsw28$(D)_core.lib wxmsw28$(D)_adv.lib wxbase28$(D).lib wxtiff$(D).lib wxjpeg$(D).lib wxpng$(D).lib wxzlib$(D).lib wxregex$(D).lib wxexpat$(D).lib \
+-    kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
++  libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib \
++  libdb47sd.lib \
++  libeay32.lib \
++  wxmsw29ud_html.lib wxmsw29ud_core.lib wxmsw29ud_adv.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib \
++  kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
++
+ WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
+-CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
++CFLAGS=/c /nologo /Ob0 /MDd /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 201;
+-static const char* pszSubVer = &quot;.2&quot;;
++static const int VERSION = 202;
++static const char* pszSubVer = &quot;.0&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -229,8 +229,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_staticTextBalance-&gt;SetSize(140, 17);
+     // &amp; underlines don&#x27;t work on the toolbar buttons on gtk
+     m_toolBar-&gt;ClearTools();
+-    m_toolBar-&gt;AddTool(wxID_BUTTONSEND, &quot;Send Coins&quot;, wxBitmap(send20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+-    m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, &quot;Address Book&quot;, wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
++    m_toolBar-&gt;AddTool(wxID_BUTTONSEND, _(&quot;Send Coins&quot;), wxBitmap(send20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
++    m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, _(&quot;Address Book&quot;), wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+     m_toolBar-&gt;Realize();
+     // resize to fit ubuntu&#x27;s huge default font
+     dResize = 1.20;
+@@ -244,13 +244,13 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
+     if (!strstr(DateTimeStr(1229413914).c_str(), &quot;2008&quot;))
+         nDateWidth += 12;
+-    m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
+-    m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
+-    m_listCtrl-&gt;InsertColumn(2, &quot;Status&quot;,       wxLIST_FORMAT_LEFT,  dResize * 110);
+-    m_listCtrl-&gt;InsertColumn(3, &quot;Date&quot;,         wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(4, &quot;Description&quot;,  wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(5, &quot;Debit&quot;,        wxLIST_FORMAT_RIGHT, dResize * 79);
+-    m_listCtrl-&gt;InsertColumn(6, &quot;Credit&quot;,       wxLIST_FORMAT_RIGHT, dResize * 79);
++    m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
++    m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
++    m_listCtrl-&gt;InsertColumn(2, _(&quot;Status&quot;),      wxLIST_FORMAT_LEFT,  dResize * 110);
++    m_listCtrl-&gt;InsertColumn(3, _(&quot;Date&quot;),        wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
++    m_listCtrl-&gt;InsertColumn(4, _(&quot;Description&quot;), wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
++    m_listCtrl-&gt;InsertColumn(5, _(&quot;Debit&quot;),       wxLIST_FORMAT_RIGHT, dResize * 79);
++    m_listCtrl-&gt;InsertColumn(6, _(&quot;Credit&quot;),      wxLIST_FORMAT_RIGHT, dResize * 79);
+ 
+     // Init status bar
+     int pnWidths[3] = { -100, 88, 290 };
+@@ -450,19 +450,19 @@ string FormatTxStatus(const CWalletTx&amp; wtx)
+     if (!wtx.IsFinal())
+     {
+         if (wtx.nLockTime &lt; 500000000)
+-            return strprintf(&quot;Open for %d blocks&quot;, nBestHeight - wtx.nLockTime);
++            return strprintf(_(&quot;Open for %d blocks&quot;), nBestHeight - wtx.nLockTime);
+         else
+-            return strprintf(&quot;Open until %s&quot;, DateTimeStr(wtx.nLockTime).c_str());
++            return strprintf(_(&quot;Open until %s&quot;), DateTimeStr(wtx.nLockTime).c_str());
+     }
+     else
+     {
+         int nDepth = wtx.GetDepthInMainChain();
+         if (GetAdjustedTime() - wtx.nTimeReceived &gt; 2 * 60 &amp;&amp; wtx.GetRequestCount() == 0)
+-            return strprintf(&quot;%d/offline?&quot;, nDepth);
++            return strprintf(_(&quot;%d/offline?&quot;), nDepth);
+         else if (nDepth &lt; 6)
+-            return strprintf(&quot;%d/unconfirmed&quot;, nDepth);
++            return strprintf(_(&quot;%d/unconfirmed&quot;), nDepth);
+         else
+-            return strprintf(&quot;%d confirmations&quot;, nDepth);
++            return strprintf(_(&quot;%d confirmations&quot;), nDepth);
+     }
+ }
+ 
+@@ -547,7 +547,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         if (wtx.IsCoinBase())
+         {
+             // Coinbase
+-            strDescription = &quot;Generated&quot;;
++            strDescription = _(&quot;Generated&quot;);
+             if (nCredit == 0)
+             {
+                 int64 nUnmatured = 0;
+@@ -555,15 +555,15 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                     nUnmatured += txout.GetCredit();
+                 if (wtx.IsInMainChain())
+                 {
+-                    strDescription = strprintf(&quot;Generated (%s matures in %d more blocks)&quot;, FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
++                    strDescription = strprintf(_(&quot;Generated (%s matures in %d more blocks)&quot;), FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
+ 
+                     // Check if the block was requested by anyone
+                     if (GetAdjustedTime() - wtx.nTimeReceived &gt; 2 * 60 &amp;&amp; wtx.GetRequestCount() == 0)
+-                        strDescription = &quot;Generated - Warning: This block was not received by any other nodes and will probably not be accepted!&quot;;
++                        strDescription = _(&quot;Generated - Warning: This block was not received by any other nodes and will probably not be accepted!&quot;);
+                 }
+                 else
+                 {
+-                    strDescription = &quot;Generated (not accepted)&quot;;
++                    strDescription = _(&quot;Generated (not accepted)&quot;);
+                 }
+             }
+         }
+@@ -571,7 +571,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         {
+             // Online transaction
+             if (!mapValue[&quot;from&quot;].empty())
+-                strDescription += &quot;From: &quot; + mapValue[&quot;from&quot;];
++                strDescription += _(&quot;From: &quot;) + mapValue[&quot;from&quot;];
+             if (!mapValue[&quot;message&quot;].empty())
+             {
+                 if (!strDescription.empty())
+@@ -594,9 +594,9 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                             string strAddress = PubKeyToAddress(vchPubKey);
+                             if (mapAddressBook.count(strAddress))
+                             {
+-                                //strDescription += &quot;Received payment to &quot;;
+-                                //strDescription += &quot;Received with address &quot;;
+-                                strDescription += &quot;From: unknown, To: &quot;;
++                                //strDescription += _(&quot;Received payment to &quot;);
++                                //strDescription += _(&quot;Received with address &quot;);
++                                strDescription += _(&quot;From: unknown, To: &quot;);
+                                 strDescription += strAddress;
+                                 /// The labeling feature is just too confusing, so I hid it
+                                 /// by putting it at the end where it runs off the screen.
+@@ -636,7 +636,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             InsertLine(fNew, nIndex, hash, strSort,
+                        strStatus,
+                        nTime ? DateTimeStr(nTime) : &quot;&quot;,
+-                       &quot;Payment to yourself&quot;,
++                       _(&quot;Payment to yourself&quot;),
+                        &quot;&quot;,
+                        &quot;&quot;);
+             /// issue: can&#x27;t tell which is the payment and which is the change anymore
+@@ -670,7 +670,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                         strAddress = Hash160ToAddress(hash160);
+                 }
+ 
+-                string strDescription = &quot;To: &quot;;
++                string strDescription = _(&quot;To: &quot;);
+                 CRITICAL_BLOCK(cs_mapAddressBook)
+                     if (mapAddressBook.count(strAddress) &amp;&amp; !mapAddressBook[strAddress].empty())
+                         strDescription += mapAddressBook[strAddress] + &quot; &quot;;
+@@ -960,12 +960,12 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     // Update status bar
+     string strGen = &quot;&quot;;
+     if (fGenerateBitcoins)
+-        strGen = &quot;    Generating&quot;;
++        strGen = _(&quot;    Generating&quot;);
+     if (fGenerateBitcoins &amp;&amp; vNodes.empty())
+-        strGen = &quot;(not connected)&quot;;
++        strGen = _(&quot;(not connected)&quot;);
+     m_statusBar-&gt;SetStatusText(strGen, 1);
+ 
+-    string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, nTransactionCount);
++    string strStatus = strprintf(_(&quot;     %d connections     %d blocks     %d transactions&quot;), vNodes.size(), nBestHeight + 1, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
+     if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)
+@@ -1160,20 +1160,20 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+ 
+ 
+ 
+-        strHTML += &quot;&lt;b&gt;Status:&lt;/b&gt; &quot; + FormatTxStatus(wtx);
++        strHTML += _(&quot;&lt;b&gt;Status:&lt;/b&gt; &quot;) + FormatTxStatus(wtx);
+         int nRequests = wtx.GetRequestCount();
+         if (nRequests != -1)
+         {
+             if (nRequests == 0)
+-                strHTML += &quot;, has not been successfully broadcast yet&quot;;
++                strHTML += _(&quot;, has not been successfully broadcast yet&quot;);
+             else if (nRequests == 1)
+-                strHTML += strprintf(&quot;, broadcast through %d node&quot;, nRequests);
++                strHTML += strprintf(_(&quot;, broadcast through %d node&quot;), nRequests);
+             else
+-                strHTML += strprintf(&quot;, broadcast through %d nodes&quot;, nRequests);
++                strHTML += strprintf(_(&quot;, broadcast through %d nodes&quot;), nRequests);
+         }
+         strHTML += &quot;&lt;br&gt;&quot;;
+ 
+-        strHTML += &quot;&lt;b&gt;Date:&lt;/b&gt; &quot; + (nTime ? DateTimeStr(nTime) : &quot;&quot;) + &quot;&lt;br&gt;&quot;;
++        strHTML += _(&quot;&lt;b&gt;Date:&lt;/b&gt; &quot;) + (nTime ? DateTimeStr(nTime) : &quot;&quot;) + &quot;&lt;br&gt;&quot;;
+ 
+ 
+         //
+@@ -1181,13 +1181,13 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+         //
+         if (wtx.IsCoinBase())
+         {
+-            strHTML += &quot;&lt;b&gt;Source:&lt;/b&gt; Generated&lt;br&gt;&quot;;
++            strHTML += _(&quot;&lt;b&gt;Source:&lt;/b&gt; Generated&lt;br&gt;&quot;);
+         }
+         else if (!wtx.mapValue[&quot;from&quot;].empty())
+         {
+             // Online transaction
+             if (!wtx.mapValue[&quot;from&quot;].empty())
+-                strHTML += &quot;&lt;b&gt;From:&lt;/b&gt; &quot; + HtmlEscape(wtx.mapValue[&quot;from&quot;]) + &quot;&lt;br&gt;&quot;;
++                strHTML += _(&quot;&lt;b&gt;From:&lt;/b&gt; &quot;) + HtmlEscape(wtx.mapValue[&quot;from&quot;]) + &quot;&lt;br&gt;&quot;;
+         }
+         else
+         {
+@@ -1205,13 +1205,13 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                             string strAddress = PubKeyToAddress(vchPubKey);
+                             if (mapAddressBook.count(strAddress))
+                             {
+-                                strHTML += &quot;&lt;b&gt;From:&lt;/b&gt; unknown&lt;br&gt;&quot;;
+-                                strHTML += &quot;&lt;b&gt;To:&lt;/b&gt; &quot;;
++                                strHTML += string() + _(&quot;&lt;b&gt;From:&lt;/b&gt; &quot;) + _(&quot;unknown&quot;) + &quot;&lt;br&gt;&quot;;
++                                strHTML += _(&quot;&lt;b&gt;To:&lt;/b&gt; &quot;);
+                                 strHTML += HtmlEscape(strAddress);
+                                 if (!mapAddressBook[strAddress].empty())
+-                                    strHTML += &quot; (yours, label: &quot; + mapAddressBook[strAddress] + &quot;)&quot;;
++                                    strHTML += _(&quot; (yours, label: &quot;) + mapAddressBook[strAddress] + &quot;)&quot;;
+                                 else
+-                                    strHTML += &quot; (yours)&quot;;
++                                    strHTML += _(&quot; (yours)&quot;);
+                                 strHTML += &quot;&lt;br&gt;&quot;;
+                             }
+                         }
+@@ -1230,7 +1230,7 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+         {
+             // Online transaction
+             strAddress = wtx.mapValue[&quot;to&quot;];
+-            strHTML += &quot;&lt;b&gt;To:&lt;/b&gt; &quot;;
++            strHTML += _(&quot;&lt;b&gt;To:&lt;/b&gt; &quot;);
+             if (mapAddressBook.count(strAddress) &amp;&amp; !mapAddressBook[strAddress].empty())
+                 strHTML += mapAddressBook[strAddress] + &quot; &quot;;
+             strHTML += HtmlEscape(strAddress) + &quot;&lt;br&gt;&quot;;
+@@ -1248,17 +1248,19 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+             int64 nUnmatured = 0;
+             foreach(const CTxOut&amp; txout, wtx.vout)
+                 nUnmatured += txout.GetCredit();
++            strHTML += _(&quot;&lt;b&gt;Credit:&lt;/b&gt; &quot;);
+             if (wtx.IsInMainChain())
+-                strHTML += strprintf(&quot;&lt;b&gt;Credit:&lt;/b&gt; (%s matures in %d more blocks)&lt;br&gt;&quot;, FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
++                strHTML += strprintf(_(&quot;(%s matures in %d more blocks)&quot;), FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
+             else
+-                strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; (not accepted)&lt;br&gt;&quot;;
++                strHTML += _(&quot;(not accepted)&quot;);
++            strHTML += &quot;&lt;br&gt;&quot;;
+         }
+         else if (nNet &gt; 0)
+         {
+             //
+             // Credit
+             //
+-            strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(nNet) + &quot;&lt;br&gt;&quot;;
++            strHTML += _(&quot;&lt;b&gt;Credit:&lt;/b&gt; &quot;) + FormatMoney(nNet) + &quot;&lt;br&gt;&quot;;
+         }
+         else
+         {
+@@ -1287,7 +1289,7 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                         if (ExtractHash160(txout.scriptPubKey, hash160))
+                         {
+                             string strAddress = Hash160ToAddress(hash160);
+-                            strHTML += &quot;&lt;b&gt;To:&lt;/b&gt; &quot;;
++                            strHTML += _(&quot;&lt;b&gt;To:&lt;/b&gt; &quot;);
+                             if (mapAddressBook.count(strAddress) &amp;&amp; !mapAddressBook[strAddress].empty())
+                                 strHTML += mapAddressBook[strAddress] + &quot; &quot;;
+                             strHTML += strAddress;
+@@ -1295,7 +1297,7 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                         }
+                     }
+ 
+-                    strHTML += &quot;&lt;b&gt;Debit:&lt;/b&gt; &quot; + FormatMoney(-txout.nValue) + &quot;&lt;br&gt;&quot;;
++                    strHTML += _(&quot;&lt;b&gt;Debit:&lt;/b&gt; &quot;) + FormatMoney(-txout.nValue) + &quot;&lt;br&gt;&quot;;
+                 }
+ 
+                 if (fAllToMe)
+@@ -1303,13 +1305,13 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                     // Payment to self
+                     /// issue: can&#x27;t tell which is the payment and which is the change anymore
+                     //int64 nValue = wtx.vout[0].nValue;
+-                    //strHTML += &quot;&lt;b&gt;Debit:&lt;/b&gt; &quot; + FormatMoney(-nValue) + &quot;&lt;br&gt;&quot;;
+-                    //strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(nValue) + &quot;&lt;br&gt;&quot;;
++                    //strHTML += _(&quot;&lt;b&gt;Debit:&lt;/b&gt; &quot;) + FormatMoney(-nValue) + &quot;&lt;br&gt;&quot;;
++                    //strHTML += _(&quot;&lt;b&gt;Credit:&lt;/b&gt; &quot;) + FormatMoney(nValue) + &quot;&lt;br&gt;&quot;;
+                 }
+ 
+                 int64 nTxFee = nDebit - wtx.GetValueOut();
+                 if (nTxFee &gt; 0)
+-                    strHTML += &quot;&lt;b&gt;Transaction fee:&lt;/b&gt; &quot; + FormatMoney(-nTxFee) + &quot;&lt;br&gt;&quot;;
++                    strHTML += _(&quot;&lt;b&gt;Transaction fee:&lt;/b&gt; &quot;) + FormatMoney(-nTxFee) + &quot;&lt;br&gt;&quot;;
+             }
+             else
+             {
+@@ -1318,24 +1320,24 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                 //
+                 foreach(const CTxIn&amp; txin, wtx.vin)
+                     if (txin.IsMine())
+-                        strHTML += &quot;&lt;b&gt;Debit:&lt;/b&gt; &quot; + FormatMoney(-txin.GetDebit()) + &quot;&lt;br&gt;&quot;;
++                        strHTML += _(&quot;&lt;b&gt;Debit:&lt;/b&gt; &quot;) + FormatMoney(-txin.GetDebit()) + &quot;&lt;br&gt;&quot;;
+                 foreach(const CTxOut&amp; txout, wtx.vout)
+                     if (txout.IsMine())
+-                        strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(txout.GetCredit()) + &quot;&lt;br&gt;&quot;;
++                        strHTML += _(&quot;&lt;b&gt;Credit:&lt;/b&gt; &quot;) + FormatMoney(txout.GetCredit()) + &quot;&lt;br&gt;&quot;;
+             }
+         }
+ 
+-        strHTML += &quot;&lt;b&gt;Net amount:&lt;/b&gt; &quot; + FormatMoney(nNet, true) + &quot;&lt;br&gt;&quot;;
++        strHTML += _(&quot;&lt;b&gt;Net amount:&lt;/b&gt; &quot;) + FormatMoney(nNet, true) + &quot;&lt;br&gt;&quot;;
+ 
+ 
+         //
+         // Message
+         //
+         if (!wtx.mapValue[&quot;message&quot;].empty())
+-            strHTML += &quot;&lt;br&gt;&lt;b&gt;Message:&lt;/b&gt;&lt;br&gt;&quot; + HtmlEscape(wtx.mapValue[&quot;message&quot;], true) + &quot;&lt;br&gt;&quot;;
++            strHTML += string() + &quot;&lt;br&gt;&lt;b&gt;&quot; + _(&quot;Message:&quot;) + &quot;&lt;/b&gt;&lt;br&gt;&quot; + HtmlEscape(wtx.mapValue[&quot;message&quot;], true) + &quot;&lt;br&gt;&quot;;
+ 
+         if (wtx.IsCoinBase())
+-            strHTML += &quot;&lt;br&gt;Generated coins must wait 120 blocks before they can be spent.  When you generated this block, it was broadcast to the network to be added to the block chain.  If it fails to get into the chain, it will change to \&quot;not accepted\&quot; and not be spendable.  This may occasionally happen if another node generates a block within a few seconds of yours.&lt;br&gt;&quot;;
++            strHTML += string() + &quot;&lt;br&gt;&quot; + _(&quot;Generated coins must wait 120 blocks before they can be spent.  When you generated this block, it was broadcast to the network to be added to the block chain.  If it fails to get into the chain, it will change to \&quot;not accepted\&quot; and not be spendable.  This may occasionally happen if another node generates a block within a few seconds of yours.&quot;) + &quot;&lt;br&gt;&quot;;
+ 
+ 
+         //
+@@ -1402,12 +1404,12 @@ void CTxDetailsDialog::OnButtonOK(wxCommandEvent&amp; event)
+ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -16,12 +16,12 @@ extern int fMinimizeOnClose;
+ 
+ 
+ 
+-extern void HandleCtrlA(wxKeyEvent&amp; event);
+-extern string FormatTxStatus(const CWalletTx&amp; wtx);
+-extern void UIThreadCall(boost::function0&lt;void&gt;);
+-extern void MainFrameRepaint();
+-extern void Shutdown(void* parg);
+-extern int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
++void HandleCtrlA(wxKeyEvent&amp; event);
++string FormatTxStatus(const CWalletTx&amp; wtx);
++void UIThreadCall(boost::function0&lt;void&gt;);
++void MainFrameRepaint();
++void Shutdown(void* parg);
++int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
+ 
+ 
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,6 +1,3 @@
+-// Copyright (c) 2009-2010 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -406,22 +403,14 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer64-&gt;Add( 0, 16, 0, wxEXPAND, 5 );
+ 	
+-	m_staticText321 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;Test panel 2 for future expansion&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText321 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;// [don&#x27;t translate] Test panel 2 for future expansion&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText321-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText321, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+-	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;Let&#x27;s not start multiple pages until the first page is filled up&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;// [don&#x27;t translate] Let&#x27;s not start multiple pages until the first page is filled up&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText69-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText69, 0, wxALL, 5 );
+ 	
+-	m_staticText70 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_staticText70-&gt;Wrap( -1 );
+-	bSizer64-&gt;Add( m_staticText70, 0, wxALL, 5 );
+-	
+-	m_staticText71 = new wxStaticText( m_panelTest2, wxID_ANY, _(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_staticText71-&gt;Wrap( -1 );
+-	bSizer64-&gt;Add( m_staticText71, 0, wxALL, 5 );
+-	
+ 	m_panelTest2-&gt;SetSizer( bSizer64 );
+ 	m_panelTest2-&gt;Layout();
+ 	bSizer64-&gt;Fit( m_panelTest2 );
+@@ -521,7 +510,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright © 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextMain-&gt;Wrap( -1 );
+ 	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,6 +1,3 @@
+-// Copyright (c) 2009-2010 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -178,8 +175,6 @@ class COptionsDialogBase : public wxDialog
+ 		
+ 		wxStaticText* m_staticText321;
+ 		wxStaticText* m_staticText69;
+-		wxStaticText* m_staticText70;
+-		wxStaticText* m_staticText71;
+ 		wxButton* m_buttonOK;
+ 		wxButton* m_buttonCancel;
+ 		wxButton* m_buttonApply;</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2173,7 +2173,7 @@
+                                                         &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                        &lt;property name=&quot;label&quot;&gt;Test panel 2 for future expansion&lt;/property&gt;
++                                                        &lt;property name=&quot;label&quot;&gt;// [don&amp;apos;t translate] Test panel 2 for future expansion&lt;/property&gt;
+                                                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;name&quot;&gt;m_staticText321&lt;/property&gt;
+@@ -2224,7 +2224,7 @@
+                                                         &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                        &lt;property name=&quot;label&quot;&gt;Let&amp;apos;s not start multiple pages until the first page is filled up&lt;/property&gt;
++                                                        &lt;property name=&quot;label&quot;&gt;// [don&amp;apos;t translate] Let&amp;apos;s not start multiple pages until the first page is filled up&lt;/property&gt;
+                                                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;name&quot;&gt;m_staticText69&lt;/property&gt;
+@@ -2263,108 +2263,6 @@
+                                                         &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                                                     &lt;/object&gt;
+                                                 &lt;/object&gt;
+-                                                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                                    &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
+-                                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                                    &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                        &lt;property name=&quot;label&quot;&gt;MyLabel&lt;/property&gt;
+-                                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;name&quot;&gt;m_staticText70&lt;/property&gt;
+-                                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
+-                                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                                    &lt;/object&gt;
+-                                                &lt;/object&gt;
+-                                                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                                    &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
+-                                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                                    &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                        &lt;property name=&quot;label&quot;&gt;MyLabel&lt;/property&gt;
+-                                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;name&quot;&gt;m_staticText71&lt;/property&gt;
+-                                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
+-                                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                                    &lt;/object&gt;
+-                                                &lt;/object&gt;
+                                             &lt;/object&gt;
+                                         &lt;/object&gt;
+                                     &lt;/object&gt;
+@@ -2820,7 +2718,7 @@
+                                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                &lt;property name=&quot;label&quot;&gt;Copyright © 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.  Do not rely on it for actual financial transactions.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
++                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.  Do not rely on it for actual financial transactions.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
+                                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -90,7 +90,7 @@ void RandAddSeedPerfmon()
+     unsigned char pdata[250000];
+     memset(pdata, 0, sizeof(pdata));
+     unsigned long nSize = sizeof(pdata);
+-    long ret = RegQueryValueEx(HKEY_PERFORMANCE_DATA, &quot;Global&quot;, NULL, NULL, pdata, &amp;nSize);
++    long ret = RegQueryValueExA(HKEY_PERFORMANCE_DATA, &quot;Global&quot;, NULL, NULL, pdata, &amp;nSize);
+     RegCloseKey(HKEY_PERFORMANCE_DATA);
+     if (ret == ERROR_SUCCESS)
+     {
+@@ -193,7 +193,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+                 p2++;
+                 char c = *p2;
+                 *p2 = &#x27;\0&#x27;;
+-                OutputDebugString(p1);
++                OutputDebugStringA(p1);
+                 *p2 = c;
+                 p1 = p2;
+             }
+@@ -441,7 +441,7 @@ void FormatException(char* pszMessage, std::exception* pex, const char* pszThrea
+ #ifdef __WXMSW__
+     char pszModule[MAX_PATH];
+     pszModule[0] = &#x27;\0&#x27;;
+-    GetModuleFileName(NULL, pszModule, sizeof(pszModule));
++    GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
+ #else
+     // might not be thread safe, uses wxString
+     //const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -340,10 +340,11 @@ void skipspaces(T&amp; it)
+         ++it;
+ }
+ 
+-
+-
+-
+-
++inline const char* wxGetTranslation(const char* psz)
++{
++    // Return translated UTF-8 const char*
++    return wxGetTranslation(wxString(psz, wxConvUTF8)).utf8_str();
++}
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2b63e68/">← fix mingw makefile to use correct wxWidgets include, this…</a><a rel="next" href="../../commits/c6ab3cf/">safer wxGetTranslation wrapper →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

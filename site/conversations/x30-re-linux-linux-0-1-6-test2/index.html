@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Linux - linux-0.1.6-test2 – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 11 November 2009: I fixed a few places I found where it was possible for a socket to get an error and not get disconnected. If your…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x30-re-linux-linux-0-1-6-test2/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Linux - linux-0.1.6-test2 – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 11 November 2009: I fixed a few places I found where it was possible for a socket to get an error and not get disconnected. If your…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x30-re-linux-linux-0-1-6-test2/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Linux - linux-0.1.6-test2 – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 11 November 2009: I fixed a few places I found where it was possible for a socket to get an error and not get disconnected. If your…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Linux - linux-0.1.6-test2", "url": "https://satoshimail.pages.dev/conversations/x30-re-linux-linux-0-1-6-test2/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-11T00:39:19Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-11T00:39:19Z", "text": "I fixed a few places I found where it was possible for a socket to get an error and not get disconnected. If your connections go dead again, it should disconnect and reconnect them. I also implemented an inactivity timeout as a fallback. This also includes a partial fix for the slow initial block download. You should run with the \"-debug\" switch to get some additional debug.log information I added that'll help if there are more problems. linux-0.1.6-test2.tar.bz2 12,134,012 bytes Download…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Re: Linux - linux-0.1.6-test2", "item": "https://satoshimail.pages.dev/conversations/x30-re-linux-linux-0-1-6-test2/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x30">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Linux - linux-0.1.6-test2</span></div></nav>
+<main class="in">
+<h1>Re: Linux - linux-0.1.6-test2</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 1 message · from 11 November 2009 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x30">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-11T00:39:19Z">11 November 2009, 00:39 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-74" rel="nofollow noopener">original</a></span></header>
+<div class="t">I fixed a few places I found where it was possible for a socket to get
+an error and not get disconnected.  If your connections go dead again,
+it should disconnect and reconnect them.  I also implemented an
+inactivity timeout as a fallback.
+
+This also includes a partial fix for the slow initial block download.
+
+You should run with the &quot;-debug&quot; switch to get some additional debug.log
+information I added that&#x27;ll help if there are more problems.
+
+linux-0.1.6-test2.tar.bz2  12,134,012 bytes
+Download:
+<a href="http://rapidshare.com/files/305231818/linux-0.1.6-test2.tar.bz2.html" rel="nofollow noopener">http://rapidshare.com/files/305231818/linux-0.1.6-test2.tar.bz2.html</a></div><blockquote><div class=qh>Satoshi Nakamoto wrote:</div><div class="t">I see what happened.  All your sockets went dead somehow.  You had no
+communication with the network, but because you had 8 zombie
+connections, it thought it was still online and kept generating blocks.
+ You can tell this is happening when your blocks are numbered
+sequentially, without other people&#x27;s blocks interspersed, like:
+2/unconfirmed
+3/unconfirmed
+4/unconfirmed
+5/unconfirmed
+6 blocks
+7 blocks
+
+It&#x27;s implausible that you would be the only one to find blocks for 6
+blocks in a row like that.
+
+When you exited and restarted, it connected and downloaded 45 blocks
+that the network found in your absence.  Since your blocks were not
+broadcast to the network immediately, the network went on without them.
+
+It sounds like you had exactly the same problem on Wine.  There&#x27;s
+clearly something about socket handling on Linux that&#x27;s effecting it
+either way.
+
+I&#x27;ll start researching this.  Ultimately if I can&#x27;t find the root of the
+problem, I&#x27;ll have to make some kind of mechanism to watch for an
+absence of messages and disconnect.  The only workaround for you right
+now would be to exit and restart more often.
+
+All but one of your node connections went dead at the same time, one
+shortly after.  IRC was still working, so it wasn&#x27;t that you were
+offline from the internet.
+
+I wonder if the status of blocks should say &quot;#/unconfirmed&quot; all the way
+up to maturity (119/unconfirmed then 120 blocks) instead.  The meaning
+of the number isn&#x27;t as strong for blocks as for transactions.
+
+I think it would be an improvement not to count one&#x27;s own blocks as
+confirmations.  A drawback would be that the status numbers shown by
+different nodes would not match.  The status number would no longer be
+coordinated with the maturity countdown on blocks either.  A lighter
+option would be a special case only if all confirmations are your own.
+
+Liberty Standard wrote:
+&gt; I just lost 6 sets of maturing coins! I had 10 sets of bitcoins
+&gt; maturing. The last set was generated at about 0:22. It got to
+&gt; 2/unconfirmed before bitcoin got stuck. At 10:10, the bitcoin which
+&gt; was generated at 0:22 was still only at 2/unconfirmed. Since you had
+&gt; told me that I wasn&#x27;t going to lose coins, I shutdown and restarted
+&gt; bitcoin. On the bright side, it shutdown and started up very smoothly.
+&gt; But unfortunately, when the blocks updated, I lost 6 sets of bitcoins.
+&gt; Four sets were still unconfirmed, but two sets were confirmed. And
+&gt; there&#x27;s no trace of them now. Perhaps now that you have the &#x27;Show
+&gt; Generated Coins&#x27; option available, you can put back in failed bitcoin
+&gt; generations. I just don&#x27;t like that those bitcoins just disappeared
+&gt; into thin air. I&#x27;m still running the Linux build at the moment, but
+&gt; the Wine version is suddenly looking much more attractive now that 6
+&gt; out of the 10 sets of bitcoins I generated in the past 24 hours just
+&gt; vanished. I&#x27;ve included my debug.log.
+&gt;
+&gt;
+&gt; On Tue, Nov 10, 2009 at 1:45 AM, Liberty Standard
+&gt; &lt;newlibertystandard@gmail.com &lt;mailto:newlibertystandard@gmail.com&gt;&gt;
+&gt; wrote:
+&gt;
+&gt;     The Linux build has generated a decent amount of bitcoins within the
+&gt;     past 20 hours and I trust what you&#x27;re telling me about database
+&gt;     errors, so all signs point toward me running the Linux build from
+&gt;     now on. The only half annoying thing about the Linux build is that
+&gt;     my computer&#x27;s fan has gone from 50% to 100%. :-P I know I can limit
+&gt;     the CPU, so if it gets on my nerves too much and if I can live with
+&gt;     less bitcoins being generated, perhaps I&#x27;ll do that. Or maybe I just
+&gt;     need to start listening to more music...
+&gt;
+...
+&gt;
+&gt;                    There&#x27;s no risk in shutting down while there are
+&gt;             unconfirmed.
+&gt;                     When you make a transaction or new block, it
+&gt; immediately
+&gt;                    broadcasts it to the network.  After that, the
+&gt; increasing
+&gt;                    #/confirmed number is just monitoring the outcome.
+&gt;              There&#x27;s
+&gt;                    nothing your node does during that time to promote
+&gt;             the acceptance.
+&gt;
+&gt;
+&gt;</div></blockquote></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x29-re-linux-dead-sockets-problem/">← Re: Linux - dead sockets problem</a><a rel="next" href="../../conversations/x31-re-linux-linux-0-1-6-test2-attachment/">Re: Linux - linux-0.1.6-test2 attachment →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

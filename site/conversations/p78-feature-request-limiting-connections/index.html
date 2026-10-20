@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feature Request: Limiting Connections – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 2 July 2010: Thanks for the feedback on this. One thing we could do is lower the outbound connections from 15 to 10 or maybe even 5.…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p78-feature-request-limiting-connections/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Feature Request: Limiting Connections – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 2 July 2010: Thanks for the feedback on this. One thing we could do is lower the outbound connections from 15 to 10 or maybe even 5.…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p78-feature-request-limiting-connections/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Feature Request: Limiting Connections – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 2 July 2010: Thanks for the feedback on this. One thing we could do is lower the outbound connections from 15 to 10 or maybe even 5.…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Feature Request: Limiting Connections", "url": "https://satoshimail.pages.dev/conversations/p78-feature-request-limiting-connections/", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-29T00:41:52Z", "text": "I'd like to see an option (with an RPC interface as well) to limit the number of connections that a Bitcoin client accepts. My home client is connected to 70 different nodes and my poor wimpy router just can't keep up. It's starting to slow my network down, to the point where I'll need to force Bitcoin to ignore connection requests (with -connect=<a node>) if this keeps up. A connection limiting option would be a great alternative.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-06-29T01:19:51Z", "text": "Unforward port 8333 Tongue It'll limit it to 15 and still work fine."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-29T01:52:47Z", "text": "Alright. Thanks. Would still be a nice feature. I don't mind people connecting to me to bootstrap or something, and I'd probably leave it at 40 rather than 15."}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitcoinFX"}, "datePublished": "2010-06-30T01:54:04Z", "text": "Might I 2nd this request as a 'standard' GUI feature. I've recently tested bitcoin through various socks proxies / providers and the ability to limit connections below 10 would be really useful."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-02T19:21:36Z", "text": "Thanks for the feedback on this. One thing we could do is lower the outbound connections from 15 to 10 or maybe even 5. The choice of 15 was arbitrary. It just needs to be enough for redundancy and fast exponential propagation of messages. 10 would still be plenty. 5 should be fine. 10 is good as a nice round number so users can see that it stopped intentionally. It would help to implement UPnP so there would be more inbound accepting nodes. Your number of connections is the ratio of inbound…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-07-02T19:33:24Z", "text": "BitTorrent clients can do hundreds of connections easily - this is why they end up killing those little embedded routers. It should be no problem for a regular IP router but the little embedded things are doing NAT so they're tracking state on all those connections and run out of memory.. also they're very slow SoC style computers so everything going through them suffers. Torrent clients generally have options for configuring a global maximum number of connections, maximum inbound and maximum…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-02T22:20:20Z", "text": "I reduced max outbound connections from 15 to 8 in RC4. 15 was way more than we needed for redundancy. 8 is still plenty of redundancy. As the nodes upgrade to this version, this will cut in half the number of connections that inbound accepting nodes get. If anyone wants more than 8 connections, they can open port 8333 on their firewall."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Feature Request: Limiting Connections", "item": "https://satoshimail.pages.dev/conversations/p78-feature-request-limiting-connections/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p78">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Feature Request: Limiting Connections</span></div></nav>
+<main class="in">
+<h1>Feature Request: Limiting Connections</h1>
+<p class="lead">BitcoinTalk forum · 7 messages · from 29 June 2010 · with BitcoinFX, Satoshi Nakamoto, Vasiliev, lachesis, laszlo</p>
+<p class="actions"><a class="btn" href="../../#t-p78">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/78/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-29T00:41:52Z">29 June 2010, 00:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1859#msg1859" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;d like to see an option (with an RPC interface as well) to limit the number of connections that a Bitcoin client accepts. My home client is connected to 70 different nodes and my poor wimpy router just can&#x27;t keep up. It&#x27;s starting to slow my network down, to the point where I&#x27;ll need to force Bitcoin to ignore connection requests (with -connect=&lt;a node&gt;) if this keeps up.
+
+A connection limiting option would be a great alternative.</div></article><article class="msg" id="m1">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-06-29T01:19:51Z">29 June 2010, 01:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1864#msg1864" rel="nofollow noopener">original</a></span></header>
+<div class="t">Unforward port 8333 Tongue
+It&#x27;ll limit it to 15 and still work fine.</div></article><article class="msg" id="m2">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-29T01:52:47Z">29 June 2010, 01:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1865#msg1865" rel="nofollow noopener">original</a></span></header>
+<div class="t">Alright. Thanks.
+
+Would still be a nice feature. I don&#x27;t mind people connecting to me to bootstrap or something, and I&#x27;d probably leave it at 40 rather than 15.</div></article><article class="msg" id="m3">
+<header><b>BitcoinFX</b><span class="muted"> · <time datetime="2010-06-30T01:54:04Z">30 June 2010, 01:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1883#msg1883" rel="nofollow noopener">original</a></span></header>
+<div class="t">Might I 2nd this request as a &#x27;standard&#x27; GUI feature.
+
+I&#x27;ve recently tested bitcoin through various socks proxies / providers and the ability to limit connections below 10 would be really useful.   </div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-02T19:21:36Z">2 July 2010, 19:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1924#msg1924" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for the feedback on this.
+
+One thing we could do is lower the outbound connections from 15 to 10 or maybe even 5.  The choice of 15 was arbitrary.  It just needs to be enough for redundancy and fast exponential propagation of messages.  10 would still be plenty.  5 should be fine.  10 is good as a nice round number so users can see that it stopped intentionally.
+
+It would help to implement UPnP so there would be more inbound accepting nodes.  Your number of connections is the ratio of inbound accepting nodes to out-only times 15.  We need to encourage more people to accept inbound connections.
+
+I will implement a feature to stop accepting inbound connections once you hit a certain number.
+
+Which version are you running?
+
+Anyone know how many connections typical P2P software like BitTorrent can get up to?</div></article><article class="msg" id="m5">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-07-02T19:33:24Z">2 July 2010, 19:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1925#msg1925" rel="nofollow noopener">original</a></span></header>
+<div class="t">BitTorrent clients can do hundreds of connections easily - this is why they end up killing those little embedded routers.  It should be no problem for a regular IP router but the little embedded things are doing NAT so they&#x27;re tracking state on all those connections and run out of memory.. also they&#x27;re very slow SoC style computers so everything going through them suffers.
+
+Torrent clients generally have options for configuring a global maximum number of connections, maximum inbound and maximum outbound connections.
+
+I think it would be good to allow configuration of unlimited inbound/outbound connections for those who have the capability to do it, and provide a conservative default for those who are using NAT, tor, proxies, etc.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-02T22:20:20Z">2 July 2010, 22:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=223.msg1929#msg1929" rel="nofollow noopener">original</a></span></header>
+<div class="t">I reduced max outbound connections from 15 to 8 in RC4.
+
+15 was way more than we needed for redundancy.  8 is still plenty of redundancy.
+
+As the nodes upgrade to this version, this will cut in half the number of connections that inbound accepting nodes get.
+
+If anyone wants more than 8 connections, they can open port 8333 on their firewall.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p77-ipv6-headless-client-and-more/">← IPv6, headless client, and more</a><a rel="next" href="../../conversations/p79-slashdot-submission-for-1-0/">Slashdot Submission for 1.0 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

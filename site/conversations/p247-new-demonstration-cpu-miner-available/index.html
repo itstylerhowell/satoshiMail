@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>New demonstration CPU miner available – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 26 November 2010: You should try it with tcatm&#x27;s 4-way SSE2 SHA in sha256.cpp. It compiles fine as a C file, just rename sha256.cpp to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p247-new-demonstration-cpu-miner-available/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="New demonstration CPU miner available – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 26 November 2010: You should try it with tcatm&#x27;s 4-way SSE2 SHA in sha256.cpp. It compiles fine as a C file, just rename sha256.cpp to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p247-new-demonstration-cpu-miner-available/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="New demonstration CPU miner available – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 26 November 2010: You should try it with tcatm&#x27;s 4-way SSE2 SHA in sha256.cpp. It compiles fine as a C file, just rename sha256.cpp to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "New demonstration CPU miner available", "url": "https://satoshimail.pages.dev/conversations/p247-new-demonstration-cpu-miner-available/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-25T00:45:23Z", "text": "A new CPU miner is now available, making use of the new 'getwork' RPC command. In the beginning, this is intended largely to demonstrate a 'getwork' miner. It is written in straight C, with minimal dependencies (libcurl, jansson). It has successfully generated blocks on testnet, mainnet and almost all pools. Linux/BSD release tarball: http://yyz.us/bitcoin/cpuminer-1.0.2.tar.gz Windows installer: http://yyz.us/bitcoin/cpuminer-installer-1.0.2.zip git repository: git://github.com/jgarzik/cpuminer.git Contributions welcomed! (GPL v2 license) UPDATE: This has largely been superceded by Con Kolivas's cgminer fork <http://forum.bitcoin.org/index.php?topic=28402.0>. See cgminer's official forum thread <http://forum.bitcoin.org/index.php?topic=28402.0> for updates and details.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "slush"}, "datePublished": "2010-11-25T02:14:17Z", "text": "Cool, I like simplicity of your code. I want to try similar implementation in javascript. Partially because of curiosity and partialy because (inspired by hashcash) it can generate few hashes by fighting comments spam :-). I just made few tests. In four javascript threads I get ~4khash/s, which is EXTREMELY slow. Probably because javascript is interpreted and without any JIT yet. Would be great if javascript supports GPU. Flash will support GPU soon, so we will see Wink."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sturle"}, "datePublished": "2010-11-25T13:28:45Z", "text": "Is your JavaScript code available? I wish the getwork RPC command could be allowed for non-authenticated users from other hosts. It isn't revealing any secret information, is it?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-11-25T13:34:05Z", "text": "Nice idea on the independent C miner. On the JS one: Oh no, soon all kinds of websites will be sneakily generating bitcons on the background while you browse them, hogging your CPU even more Tongue"}, {"@type": "Comment", "author": {"@type": "Person", "name": "slush"}, "datePublished": "2010-11-25T14:53:20Z", "text": "Will be available if I finish that. It is just for curiosity because it will be slow as hell. Also network overhead will be significant. I expect simple PHP proxy will do good work for hiding credentials to client. something like yourdomain.com/getwork.php which call rpc to localhost and return json encoded data."}, {"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-11-25T14:59:26Z", "text": "I believe that IE has cryptographic extensions that you can use from javascript. Maybe that will speed it up?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "slush"}, "datePublished": "2010-11-25T16:47:30Z", "text": "Do you have any link or reference? I found only 3rd party ActiveX component here http://www.chilkatsoft.com/js-sha512-hash.asp."}, {"@type": "Comment", "author": {"@type": "Person", "name": "teknohog"}, "datePublished": "2010-11-26T13:41:39Z", "text": "Should I use a particular version of jansson? I installed it from git, and get the following compile error: util.c: In function json_rpc_call: util.c:133:2: warning: passing argument 2 of json_loads makes integer from pointer without a cast /usr/local/include/jansson.h:188:9: note: expected size_t but argument is of type struct json_error_t * util.c:133:2: error: too few arguments to function json_loads /usr/local/include/jansson.h:188:9: note: declared here"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T18:10:29Z", "text": "Not a bug. The miner finds a hash with \"several\" zeroes in it, but then relies on bitcoin to do the full 256-bit hash < target value comparison. It's normal that some hashes will be found by the CPU miner, then rejected by bitcoin. We call those almost-solutions Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T19:47:02Z", "text": "FWIW, the default bitcoin miner also does this -- it just doesn't print out when it \"finds some zeroes\", only when a real proof of work is found. Thus, my CPU miner always shows when it stops working on a solution, and starts working on a new solution. Just giving you a bit more information on the whole process."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T21:32:51Z", "text": "Attached is a Windows executable build with mingw32. I'd be interested to know if it works. run \"minerd.exe --help\" or \"minerd.exe -h\" to show command line options. minerd.exe SHA-1 sum: 722fa3b956de3ed3438ed3294fe191f0d55c1514 minerd.exe MD5 sum: 9f75f8da7a5d02da1d45d46d4a032489"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T21:45:54Z", "text": "It's been tested with jansson 1.2 and 1.3 release versions. EDIT: If you lack jansson, current cpuminer.git will build an in-tree version. Thus, you may opt to fix the problem by... removing jansson from your system."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-26T22:02:41Z", "text": "You should try it with tcatm's 4-way SSE2 SHA in sha256.cpp. It compiles fine as a C file, just rename sha256.cpp to sha256.c. I was able to get it to work in simple tests on Windows, but not when linked in with Bitcoin. It may have a better chance of working as part of a C program instead of C++. Currently it's only enabled in the Linux build, so if you get it to work you could make it available to Windows users. It's about 100% speedup on AMD CPUs."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "New demonstration CPU miner available", "item": "https://satoshimail.pages.dev/conversations/p247-new-demonstration-cpu-miner-available/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p247">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">New demonstration CPU miner available</span></div></nav>
+<main class="in">
+<h1>New demonstration CPU miner available</h1>
+<p class="lead">BitcoinTalk forum · 13 messages · from 25 November 2010 · with Satoshi Nakamoto, jgarzik, slush, sturle, teknohog, wumpus</p>
+<p class="actions"><a class="btn" href="../../#t-p247">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/247/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-25T00:45:23Z">25 November 2010, 00:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24217#msg24217" rel="nofollow noopener">original</a></span></header>
+<div class="t">A new CPU miner is now available, making use of the new &#x27;getwork&#x27; RPC command.
+
+In the beginning, this is intended largely to demonstrate a &#x27;getwork&#x27; miner.  It is written in straight C, with minimal dependencies (libcurl, jansson).
+
+It has successfully generated blocks on testnet, mainnet and almost all pools.
+
+Linux/BSD release tarball: <a href="http://yyz.us/bitcoin/cpuminer-1.0.2.tar.gz" rel="nofollow noopener">http://yyz.us/bitcoin/cpuminer-1.0.2.tar.gz</a>
+Windows installer: <a href="http://yyz.us/bitcoin/cpuminer-installer-1.0.2.zip" rel="nofollow noopener">http://yyz.us/bitcoin/cpuminer-installer-1.0.2.zip</a>
+git repository: git://github.com/jgarzik/cpuminer.git
+
+Contributions welcomed!  (GPL v2 license)
+
+UPDATE:  This has largely been superceded by Con Kolivas&#x27;s cgminer fork &lt;<a href="http://forum.bitcoin.org/index.php?topic=28402.0" rel="nofollow noopener">http://forum.bitcoin.org/index.php?topic=28402.0</a>&gt;.  See cgminer&#x27;s official forum thread &lt;<a href="http://forum.bitcoin.org/index.php?topic=28402.0" rel="nofollow noopener">http://forum.bitcoin.org/index.php?topic=28402.0</a>&gt; for updates and details.</div></article><article class="msg" id="m1">
+<header><b>slush</b><span class="muted"> · <time datetime="2010-11-25T02:14:17Z">25 November 2010, 02:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24236#msg24236" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 25, 2010, 12:45:23 AM</div><div class="t">In the beginning, this is intended largely to demonstrate a &#x27;getwork&#x27; miner.  It is written in straight C, with minimal dependencies (libcurl, libcrypto, jansson).</div></blockquote><div class="t">Cool, I like simplicity of your code. I want to try similar implementation in javascript. Partially because of curiosity and partialy because (inspired by hashcash) it can generate few hashes by fighting comments spam :-).
+
+I just made few tests. In four javascript threads I get ~4khash/s, which is EXTREMELY slow. Probably because javascript is interpreted and without any JIT yet. Would be great if javascript supports GPU. Flash will support GPU soon, so we will see Wink.</div></article><article class="msg" id="m2">
+<header><b>sturle</b><span class="muted"> · <time datetime="2010-11-25T13:28:45Z">25 November 2010, 13:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24350#msg24350" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: slush on November 25, 2010, 02:14:17 AM</div><div class="t">&gt; Quote from: jgarzik on November 25, 2010, 12:45:23 AM
+&gt; In the beginning, this is intended largely to demonstrate a &#x27;getwork&#x27; miner.  It is written in straight C, with minimal dependencies (libcurl, libcrypto, jansson).
+Cool, I like simplicity of your code. I want to try similar implementation in javascript. Partially because of curiosity and partialy because (inspired by hashcash) it can generate few hashes by fighting comments spam :-).
+
+I just made few tests. In four javascript threads I get ~4khash/s, which is EXTREMELY slow. Probably because javascript is interpreted and without any JIT yet. Would be great if javascript supports GPU. Flash will support GPU soon, so we will see Wink.</div></blockquote><div class="t">Is your JavaScript code available?
+
+I wish the getwork RPC command could be allowed for non-authenticated users from other hosts.  It isn&#x27;t revealing any secret information, is it?</div></article><article class="msg" id="m3">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-11-25T13:34:05Z">25 November 2010, 13:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24351#msg24351" rel="nofollow noopener">original</a></span></header>
+<div class="t">Nice idea on the independent C miner.
+
+On the JS one: Oh no, soon all kinds of websites will be sneakily generating bitcons on the background while you browse them, hogging your CPU even more Tongue</div></article><article class="msg" id="m4">
+<header><b>slush</b><span class="muted"> · <time datetime="2010-11-25T14:53:20Z">25 November 2010, 14:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24374#msg24374" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sturle on November 25, 2010, 01:28:45 PM</div><div class="t">Is your JavaScript code available?
+
+I wish the getwork RPC command could be allowed for non-authenticated users from other hosts.  It isn&#x27;t revealing any secret information, is it?</div></blockquote><div class="t">Will be available if I finish that. It is just for curiosity because it will be slow as hell. Also network overhead will be significant.
+
+I expect simple PHP proxy will do good work for hiding credentials to client. something like yourdomain.com/getwork.php which call rpc to localhost and return json encoded data.</div></article><article class="msg" id="m5">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-11-25T14:59:26Z">25 November 2010, 14:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24376#msg24376" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: slush on November 25, 2010, 02:53:20 PM</div><div class="t">Will be available if I finish that. It is just for curiosity because it will be slow as hell. Also network overhead will be significant.</div></blockquote><div class="t">I believe that IE has cryptographic extensions that you can use from javascript. Maybe that will speed it up?</div></article><article class="msg" id="m6">
+<header><b>slush</b><span class="muted"> · <time datetime="2010-11-25T16:47:30Z">25 November 2010, 16:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24417#msg24417" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: witchspace on November 25, 2010, 02:59:26 PM</div><div class="t">I believe that IE has cryptographic extensions that you can use from javascript. Maybe that will speed it up?</div></blockquote><div class="t"> Do you have any link or reference? I found only 3rd party ActiveX component here <a href="http://www.chilkatsoft.com/js-sha512-hash.asp." rel="nofollow noopener">http://www.chilkatsoft.com/js-sha512-hash.asp.</a></div></article><article class="msg" id="m7">
+<header><b>teknohog</b><span class="muted"> · <time datetime="2010-11-26T13:41:39Z">26 November 2010, 13:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24635#msg24635" rel="nofollow noopener">original</a></span></header>
+<div class="t">Should I use a particular version of jansson? I installed it from git, and get the following compile error:</div><pre><code>util.c: In function json_rpc_call:
+util.c:133:2: warning: passing argument 2 of json_loads makes integer from pointer without a cast
+/usr/local/include/jansson.h:188:9: note: expected size_t but argument is of type struct json_error_t *
+util.c:133:2: error: too few arguments to function json_loads
+/usr/local/include/jansson.h:188:9: note: declared here</code></pre></article><article class="msg" id="m8">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T18:10:29Z">26 November 2010, 18:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24671#msg24671" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bugmenot on November 26, 2010, 12:08:00 PM</div><div class="t">Nice work.
+
+But :
+
+&gt; Quote
+&gt; DBG: found zeroes in hash:
+&gt; 6c1e0d9af9b06eab5aae7fbe058760708c1c7869870142b91b9c0ae300000000
+&gt; PROOF OF WORK FOUND?  submitting...
+&gt; PROOF OF WORK RESULT: false (booooo)
+&gt; [...]
+&gt; DBG: found zeroes in hash:
+&gt; c155613cbd70edad88bf56b06cbd788329a2a741b27ee78f25abdb2e00000000
+&gt; PROOF OF WORK FOUND?  submitting...
+&gt; PROOF OF WORK RESULT: false (booooo)
+
+I don&#x27;t know if this is a bug or not.
+The miner has been compiled with cygwin, I don&#x27;t know if it matters.</div></blockquote><div class="t">Not a bug.  The miner finds a hash with &quot;several&quot; zeroes in it, but then relies on bitcoin to do the full 256-bit hash &lt; target value comparison.  It&#x27;s normal that some hashes will be found by the CPU miner, then rejected by bitcoin.  We call those almost-solutions Smiley</div></article><article class="msg" id="m9">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T19:47:02Z">26 November 2010, 19:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24681#msg24681" rel="nofollow noopener">original</a></span></header>
+<div class="t">FWIW, the default bitcoin miner also does this -- it just doesn&#x27;t print out when it &quot;finds some zeroes&quot;, only when a real proof of work is found.
+
+Thus, my CPU miner always shows when it stops working on a solution, and starts working on a new solution.  Just giving you a bit more information on the whole process.</div></article><article class="msg" id="m10">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T21:32:51Z">26 November 2010, 21:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24709#msg24709" rel="nofollow noopener">original</a></span></header>
+<div class="t">Attached is a Windows executable build with mingw32.  I&#x27;d be interested to know if it works.
+
+run &quot;minerd.exe --help&quot; or &quot;minerd.exe -h&quot; to show command line options.
+
+minerd.exe SHA-1 sum: 722fa3b956de3ed3438ed3294fe191f0d55c1514
+minerd.exe MD5 sum: 9f75f8da7a5d02da1d45d46d4a032489</div></article><article class="msg" id="m11">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T21:45:54Z">26 November 2010, 21:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24712#msg24712" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: teknohog on November 26, 2010, 01:41:39 PM</div><div class="t">Should I use a particular version of jansson? I installed it from git, and get the following compile error:
+
+util.c: In function json_rpc_call:
+util.c:133:2: warning: passing argument 2 of json_loads makes integer from pointer without a cast
+/usr/local/include/jansson.h:188:9: note: expected size_t but argument is of type struct json_error_t *
+util.c:133:2: error: too few arguments to function json_loads
+/usr/local/include/jansson.h:188:9: note: declared here</div></blockquote><div class="t">It&#x27;s been tested with jansson 1.2 and 1.3 release versions.
+
+EDIT:  If you lack jansson, current cpuminer.git will build an in-tree version.  Thus, you may opt to fix the problem by... removing jansson from your system.</div></article><article class="msg sat" id="m12">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-26T22:02:41Z">26 November 2010, 22:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1925.msg24719#msg24719" rel="nofollow noopener">original</a></span></header>
+<div class="t">You should try it with tcatm&#x27;s 4-way SSE2 SHA in sha256.cpp.  It compiles fine as a C file, just rename sha256.cpp to sha256.c.  I was able to get it to work in simple tests on Windows, but not when linked in with Bitcoin.  It may have a better chance of working as part of a C program instead of C++.
+
+Currently it&#x27;s only enabled in the Linux build, so if you get it to work you could make it available to Windows users.  It&#x27;s about 100% speedup on AMD CPUs.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p246-new-getwork/">← New getwork</a><a rel="next" href="../../conversations/p248-rfc-ship-block-chain-1-74000-with-release-tarballs/">RFC: ship block chain 1-74000 with release tarballs? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

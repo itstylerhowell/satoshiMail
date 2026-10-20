@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>auto backing up of wallet.dat – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 26 August 2010: I started posting in the other topic but I&#x27;ll repeat here, this thread seems more specific to the topic. The main…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p203-auto-backing-up-of-wallet-dat/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="auto backing up of wallet.dat – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 26 August 2010: I started posting in the other topic but I&#x27;ll repeat here, this thread seems more specific to the topic. The main…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p203-auto-backing-up-of-wallet-dat/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="auto backing up of wallet.dat – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 26 August 2010: I started posting in the other topic but I&#x27;ll repeat here, this thread seems more specific to the topic. The main…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "auto backing up of wallet.dat", "url": "https://satoshimail.pages.dev/conversations/p203-auto-backing-up-of-wallet-dat/", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-25T03:52:13Z", "text": "So, as many others, I need to backup wallet.dat. And since this one is on a server, I need it to happen unattended. And because this server is being used by the lottery, I must not shutdown bitcoind. So far I just copy the file over, and do it often so I can outlive one corrupted file. But this is not ideal, as I should backup after every transaction (sent, right? no new addresses are created on receiving a transfer ) or after everytime I create a new address. For that I thought about instead of copying the file I could use db_dump to dump it's contents, using the -r flag just in case. Would that work? The ideal solution would be an rpc call that would either: - flush and lock updates until a new rpc call (any call, didn't need to be an unlock command) would come over - flush and cp wallet.dat to a side file - flush and dump through jsonrpc. If each key would come separate in an array, we could then call this with 'lastseen=X' to just get new keys Could this work? Which would work best?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-08-25T11:11:16Z", "text": "http://bitcointalk.org/index.php?topic=873.msg10728#msg10728 is somewhat related"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-26T00:57:40Z", "text": "I started posting in the other topic but I'll repeat here, this thread seems more specific to the topic. The main backup improvement will be a pre-generated pool of keys and a rescan at load to scrape missed transactions from the block history. Then a backup will last forward for a long time. I was starting to post the same idea you said nelisky. How about a json-rpc command that locks the wallet, flushes it, copies wallet.dat to a location you specified, then unlocks it? That would be a…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-26T01:21:57Z", "text": "Yes, I saw your other post and I really like the poll of addresses, but we still need a way to easily back up when those get all used, don't we? I know the address space is huge, but there might be applications that deliver thousands of addresses per day. Great on all accounts, name and implementation approach. As for the file copy, why add to the boost dependency? I for one would love to get a core lib with very little deps. In C++ you can just use standard file streams, can't you? Something…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-26T01:42:26Z", "text": "mmap(2) + memcpy(3) ? Boost::Iostreams already has a mapped_file Source. Sounds quite useful!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-27T01:13:42Z", "text": "If you read it into memory and write it out, it could fail in tight memory situations. I'm looking for something like copyfile(const char* from, const char* to) or copyfile(path from, path to), preferably something in Boost if it has it. If you find it for me, it's more likely I'll get to implementing it. We require Boost for JSON and a dozen things replacing dependencies on wxWidgets. Boost is good, portable stuff, we should not shy away from it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-27T01:21:09Z", "text": "Ok, so what's wrong with the simple standard fstream usage from that snippet I mentioned? I think simple is best Smiley But if you are already using features from boost::filesystem you can use copy_file from that. I just think that, if not already required for something else, it's a tad overkill."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-27T02:14:19Z", "text": "I think you misunderstand what mmap does? mmap / CreateFileMapping does not read a file into heap memory: http://en.wikipedia.org/wiki/Mmap"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-27T02:54:07Z", "text": "I doubt there's an mmap(2) on Windows. I'd rather call an existing file copy function than make and test my own. Thanks. I thought it would be in there somewhere. We already use boost::filesystem in a dozen places. It's not a new added dependency. It gives us a lot of portable stuff that we would otherwise have to have a #ifdef for each OS and test everywhere."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-27T03:42:25Z", "text": "The Windows version of mmap was mentioned in the message to which you replied: CreateFileMapping In my earlier message, I mentioned how to use this from boost: Boost::Iostreams already has a mapped_file Source."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-27T15:47:57Z", "text": "Sorry, I've been so busy lately I've been skimming messages and I still can't keep up. We want to avoid Windows API calls whenever possible. They usually take about 6-8 parameters and a lot of testing to get right, it takes a page of code to do something simple. I usually shy away from iostreams. Seems like I too often hit limitations. They kind of botched the C++ streams standard in the 90's, which is too bad, streams can be very powerful and useful when done right. Using it in rpc.cpp may…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-06T21:45:10Z", "text": "rpc backupwallet <destination> is in SVN rev 147."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "auto backing up of wallet.dat", "item": "https://satoshimail.pages.dev/conversations/p203-auto-backing-up-of-wallet-dat/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p203">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">auto backing up of wallet.dat</span></div></nav>
+<main class="in">
+<h1>auto backing up of wallet.dat</h1>
+<p class="lead">BitcoinTalk forum · 12 messages · from 25 August 2010 · with Satoshi Nakamoto, jgarzik, mizerydearia, nelisky</p>
+<p class="actions"><a class="btn" href="../../#t-p203">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/203/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-25T03:52:13Z">25 August 2010, 03:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11107#msg11107" rel="nofollow noopener">original</a></span></header>
+<div class="t">So, as many others, I need to backup wallet.dat. And since this one is on a server, I need it to happen unattended. And because this server is being used by the lottery, I must not shutdown bitcoind.
+
+So far I just copy the file over, and do it often so I can outlive one corrupted file. But this is not ideal, as I should backup after every transaction (sent, right? no new addresses are created on receiving a transfer ) or after everytime I create a new address.
+
+For that I thought about instead of copying the file I could use db_dump to dump it&#x27;s contents, using the -r flag just in case. Would that work?
+
+The ideal solution would be an rpc call that would either:
+- flush and lock updates until a new rpc call (any call, didn&#x27;t need to be an unlock command) would come over
+- flush and cp wallet.dat to a side file
+- flush and dump through jsonrpc. If each key would come separate in an array, we could then call this with &#x27;lastseen=X&#x27; to just get new keys
+
+Could this work? Which would work best?</div></article><article class="msg" id="m1">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-08-25T11:11:16Z">25 August 2010, 11:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11131#msg11131" rel="nofollow noopener">original</a></span></header>
+<div class="t"><a href="http://bitcointalk.org/index.php?topic=873.msg10728#msg10728" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=873.msg10728#msg10728</a> is somewhat related</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-26T00:57:40Z">26 August 2010, 00:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11228#msg11228" rel="nofollow noopener">original</a></span></header>
+<div class="t">I started posting in the other topic but I&#x27;ll repeat here, this thread seems more specific to the topic.
+
+The main backup improvement will be a pre-generated pool of keys and a rescan at load to scrape missed transactions from the block history.  Then a backup will last forward for a long time.
+
+I was starting to post the same idea you said nelisky.
+
+How about a json-rpc command that locks the wallet, flushes it, copies wallet.dat to a location you specified, then unlocks it?  That would be a smaller project than the pooled keys, so maybe it could be done first.
+
+What&#x27;s the simplest portable way to copy a file?  Is there something in Boost?
+
+What should it be named?  maybe:
+backupwallet &lt;destination&gt;</div></article><article class="msg" id="m3">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-26T01:21:57Z">26 August 2010, 01:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11232#msg11232" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 26, 2010, 12:57:40 AM</div><div class="t">I started posting in the other topic but I&#x27;ll repeat here, this thread seems more specific to the topic.
+
+The main backup improvement will be a pre-generated pool of keys and a rescan at load to scrape missed transactions from the block history.  Then a backup will last forward for a long time.
+
+I was starting to post the same idea you said nelisky.</div></blockquote><div class="t">Yes, I saw your other post and I really like the poll of addresses, but we still need a way to easily back up when those get all used, don&#x27;t we? I know the address space is huge, but there might be applications that deliver thousands of addresses per day.</div><blockquote><div class=qh>Quote from: satoshi on August 26, 2010, 12:57:40 AM</div><div class="t">How about a json-rpc command that locks the wallet, flushes it, copies wallet.dat to a location you specified, then unlocks it?  That would be a smaller project than the pooled keys, so maybe it could be done first.
+
+What&#x27;s the simplest portable way to copy a file?  Is there something in Boost?
+
+What should it be named?  maybe:
+backupwallet &lt;destination&gt;</div></blockquote><div class="t">Great on all accounts, name and implementation approach.
+
+As for the file copy, why add to the boost dependency? I for one would love to get a core lib with very little deps. In C++ you can just use standard file streams, can&#x27;t you? Something like <a href="http://www.dreamincode.net/code/snippet2306.htm" rel="nofollow noopener">http://www.dreamincode.net/code/snippet2306.htm</a> (out of a quick google, didn&#x27;t try but looks correct).
+
+To put the cherry on top, why not add a trigger that makes the copy whenever there&#x27;s a change to the wallet? Well, this would depend on file locking to work properly and that sucks on windows iirc. Been a while since I had to code there Smiley</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-26T01:42:26Z">26 August 2010, 01:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11235#msg11235" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 26, 2010, 12:57:40 AM</div><div class="t">What&#x27;s the simplest portable way to copy a file?  Is there something in Boost?</div></blockquote><div class="t">mmap(2) + memcpy(3) ?  Boost::Iostreams already has a mapped_file Source.</div><blockquote><div class=qh>Quote from: satoshi on August 26, 2010, 12:57:40 AM</div><div class="t">What should it be named?  maybe:
+backupwallet &lt;destination&gt;</div></blockquote><div class="t">Sounds quite useful!</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-27T01:13:42Z">27 August 2010, 01:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11345#msg11345" rel="nofollow noopener">original</a></span></header>
+<div class="t">If you read it into memory and write it out, it could fail in tight memory situations.
+
+I&#x27;m looking for something like copyfile(const char* from, const char* to) or copyfile(path from, path to), preferably something in Boost if it has it.  If you find it for me, it&#x27;s more likely I&#x27;ll get to implementing it.</div><blockquote><div class=qh>Quote from: nelisky on August 26, 2010, 01:21:57 AM</div><div class="t">As for the file copy, why add to the boost dependency? I for one would love to get a core lib with very little deps.</div></blockquote><div class="t">We require Boost for JSON and a dozen things replacing dependencies on wxWidgets.  Boost is good, portable stuff, we should not shy away from it.</div></article><article class="msg" id="m6">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-27T01:21:09Z">27 August 2010, 01:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11346#msg11346" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 27, 2010, 01:13:42 AM</div><div class="t">If you read it into memory and write it out, it could fail in tight memory situations.
+
+I&#x27;m looking for something like copyfile(const char* from, const char* to) or copyfile(path from, path to), preferably something in Boost if it has it.  If you find it for me, it&#x27;s more likely I&#x27;ll get to implementing it.
+
+&gt; Quote from: nelisky on August 26, 2010, 01:21:57 AM
+&gt; As for the file copy, why add to the boost dependency? I for one would love to get a core lib with very little deps.
+We require Boost for JSON and a dozen things replacing dependencies on wxWidgets.  Boost is good, portable stuff, we should not shy away from it.</div></blockquote><div class="t">Ok, so what&#x27;s wrong with the simple standard fstream usage from that snippet I mentioned? I think simple is best Smiley
+
+But if you are already using features from boost::filesystem you can use copy_file from that. I just think that, if not already required for something else, it&#x27;s a tad overkill.</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-27T02:14:19Z">27 August 2010, 02:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11348#msg11348" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 27, 2010, 01:13:42 AM</div><div class="t">If you read it into memory and write it out, it could fail in tight memory situations.</div></blockquote><div class="t">I think you misunderstand what mmap does?  mmap / CreateFileMapping does not read a file into heap memory:  <a href="http://en.wikipedia.org/wiki/Mmap" rel="nofollow noopener">http://en.wikipedia.org/wiki/Mmap</a></div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-27T02:54:07Z">27 August 2010, 02:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11350#msg11350" rel="nofollow noopener">original</a></span></header>
+<div class="t">I doubt there&#x27;s an mmap(2) on Windows.  I&#x27;d rather call an existing file copy function than make and test my own.</div><blockquote><div class=qh>Quote from: nelisky on August 27, 2010, 01:21:09 AM</div><div class="t">But if you are already using features from boost::filesystem you can use copy_file from that. I just think that, if not already required for something else, it&#x27;s a tad overkill.</div></blockquote><div class="t">Thanks.  I thought it would be in there somewhere.
+
+We already use boost::filesystem in a dozen places.  It&#x27;s not a new added dependency.  It gives us a lot of portable stuff that we would otherwise have to have a #ifdef for each OS and test everywhere.</div></article><article class="msg" id="m9">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-27T03:42:25Z">27 August 2010, 03:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11352#msg11352" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 27, 2010, 02:54:07 AM</div><div class="t">I doubt there&#x27;s an mmap(2) on Windows.</div></blockquote><div class="t">The Windows version of mmap was mentioned in the message to which you replied:  CreateFileMapping
+
+In my earlier message, I mentioned how to use this from boost:  Boost::Iostreams already has a mapped_file Source.</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-27T15:47:57Z">27 August 2010, 15:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg11399#msg11399" rel="nofollow noopener">original</a></span></header>
+<div class="t">Sorry, I&#x27;ve been so busy lately I&#x27;ve been skimming messages and I still can&#x27;t keep up.
+
+We want to avoid Windows API calls whenever possible.  They usually take about 6-8 parameters and a lot of testing to get right, it takes a page of code to do something simple.
+
+I usually shy away from iostreams.  Seems like I too often hit limitations.  They kind of botched the C++ streams standard in the 90&#x27;s, which is too bad, streams can be very powerful and useful when done right.  Using it in rpc.cpp may still turn out to be a mistake.
+
+Bottom line is I&#x27;d rather call an existing file copy function than make and test my own.</div></article><article class="msg sat" id="m11">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-06T21:45:10Z">6 September 2010, 21:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=921.msg12134#msg12134" rel="nofollow noopener">original</a></span></header>
+<div class="t">rpc backupwallet &lt;destination&gt; is in SVN rev 147.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p202-rfc-remove-db-private-flag/">← RFC: remove DB_PRIVATE flag</a><a rel="next" href="../../conversations/p204-new-web-service-obtain-dump-of-bitcoin-block-nnnn/">New web service: obtain dump of bitcoin block NNNN →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

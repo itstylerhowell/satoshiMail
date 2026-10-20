@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>simplified makefile.unix, updated… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: simplified makefile.unix, updated build-unix.txt instructions to include boost 1.37. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e1cb7ce/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="simplified makefile.unix, updated… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: simplified makefile.unix, updated build-unix.txt instructions to include boost 1.37. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e1cb7ce/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="simplified makefile.unix, updated… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: simplified makefile.unix, updated build-unix.txt instructions to include boost 1.37. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "simplified makefile.unix, updated build-unix.txt instructions to include boost 1.37", "url": "https://satoshimail.pages.dev/commits/e1cb7ce/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-31T14:14:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e1cb7ce0177de72b00e06dc4c8fe1d414723a9e7"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "simplified makefile.unix, updated…", "item": "https://satoshimail.pages.dev/commits/e1cb7ce/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce1cb7ce017">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">simplified makefile.unix, updated…</span></div></nav>
+<main class="in">
+<h1>simplified makefile.unix, updated build-unix.txt instructions to include boost 1.37</h1>
+<p class="lead">Commit by Satoshi Nakamoto (--author=Satoshi Nakamoto) on 31 July 2010 · release v0.3.7 · 2 files, +12 −29</p>
+<p class="actions"><a class="btn" href="../../#t-ce1cb7ce017">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e1cb7ce0177de72b00e06dc4c8fe1d414723a9e7" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -16,13 +16,12 @@ sudo apt-get install libgtk2.0-dev
+ sudo apt-get install libssl-dev
+ sudo apt-get install libdb4.7-dev
+ sudo apt-get install libdb4.7++-dev
+-sudo apt-get install libboost-all-dev
++Boost 1.40+: sudo apt-get install libboost-all-dev
++or Boost 1.37: sudo apt-get install libboost1.37-dev
+ 
+-We&#x27;re now using wxWidgets 2.9, which uses UTF-8.
++If using Boost 1.37, append -mt to the boost libraries in the makefile.
+ 
+-There isn&#x27;t currently a debian package of wxWidgets we can use.  The 2.8
+-packages for Karmic are UTF-16 unicode and won&#x27;t work for us, and we&#x27;ve had
+-trouble building 2.8 on 64-bit.
++We&#x27;re now using wxWidgets 2.9, which uses UTF-8.  Don&#x27;t try 2.8, it won&#x27;t work.
+ 
+ You need to download wxWidgets from http://www.wxwidgets.org/downloads/
+ and build it yourself.  See the build instructions and configure parameters
+@@ -34,11 +33,11 @@ Berkeley DB    New BSD license with additional requirement that linked software
+ Boost          MIT-like license
+ 
+ Versions used in this release:
+-GCC          4.4.3
+-OpenSSL      0.9.8k
++GCC          4.3.3
++OpenSSL      0.9.8g
+ wxWidgets    2.9.0
+ Berkeley DB  4.7.25.NC
+-Boost        1.40.0
++Boost        1.37
+ 
+ 
+ Notes
+@@ -55,7 +54,7 @@ wxWidgets
+ ---------
+ cd /usr/local
+ tar -xzvf wxWidgets-2.9.0.tar.gz
+-cd /usr/local/wxWidgets-2.9.0
++cd wxWidgets-2.9.0
+ mkdir buildgtk
+ cd buildgtk
+ ../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
+@@ -63,15 +62,6 @@ make
+ sudo su
+ make install
+ ldconfig
+-su &lt;username&gt;
+-cd ..
+-mkdir buildbase
+-cd buildbase
+-../configure --disable-gui --enable-debug --disable-shared --enable-monolithic
+-make
+-sudo su
+-make install
+-ldconfig
+ 
+ 
+ Boost</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -4,20 +4,16 @@
+ 
+ 
+ INCLUDEPATHS= \
+- -I&quot;/usr/include&quot; \
+  -I&quot;/usr/local/include/wx-2.9&quot; \
+  -I&quot;/usr/local/lib/wx/include/gtk2-unicode-debug-static-2.9&quot;
+ 
+-LIBPATHS= \
+- -L&quot;/usr/lib&quot; \
+- -L&quot;/usr/local/lib&quot;
+-
+ WXLIBS= \
+  -Wl,-Bstatic \
+    -l wx_gtk2ud-2.9 \
+  -Wl,-Bdynamic \
+    -l gtk-x11-2.0 -l SM
+ 
++# for boost 1.37, add -mt to the boost libraries
+ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system \
+@@ -51,24 +47,21 @@ OBJS= \
+ all: bitcoin
+ 
+ 
+-headers.h.gch: headers.h $(HEADERS)
+-	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+-
+-obj/%.o: %.cpp $(HEADERS) headers.h.gch
++obj/%.o: %.cpp $(HEADERS)
+ 	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+ 	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++	g++ $(CFLAGS) -o $@ $^ $(WXLIBS) $(LIBS)
+ 
+ 
+ obj/nogui/%.o: %.cpp $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ bitcoind: $(OBJS:obj/%=obj/nogui/%)
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
++	g++ $(CFLAGS) -o $@ $^ $(LIBS)
+ 
+ 
+ clean:</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/01bed18/">← simplified makefile.unix, updated build-unix.txt…</a><a rel="next" href="../../commits/6ff5f71/">fixed segfault in bignum.h, additional security limits… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

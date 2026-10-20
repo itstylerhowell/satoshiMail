@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>security safeguards, limited addr… (r107) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 July 2010: security safeguards, limited addr messages -- version 0.3.2. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/ae922a3/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="security safeguards, limited addr… (r107) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 July 2010: security safeguards, limited addr messages -- version 0.3.2. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/ae922a3/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="security safeguards, limited addr… (r107) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 17 July 2010: security safeguards, limited addr messages -- version 0.3.2. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "security safeguards, limited addr messages -- version 0.3.2", "url": "https://satoshimail.pages.dev/commits/ae922a3/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-17T23:51:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/ae922a36a4b54a8e78d3a2a2cb2af7f03960fce3"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "security safeguards, limited addr…", "item": "https://satoshimail.pages.dev/commits/ae922a3/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cae922a36a4">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">security safeguards, limited addr…</span></div></nav>
+<main class="in">
+<h1>security safeguards, limited addr messages -- version 0.3.2</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 17 July 2010 · SVN r107 · release v0.3.10 · 3 files, +20 −7</p>
+<p class="actions"><a class="btn" href="../../#t-cae922a36a4">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/ae922a36a4b54a8e78d3a2a2cb2af7f03960fce3" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1341,6 +1341,14 @@ bool CBlock::AcceptBlock()
+     if (nBits != GetNextWorkRequired(pindexPrev))
+         return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+ 
++    // Check that the block chain matches the known block chain up to a checkpoint
++    if (pindexPrev-&gt;nHeight+1 == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;))
++        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 11111&quot;);
++    if (pindexPrev-&gt;nHeight+1 == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;))
++        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 33333&quot;);
++    if (pindexPrev-&gt;nHeight+1 == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;))
++        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 68555&quot;);
++
+     // Write block to history file
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+         return error(&quot;AcceptBlock() : out of disk space&quot;);
+@@ -1933,6 +1941,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vRecv &gt;&gt; vAddr;
+         if (pfrom-&gt;nVersion &lt; 200) // don&#x27;t want addresses from 0.1.5
+             return true;
++        if (pfrom-&gt;nVersion &lt; 209 &amp;&amp; mapAddresses.size() &gt; 1000) // don&#x27;t want addr from 0.2.0 unless seeding
++            return true;
+         if (vAddr.size() &gt; 1000)
+             return error(&quot;message addr size() = %d&quot;, vAddr.size());
+ 
+@@ -1941,6 +1951,9 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         {
+             if (fShutdown)
+                 return true;
++            // ignore IPv6 for now, since it isn&#x27;t implemented anyway
++            if (!addr.IsIPv4())
++                continue;
+             addr.nTime = GetAdjustedTime() - 2 * 60 * 60;
+             if (pfrom-&gt;fGetAddr || vAddr.size() &gt; 10)
+                 addr.nTime -= 5 * 24 * 60 * 60;
+@@ -1952,15 +1965,15 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                 CRITICAL_BLOCK(cs_vNodes)
+                 {
+                     // Use deterministic randomness to send to
+-                    // the same places for an hour at a time
++                    // the same places for 12 hours at a time
+                     static uint256 hashSalt;
+                     if (hashSalt == 0)
+                         RAND_bytes((unsigned char*)&amp;hashSalt, sizeof(hashSalt));
+-                    uint256 hashRand = addr.ip ^ (GetTime()/3600) ^ hashSalt;
++                    uint256 hashRand = addr.ip ^ ((GetTime()+addr.ip)/(12*60*60)) ^ hashSalt;
+                     multimap&lt;uint256, CNode*&gt; mapMix;
+                     foreach(CNode* pnode, vNodes)
+                         mapMix.insert(make_pair(hashRand = Hash(BEGIN(hashRand), END(hashRand)), pnode));
+-                    int nRelayNodes = 10; // reduce this to 5 when the network is large
++                    int nRelayNodes = 4;
+                     for (multimap&lt;uint256, CNode*&gt;::iterator mi = mapMix.begin(); mi != mapMix.end() &amp;&amp; nRelayNodes-- &gt; 0; ++mi)
+                         ((*mi).second)-&gt;PushAddress(addr);
+                 }</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 301;
++static const int VERSION = 302;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.1
++!define VERSION 0.3.2
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.1-win32-setup.exe
++OutFile bitcoin-0.3.2-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.1.0
++VIProductVersion 0.3.2.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/673a6d1/">← version 0.3.1 release</a><a rel="next" href="../../commits/e8bff10/">minor UI tweaks, removed some outdated txt files, (and… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

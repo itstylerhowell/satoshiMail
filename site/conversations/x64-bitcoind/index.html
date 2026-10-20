@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoind – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 28 February 2010: I put it at bitcoin.org/download/linux64-0.2.7.1.tar.gz. You can delete it when you&#x27;ve got it. I thought about what…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x64-bitcoind/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoind – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 28 February 2010: I put it at bitcoin.org/download/linux64-0.2.7.1.tar.gz. You can delete it when you&#x27;ve got it. I thought about what…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x64-bitcoind/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoind – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 28 February 2010: I put it at bitcoin.org/download/linux64-0.2.7.1.tar.gz. You can delete it when you&#x27;ve got it. I thought about what…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Bitcoind", "url": "https://satoshimail.pages.dev/conversations/x64-bitcoind/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2010-02-28T04:12:44Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-28T04:12:44Z", "text": "I tried debugging my build of bitcoind with ddd debugger, but didn't have much success yet. It always ends up taking all the system's memory and finally crashes. Could you please send me again the latest 64 bit build of bitcoind, so I can see if the problem is about my build?"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-28T14:47:01Z", "text": "I put it at bitcoin.org/download/linux64-0.2.7.1.tar.gz. You can delete it when you've got it. I thought about what might cause the problem you're having and made a change that this build includes. This might have been unsafe code, although it would probably always get lucky. in util.cpp, old: const char* wxGetTranslation(const char* pszEnglish) { // Wrapper of wxGetTranslation returning the same const char* type as was passed in static CCriticalSection cs; CRITICAL_BLOCK(cs) { // Look in…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-28T20:09:07Z", "text": "Could you send me the debug.log?"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-02T19:33:24Z", "text": "Here goes. I forgot to mention the crash error message: terminate called after throwing an instance of 'std::bad_alloc' what(): std::bad_alloc"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-02T19:36:10Z", "text": "This was from the compilation you sent, the same problem occurred with it."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-02T22:27:22Z", "text": "Does it still do it if you didn't do getinfo? You could comment out the CreateThreads listed below, then re-enable them one at a time until it does it again. Then we would know which thread the problem is in. net.cpp, under // Start threads CreateThread(ThreadIRCSeed, NULL) CreateThread(ThreadSocketHandler, NULL, true) CreateThread(ThreadOpenConnections, NULL) CreateThread(ThreadMessageHandler, NULL) init.cpp: CreateThread(ThreadRPCServer, NULL);"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-03T01:50:39Z", "text": "I get the error regardless of the getinfo. Commenting out ThreadIRCSeed fixed the problem."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-03T03:54:52Z", "text": "That narrows it down a lot. It didn't print any IRC activity in debug.log, so I guess it couldn't have gotten past the RecvUntil. Eyeballing it I don't see anything obvious. I guess it would have to be either in ConnectSocket or RecvUntil. Try it with the attached irc.cpp and net.cpp and send me the debug.log. Or you could run it in gdb and step through ThreadIRCSeed gdb --args bitcoin [switches] b ThreadIRCSeed run step or u to step over and up out of routines."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-03T12:32:01Z", "text": "debug.log attached"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-03T17:15:28Z", "text": "It's in RecvUntil, but I still can't see anything wrong with it. The only thing I can think of is if the socket is receiving a spew of characters. Try this irc.cpp. debug.log may grow rapidly so be ready to kill it."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-04T22:27:08Z", "text": "Here's the debug.log. I stopped bitcoind before it took up all the memory."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-05T00:09:02Z", "text": "Here's another test run debug.log I got when debugging with gdb. The program started eating memory after the debug line \"irc 8\" and within a few seconds crashed with \"terminate called after throwing an instance of 'std::bad_alloc'\"."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-05T00:42:16Z", "text": "It's in util.c ParseString. I'm guessing the problem is incompatibility between the type \"unsigned int\" and the type of str.npos, which is size_type. Try changing the two \"unsigned int\"s to \"size_type\". old: void ParseString(const string& str, char c, vector<string>& v) { unsigned int i1 = 0; unsigned int i2; do { i2 = str.find(c, i1); v.push_back(str.substr(i1, i2-i1)); i1 = i2+1; } while (i2 != str.npos); } new: void ParseString(const string& str, char c, vector<string>& v) { size_type i1 =…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-05T00:54:40Z", "text": "Actually, please try this instead, this is more correct: void ParseString(const string& str, char c, vector<string>& v) { string::size_type i1 = 0; string::size_type i2; loop { i2 = str.find(c, i1); if (i2 == str.npos) { v.push_back(str.substr(i1)); return; } v.push_back(str.substr(i1, i2-i1)); i1 = i2+1; } }"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-03-05T01:33:34Z", "text": "Great! Works fine now."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-03-05T01:42:00Z", "text": "I confirmed that ParseString has this problem, and uploaded the fixed util.cpp to SVN. string::npos == -1 Comparing unsigned int -1 (0xffffffff) with long unsigned int -1 (0xffffffffffffffff) results in the unsigned int being promoted to 64-bit, which is 0x00000000ffffffff != 0xffffffffffffffff."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoind", "item": "https://satoshimail.pages.dev/conversations/x64-bitcoind/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x64">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoind</span></div></nav>
+<main class="in">
+<h1>Bitcoind</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 16 messages · from 28 February 2010 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x64">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-02-28T04:12:44Z">28 February 2010, 04:12 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-173" rel="nofollow noopener">original</a></span></header>
+<div class="t">I tried debugging my build of bitcoind with ddd debugger, but didn&#x27;t
+have much success yet. It always ends up taking all the system&#x27;s
+memory and finally crashes. Could you please send me again the latest
+64 bit build of bitcoind, so I can see if the problem is about my build?</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-28T14:47:01Z">28 February 2010, 14:47 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-174" rel="nofollow noopener">original</a></span></header>
+<div class="t">I put it at bitcoin.org/download/linux64-0.2.7.1.tar.gz.  You can delete
+it when you&#x27;ve got it.
+
+I thought about what might cause the problem you&#x27;re having and made a
+change that this build includes.  This might have been unsafe code,
+although it would probably always get lucky.
+
+in util.cpp, old:
+const char* wxGetTranslation(const char* pszEnglish)
+{
+     // Wrapper of wxGetTranslation returning the same const char* type
+as was passed in
+     static CCriticalSection cs;
+     CRITICAL_BLOCK(cs)
+     {
+         // Look in cache
+         static map&lt;string, char*&gt; mapCache;
+         map&lt;string, char*&gt;::iterator mi = mapCache.find(pszEnglish);
+         if (mi != mapCache.end())
+             return (*mi).second;
+
+         // wxWidgets translation
+         const char* pszTranslated =
+wxGetTranslation(wxString(pszEnglish, wxConvUTF8)).utf8_str();
+
+         // We don&#x27;t cache unknown strings because caller might be
+passing in a
+         // dynamic string and we would keep allocating memory for each
+variation.
+         if (strcmp(pszEnglish, pszTranslated) == 0)
+             return pszEnglish;
+
+         // Add to cache, memory doesn&#x27;t need to be freed.  We only
+cache because
+         // we must pass back a pointer to permanently allocated memory.
+         char* pszCached = new char[strlen(pszTranslated)+1];
+         strcpy(pszCached, pszTranslated);
+         mapCache[pszEnglish] = pszCached;
+         return pszCached;
+     }
+     return NULL;
+}
+
+new:
+const char* wxGetTranslation(const char* pszEnglish)
+{
+     // Wrapper of wxGetTranslation returning the same const char* type
+as was passed in
+     static CCriticalSection cs;
+     CRITICAL_BLOCK(cs)
+     {
+         // Look in cache
+         static map&lt;string, char*&gt; mapCache;
+         map&lt;string, char*&gt;::iterator mi = mapCache.find(pszEnglish);
+         if (mi != mapCache.end())
+             return (*mi).second;
+
+         // wxWidgets translation
+         wxString strTranslated = wxGetTranslation(wxString(pszEnglish,
+wxConvUTF8));
+
+         // We don&#x27;t cache unknown strings because caller might be
+passing in a
+         // dynamic string and we would keep allocating memory for each
+variation.
+         if (strcmp(pszEnglish, strTranslated.utf8_str()) == 0)
+             return pszEnglish;
+
+         // Add to cache, memory doesn&#x27;t need to be freed.  We only
+cache because
+         // we must pass back a pointer to permanently allocated memory.
+         char* pszCached = new char[strlen(strTranslated.utf8_str())+1];
+         strcpy(pszCached, strTranslated.utf8_str());
+         mapCache[pszEnglish] = pszCached;
+         return pszCached;
+     }
+     return NULL;
+}
+
+If you still suspect this code, for testing you could change it to:
+const char* wxGetTranslation(const char* pszEnglish)
+{
+     return pszEnglish;
+}</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I tried debugging my build of bitcoind with ddd debugger, but didn&#x27;t
+have much success yet. It always ends up taking all the system&#x27;s memory
+and finally crashes. Could you please send me again the latest 64 bit
+build of bitcoind, so I can see if the problem is about my build?</div></blockquote></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-28T20:09:07Z">28 February 2010, 20:09 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-175" rel="nofollow noopener">original</a></span></header>
+<div class="t">Could you send me the debug.log?</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I tried debugging my build of bitcoind with ddd debugger, but didn&#x27;t
+have much success yet. It always ends up taking all the system&#x27;s memory
+and finally crashes. Could you please send me again the latest 64 bit
+build of bitcoind, so I can see if the problem is about my build?</div></blockquote></article><article class="msg" id="m3">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-02T19:33:24Z">2 March 2010, 19:33 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-176" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here goes. I forgot to mention the crash error message:
+
+terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+what():  std::bad_alloc</div><blockquote><div class="t">Could you send me the debug.log?
+
+mmalmi@cc.hut.fi wrote:
+&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt; didn&#x27;t have much success yet. It always ends up taking all the
+&gt; system&#x27;s memory and finally crashes. Could you please send me again
+&gt;  the latest 64 bit build of bitcoind, so I can see if the problem
+&gt; is  about my build?
+&gt;</div></blockquote></article><article class="msg" id="m4">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-02T19:36:10Z">2 March 2010, 19:36 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-177" rel="nofollow noopener">original</a></span></header>
+<div class="t">This was from the compilation you sent, the same problem occurred with it.</div><blockquote><div class="t">Here goes. I forgot to mention the crash error message:
+
+terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+what():  std::bad_alloc
+
+&gt; Could you send me the debug.log?
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt; didn&#x27;t have much success yet. It always ends up taking all the
+&gt;&gt; system&#x27;s memory and finally crashes. Could you please send me
+&gt;&gt; again   the latest 64 bit build of bitcoind, so I can see if the
+&gt;&gt; problem  is  about my build?
+&gt;&gt;</div></blockquote></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-02T22:27:22Z">2 March 2010, 22:27 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-178" rel="nofollow noopener">original</a></span></header>
+<div class="t">Does it still do it if you didn&#x27;t do getinfo?
+
+You could comment out the CreateThreads listed below, then re-enable
+them one at a time until it does it again.  Then we would know which
+thread the problem is in.
+
+net.cpp, under // Start threads
+     CreateThread(ThreadIRCSeed, NULL)
+     CreateThread(ThreadSocketHandler, NULL, true)
+     CreateThread(ThreadOpenConnections, NULL)
+     CreateThread(ThreadMessageHandler, NULL)
+
+init.cpp:
+     CreateThread(ThreadRPCServer, NULL);</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Here goes. I forgot to mention the crash error message:
+
+terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+what():  std::bad_alloc
+
+&gt; Could you send me the debug.log?
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but  didn&#x27;t
+&gt;&gt; have much success yet. It always ends up taking all the  system&#x27;s
+&gt;&gt; memory and finally crashes. Could you please send me again  the
+&gt;&gt; latest 64 bit build of bitcoind, so I can see if the problem is
+&gt;&gt; about my build?
+&gt;&gt;</div></blockquote></article><article class="msg" id="m6">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-03T01:50:39Z">3 March 2010, 01:50 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-179" rel="nofollow noopener">original</a></span></header>
+<div class="t">I get the error regardless of the getinfo. Commenting out
+ThreadIRCSeed fixed the problem.</div><blockquote><div class="t">Does it still do it if you didn&#x27;t do getinfo?
+
+You could comment out the CreateThreads listed below, then re-enable
+them one at a time until it does it again.  Then we would know which
+thread the problem is in.
+
+net.cpp, under // Start threads
+    CreateThread(ThreadIRCSeed, NULL)
+    CreateThread(ThreadSocketHandler, NULL, true)
+    CreateThread(ThreadOpenConnections, NULL)
+    CreateThread(ThreadMessageHandler, NULL)
+
+init.cpp:
+    CreateThread(ThreadRPCServer, NULL);
+
+mmalmi@cc.hut.fi wrote:
+&gt; Here goes. I forgot to mention the crash error message:
+&gt;
+&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt; what():  std::bad_alloc
+&gt;
+&gt;&gt; Could you send me the debug.log?
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt; didn&#x27;t have much success yet. It always ends up taking all the
+&gt;&gt;&gt; system&#x27;s memory and finally crashes. Could you please send me
+&gt;&gt;&gt; again  the latest 64 bit build of bitcoind, so I can see if the
+&gt;&gt;&gt; problem is  about my build?
+&gt;&gt;&gt;
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-03T03:54:52Z">3 March 2010, 03:54 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-180" rel="nofollow noopener">original</a></span></header>
+<div class="t">That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to be
+either in ConnectSocket or RecvUntil.
+
+Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+
+Or you could run it in gdb and step through ThreadIRCSeed
+gdb --args bitcoin [switches]
+b ThreadIRCSeed
+run
+step
+or u to step over and up out of routines.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I get the error regardless of the getinfo. Commenting out ThreadIRCSeed
+fixed the problem.
+
+&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;
+&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt; them one at a time until it does it again.  Then we would know which
+&gt; thread the problem is in.
+&gt;
+&gt; net.cpp, under // Start threads
+&gt;     CreateThread(ThreadIRCSeed, NULL)
+&gt;     CreateThread(ThreadSocketHandler, NULL, true)
+&gt;     CreateThread(ThreadOpenConnections, NULL)
+&gt;     CreateThread(ThreadMessageHandler, NULL)
+&gt;
+&gt; init.cpp:
+&gt;     CreateThread(ThreadRPCServer, NULL);
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;
+&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt; what():  std::bad_alloc
+&gt;&gt;
+&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;
+&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt; didn&#x27;t have much success yet. It always ends up taking all the
+&gt;&gt;&gt;&gt; system&#x27;s memory and finally crashes. Could you please send me
+&gt;&gt;&gt;&gt; again  the latest 64 bit build of bitcoind, so I can see if the
+&gt;&gt;&gt;&gt; problem is  about my build?
+&gt;&gt;&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;&gt;</div></blockquote></article><article class="msg" id="m8">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-03T12:32:01Z">3 March 2010, 12:32 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-181" rel="nofollow noopener">original</a></span></header>
+<div class="t">debug.log attached</div><blockquote><div class="t">That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+be either in ConnectSocket or RecvUntil.
+
+Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+
+Or you could run it in gdb and step through ThreadIRCSeed
+gdb --args bitcoin [switches]
+b ThreadIRCSeed
+run
+step
+or u to step over and up out of routines.
+
+mmalmi@cc.hut.fi wrote:
+&gt; I get the error regardless of the getinfo. Commenting out
+&gt; ThreadIRCSeed fixed the problem.
+&gt;
+&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;
+&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt; thread the problem is in.
+&gt;&gt;
+&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;    CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;    CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;    CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;    CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;
+&gt;&gt; init.cpp:
+&gt;&gt;    CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;
+&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;  didn&#x27;t have much success yet. It always ends up taking all the
+&gt;&gt;&gt;&gt;&gt;    system&#x27;s memory and finally crashes. Could you please send
+&gt;&gt;&gt;&gt;&gt; me   again  the latest 64 bit build of bitcoind, so I can see
+&gt;&gt;&gt;&gt;&gt; if the   problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-03T17:15:28Z">3 March 2010, 17:15 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-182" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+only thing I can think of is if the socket is receiving a spew of
+characters.
+
+Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">debug.log attached
+
+&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt; be either in ConnectSocket or RecvUntil.
+&gt;
+&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;
+&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt; gdb --args bitcoin [switches]
+&gt; b ThreadIRCSeed
+&gt; run
+&gt; step
+&gt; or u to step over and up out of routines.
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;
+&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;
+&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;
+&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;    CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;    CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;    CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;    CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;
+&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;    CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;
+&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;  didn&#x27;t have much success yet. It always ends up taking all the
+&gt;&gt;&gt;&gt;&gt;&gt;    system&#x27;s memory and finally crashes. Could you please send
+&gt;&gt;&gt;&gt;&gt;&gt; me   again  the latest 64 bit build of bitcoind, so I can see if
+&gt;&gt;&gt;&gt;&gt;&gt; the   problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;&gt;</div></blockquote></article><article class="msg" id="m10">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-04T22:27:08Z">4 March 2010, 22:27 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-183" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s the debug.log. I stopped bitcoind before it took up all the memory.</div><blockquote><div class="t">It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+only thing I can think of is if the socket is receiving a spew of
+characters.
+
+Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+
+mmalmi@cc.hut.fi wrote:
+&gt; debug.log attached
+&gt;
+&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;
+&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;&gt;
+&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt; b ThreadIRCSeed
+&gt;&gt; run
+&gt;&gt; step
+&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;   CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;   CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;     didn&#x27;t have much success yet. It always ends up taking
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; all  the   system&#x27;s memory and finally crashes. Could you
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; please  send me   again  the latest 64 bit build of bitcoind,
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; so I  can see if the  problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg" id="m11">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-05T00:09:02Z">5 March 2010, 00:09 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-184" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s another test run debug.log I got when debugging with gdb. The
+program started eating memory after the debug line &quot;irc 8&quot; and within
+a few seconds crashed with &quot;terminate called after throwing an
+instance of &#x27;std::bad_alloc&#x27;&quot;.</div><blockquote><div class="t">It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+only thing I can think of is if the socket is receiving a spew of
+characters.
+
+Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+
+mmalmi@cc.hut.fi wrote:
+&gt; debug.log attached
+&gt;
+&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;
+&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;&gt;
+&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt; b ThreadIRCSeed
+&gt;&gt; run
+&gt;&gt; step
+&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;   CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;   CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;   CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;     didn&#x27;t have much success yet. It always ends up taking
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; all  the   system&#x27;s memory and finally crashes. Could you
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; please  send me   again  the latest 64 bit build of bitcoind,
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; so I  can see if the  problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg sat" id="m12">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-05T00:42:16Z">5 March 2010, 00:42 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-185" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s in util.c ParseString.  I&#x27;m guessing the problem is incompatibility
+between the type &quot;unsigned int&quot; and the type of str.npos, which is
+size_type.
+
+Try changing the two &quot;unsigned int&quot;s to &quot;size_type&quot;.
+
+old:
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+     unsigned int i1 = 0;
+     unsigned int i2;
+     do
+     {
+         i2 = str.find(c, i1);
+         v.push_back(str.substr(i1, i2-i1));
+         i1 = i2+1;
+     }
+     while (i2 != str.npos);
+}
+
+new:
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+     size_type i1 = 0;
+     size_type i2;
+     do
+     {
+         i2 = str.find(c, i1);
+         v.push_back(str.substr(i1, i2-i1));
+         i1 = i2+1;
+     }
+     while (i2 != str.npos);
+}</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Here&#x27;s another test run debug.log I got when debugging with gdb. The
+program started eating memory after the debug line &quot;irc 8&quot; and within a
+few seconds crashed with &quot;terminate called after throwing an instance of
+&#x27;std::bad_alloc&#x27;&quot;.
+
+&gt; It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+&gt; only thing I can think of is if the socket is receiving a spew of
+&gt; characters.
+&gt;
+&gt; Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; debug.log attached
+&gt;&gt;
+&gt;&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;&gt;
+&gt;&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;&gt;&gt;
+&gt;&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt;&gt; b ThreadIRCSeed
+&gt;&gt;&gt; run
+&gt;&gt;&gt; step
+&gt;&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;&gt;
+&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;     didn&#x27;t have much success yet. It always ends up taking all
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; the   system&#x27;s memory and finally crashes. Could you please
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; send me   again  the latest 64 bit build of bitcoind, so I  can
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; see if the  problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;&gt;</div></blockquote></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-05T00:54:40Z">5 March 2010, 00:54 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-186" rel="nofollow noopener">original</a></span></header>
+<div class="t">Actually, please try this instead, this is more correct:
+
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+     string::size_type i1 = 0;
+     string::size_type i2;
+     loop
+     {
+         i2 = str.find(c, i1);
+         if (i2 == str.npos)
+         {
+             v.push_back(str.substr(i1));
+             return;
+         }
+         v.push_back(str.substr(i1, i2-i1));
+         i1 = i2+1;
+     }
+}</div><blockquote><div class=qh>Satoshi Nakamoto wrote:</div><div class="t">It&#x27;s in util.c ParseString.  I&#x27;m guessing the problem is incompatibility
+between the type &quot;unsigned int&quot; and the type of str.npos, which is
+size_type.
+
+Try changing the two &quot;unsigned int&quot;s to &quot;size_type&quot;.
+
+old:
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+    unsigned int i1 = 0;
+    unsigned int i2;
+    do
+    {
+        i2 = str.find(c, i1);
+        v.push_back(str.substr(i1, i2-i1));
+        i1 = i2+1;
+    }
+    while (i2 != str.npos);
+}
+
+new:
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+    size_type i1 = 0;
+    size_type i2;
+    do
+    {
+        i2 = str.find(c, i1);
+        v.push_back(str.substr(i1, i2-i1));
+        i1 = i2+1;
+    }
+    while (i2 != str.npos);
+}
+
+mmalmi@cc.hut.fi wrote:
+&gt; Here&#x27;s another test run debug.log I got when debugging with gdb. The
+&gt; program started eating memory after the debug line &quot;irc 8&quot; and within
+&gt; a few seconds crashed with &quot;terminate called after throwing an
+&gt; instance of &#x27;std::bad_alloc&#x27;&quot;.
+&gt;
+&gt;&gt; It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+&gt;&gt; only thing I can think of is if the socket is receiving a spew of
+&gt;&gt; characters.
+&gt;&gt;
+&gt;&gt; Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; debug.log attached
+&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt;&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt;&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt;&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the
+&gt;&gt;&gt;&gt; debug.log.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt;&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt;&gt;&gt; b ThreadIRCSeed
+&gt;&gt;&gt;&gt; run
+&gt;&gt;&gt;&gt; step
+&gt;&gt;&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;     didn&#x27;t have much success yet. It always ends up taking
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; all  the   system&#x27;s memory and finally crashes. Could you
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; please  send me   again  the latest 64 bit build of bitcoind,
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; so I  can see if the  problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt;
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg" id="m14">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-03-05T01:33:34Z">5 March 2010, 01:33 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-187" rel="nofollow noopener">original</a></span></header>
+<div class="t">Great! Works fine now.</div><blockquote><div class="t">Actually, please try this instead, this is more correct:
+
+void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+{
+    string::size_type i1 = 0;
+    string::size_type i2;
+    loop
+    {
+        i2 = str.find(c, i1);
+        if (i2 == str.npos)
+        {
+            v.push_back(str.substr(i1));
+            return;
+        }
+        v.push_back(str.substr(i1, i2-i1));
+        i1 = i2+1;
+    }
+}
+
+Satoshi Nakamoto wrote:
+&gt; It&#x27;s in util.c ParseString.  I&#x27;m guessing the problem is
+&gt; incompatibility between the type &quot;unsigned int&quot; and the type of
+&gt; str.npos, which is size_type.
+&gt;
+&gt; Try changing the two &quot;unsigned int&quot;s to &quot;size_type&quot;.
+&gt;
+&gt; old:
+&gt; void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+&gt; {
+&gt;    unsigned int i1 = 0;
+&gt;    unsigned int i2;
+&gt;    do
+&gt;    {
+&gt;        i2 = str.find(c, i1);
+&gt;        v.push_back(str.substr(i1, i2-i1));
+&gt;        i1 = i2+1;
+&gt;    }
+&gt;    while (i2 != str.npos);
+&gt; }
+&gt;
+&gt; new:
+&gt; void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+&gt; {
+&gt;    size_type i1 = 0;
+&gt;    size_type i2;
+&gt;    do
+&gt;    {
+&gt;        i2 = str.find(c, i1);
+&gt;        v.push_back(str.substr(i1, i2-i1));
+&gt;        i1 = i2+1;
+&gt;    }
+&gt;    while (i2 != str.npos);
+&gt; }
+&gt;
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; Here&#x27;s another test run debug.log I got when debugging with gdb.
+&gt;&gt; The program started eating memory after the debug line &quot;irc 8&quot; and
+&gt;&gt;  within a few seconds crashed with &quot;terminate called after
+&gt;&gt; throwing  an instance of &#x27;std::bad_alloc&#x27;&quot;.
+&gt;&gt;
+&gt;&gt;&gt; It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+&gt;&gt;&gt; only thing I can think of is if the socket is receiving a spew of
+&gt;&gt;&gt; characters.
+&gt;&gt;&gt;
+&gt;&gt;&gt; Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+&gt;&gt;&gt;
+&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt; debug.log attached
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt;&gt;&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt;&gt;&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt;&gt;&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt;&gt;&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt;&gt;&gt;&gt; b ThreadIRCSeed
+&gt;&gt;&gt;&gt;&gt; run
+&gt;&gt;&gt;&gt;&gt; step
+&gt;&gt;&gt;&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt;&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;  CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;  CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;  CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;  CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;  CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger,
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; but    didn&#x27;t have much success yet. It always ends up
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; taking all  the   system&#x27;s memory and finally crashes.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Could you please  send me   again  the latest 64 bit build
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;  of bitcoind, so I  can see if the  problem is  about my
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg sat" id="m15">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-03-05T01:42:00Z">5 March 2010, 01:42 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-188" rel="nofollow noopener">original</a></span></header>
+<div class="t">I confirmed that ParseString has this problem, and uploaded the fixed
+util.cpp to SVN.
+
+string::npos == -1
+
+Comparing unsigned int -1 (0xffffffff) with long unsigned int -1
+(0xffffffffffffffff) results in the unsigned int being promoted to
+64-bit, which is 0x00000000ffffffff != 0xffffffffffffffff.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Here&#x27;s another test run debug.log I got when debugging with gdb. The
+program started eating memory after the debug line &quot;irc 8&quot; and within a
+few seconds crashed with &quot;terminate called after throwing an instance of
+&#x27;std::bad_alloc&#x27;&quot;.
+
+&gt; It&#x27;s in RecvUntil, but I still can&#x27;t see anything wrong with it.  The
+&gt; only thing I can think of is if the socket is receiving a spew of
+&gt; characters.
+&gt;
+&gt; Try this irc.cpp.  debug.log may grow rapidly so be ready to kill it.
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; debug.log attached
+&gt;&gt;
+&gt;&gt;&gt; That narrows it down a lot.  It didn&#x27;t print any IRC activity in
+&gt;&gt;&gt; debug.log, so I guess it couldn&#x27;t have gotten past the RecvUntil.
+&gt;&gt;&gt; Eyeballing it I don&#x27;t see anything obvious.  I guess it would have to
+&gt;&gt;&gt; be either in ConnectSocket or RecvUntil.
+&gt;&gt;&gt;
+&gt;&gt;&gt; Try it with the attached irc.cpp and net.cpp and send me the debug.log.
+&gt;&gt;&gt;
+&gt;&gt;&gt; Or you could run it in gdb and step through ThreadIRCSeed
+&gt;&gt;&gt; gdb --args bitcoin [switches]
+&gt;&gt;&gt; b ThreadIRCSeed
+&gt;&gt;&gt; run
+&gt;&gt;&gt; step
+&gt;&gt;&gt; or u to step over and up out of routines.
+&gt;&gt;&gt;
+&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt; I get the error regardless of the getinfo. Commenting out
+&gt;&gt;&gt;&gt; ThreadIRCSeed fixed the problem.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; Does it still do it if you didn&#x27;t do getinfo?
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; You could comment out the CreateThreads listed below, then re-enable
+&gt;&gt;&gt;&gt;&gt; them one at a time until it does it again.  Then we would know which
+&gt;&gt;&gt;&gt;&gt; thread the problem is in.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; net.cpp, under // Start threads
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadIRCSeed, NULL)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadSocketHandler, NULL, true)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadOpenConnections, NULL)
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadMessageHandler, NULL)
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; init.cpp:
+&gt;&gt;&gt;&gt;&gt;   CreateThread(ThreadRPCServer, NULL);
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; Here goes. I forgot to mention the crash error message:
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt; terminate called after throwing an instance of &#x27;std::bad_alloc&#x27;
+&gt;&gt;&gt;&gt;&gt;&gt; what():  std::bad_alloc
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Could you send me the debug.log?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; I tried debugging my build of bitcoind with ddd debugger, but
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;     didn&#x27;t have much success yet. It always ends up taking all
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; the   system&#x27;s memory and finally crashes. Could you please
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; send me   again  the latest 64 bit build of bitcoind, so I  can
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; see if the  problem is  about my build?
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt;
+&gt;&gt;
+&gt;&gt;
+&gt;&gt;</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x63-non-gui-option/">← Non-GUI option</a><a rel="next" href="../../conversations/x66-blog/">Blog →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

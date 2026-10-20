@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Version 0.3.10 - block 74638 overflow PATCH! – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 15 August 2010: Version 0.3.10 patches the block 74638 overflow bug. http://bitcointalk.org/index.php?topic=823 The Linux version…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p186-version-0-3-10-block-74638-overflow-patch/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Version 0.3.10 - block 74638 overflow PATCH! – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 15 August 2010: Version 0.3.10 patches the block 74638 overflow bug. http://bitcointalk.org/index.php?topic=823 The Linux version…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p186-version-0-3-10-block-74638-overflow-patch/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Version 0.3.10 - block 74638 overflow PATCH! – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 15 August 2010: Version 0.3.10 patches the block 74638 overflow bug. http://bitcointalk.org/index.php?topic=823 The Linux version…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Version 0.3.10 - block 74638 overflow PATCH!", "url": "https://satoshimail.pages.dev/conversations/p186-version-0-3-10-block-74638-overflow-patch/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T23:48:22Z", "text": "Version 0.3.10 patches the block 74638 overflow bug. http://bitcointalk.org/index.php?topic=823 The Linux version includes tcatm's 4-way SSE2 SHA-256 that makes generating faster on i5, i7 (with hyperthreading) and AMD CPU's. Try the \"-4way\" switch to enable it and check if it's faster for you. Download from sourceforge: http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.10/ SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip SHA1 e3fda1ddb31b0d5c35156cacd80dee6ea6ae6423 bitcoin-0.3.10-linux.tar.gz SHA1 b812ccff4881778b9090f7c0b0255bcba7b078ac bitcoin-0.3.10-macosx.zip It is no longer necessary to delete blk*.dat. The good block chain has overtaken the bad block chain, so you can just upgrade and it'll automatically reorg away the bad block chain.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": []}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Version 0.3.10 - block 74638 overflow PATCH!", "item": "https://satoshimail.pages.dev/conversations/p186-version-0-3-10-block-74638-overflow-patch/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p186">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Version 0.3.10 - block 74638 overflow PATCH!</span></div></nav>
+<main class="in">
+<h1>Version 0.3.10 - block 74638 overflow PATCH!</h1>
+<p class="lead">BitcoinTalk forum · 1 message · from 15 August 2010 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-p186">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/186/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:48:22Z">15 August 2010, 23:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=827.msg9590#msg9590" rel="nofollow noopener">original</a></span></header>
+<div class="t">Version 0.3.10 patches the block 74638 overflow bug.   <a href="http://bitcointalk.org/index.php?topic=823" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=823</a>
+
+The Linux version includes tcatm&#x27;s 4-way SSE2 SHA-256 that makes generating faster on i5, i7 (with hyperthreading) and AMD CPU&#x27;s.  Try the &quot;-4way&quot; switch to enable it and check if it&#x27;s faster for you. 
+
+Download from sourceforge:
+<a href="http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.10/" rel="nofollow noopener">http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.10/</a>
+
+SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe
+SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip
+SHA1 e3fda1ddb31b0d5c35156cacd80dee6ea6ae6423 bitcoin-0.3.10-linux.tar.gz
+SHA1 b812ccff4881778b9090f7c0b0255bcba7b078ac bitcoin-0.3.10-macosx.zip
+
+It is no longer necessary to delete blk*.dat.  The good block chain has overtaken the bad block chain, so you can just upgrade and it&#x27;ll automatically reorg away the bad block chain.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/value-overflow-incident/">Value overflow incident</a> <span class="muted">The August 2010 bug that created over 184 billion bitcoins, fixed within hours.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p185-overflow-bug-serious/">← overflow bug SERIOUS</a><a rel="next" href="../../conversations/p187-0-3-10-1-question-on-where-block-should-be/">0.3.10.1 Question on where block should be →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

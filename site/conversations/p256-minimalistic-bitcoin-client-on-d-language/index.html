@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>minimalistic bitcoin client on D language? – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 11 December 2010: That means a lot coming from you, Hal. Thanks.">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p256-minimalistic-bitcoin-client-on-d-language/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="minimalistic bitcoin client on D language? – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 11 December 2010: That means a lot coming from you, Hal. Thanks.">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p256-minimalistic-bitcoin-client-on-d-language/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="minimalistic bitcoin client on D language? – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 11 December 2010: That means a lot coming from you, Hal. Thanks.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "minimalistic bitcoin client on D language?", "url": "https://satoshimail.pages.dev/conversations/p256-minimalistic-bitcoin-client-on-d-language/", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-12-10T09:22:33Z", "text": "I think to start writing a minimalistic bitcoin client on D language. Do you think this makes sense?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "grondilu"}, "datePublished": "2010-12-10T09:28:08Z", "text": "The more implementations we have, the better. Unfortunately, writting a client is no easy task. Satoshi's code is far from from trivial."}, {"@type": "Comment", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-12-10T10:27:16Z", "text": "Maybe then wait bitdns? I'm just bored and a want to write a code"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-12-10T10:37:03Z", "text": "If you're bored you should learn some Ruby it's really sweet !"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cryptoman"}, "datePublished": "2010-12-10T15:26:33Z", "text": "+1 on Ruby. Didn't someone recently write a Ruby interface to bitcoind?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-12-10T15:29:05Z", "text": "I wrote a bitcoin daemon wrapper in Ruby Fully extensible since it's heavily based on method missing EDIT : Made it for Rails so it includes a lovely initializer and a sweet yml configuration file"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-12-10T17:11:11Z", "text": "I do not like ruby, python, perl or java Angry"}, {"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-12-10T17:13:12Z", "text": "You want to re-implement the entire client? Why make a convenient wrapper around the JSON API? That's much easier and just as useful."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cryptoman"}, "datePublished": "2010-12-10T17:27:21Z", "text": "I'll have to spend some time playing with it over the winter break. Any thoughts on keeping a server running bitcoind relatively secure? It seems like having a wallet.dat file on a publicly-accessible server is an accident waiting to happen."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cryptoman"}, "datePublished": "2010-12-10T17:30:06Z", "text": "Well, I don't like C or Java or anything else that uses braces. Tongue"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-12-10T20:33:55Z", "text": "I don't like IndentationErrors Not gonna criticize what I don't know I'll leave you the bob = new InstanceLocatorFactoryProxyWrapper<GenericInstanceBuilder>(); Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-12-10T20:53:36Z", "text": "It's pointless, I think. There is may be a \"multidimensional\" result. Use jsawk: $ ./bitcoin listreceivedbylabel | jsawk -n 'out(this.label+\" \"+this.amount+\" \"+this.confirmations)' user_id:1080 106 5189 user_id:1081 0.05 5557 user_id:1083 2.89 2800 user_id:1087 500 5276 user_id:1105 0.4 462 user_id:1109 0.1 922 user_id:1110 0.04 431"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-12-10T21:01:04Z", "text": "It's just not as fun ! Cheesy I would love a ruby bitcoin client so much !!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "farmer_boy"}, "datePublished": "2010-12-10T22:43:43Z", "text": "Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ribuck"}, "datePublished": "2010-12-10T23:04:41Z", "text": "I bet you're also shocked by what restaurant kitchens look like, and by what goes into sausages."}, {"@type": "Comment", "author": {"@type": "Person", "name": "farmer_boy"}, "datePublished": "2010-12-10T23:19:10Z", "text": "No, I happen to be aware of that, and that's why I usually try to eat at places with a semi-open kitchen. The cryptography code that competent people use, doesn't look like a mess, btw. That 99% of the world uses this kind of obfuscated cryptography only shows that users don't know what they use. Have you ever looked at TrueCrypt for example? It's the exact same kind of mess."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cdecker"}, "datePublished": "2010-12-11T01:19:33Z", "text": "Here we are with the Language war once again. Please just stop! As for the topic, yes please get an alternative implementation started, the more the merrier Smiley Maybe some good code actually makes it out there, helping future generations of clients to build on top of your code. +1 on the D implementation (I'm starting a Java one in the holidays)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Hal"}, "datePublished": "2010-12-11T20:08:45Z", "text": "I'd like to hear some specific criticisms of the code. To me it looks like an impressive job, although I'd wish for more comments. Now I've mostly studied the init, main, script and a bit of net modules. This is some powerful machinery."}, {"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-12-11T20:11:04Z", "text": "Can you be more specific? What exactly makes it a 'mess'?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "chaord"}, "datePublished": "2010-12-11T20:11:28Z", "text": "+1 on scala if you're bored Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "grondilu"}, "datePublished": "2010-12-11T21:25:51Z", "text": "I agree. Actually I'm amazed this is the product of only one person's work."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ribuck"}, "datePublished": "2010-12-11T21:46:14Z", "text": "It's easy to complain about code. But unless a person can show that they did something better, they have no moral authority to complain."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-12-11T22:07:04Z", "text": "That means a lot coming from you, Hal. Thanks."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "minimalistic bitcoin client on D language?", "item": "https://satoshimail.pages.dev/conversations/p256-minimalistic-bitcoin-client-on-d-language/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p256">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">minimalistic bitcoin client on D language?</span></div></nav>
+<main class="in">
+<h1>minimalistic bitcoin client on D language?</h1>
+<p class="lead">BitcoinTalk forum · 23 messages · from 10 December 2010 · with Cdecker, Cryptoman, Hal, Satoshi Nakamoto, bitcoinex, chaord…</p>
+<p class="actions"><a class="btn" href="../../#t-p256">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/256/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-12-10T09:22:33Z">10 December 2010, 09:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28818#msg28818" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think to start writing a minimalistic bitcoin client on D language. Do you think this makes sense?</div></article><article class="msg" id="m1">
+<header><b>grondilu</b><span class="muted"> · <time datetime="2010-12-10T09:28:08Z">10 December 2010, 09:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28819#msg28819" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bitcoinex on December 10, 2010, 09:22:33 AM</div><div class="t">I think to start writing a minimalistic bitcoin client on D language. Do you think this makes sense?</div></blockquote><div class="t">The more implementations we have, the better.
+
+Unfortunately, writting a client is no easy task.   Satoshi&#x27;s code is far from from trivial.</div></article><article class="msg" id="m2">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-12-10T10:27:16Z">10 December 2010, 10:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28826#msg28826" rel="nofollow noopener">original</a></span></header>
+<div class="t">Maybe then wait bitdns?
+
+I&#x27;m just bored and a want to write a code</div></article><article class="msg" id="m3">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-12-10T10:37:03Z">10 December 2010, 10:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28829#msg28829" rel="nofollow noopener">original</a></span></header>
+<div class="t">If you&#x27;re bored you should learn some Ruby it&#x27;s really sweet !</div></article><article class="msg" id="m4">
+<header><b>Cryptoman</b><span class="muted"> · <time datetime="2010-12-10T15:26:33Z">10 December 2010, 15:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28885#msg28885" rel="nofollow noopener">original</a></span></header>
+<div class="t">+1 on Ruby.  Didn&#x27;t someone recently write a Ruby interface to bitcoind?</div></article><article class="msg" id="m5">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-12-10T15:29:05Z">10 December 2010, 15:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28886#msg28886" rel="nofollow noopener">original</a></span></header>
+<div class="t">I wrote a bitcoin daemon wrapper in Ruby
+Fully extensible since it&#x27;s heavily based on method missing
+
+EDIT : Made it for Rails so it includes a lovely initializer and a sweet yml configuration file</div></article><article class="msg" id="m6">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-12-10T17:11:11Z">10 December 2010, 17:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28906#msg28906" rel="nofollow noopener">original</a></span></header>
+<div class="t">I do not like ruby, python, perl or java  Angry</div></article><article class="msg" id="m7">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-12-10T17:13:12Z">10 December 2010, 17:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28908#msg28908" rel="nofollow noopener">original</a></span></header>
+<div class="t">You want to re-implement the entire client?
+
+Why make a convenient wrapper around the JSON API? That&#x27;s much easier and just as useful.</div></article><article class="msg" id="m8">
+<header><b>Cryptoman</b><span class="muted"> · <time datetime="2010-12-10T17:27:21Z">10 December 2010, 17:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28916#msg28916" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davout on December 10, 2010, 03:29:05 PM</div><div class="t">I wrote a bitcoin daemon wrapper in Ruby
+Fully extensible since it&#x27;s heavily based on method missing
+
+EDIT : Made it for Rails so it includes a lovely initializer and a sweet yml configuration file</div></blockquote><div class="t">I&#x27;ll have to spend some time playing with it over the winter break.  Any thoughts on keeping a server running bitcoind relatively secure?  It seems like having a wallet.dat file on a publicly-accessible server is an accident waiting to happen.</div></article><article class="msg" id="m9">
+<header><b>Cryptoman</b><span class="muted"> · <time datetime="2010-12-10T17:30:06Z">10 December 2010, 17:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28918#msg28918" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bitcoinex on December 10, 2010, 05:11:11 PM</div><div class="t">I do not like ruby, python, perl or java  Angry</div></blockquote><div class="t">Well, I don&#x27;t like C or Java or anything else that uses braces.  Tongue</div></article><article class="msg" id="m10">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-12-10T20:33:55Z">10 December 2010, 20:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28968#msg28968" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bitcoinex on December 10, 2010, 05:11:11 PM</div><div class="t">python</div></blockquote><div class="t">I don&#x27;t like IndentationErrors</div><blockquote><div class=qh>Quote from: bitcoinex on December 10, 2010, 05:11:11 PM</div><div class="t">perl</div></blockquote><div class="t">Not gonna criticize what I don&#x27;t know</div><blockquote><div class=qh>Quote from: bitcoinex on December 10, 2010, 05:11:11 PM</div><div class="t">or java  Angry</div></blockquote><div class="t">I&#x27;ll leave you the bob = new InstanceLocatorFactoryProxyWrapper&lt;GenericInstanceBuilder&gt;();
+
+Smiley</div></article><article class="msg" id="m11">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-12-10T20:53:36Z">10 December 2010, 20:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28976#msg28976" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: witchspace on December 10, 2010, 05:13:12 PM</div><div class="t">You want to re-implement the entire client?
+
+Why make a convenient wrapper around the JSON API? That&#x27;s much easier and just as useful.</div></blockquote><div class="t">It&#x27;s pointless, I think. There is may be a &quot;multidimensional&quot; result.
+
+Use jsawk:</div><pre><code>$ ./bitcoin listreceivedbylabel | jsawk -n &#x27;out(this.label+&quot; &quot;+this.amount+&quot; &quot;+this.confirmations)&#x27;
+user_id:1080 106 5189
+user_id:1081 0.05 5557
+user_id:1083 2.89 2800
+user_id:1087 500 5276
+user_id:1105 0.4 462
+user_id:1109 0.1 922
+user_id:1110 0.04 431</code></pre></article><article class="msg" id="m12">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-12-10T21:01:04Z">10 December 2010, 21:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg28979#msg28979" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: witchspace on December 10, 2010, 05:13:12 PM</div><div class="t">You want to re-implement the entire client?
+
+Why make a convenient wrapper around the JSON API? That&#x27;s much easier and just as useful.</div></blockquote><div class="t">It&#x27;s just not as fun ! Cheesy
+I would love a ruby bitcoin client so much !!</div></article><article class="msg" id="m13">
+<header><b>farmer_boy</b><span class="muted"> · <time datetime="2010-12-10T22:43:43Z">10 December 2010, 22:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29020#msg29020" rel="nofollow noopener">original</a></span></header>
+<div class="t">Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this. </div></article><article class="msg" id="m14">
+<header><b>ribuck</b><span class="muted"> · <time datetime="2010-12-10T23:04:41Z">10 December 2010, 23:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29025#msg29025" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: farmer_boy on December 10, 2010, 10:43:43 PM</div><div class="t">Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this.</div></blockquote><div class="t">I bet you&#x27;re also shocked by what restaurant kitchens look like, and by what goes into sausages.</div></article><article class="msg" id="m15">
+<header><b>farmer_boy</b><span class="muted"> · <time datetime="2010-12-10T23:19:10Z">10 December 2010, 23:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29027#msg29027" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: ribuck on December 10, 2010, 11:04:41 PM</div><div class="t">&gt; Quote from: farmer_boy on December 10, 2010, 10:43:43 PM
+&gt; Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this.
+
+I bet you&#x27;re also shocked by what restaurant kitchens look like, and by what goes into sausages.</div></blockquote><div class="t">No, I happen to be aware of that, and that&#x27;s why I usually try to eat at places with a semi-open kitchen.
+
+The cryptography code that competent people use, doesn&#x27;t look like a mess, btw. That 99% of the world uses this kind of obfuscated cryptography only shows that users don&#x27;t know what they use. Have you ever looked at TrueCrypt for example? It&#x27;s the exact same kind of mess.</div></article><article class="msg" id="m16">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-12-11T01:19:33Z">11 December 2010, 01:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29047#msg29047" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here we are with the Language war once again. Please just stop!
+
+As for the topic, yes please get an alternative implementation started, the more the merrier Smiley
+Maybe some good code actually makes it out there, helping future generations of clients to build on top of your code.
+
++1 on the D implementation (I&#x27;m starting a Java one in the holidays)</div></article><article class="msg" id="m17">
+<header><b>Hal</b><span class="muted"> · <time datetime="2010-12-11T20:08:45Z">11 December 2010, 20:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29223#msg29223" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: farmer_boy on December 10, 2010, 10:43:43 PM</div><div class="t">Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this.</div></blockquote><div class="t">I&#x27;d like to hear some specific criticisms of the code. To me it looks like an impressive job, although I&#x27;d wish for more comments. Now I&#x27;ve mostly studied the init, main, script and a bit of net modules. This is some powerful machinery.</div></article><article class="msg" id="m18">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-12-11T20:11:04Z">11 December 2010, 20:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29225#msg29225" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: farmer_boy on December 10, 2010, 10:43:43 PM</div><div class="t">Another client is useful, especially since the current Bitcoin client is a big mess. I was *shocked* that cryptography code looked like this.</div></blockquote><div class="t">Can you be more specific? What exactly makes it a &#x27;mess&#x27;?</div></article><article class="msg" id="m19">
+<header><b>chaord</b><span class="muted"> · <time datetime="2010-12-11T20:11:28Z">11 December 2010, 20:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29226#msg29226" rel="nofollow noopener">original</a></span></header>
+<div class="t">+1 on scala if you&#x27;re bored Wink</div></article><article class="msg" id="m20">
+<header><b>grondilu</b><span class="muted"> · <time datetime="2010-12-11T21:25:51Z">11 December 2010, 21:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29246#msg29246" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Hal on December 11, 2010, 08:08:45 PM</div><div class="t">I&#x27;d like to hear some specific criticisms of the code. To me it looks like an impressive job, although I&#x27;d wish for more comments. Now I&#x27;ve mostly studied the init, main, script and a bit of net modules. This is some powerful machinery.</div></blockquote><div class="t">I agree.  Actually I&#x27;m amazed this is the product of only one person&#x27;s work.</div></article><article class="msg" id="m21">
+<header><b>ribuck</b><span class="muted"> · <time datetime="2010-12-11T21:46:14Z">11 December 2010, 21:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29253#msg29253" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s easy to complain about code. But unless a person can show that they did something better, they have no moral authority to complain.</div></article><article class="msg sat" id="m22">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-12-11T22:07:04Z">11 December 2010, 22:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=2188.msg29259#msg29259" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Hal on December 11, 2010, 08:08:45 PM</div><div class="t">I&#x27;d like to hear some specific criticisms of the code. To me it looks like an impressive job, although I&#x27;d wish for more comments. Now I&#x27;ve mostly studied the init, main, script and a bit of net modules. This is some powerful machinery.</div></blockquote><div class="t">That means a lot coming from you, Hal.  Thanks.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/hal-finney/">Hal Finney</a> <span class="muted">Cypherpunk who ran Bitcoin from its first release and received its first transaction.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p255-fees-in-bitdns-confusion/">← Fees in BitDNS confusion</a><a rel="next" href="../../conversations/p257-accounts-example-code/">Accounts example code →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

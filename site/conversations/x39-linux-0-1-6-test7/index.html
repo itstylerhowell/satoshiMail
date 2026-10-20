@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>linux-0.1.6-test7 – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 17 November 2009: test 7: Backup your data directory before running this, just in case. Workaround for the Db::open/Db::close &quot;Bad file…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x39-linux-0-1-6-test7/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="linux-0.1.6-test7 – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 17 November 2009: test 7: Backup your data directory before running this, just in case. Workaround for the Db::open/Db::close &quot;Bad file…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x39-linux-0-1-6-test7/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="linux-0.1.6-test7 – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 17 November 2009: test 7: Backup your data directory before running this, just in case. Workaround for the Db::open/Db::close &quot;Bad file…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "linux-0.1.6-test7", "url": "https://satoshimail.pages.dev/conversations/x39-linux-0-1-6-test7/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-17T03:41:26Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-17T03:41:26Z", "text": "test 7: Backup your data directory before running this, just in case. Workaround for the Db::open/Db::close \"Bad file descriptor\" exception. Might also make the initial block download faster. The workaround is to open the database handles and keep them open for the duration of the program, which is actually the more common thing to do anyway. If we're not closing and opening all the time, the error shouldn't get a chance to happen. The one exception is wallet.dat, which I still close after…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-18T04:35:32Z", "text": "Finally an easy one. I see a way that could happen on a long operation such as the initial download. The TryLock bug is unrelated to the db stuff. Fix will be in test8. I've been able to reproduce the db::open/close exception 3 times now on 32-bit linux by hitting it with a continuous flood of non-stop requests. It looks like even periodically closing the wallet.dat database to flush it gets the db::close exceptions. I'm disabling the wallet flush feature on Linux. On Linux we'll never close a…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "linux-0.1.6-test7", "item": "https://satoshimail.pages.dev/conversations/x39-linux-0-1-6-test7/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x39">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">linux-0.1.6-test7</span></div></nav>
+<main class="in">
+<h1>linux-0.1.6-test7</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 2 messages · from 17 November 2009 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x39">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-17T03:41:26Z">17 November 2009, 03:41 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-91" rel="nofollow noopener">original</a></span></header>
+<div class="t">test 7:
+
+Backup your data directory before running this, just in case.
+
+Workaround for the Db::open/Db::close &quot;Bad file descriptor&quot; exception.
+Might also make the initial block download faster.  The workaround is to
+open the database handles and keep them open for the duration of the
+program, which is actually the more common thing to do anyway.  If we&#x27;re
+not closing and opening all the time, the error shouldn&#x27;t get a chance
+to happen.
+
+The one exception is wallet.dat, which I still close after writing is
+finished so I can flush the transaction logs into the dat file, making
+the dat file standalone.  That way if someone does a backup while
+Bitcoin is running, they&#x27;ll get a wallet.dat that is valid by itself
+without the database transaction logs.
+
+This is a restructuring of the database handling, so we might find some
+new deadlocks.  Usually if it deadlocks, either the UI will stop
+repainting, or it&#x27;ll stop using CPU even though it still says Generating.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-18T04:35:32Z">18 November 2009, 04:35 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-95" rel="nofollow noopener">original</a></span></header>
+<div class="t">Finally an easy one.  I see a way that could happen on a long operation
+such as the initial download.  The TryLock bug is unrelated to the db
+stuff.  Fix will be in test8.
+
+I&#x27;ve been able to reproduce the db::open/close exception 3 times now on
+32-bit linux by hitting it with a continuous flood of non-stop requests.
+  It looks like even periodically closing the wallet.dat database to
+flush it gets the db::close exceptions.  I&#x27;m disabling the wallet flush
+feature on Linux.  On Linux we&#x27;ll never close a database handle until
+we&#x27;re ready to exit.  So far with this disabled, no exceptions.
+
+I&#x27;m also implementing the orderly initial block download.  Instead of
+naively requesting all the blocks at once, it&#x27;ll request batches of 500
+at a time.  This way, it&#x27;ll receive the blocks before the retry timeout,
+so it shouldn&#x27;t go requesting it from other nodes unless it actually
+doesn&#x27;t receive them or it&#x27;s too slow.  The change is in the requestee&#x27;s
+side, so this functionality won&#x27;t be visible until your initial block
+download is coming from a node that has the new version.
+
+I&#x27;m going to test this some more before sending test8.</div><blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">I started with a fresh data directory with test7. Blocks started to
+download much faster. It only took about 15 seconds where it took a few
+minutes previously with the Linux build. It crashed once while it was
+downloading blocks with the following message in the terminal.
+
+../include/wx/thrimpl.cpp(50): assert &quot;m_internal&quot; failed in TryLock():
+wxMutex::TryLock(): not initialized [in child thread]
+Trace/breakpoint trap
+
+I&#x27;ve included my log file, but I forgot to back it up before restarting
+bitcoin, so I&#x27;m not sure at what point in the log file the crash occurred.
+
+Fortunately I haven&#x27;t encountered the segmentation fault yet. The
+frequency of segmentation faults in the previous builds varied quite a
+bit, so I&#x27;ll keep running it and let you know if i run into any problems.
+
+On Tue, Nov 17, 2009 at 5:41 AM, Satoshi Nakamoto &lt;satoshin@gmx.com
+&lt;mailto:satoshin@gmx.com&gt;&gt; wrote:
+
+    test 7:
+
+    Backup your data directory before running this, just in case.
+
+    Workaround for the Db::open/Db::close &quot;Bad file descriptor&quot;
+    exception. Might also make the initial block download faster.  The
+    workaround is to open the database handles and keep them open for
+    the duration of the program, which is actually the more common thing
+    to do anyway.  If we&#x27;re not closing and opening all the time, the
+    error shouldn&#x27;t get a chance to happen.
+
+    The one exception is wallet.dat, which I still close after writing
+    is finished so I can flush the transaction logs into the dat file,
+    making the dat file standalone.  That way if someone does a backup
+    while Bitcoin is running, they&#x27;ll get a wallet.dat that is valid by
+    itself without the database transaction logs.
+
+    This is a restructuring of the database handling, so we might find
+    some new deadlocks.  Usually if it deadlocks, either the UI will
+    stop repainting, or it&#x27;ll stop using CPU even though it still says
+    Generating.</div></blockquote></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x38-re-db-open-db-close-bad-file-descriptor-exception/">← Re: Db::open/Db::close &quot;Bad file descriptor&quot; exception</a><a rel="next" href="../../conversations/x40-smf-forum-need-a-mod-installed/">SMF forum, need a mod installed →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

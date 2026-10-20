@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>New getwork – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 23 November 2010: I uploaded a redesign of m0mchil&#x27;s getwork to SVN rev 189 (version 31601) m0mchil&#x27;s external bitcoin miner idea has…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p246-new-getwork/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="New getwork – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 23 November 2010: I uploaded a redesign of m0mchil&#x27;s getwork to SVN rev 189 (version 31601) m0mchil&#x27;s external bitcoin miner idea has…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p246-new-getwork/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="New getwork – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 November 2010: I uploaded a redesign of m0mchil&#x27;s getwork to SVN rev 189 (version 31601) m0mchil&#x27;s external bitcoin miner idea has…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "New getwork", "url": "https://satoshimail.pages.dev/conversations/p246-new-getwork/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-23T19:50:12Z", "text": "I uploaded a redesign of m0mchil's getwork to SVN rev 189 (version 31601) m0mchil's external bitcoin miner idea has solved a lot of problems. GPU programming is immature and hard to compile, and I didn't want to add additional dependencies to the build. getwork allows these problems to be solved separately, with different programs for different hardware and OSes. It's also convenient that server farms can run a single Bitcoin node and the rest only run getwork clients. The interface has a few changes: getwork [data] If [data] is not specified, returns formatted hash data to work on: \"midstate\" : precomputed hash state after hashing the first half of the data \"data\" : block data \"hash1\" : formatted hash buffer for second hash \"target\" : little endian hash target If [data] is specified, tries to solve the block and returns true if it was successful. [data] is the same 128 byte block data that was returned in the \"data\" field, but with the nonce changed. Notes: - It does not return work when you submit a possible hit, only when called without parameter. - The block field has been separated into data and hash1. - data is 128 bytes, which includes the first half that's already hashed by midstate. - hash1 is always the same, but included for convenience. - Logging of \"ThreadRPCServer method=getwork\" is disabled, it would be too much junk in the log.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-11-23T20:11:20Z", "text": "Nice, that will save a lot of patching Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-11-23T20:42:34Z", "text": "That's really nice. Will it be a drop-in replacement a patched client already used by GPU miners ?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-11-23T20:43:52Z", "text": "I understand the use case for external miners, but I rather like the all-in-one approach. Will I still be able to compile in my own mining code? I really enjoyed the revamped interface you introduced some time ago, and would very much like to keep on using it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-23T20:55:27Z", "text": "It's not an exact drop-in replacement. I wanted to clean up the interface a little. It only requires a few changes. ScanHash_ functions aren't going away. BTW, the interface of this is designed to mirror the parameters of that (midstate, data, hash1)."}, {"@type": "Comment", "author": {"@type": "Person", "name": "davout"}, "datePublished": "2010-11-23T22:39:07Z", "text": "Btw satoshi, you should give a shot at git, it's so much better than svn, especially with lots of patches and forks going around =)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-23T22:46:05Z", "text": "Fantastic stuff, this eliminates one of my patches completely. I am also tempted to work on an external CPU miner..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-24T04:47:42Z", "text": "Just started working on a simple CPU miner in C, mainly as a demonstration, and to understand 'getwork'. Repository is at git://github.com/jgarzik/cpuminer.git Implementation is complete... but it does not work, so don't get too excited. I suspect something weird going on with ByteReverse (or lack thereof). It's quite unclear whether or not 'data' and 'nonce' must be byte-reversed, and in what way."}, {"@type": "Comment", "author": {"@type": "Person", "name": "DiabloD3"}, "datePublished": "2010-11-24T11:31:11Z", "text": "Satoshi, please fix your implementation of getwork so it complies with m0mchill's specification"}, {"@type": "Comment", "author": {"@type": "Person", "name": "m0mchil"}, "datePublished": "2010-11-24T11:56:34Z", "text": "No need to do this, I'll change the miner to comply. I am just a little busy right now."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-24T17:21:01Z", "text": "getwork does the byte-reversing. midstate, data and hash1 are already big-endian, and you pass data back still big-endian, so you work in big-endian and don't have to do any byte-reversing. They're the same data that is passed to the ScanHash_ functions. You can take midstate, data and hash1, put them in 16-byte aligned buffers and pass them to a ScanHash_ function, like ScanHash(pmidstate, pdata + 64, phash1, nHashesDone). If a nonce is found, patch it into data and call getwork. I should…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-25T00:46:34Z", "text": "Figured out the problem. My sha256 algo was byteswapping the input into big endian, when it was already big endian. First version of this new CPU miner now described here: http://bitcointalk.org/index.php?topic=1925.0"}, {"@type": "Comment", "author": {"@type": "Person", "name": "DiabloD3"}, "datePublished": "2010-11-26T21:17:07Z", "text": "It would be immensely useful if you'd return if what I sent to the client actually was an actual hit. It makes it easier to debug issues in miners due to sanity checking."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-26T21:31:13Z", "text": "That's what it does, it returns true/false."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "New getwork", "item": "https://satoshimail.pages.dev/conversations/p246-new-getwork/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p246">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">New getwork</span></div></nav>
+<main class="in">
+<h1>New getwork</h1>
+<p class="lead">BitcoinTalk forum · 14 messages · from 23 November 2010 · with DiabloD3, Satoshi Nakamoto, davout, jgarzik, m0mchil, nelisky…</p>
+<p class="actions"><a class="btn" href="../../#t-p246">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/246/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-23T19:50:12Z">23 November 2010, 19:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23876#msg23876" rel="nofollow noopener">original</a></span></header>
+<div class="t">I uploaded a redesign of m0mchil&#x27;s getwork to SVN rev 189 (version 31601)
+
+m0mchil&#x27;s external bitcoin miner idea has solved a lot of problems.  GPU programming is immature and hard to compile, and I didn&#x27;t want to add additional dependencies to the build.  getwork allows these problems to be solved separately, with different programs for different hardware and OSes.  It&#x27;s also convenient that server farms can run a single Bitcoin node and the rest only run getwork clients.
+
+The interface has a few changes:
+
+getwork [data]
+If [data] is not specified, returns formatted hash data to work on:
+  &quot;midstate&quot; : precomputed hash state after hashing the first half of the data
+  &quot;data&quot; : block data
+  &quot;hash1&quot; : formatted hash buffer for second hash
+  &quot;target&quot; : little endian hash target
+If [data] is specified, tries to solve the block and returns true if it was successful.  [data] is the same 128 byte block data that was returned in the &quot;data&quot; field, but with the nonce changed.
+
+Notes:
+- It does not return work when you submit a possible hit, only when called without parameter.
+- The block field has been separated into data and hash1.
+- data is 128 bytes, which includes the first half that&#x27;s already hashed by midstate.
+- hash1 is always the same, but included for convenience.
+- Logging of &quot;ThreadRPCServer method=getwork&quot; is disabled, it would be too much junk in the log.</div></article><article class="msg" id="m1">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-11-23T20:11:20Z">23 November 2010, 20:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23882#msg23882" rel="nofollow noopener">original</a></span></header>
+<div class="t">Nice, that will save a lot of patching Smiley</div></article><article class="msg" id="m2">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-11-23T20:42:34Z">23 November 2010, 20:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23889#msg23889" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s really nice.
+Will it be a drop-in replacement a patched client already used by GPU miners ?</div></article><article class="msg" id="m3">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-11-23T20:43:52Z">23 November 2010, 20:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23890#msg23890" rel="nofollow noopener">original</a></span></header>
+<div class="t">I understand the use case for external miners, but I rather like the all-in-one approach. Will I still be able to compile in my own mining code? I really enjoyed the revamped interface you introduced some time ago, and would very much like to keep on using it.</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-23T20:55:27Z">23 November 2010, 20:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23891#msg23891" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s not an exact drop-in replacement.  I wanted to clean up the interface a little.  It only requires a few changes.
+
+ScanHash_ functions aren&#x27;t going away.  BTW, the interface of this is designed to mirror the parameters of that (midstate, data, hash1).</div></article><article class="msg" id="m5">
+<header><b>davout</b><span class="muted"> · <time datetime="2010-11-23T22:39:07Z">23 November 2010, 22:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23917#msg23917" rel="nofollow noopener">original</a></span></header>
+<div class="t">Btw satoshi, you should give a shot at git, it&#x27;s so much better than svn, especially with lots of patches and forks going around =)</div></article><article class="msg" id="m6">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-23T22:46:05Z">23 November 2010, 22:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg23920#msg23920" rel="nofollow noopener">original</a></span></header>
+<div class="t">Fantastic stuff, this eliminates one of my patches completely.
+
+I am also tempted to work on an external CPU miner...</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-24T04:47:42Z">24 November 2010, 04:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24008#msg24008" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just started working on a simple CPU miner in C, mainly as a demonstration, and to understand &#x27;getwork&#x27;.
+
+Repository is at git://github.com/jgarzik/cpuminer.git
+
+Implementation is complete... but it does not work, so don&#x27;t get too excited.  I suspect something weird going on with ByteReverse (or lack thereof).  It&#x27;s quite unclear whether or not &#x27;data&#x27; and &#x27;nonce&#x27; must be byte-reversed, and in what way.</div></article><article class="msg" id="m8">
+<header><b>DiabloD3</b><span class="muted"> · <time datetime="2010-11-24T11:31:11Z">24 November 2010, 11:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24050#msg24050" rel="nofollow noopener">original</a></span></header>
+<div class="t">Satoshi, please fix your implementation of getwork so it complies with m0mchill&#x27;s specification</div></article><article class="msg" id="m9">
+<header><b>m0mchil</b><span class="muted"> · <time datetime="2010-11-24T11:56:34Z">24 November 2010, 11:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24053#msg24053" rel="nofollow noopener">original</a></span></header>
+<div class="t">No need to do this, I&#x27;ll change the miner to comply. I am just a little busy right now.</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-24T17:21:01Z">24 November 2010, 17:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24095#msg24095" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 24, 2010, 04:47:42 AM</div><div class="t">I suspect something weird going on with ByteReverse (or lack thereof).  It&#x27;s quite unclear whether or not &#x27;data&#x27; and &#x27;nonce&#x27; must be byte-reversed, and in what way.</div></blockquote><div class="t">getwork does the byte-reversing.  midstate, data and hash1 are already big-endian, and you pass data back still big-endian, so you work in big-endian and don&#x27;t have to do any byte-reversing.  They&#x27;re the same data that is passed to the ScanHash_ functions.  You can take midstate, data and hash1, put them in 16-byte aligned buffers and pass them to a ScanHash_ function, like ScanHash(pmidstate, pdata + 64, phash1, nHashesDone).  If a nonce is found, patch it into data and call getwork.
+
+I should probably change the ScanHash_ functions to use pdata instead of pdata + 64 so they&#x27;re consistent.
+
+target is little endian, it&#x27;s supposed to be the same as how m0mchil&#x27;s did it.  (if it&#x27;s not, then it should be fixed)  That&#x27;s the only case where you would use byte reverse.  I think you do it like: if ByteReverse((unsigned int*)hash[6]) &lt; (unsigned int*)target[6].</div><blockquote><div class=qh>Quote from: DiabloD3 on November 24, 2010, 11:31:11 AM</div><div class="t">Satoshi, please fix your implementation of getwork so it complies with m0mchill&#x27;s specification</div></blockquote><div class="t">This is the new spec.  It shouldn&#x27;t be hard to update your miner to use it.
+
+The changes are:
+- It does not return work when you submit a possible hit, only when called without parameter.
+- The block field has been split into data and hash1.
+- state renamed to midstate for consistency.
+- extranonce not needed.</div></article><article class="msg" id="m11">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-25T00:46:34Z">25 November 2010, 00:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24218#msg24218" rel="nofollow noopener">original</a></span></header>
+<div class="t">Figured out the problem.  My sha256 algo was byteswapping the input into big endian, when it was already big endian.
+
+First version of this new CPU miner now described here:  <a href="http://bitcointalk.org/index.php?topic=1925.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=1925.0</a></div></article><article class="msg" id="m12">
+<header><b>DiabloD3</b><span class="muted"> · <time datetime="2010-11-26T21:17:07Z">26 November 2010, 21:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24701#msg24701" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on November 24, 2010, 05:21:01 PM</div><div class="t">- It does not return work when you submit a possible hit, only when called without parameter.</div></blockquote><div class="t">It would be immensely useful if you&#x27;d return if what I sent to the client actually was an actual hit. It makes it easier to debug issues in miners due to sanity checking.</div></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-26T21:31:13Z">26 November 2010, 21:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1901.msg24708#msg24708" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s what it does, it returns true/false.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p245-transaction-spam-flood-attack-currently-under-way/">← Transaction / spam flood attack currently under way</a><a rel="next" href="../../conversations/p247-new-demonstration-cpu-miner-available/">New demonstration CPU miner available →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

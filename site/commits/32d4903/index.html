@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>make CheckDiskSpace portable (r22) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 October 2009: make CheckDiskSpace portable. 1 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/32d4903/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="make CheckDiskSpace portable (r22) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 October 2009: make CheckDiskSpace portable. 1 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/32d4903/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="make CheckDiskSpace portable (r22) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 October 2009: make CheckDiskSpace portable. 1 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "make CheckDiskSpace portable", "url": "https://satoshimail.pages.dev/commits/32d4903/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-30T00:57:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/32d490313b21d5cea64f99ca9db4388591bb3ab9"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "make CheckDiskSpace portable", "item": "https://satoshimail.pages.dev/commits/32d4903/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c32d490313b">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">make CheckDiskSpace portable</span></div></nav>
+<main class="in">
+<h1>make CheckDiskSpace portable</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 30 October 2009 · SVN r22 · release v0.2.0 · 1 files, +4 −10</p>
+<p class="actions"><a class="btn" href="../../#t-c32d490313b">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/32d490313b21d5cea64f99ca9db4388591bb3ab9" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1398,21 +1398,15 @@ string GetAppDir()
+ 
+ bool CheckDiskSpace(int64 nAdditionalBytes)
+ {
+-    uint64 nFreeBytesAvailable = 0;     // bytes available to caller
+-    uint64 nTotalNumberOfBytes = 0;     // bytes on disk
+-    uint64 nTotalNumberOfFreeBytes = 0; // free bytes on disk
+-
+-    if (!GetDiskFreeSpaceEx(GetAppDir().c_str(),
+-            (PULARGE_INTEGER)&amp;nFreeBytesAvailable,
+-            (PULARGE_INTEGER)&amp;nTotalNumberOfBytes,
+-            (PULARGE_INTEGER)&amp;nTotalNumberOfFreeBytes))
++    wxLongLong nFreeBytesAvailable = 0;
++    if (!wxGetDiskSpace(GetDataDir(), NULL, &amp;nFreeBytesAvailable))
+     {
+-        printf(&quot;ERROR: GetDiskFreeSpaceEx() failed\n&quot;);
++        printf(&quot;ERROR: wxGetDiskSpace() failed\n&quot;);
+         return true;
+     }
+ 
+     // Check for 15MB because database could create another 10MB log file at any time
+-    if ((int64)nFreeBytesAvailable &lt; 15000000 + nAdditionalBytes)
++    if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
+         wxMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxICON_EXCLAMATION);</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e8474be/">← better wallet.dat flush, consolidated…</a><a rel="next" href="../../commits/4ac57f0/">move debug.log and db.log to data dir, portable… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

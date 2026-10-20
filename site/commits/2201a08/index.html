@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>warning message if clock is too… (r141) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 August 2010: warning message if clock is too far off. 6 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/2201a08/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="warning message if clock is too… (r141) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 August 2010: warning message if clock is too far off. 6 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/2201a08/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="warning message if clock is too… (r141) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 August 2010: warning message if clock is too far off. 6 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "warning message if clock is too far off", "url": "https://satoshimail.pages.dev/commits/2201a08/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-20T16:55:14Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2201a0808ea240617a66823f98dda3433d2546b0"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "warning message if clock is too far off", "item": "https://satoshimail.pages.dev/commits/2201a08/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c2201a0808e">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">warning message if clock is too far off</span></div></nav>
+<main class="in">
+<h1>warning message if clock is too far off</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 20 August 2010 · SVN r141 · release v0.3.12 · 6 files, +64 −14</p>
+<p class="actions"><a class="btn" href="../../#t-c2201a0808e">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/2201a0808ea240617a66823f98dda3433d2546b0" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1579,10 +1579,10 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
+     if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
+-        printf(&quot;***  %s***\n&quot;, _(&quot;Warning: Disk space is low  &quot;));
+-#ifdef GUI
+-        ThreadSafeMessageBox(_(&quot;Warning: Disk space is low  &quot;), &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+-#endif
++        string strMessage = _(&quot;Warning: Disk space is low  &quot;);
++        strWarning = strMessage;
++        printf(&quot;*** %s\n&quot;, strMessage.c_str());
++        ThreadSafeMessageBox(strMessage, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+         CreateThread(Shutdown, NULL);
+         return false;
+     }</code></pre></details><details><summary><code>noui.h</code></summary><pre><code>@@ -3,7 +3,35 @@
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-inline int MyMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=4, void* parent=NULL, int x=-1, int y=-1)
++typedef void wxWindow;
++#define wxYES                   0x00000002
++#define wxOK                    0x00000004
++#define wxNO                    0x00000008
++#define wxYES_NO                (wxYES|wxNO)
++#define wxCANCEL                0x00000010
++#define wxAPPLY                 0x00000020
++#define wxCLOSE                 0x00000040
++#define wxOK_DEFAULT            0x00000000
++#define wxYES_DEFAULT           0x00000000
++#define wxNO_DEFAULT            0x00000080
++#define wxCANCEL_DEFAULT        0x80000000
++#define wxICON_EXCLAMATION      0x00000100
++#define wxICON_HAND             0x00000200
++#define wxICON_WARNING          wxICON_EXCLAMATION
++#define wxICON_ERROR            wxICON_HAND
++#define wxICON_QUESTION         0x00000400
++#define wxICON_INFORMATION      0x00000800
++#define wxICON_STOP             wxICON_HAND
++#define wxICON_ASTERISK         wxICON_INFORMATION
++#define wxICON_MASK             (0x00000100|0x00000200|0x00000400|0x00000800)
++#define wxFORWARD               0x00001000
++#define wxBACKWARD              0x00002000
++#define wxRESET                 0x00004000
++#define wxHELP                  0x00008000
++#define wxMORE                  0x00010000
++#define wxSETUP                 0x00020000
++
++inline int MyMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1)
+ {
+     printf(&quot;%s: %s\n&quot;, caption.c_str(), message.c_str());
+     fprintf(stderr, &quot;%s: %s\n&quot;, caption.c_str(), message.c_str());
+@@ -11,12 +39,12 @@ inline int MyMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;,
+ }
+ #define wxMessageBox  MyMessageBox
+ 
+-inline int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, void* parent, int x, int y)
++inline int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1)
+ {
+     return MyMessageBox(message, caption, style, parent, x, y);
+ }
+ 
+-inline bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, void* parent)
++inline bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent)
+ {
+     return true;
+ }</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -247,6 +247,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+     obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
+     obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
+     obj.push_back(Pair(&quot;hashespersec&quot;,  gethashespersec(params, false)));
++    obj.push_back(Pair(&quot;status&quot;,        strWarning));
+     return obj;
+ }
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 310;
+-static const char* pszSubVer = &quot;.4&quot;;
++static const char* pszSubVer = &quot;.5&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,6 +14,7 @@ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
+ bool fShutdown = false;
+ bool fDaemon = false;
+ bool fCommandLine = false;
++string strWarning;
+ 
+ 
+ 
+@@ -742,14 +743,28 @@ void AddTimeData(unsigned int ip, int64 nTime)
+     {
+         sort(vTimeOffsets.begin(), vTimeOffsets.end());
+         int64 nMedian = vTimeOffsets[vTimeOffsets.size()/2];
+-        nTimeOffset = nMedian;
+-        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 70 * 60)
++        // Only let other nodes change our time by so much
++        if (abs64(nMedian) &lt; 70 * 60)
++        {
++            nTimeOffset = nMedian;
++        }
++        else
+         {
+-            // Only let other nodes change our clock so far before we
+-            // go to the NTP servers
+-            /// todo: Get time from NTP servers, then set a flag
+-            ///    to make sure it doesn&#x27;t get changed again
+             nTimeOffset = 0;
++            // If nobody else has the same time as us, give a warning
++            bool fMatch = false;
++            foreach(int64 nOffset, vTimeOffsets)
++                if (nOffset != 0 &amp;&amp; abs64(nOffset) &lt; 10 * 60)
++                    fMatch = true;
++            static bool fDone;
++            if (!fMatch &amp;&amp; !fDone)
++            {
++                fDone = true;
++                string strMessage = _(&quot;Warning: Check your system date and time, you may not be able to generate or receive the most recent blocks!&quot;);
++                strWarning = strMessage;
++                printf(&quot;*** %s\n&quot;, strMessage.c_str());
++                boost::thread(bind(ThreadSafeMessageBox, strMessage+&quot; &quot;, string(&quot;Bitcoin&quot;), wxOK | wxICON_EXCLAMATION, (wxWindow*)NULL, -1, -1));
++            }
+         }
+         foreach(int64 n, vTimeOffsets)
+             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -143,6 +143,7 @@ extern char pszSetDataDir[MAX_PATH];
+ extern bool fShutdown;
+ extern bool fDaemon;
+ extern bool fCommandLine;
++extern string strWarning;
+ 
+ void RandAddSeed();
+ void RandAddSeedPerfmon();
+@@ -298,6 +299,11 @@ inline int64 roundint64(double d)
+     return (int64)(d &gt; 0 ? d + 0.5 : d - 0.5);
+ }
+ 
++inline int64 abs64(int64 n)
++{
++    return (n &gt;= 0 ? n : -n);
++}
++
+ template&lt;typename T&gt;
+ string HexStr(const T itbegin, const T itend, bool fSpaces=true)
+ {</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0545481/">← block index checking on load, extra redundant checks, misc…</a><a rel="next" href="../../commits/4019262/">alert system -- version 0.3.11 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

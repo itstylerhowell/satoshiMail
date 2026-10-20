@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Questions about Bitcoin – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 10 December 2009: 1-3: For that level of anonymity you need to connect through TOR, which will be possible with version 0.2, which is…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p9-questions-about-bitcoin/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Questions about Bitcoin – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 10 December 2009: 1-3: For that level of anonymity you need to connect through TOR, which will be possible with version 0.2, which is…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p9-questions-about-bitcoin/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Questions about Bitcoin – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 10 December 2009: 1-3: For that level of anonymity you need to connect through TOR, which will be possible with version 0.2, which is…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Questions about Bitcoin", "url": "https://satoshimail.pages.dev/conversations/p9-questions-about-bitcoin/", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2009-12-10T13:13:51Z", "text": "Hi, yesterday I stumbled upon this great payment option. I read my way through many sites but now I have some questions that couldn't get answered. 1. Is Bitcoin really anonymous? I mean totally and completely? Is my ISP able to detect, that I have sent or received a Bitcoin payment? Maybe he is even able to see that I am running Bitcoin right now? 2. If I understood this correctly, my payment partners are not able to see who I am. Does this mean, they can not see my real IP adress? Only the Bitcoin-adress? Even if they monitors their network connections and stuff? 3. If there is a way for my ISP to tell that I am running Bitcoin or for my payment partners to find out my IP, would it be more safe to tunnel the network traffic through a VPN (payed with Paysafecard for example)? Could this be dangerous, because the VPN provider will be able to capture my payment? 4. What files need to be backed up for not losing my \"money\"? Only the wallet.dat or the whole Bitcoin AppData directory ? 5. Isn`t it possible to multiply a wallet and use it on different machines? This way you would double your money without doing anything for it. Are there security measures for this case? 6. When someone loses his wallet, will there be a way to recreate the lost coins in the system ? Else the 21 million maximum will not be correct. (I mean not to recover the lost coins for one person, but if all the 21mio coins were created, and someone loses his wallet with 1mio coins, will the the others be able to create these 1mio coins now or are they totally lost for the bitcoin network?) 7. I have read that there currently are about 130k blocks out there. At my pc it only shows me about 24k. Is there something wrong or is this a normal behaviour ? 8. I`m afraid I didn`t understand everything about the bitcoin creation. How many coins are created by a machine in 24h in average? 9. I know that port 8333 should be forwarded to the bitcoin-running machine. Now I ask myself if this goes for the TCP or…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-10T20:49:02Z", "text": "1-3: For that level of anonymity you need to connect through TOR, which will be possible with version 0.2, which is only a few weeks away. I'll post TOR instructions at that time. 4: Version 0.1.5: backup the whole %appdata%\\Bitcoin directory. Version 0.2: you can backup just wallet.dat. 5: Nope. The whole design is all about preventing that from working. 6: Those coins can never be recovered, and the total circulation is less. Since the effective circulation is reduced, all the remaining…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2009-12-11T17:20:29Z", "text": "Wow, thanks alot for these detailed answers. But today another question came to my mind. Lets say we know, that our neighbar uses Bitcoin, and we also know that he will receive a payment soon (maybe because he owns an internet shop and accepts bitcoin as payment option). Also, we know that he uses WLAN and his network is unsecured or weak protected. Same goes for router configuration. We now could log into his router configuration, change the ip adresses for the forwarded port 8333 to our…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-11T17:58:57Z", "text": "That's true, with the send-to-IP option, you are sending to whoever answers that IP. Sending to a bitcoin address doesn't have that problem. The plan is to implement an IP + bitcoin address option that would have the benefits of both. It would still use a different address for each transaction, but the receiver would sign the one-time-use address with the given bitcoin address to prove it belongs to the intended receiver."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Questions about Bitcoin", "item": "https://satoshimail.pages.dev/conversations/p9-questions-about-bitcoin/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p9">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Questions about Bitcoin</span></div></nav>
+<main class="in">
+<h1>Questions about Bitcoin</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 10 December 2009 · with Satoshi Nakamoto, SmokeTooMuch</p>
+<p class="actions"><a class="btn" href="../../#t-p9">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/9/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2009-12-10T13:13:51Z">10 December 2009, 13:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=13.msg43#msg43" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hi, yesterday I stumbled upon this great payment option.
+
+I read my way through many sites but now I have some questions that couldn&#x27;t get answered.
+
+1. Is Bitcoin really anonymous? I mean totally and completely? Is my ISP able to detect, that I have sent or received a Bitcoin payment? Maybe he is even able to see that I am running Bitcoin right now?
+
+2. If I understood this correctly, my payment partners are not able to see who I am. Does this mean, they can not see my real IP adress? Only the Bitcoin-adress? Even if they monitors their network connections and stuff?
+
+3. If there is a way for my ISP to tell that I am running Bitcoin or for my payment partners to find out my IP, would it be more safe to tunnel the network traffic through a VPN (payed with Paysafecard for example)? Could this be dangerous, because the VPN provider will be able to capture my payment?
+
+4. What files need to be backed up for not losing my &quot;money&quot;? Only the wallet.dat or the whole Bitcoin AppData directory ?
+
+5. Isn`t it possible to multiply a wallet and use it on different machines? This way you would double your money without doing anything for it.
+Are there security measures for this case?
+
+6. When someone loses his wallet, will there be a way to recreate the lost coins in the system ? Else the 21 million maximum will not be correct.
+(I mean not to recover the lost coins for one person, but if all the 21mio coins were created, and someone loses his wallet with 1mio coins, will the the others be able to create these 1mio coins now or are they totally lost for the bitcoin network?)
+
+7. I have read that there currently are about 130k blocks out there. At my pc it only shows me about 24k. Is there something wrong or is this a normal behaviour ?
+
+8. I`m afraid I didn`t understand everything about the bitcoin creation. How many coins are created by a machine in 24h in average?
+
+9. I know that port 8333 should be forwarded to the bitcoin-running machine. Now I ask myself if this goes for the TCP or the UDP.
+And is this port required for generating coins? Or only for payment transactions?
+
+10. I`ve seen that the source code for bitcoin is open for everybody. Can this be an actual danger? If the code is manipulated people can create more bitcoins than others, can`t they? This would be a massive leak of security.
+
+11. I`ve seen a formular to clalculate the coins that will be created in a certain amount of time. It had something to do with the maximum cpu speed and the availabe. Can`t find it anymore, so I`m asking you to explain me the coin creating. Do slow machines produce as much coins as high-end ones?
+
+12. Are there any other exchanging systems or potential payment partners except for new liberty standard?
+
+13. What happens when my system crashes? Is the wallet saved automatically or only when bitcoin gets closed manually? (Maybe even real-time saving when a coint is created or payment is made?)
+
+14. Is there a way to see how many bitcoins have been generated this far? And how old is Bitcoin already?
+
+I know .... Many many questions but I am really interested in your service and want to know everything before I start using it more frequently.
+
+(Sorry for my bad English...)
+
+EDIT 2014-10-31: grammar and typos</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-10T20:49:02Z">10 December 2009, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=13.msg46#msg46" rel="nofollow noopener">original</a></span></header>
+<div class="t">1-3:
+For that level of anonymity you need to connect through TOR, which will be possible with version 0.2, which is only a few weeks away.  I&#x27;ll post TOR instructions at that time.
+
+4:
+Version 0.1.5: backup the whole %appdata%\Bitcoin directory.
+Version 0.2: you can backup just wallet.dat.
+
+5:
+Nope.  The whole design is all about preventing that from working.
+
+6:
+Those coins can never be recovered, and the total circulation is less.  Since the effective circulation is reduced, all the remaining coins are worth slightly more.  It&#x27;s the opposite of when a government prints money and the value of existing money goes down.
+
+7:
+It&#x27;s currently 29,296 blocks.  The circulation is the number of blocks times 50, so the current circulation is 1,464,800 bc.  
+
+If you only have 24k blocks, it must not have finished the initial block download.  Exit bitcoin and start it again.  Version 0.2 is better/faster at the initial block download.
+
+8:
+Typically a few hundred right now.  It&#x27;s easy now but it&#x27;ll get harder as the network grows.
+
+9:
+Good question, it&#x27;s TCP.  The website needs to be updated to say TCP port 8333.
+
+The port forwarding is so other nodes can connect to you, so it helps you stay connected because you are able to be connected with more nodes.  You also need it to receive payments by IP address.
+
+10:
+No, the other nodes won&#x27;t accept that.
+
+Being open source means anyone can independently review the code.  If it was closed source, nobody could verify the security.  I think it&#x27;s essential for a program of this nature to be open source.
+
+11:
+Slower machines produce fewer coins.  It&#x27;s proportional to CPU speed.
+
+12:
+There are more coming.
+
+13:
+It uses a transactional database called Berkeley DB.  It will not lose data in a system crash.  Transactions are written to the database immediately when they&#x27;re received.
+
+14:
+For now, you can just multiply the total blocks by 50.  The Bitcoin network has been running for almost a year now.  The design and coding started in 2007.</div></article><article class="msg" id="m2">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2009-12-11T17:20:29Z">11 December 2009, 17:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=13.msg48#msg48" rel="nofollow noopener">original</a></span></header>
+<div class="t">Wow, thanks alot for these detailed answers.
+
+But today another question came to my mind.
+
+Lets say we know, that our neighbar uses Bitcoin, and we also know that he will receive a payment soon (maybe because he owns an internet shop and accepts bitcoin as payment option).
+
+Also, we know that he uses WLAN and his network is unsecured or weak protected. Same goes for router configuration.
+
+We now could log into his router configuration, change the ip adresses for the forwarded port 8333 to our system ip.
+Now every payment would be received by our bitcoin client.
+
+Is this actually going to work ?
+
+I know this is highly criminal and the scenario is .. well, lets call it &quot;uncommon&quot;, but in theory it should work, right ?
+(Not that I have an interest in harming people, but I know that criminal people will try many ways to get some money.)
+
+BTW: same should work when you are on a LAN party with unprotected router config.
+
+Edit: Or are these scenarios totally impossible because no matter which ip adress uses the port, the payment will go to the bitcoin or ip adress that was defined from the payer ?</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-11T17:58:57Z">11 December 2009, 17:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=13.msg49#msg49" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s true, with the send-to-IP option, you are sending to whoever answers that IP.  Sending to a bitcoin address doesn&#x27;t have that problem.
+
+The plan is to implement an IP + bitcoin address option that would have the benefits of both.  It would still use a different address for each transaction, but the receiver would sign the one-time-use address with the given bitcoin address to prove it belongs to the intended receiver.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p8-a-few-suggestions/">← A few suggestions</a><a rel="next" href="../../conversations/p10-bitcoin-0-2-released/">Bitcoin 0.2 released! →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

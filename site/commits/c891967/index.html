@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bugfixes from Dean Gores, addr… (r173) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 October 2010: bugfixes from Dean Gores, addr system changes, make sure no gen before block 74000. 8 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c891967/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="bugfixes from Dean Gores, addr… (r173) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 October 2010: bugfixes from Dean Gores, addr system changes, make sure no gen before block 74000. 8 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c891967/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="bugfixes from Dean Gores, addr… (r173) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 October 2010: bugfixes from Dean Gores, addr system changes, make sure no gen before block 74000. 8 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "bugfixes from Dean Gores, addr system changes, make sure no gen before block 74000", "url": "https://satoshimail.pages.dev/commits/c891967/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-10-23T17:43:53Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c891967b6fcab2e8dc4ce0c787312b36c07efa4d"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "bugfixes from Dean Gores, addr system…", "item": "https://satoshimail.pages.dev/commits/c891967/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cc891967b6f">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">bugfixes from Dean Gores, addr system…</span></div></nav>
+<main class="in">
+<h1>bugfixes from Dean Gores, addr system changes, make sure no gen before block 74000</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 23 October 2010 · SVN r173 · release v0.3.15 · 8 files, +109 −63</p>
+<p class="actions"><a class="btn" href="../../#t-cc891967b6f">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/c891967b6fcab2e8dc4ce0c787312b36c07efa4d" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -503,6 +503,11 @@ bool CAddrDB::WriteAddress(const CAddress&amp; addr)
+     return Write(make_pair(string(&quot;addr&quot;), addr.GetKey()), addr);
+ }
+ 
++bool CAddrDB::EraseAddress(const CAddress&amp; addr)
++{
++    return Erase(make_pair(string(&quot;addr&quot;), addr.GetKey()));
++}
++
+ bool CAddrDB::LoadAddresses()
+ {
+     CRITICAL_BLOCK(cs_mapAddresses)
+@@ -554,11 +559,6 @@ bool CAddrDB::LoadAddresses()
+         pcursor-&gt;close();
+ 
+         printf(&quot;Loaded %d addresses\n&quot;, mapAddresses.size());
+-
+-        // Fix for possible bug that manifests in mapAddresses.count in irc.cpp,
+-        // just need to call count here and it doesn&#x27;t happen there.  The bug was the
+-        // pack pragma in irc.cpp and has been fixed, but I&#x27;m not in a hurry to delete this.
+-        mapAddresses.count(vector&lt;unsigned char&gt;(18));
+     }
+ 
+     return true;</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -298,6 +298,7 @@ private:
+     void operator=(const CAddrDB&amp;);
+ public:
+     bool WriteAddress(const CAddress&amp; addr);
++    bool EraseAddress(const CAddress&amp; addr);
+     bool LoadAddresses();
+ };
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -84,18 +84,31 @@ bool RecvLine(SOCKET hSocket, string&amp; strLine)
+         }
+         else if (nBytes &lt;= 0)
+         {
++            if (fShutdown)
++                return false;
++            if (nBytes &lt; 0)
++            {
++                int nErr = WSAGetLastError();
++                if (nErr == WSAEMSGSIZE)
++                    continue;
++                if (nErr == WSAEWOULDBLOCK || nErr == WSAEINTR || nErr == WSAEINPROGRESS)
++                {
++                    Sleep(10);
++                    continue;
++                }
++            }
+             if (!strLine.empty())
+                 return true;
+-            // socket closed
+-            printf(&quot;IRC socket closed\n&quot;);
+-            return false;
+-        }
+-        else
+-        {
+-            // socket error
+-            int nErr = WSAGetLastError();
+-            if (nErr != WSAEMSGSIZE &amp;&amp; nErr != WSAEINTR &amp;&amp; nErr != WSAEINPROGRESS)
++            if (nBytes == 0)
++            {
++                // socket closed
++                printf(&quot;IRC socket closed\n&quot;);
++                return false;
++            }
++            else
+             {
++                // socket error
++                int nErr = WSAGetLastError();
+                 printf(&quot;IRC recv failed: %d\n&quot;, nErr);
+                 return false;
+             }
+@@ -293,8 +306,8 @@ void ThreadIRCSeed2(void* parg)
+                 CAddress addr;
+                 if (DecodeAddress(pszName, addr))
+                 {
+-                    addr.nTime = GetAdjustedTime() - 51 * 60;
+-                    if (AddAddress(addr))
++                    addr.nTime = GetAdjustedTime();
++                    if (AddAddress(addr, 51 * 60))
+                         printf(&quot;IRC got new address\n&quot;);
+                     nGotIRCAddresses++;
+                 }</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -929,7 +929,7 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
+ 
+ bool IsInitialBlockDownload()
+ {
+-    if (pindexBest == NULL)
++    if (pindexBest == NULL || nBestHeight &lt; 74000)
+         return true;
+     static int64 nLastUpdate;
+     static CBlockIndex* pindexLastBest;
+@@ -2172,6 +2172,24 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         if (pfrom-&gt;nVersion &lt; 209)
+             pfrom-&gt;vRecv.SetVersion(min(pfrom-&gt;nVersion, VERSION));
+ 
++        if (!pfrom-&gt;fInbound)
++        {
++            // Advertise our address
++            if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
++            {
++                CAddress addr(addrLocalHost);
++                addr.nTime = GetAdjustedTime();
++                pfrom-&gt;PushAddress(addr);
++            }
++
++            // Get recent addresses
++            if (pfrom-&gt;nVersion &gt;= 31402 || mapAddresses.size() &lt; 1000)
++            {
++                pfrom-&gt;PushMessage(&quot;getaddr&quot;);
++                pfrom-&gt;fGetAddr = true;
++            }
++        }
++
+         // Ask the first connected node for block updates
+         static int nAskedForBlocks;
+         if (!pfrom-&gt;fClient &amp;&amp; (nAskedForBlocks &lt; 1 || vNodes.size() &lt;= 1))
+@@ -2208,14 +2226,18 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     {
+         vector&lt;CAddress&gt; vAddr;
+         vRecv &gt;&gt; vAddr;
+-        if (pfrom-&gt;nVersion &lt; 200) // don&#x27;t want addresses from 0.1.5
++
++        // Don&#x27;t want addr from older versions unless seeding
++        if (pfrom-&gt;nVersion &lt; 209)
+             return true;
+-        if (pfrom-&gt;nVersion &lt; 209 &amp;&amp; mapAddresses.size() &gt; 1000) // don&#x27;t want addr from 0.2.0 unless seeding
++        if (pfrom-&gt;nVersion &lt; 31402 &amp;&amp; mapAddresses.size() &gt; 1000)
+             return true;
+         if (vAddr.size() &gt; 1000)
+             return error(&quot;message addr size() = %d&quot;, vAddr.size());
+ 
+         // Store the new addresses
++        int64 nNow = GetAdjustedTime();
++        int64 nSince = nNow - 10 * 60;
+         foreach(CAddress&amp; addr, vAddr)
+         {
+             if (fShutdown)
+@@ -2223,12 +2245,11 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             // ignore IPv6 for now, since it isn&#x27;t implemented anyway
+             if (!addr.IsIPv4())
+                 continue;
+-            addr.nTime = GetAdjustedTime() - 2 * 60 * 60;
+-            if (pfrom-&gt;fGetAddr || vAddr.size() &gt; 10)
+-                addr.nTime -= 5 * 24 * 60 * 60;
+-            AddAddress(addr);
++            if (addr.nTime &lt;= 100000000 || addr.nTime &gt; nNow + 10 * 60)
++                addr.nTime = nNow - 5 * 24 * 60 * 60;
++            AddAddress(addr, 2 * 60 * 60);
+             pfrom-&gt;AddAddressKnown(addr);
+-            if (!pfrom-&gt;fGetAddr &amp;&amp; vAddr.size() &lt;= 10 &amp;&amp; addr.IsRoutable())
++            if (addr.nTime &gt; nSince &amp;&amp; !pfrom-&gt;fGetAddr &amp;&amp; vAddr.size() &lt;= 10 &amp;&amp; addr.IsRoutable())
+             {
+                 // Relay to a limited number of other nodes
+                 CRITICAL_BLOCK(cs_vNodes)
+@@ -2243,6 +2264,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                     multimap&lt;uint256, CNode*&gt; mapMix;
+                     foreach(CNode* pnode, vNodes)
+                     {
++                        if (pnode-&gt;nVersion &lt; 31402)
++                            continue;
+                         unsigned int nPointer;
+                         memcpy(&amp;nPointer, &amp;pnode, sizeof(nPointer));
+                         uint256 hashKey = hashRand ^ nPointer;
+@@ -2610,9 +2633,12 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
+         if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 30 * 60 &amp;&amp; pto-&gt;vSend.empty())
+             pto-&gt;PushMessage(&quot;ping&quot;);
+ 
++        // Resend wallet transactions that haven&#x27;t gotten in a block yet
++        ResendWalletTransactions();
++
+         // Address refresh broadcast
+         static int64 nLastRebroadcast;
+-        if (GetTime() - nLastRebroadcast &gt; 24 * 60 * 60) // every 24 hours
++        if (GetTime() - nLastRebroadcast &gt; 24 * 60 * 60)
+         {
+             nLastRebroadcast = GetTime();
+             CRITICAL_BLOCK(cs_vNodes)
+@@ -2624,13 +2650,42 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
+ 
+                     // Rebroadcast our address
+                     if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
+-                        pnode-&gt;PushAddress(addrLocalHost);
++                    {
++                        CAddress addr(addrLocalHost);
++                        addr.nTime = GetAdjustedTime();
++                        pnode-&gt;PushAddress(addr);
++                    }
+                 }
+             }
+         }
+ 
+-        // Resend wallet transactions that haven&#x27;t gotten in a block yet
+-        ResendWalletTransactions();
++        // Clear out old addresses periodically so it&#x27;s not too much work at once
++        static int64 nLastClear;
++        if (nLastClear == 0)
++            nLastClear = GetTime();
++        if (GetTime() - nLastClear &gt; 10 * 60 &amp;&amp; vNodes.size() &gt;= 3)
++        {
++            nLastClear = GetTime();
++            CRITICAL_BLOCK(cs_mapAddresses)
++            {
++                CAddrDB addrdb;
++                int64 nSince = GetAdjustedTime() - 14 * 24 * 60 * 60;
++                for (map&lt;vector&lt;unsigned char&gt;, CAddress&gt;::iterator mi = mapAddresses.begin();
++                     mi != mapAddresses.end();)
++                {
++                    const CAddress&amp; addr = (*mi).second;
++                    if (addr.nTime &lt; nSince)
++                    {
++                        if (mapAddresses.size() &lt; 1000 || GetTime() &gt; nLastClear + 20)
++                            break;
++                        addrdb.EraseAddress(addr);
++                        mapAddresses.erase(mi++);
++                    }
++                    else
++                        mi++;
++                }
++            }
++        }
+ 
+ 
+         //</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -144,7 +144,7 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+                 }
+             }
+             closesocket(hSocket);
+-            if (strLine.find(&quot;&lt;&quot;))
++            if (strLine.find(&quot;&lt;&quot;) != -1)
+                 strLine = strLine.substr(0, strLine.find(&quot;&lt;&quot;));
+             strLine = strLine.substr(strspn(strLine.c_str(), &quot; \t\n\r&quot;));
+             while (strLine.size() &gt; 0 &amp;&amp; isspace(strLine[strLine.size()-1]))
+@@ -224,12 +224,13 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ 
+ 
+ 
+-bool AddAddress(CAddress addr)
++bool AddAddress(CAddress addr, int64 nTimePenalty)
+ {
+     if (!addr.IsRoutable())
+         return false;
+     if (addr.ip == addrLocalHost.ip)
+         return false;
++    addr.nTime = max((int64)0, (int64)addr.nTime - nTimePenalty);
+     CRITICAL_BLOCK(cs_mapAddresses)
+     {
+         map&lt;vector&lt;unsigned char&gt;, CAddress&gt;::iterator it = mapAddresses.find(addr.GetKey());
+@@ -1073,25 +1074,6 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
+         return false;
+     pnode-&gt;fNetworkNode = true;
+ 
+-    if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
+-    {
+-        // Advertise our address
+-        vector&lt;CAddress&gt; vAddr;
+-        vAddr.push_back(addrLocalHost);
+-        pnode-&gt;PushMessage(&quot;addr&quot;, vAddr);
+-    }
+-
+-    // Get as many addresses as we can
+-    pnode-&gt;PushMessage(&quot;getaddr&quot;);
+-    pnode-&gt;fGetAddr = true; // don&#x27;t relay the results of the getaddr
+-
+-    ////// should the one on the receiving end do this too?
+-    // Subscribe our local subscription list
+-    const unsigned int nHops = 0;
+-    for (unsigned int nChannel = 0; nChannel &lt; pnodeLocalHost-&gt;vfSubscribe.size(); nChannel++)
+-        if (pnodeLocalHost-&gt;vfSubscribe[nChannel])
+-            pnode-&gt;PushMessage(&quot;subscribe&quot;, nChannel, nHops);
+-
+     return true;
+ }
+ </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -24,7 +24,7 @@ enum
+ 
+ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
+ bool GetMyExternalIP(unsigned int&amp; ipRet);
+-bool AddAddress(CAddress addr);
++bool AddAddress(CAddress addr, int64 nTimePenalty=0);
+ void AddressCurrentlyConnected(const CAddress&amp; addr);
+ CNode* FindNode(unsigned int ip);
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+@@ -139,7 +139,7 @@ public:
+     unsigned int ip;
+     unsigned short port;
+ 
+-    // disk only
++    // disk and network only
+     unsigned int nTime;
+ 
+     // memory only
+@@ -186,7 +186,7 @@ public:
+         memcpy(pchReserved, pchIPv4, sizeof(pchReserved));
+         ip = INADDR_NONE;
+         port = GetDefaultPort();
+-        nTime = GetAdjustedTime();
++        nTime = 100000000;
+         nLastTry = 0;
+     }
+ 
+@@ -218,11 +218,12 @@ public:
+ 
+     IMPLEMENT_SERIALIZE
+     (
++        if (fRead)
++            const_cast&lt;CAddress*&gt;(this)-&gt;Init();
+         if (nType &amp; SER_DISK)
+-        {
+             READWRITE(nVersion);
++        if ((nType &amp; SER_DISK) || (nVersion &gt;= 31402 &amp;&amp; !(nType &amp; SER_GETHASH)))
+             READWRITE(nTime);
+-        }
+         READWRITE(nServices);
+         READWRITE(FLATDATA(pchReserved)); // for IPv6
+         READWRITE(ip);
+@@ -415,7 +416,7 @@ public:
+     const char* GetCommand() const
+     {
+         if (!IsKnownType())
+-            throw std::out_of_range(strprintf(&quot;CInv::GetCommand() : type=% unknown type&quot;, type));
++            throw std::out_of_range(strprintf(&quot;CInv::GetCommand() : type=%d unknown type&quot;, type));
+         return ppszTypeName[type];
+     }
+ 
+@@ -732,13 +733,6 @@ public:
+             AbortMessage();
+     }
+ 
+-    const char* GetMessageCommand() const
+-    {
+-        if (nHeaderStart == -1)
+-            return &quot;&quot;;
+-        return &amp;vSend[nHeaderStart] + offsetof(CMessageHeader, pchCommand);
+-    }
+-
+ 
+ 
+ </code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -656,6 +656,7 @@ Value backupwallet(const Array&amp; params, bool fHelp)
+     return Value::null;
+ }
+ 
++
+ Value validateaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 1)</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,7 +22,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31401;
++static const int VERSION = 31402;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2ce73db/">← -- version 0.3.14 release</a><a rel="next" href="../../commits/461764c/">-paytxfee is now per KB, BitcoinMiner prioritise… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

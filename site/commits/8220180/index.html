@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>-- version 0.3.18 release (r198) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 December 2010: -- version 0.3.18 release. 5 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8220180/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="-- version 0.3.18 release (r198) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 December 2010: -- version 0.3.18 release. 5 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8220180/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="-- version 0.3.18 release (r198) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 December 2010: -- version 0.3.18 release. 5 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "-- version 0.3.18 release", "url": "https://satoshimail.pages.dev/commits/8220180/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-12-08T23:23:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/82201801336f64ee77851b9eaab9383ee4e442f0"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "-- version 0.3.18 release", "item": "https://satoshimail.pages.dev/commits/8220180/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c8220180133">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">-- version 0.3.18 release</span></div></nav>
+<main class="in">
+<h1>-- version 0.3.18 release</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 8 December 2010 · SVN r198 · release v0.3.18 · 5 files, +9 −8</p>
+<p class="actions"><a class="btn" href="../../#t-c8220180133">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/82201801336f64ee77851b9eaab9383ee4e442f0" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>script.cpp</code></summary><pre><code>@@ -997,7 +997,7 @@ bool Solver(const CScript&amp; scriptPubKey, vector&lt;pair&lt;opcodetype, valtype&gt; &gt;&amp; vSo
+                 break;
+             if (opcode2 == OP_PUBKEY)
+             {
+-                if (vch1.size() &lt; 33)
++                if (vch1.size() &lt; 33 || vch1.size() &gt; 120)
+                     break;
+                 vSolutionRet.push_back(make_pair(opcode2, vch1));
+             }</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -599,6 +599,8 @@ public:
+ 
+     bool IsPushOnly() const
+     {
++        if (size() &gt; 200)
++            return false;
+         const_iterator pc = begin();
+         while (pc &lt; end())
+         {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -25,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31705;
++static const int VERSION = 31800;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.17
++!define VERSION 0.3.18
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.17-win32-setup.exe
++OutFile bitcoin-0.3.18-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.17.0
++VIProductVersion 0.3.18.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -175,7 +175,6 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+             va_start(arg_ptr, pszFormat);
+             ret = vfprintf(fileout, pszFormat, arg_ptr);
+             va_end(arg_ptr);
+-            fflush(fileout);
+         }
+     }
+ 
+@@ -406,11 +405,11 @@ vector&lt;unsigned char&gt; ParseHex(const char* psz)
+         while (isspace(*psz))
+             psz++;
+         char c = phexdigit[(unsigned char)*psz++];
+-        if (c == -1)
++        if (c == (char)-1)
+             break;
+         unsigned char n = (c &lt;&lt; 4);
+         c = phexdigit[(unsigned char)*psz++];
+-        if (c == -1)
++        if (c == (char)-1)
+             break;
+         n |= c;
+         vch.push_back(n);</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/865c3a2/">← fix wallet.dat compatibility problem if you downgrade from…</a><a rel="next" href="../../commits/97ee01a/">added some DoS limits, removed safe mode →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

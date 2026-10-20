@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Win7 64bit since last patch Tues now crashes – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 23 October 2010: This is the important clue. I believe it&#x27;s saying it crashed in that. Maybe there are other versions of it to try.…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p238-win7-64bit-since-last-patch-tues-now-crashes/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Win7 64bit since last patch Tues now crashes – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 23 October 2010: This is the important clue. I believe it&#x27;s saying it crashed in that. Maybe there are other versions of it to try.…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p238-win7-64bit-since-last-patch-tues-now-crashes/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Win7 64bit since last patch Tues now crashes – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 October 2010: This is the important clue. I believe it&#x27;s saying it crashed in that. Maybe there are other versions of it to try.…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Win7 64bit since last patch Tues now crashes", "url": "https://satoshimail.pages.dev/conversations/p238-win7-64bit-since-last-patch-tues-now-crashes/", "author": {"@type": "Person", "name": "Odin"}, "datePublished": "2010-10-22T21:24:38Z", "text": "This is from 0.3.14-win32-setup.exe. Previously I was running (up until an hour ago) a version of bitcoin.exe from Jul-2010 (which also was crashing) and the crash reports look similar. So I upgraded to see if the problem has been fixed. To clarify what I am saying any starting of the EXE immediately reports the crash. So when I login I see the Win7 crash report and if I manually try to start it the same. The dialog beyond the crash report is \"The application was unable to start correctly (0xc0000005). Click OK to close the application.\" Please also try to tag the application .EXE with the version information if possible, as you can see it is 0.0.0.0. Problem signature: Problem Event Name: APPCRASH Application Name: bitcoin.exe Application Version: 0.0.0.0 Application Timestamp: 4cbf4979 Fault Module Name: mingwm10.dll Fault Module Version: 0.0.0.0 Fault Module Timestamp: 46b3b561 Exception Code: c0000005 Exception Offset: 00001470 OS Version: 6.1.7600.2.0.0.256.1 Locale ID: 2057 Additional Information 1: 4c0d Additional Information 2: 4c0d4d78887f76d971d5d00f1f20a433 Additional Information 3: 4c0d Additional Information 4: 4c0d4d78887f76d971d5d00f1f20a433", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Odin"}, "datePublished": "2010-10-22T21:30:29Z", "text": "Have tried turning off Windows Defender, Real Time checking and excluding \"C:\\Program Files (x86)\\bitcoin\" but this made no difference. As another recent thread indicates their problem was fixed or potential solution in this way. This thread below is the closest match. I can say the crash started the moment I rebooted after October 2010 patch Tuesday, windows update (which were only applied a few days ago). http://bitcointalk.org/index.php?topic=991.0 FYI - I was not overclocking or otherwise…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-10-23T18:52:02Z", "text": "This is the important clue. I believe it's saying it crashed in that. Maybe there are other versions of it to try. mingwm10.dll is just a simple placeholder thing that satisfies some callback requirement for multithreaded apps. Is anyone else running OK on Windows 64-bit?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "LZ"}, "datePublished": "2010-10-23T21:27:15Z", "text": "I have no problems with the official Bitcoin and 64-bit Windows 7."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Drifter"}, "datePublished": "2010-10-24T02:26:59Z", "text": "Running just fine on Win7 64bit as well"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Odin"}, "datePublished": "2010-10-24T12:09:47Z", "text": "Ok good to know others are able to run it ok. Unfortunately bitcoin is not a critical application for me and need to spend my time on other things. If however there is a debugging build of the application which can provide line numbers for the crashed code (0xc0000005 - ACCESS VIOLATION) then I'd be happy to run it to identify the line causing the problem."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-10-25T17:27:47Z", "text": "The only thing I can think of is to see if there are other versions of mingwm10.dll you can get. mingwm10.dll is a tiny little DLL that came with the MinGW compiler that you need when you build for multi-thread. I don't know exactly what it does, but it probably just says something like \"yes Windows, see I'm in a DLL like you insisted.\" The end of your debug.log file might show the last thing it was doing before it crashed."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Win7 64bit since last patch Tues now crashes", "item": "https://satoshimail.pages.dev/conversations/p238-win7-64bit-since-last-patch-tues-now-crashes/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p238">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Win7 64bit since last patch Tues now crashes</span></div></nav>
+<main class="in">
+<h1>Win7 64bit since last patch Tues now crashes</h1>
+<p class="lead">BitcoinTalk forum · 7 messages · from 22 October 2010 · with Drifter, LZ, Odin, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-p238">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/238/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Odin</b><span class="muted"> · <time datetime="2010-10-22T21:24:38Z">22 October 2010, 21:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18105#msg18105" rel="nofollow noopener">original</a></span></header>
+<div class="t">This is from 0.3.14-win32-setup.exe.  Previously I was running (up until an hour ago) a version of bitcoin.exe from Jul-2010 (which also was crashing) and the crash reports look similar.  So I upgraded to see if the problem has been fixed.
+
+To clarify what I am saying any starting of the EXE immediately reports the crash.  So when I login I see the Win7 crash report and if I manually try to start it the same.  The dialog beyond the crash report is &quot;The application was unable to start correctly (0xc0000005).  Click OK to close the application.&quot;
+
+Please also try to tag the application .EXE with the version information if possible, as you can see it is 0.0.0.0.</div><pre><code>Problem signature:
+  Problem Event Name: APPCRASH
+  Application Name: bitcoin.exe
+  Application Version: 0.0.0.0
+  Application Timestamp: 4cbf4979
+  Fault Module Name: mingwm10.dll
+  Fault Module Version: 0.0.0.0
+  Fault Module Timestamp: 46b3b561
+  Exception Code: c0000005
+  Exception Offset: 00001470
+  OS Version: 6.1.7600.2.0.0.256.1
+  Locale ID: 2057
+  Additional Information 1: 4c0d
+  Additional Information 2: 4c0d4d78887f76d971d5d00f1f20a433
+  Additional Information 3: 4c0d
+  Additional Information 4: 4c0d4d78887f76d971d5d00f1f20a433</code></pre></article><article class="msg" id="m1">
+<header><b>Odin</b><span class="muted"> · <time datetime="2010-10-22T21:30:29Z">22 October 2010, 21:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18108#msg18108" rel="nofollow noopener">original</a></span></header>
+<div class="t">Have tried turning off Windows Defender, Real Time checking and excluding &quot;C:\Program Files (x86)\bitcoin&quot; but this made no difference.
+
+As another recent thread indicates their problem was fixed or potential solution in this way.
+
+This thread below is the closest match.  I can say the crash started the moment I rebooted after October 2010 patch Tuesday, windows update (which were only applied a few days ago).
+
+<a href="http://bitcointalk.org/index.php?topic=991.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=991.0</a>
+
+FYI - I was not overclocking or otherwise buggering about with anything in ways I&#x27;m not meant to.  Which the above thread OP claims to have done.  Also My Wallet.dat looks fine, none of the AppRoaming files have been modified since I rebooted after installing the 23 updates all in one go.</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-23T18:52:02Z">23 October 2010, 18:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18246#msg18246" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Odin on October 22, 2010, 09:24:38 PM</div><div class="t">  Fault Module Name:   mingwm10.dll</div></blockquote><div class="t">This is the important clue.  I believe it&#x27;s saying it crashed in that.  Maybe there are other versions of it to try.  mingwm10.dll is just a simple placeholder thing that satisfies some callback requirement for multithreaded apps.
+
+Is anyone else running OK on Windows 64-bit?</div></article><article class="msg" id="m3">
+<header><b>LZ</b><span class="muted"> · <time datetime="2010-10-23T21:27:15Z">23 October 2010, 21:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18261#msg18261" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have no problems with the official Bitcoin and 64-bit Windows 7.</div></article><article class="msg" id="m4">
+<header><b>Drifter</b><span class="muted"> · <time datetime="2010-10-24T02:26:59Z">24 October 2010, 02:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18272#msg18272" rel="nofollow noopener">original</a></span></header>
+<div class="t">Running just fine on Win7 64bit as well</div></article><article class="msg" id="m5">
+<header><b>Odin</b><span class="muted"> · <time datetime="2010-10-24T12:09:47Z">24 October 2010, 12:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18319#msg18319" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok good to know others are able to run it ok.
+
+Unfortunately bitcoin is not a critical application for me and need to spend my time on other things.  If however there is a debugging build of the application which can provide line numbers for the crashed code (0xc0000005 - ACCESS VIOLATION) then I&#x27;d be happy to run it to identify the line causing the problem.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-25T17:27:47Z">25 October 2010, 17:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18511#msg18511" rel="nofollow noopener">original</a></span></header>
+<div class="t">The only thing I can think of is to see if there are other versions of mingwm10.dll you can get.  mingwm10.dll is a tiny little DLL that came with the MinGW compiler that you need when you build for multi-thread.  I don&#x27;t know exactly what it does, but it probably just says something like &quot;yes Windows, see I&#x27;m in a DLL like you insisted.&quot;
+
+The end of your debug.log file might show the last thing it was doing before it crashed.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p237-error-please-help-me/">← ERROR - PLEASE HELP ME!</a><a rel="next" href="../../conversations/p239-suggestion-allow-short-messages-to-be-sent-together-with-bit/">Suggestion: Allow short messages to be sent together with bitcoins ? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

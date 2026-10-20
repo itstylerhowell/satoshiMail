@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>*** ALERT *** Upgrade to 0.3.6 – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 29 July 2010: Please upgrade to 0.3.6 ASAP! We fixed an implementation bug where it was possible that bogus transactions could be…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p145-alert-upgrade-to-0-3-6/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="*** ALERT *** Upgrade to 0.3.6 – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 29 July 2010: Please upgrade to 0.3.6 ASAP! We fixed an implementation bug where it was possible that bogus transactions could be…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p145-alert-upgrade-to-0-3-6/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="*** ALERT *** Upgrade to 0.3.6 – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 29 July 2010: Please upgrade to 0.3.6 ASAP! We fixed an implementation bug where it was possible that bogus transactions could be…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "*** ALERT *** Upgrade to 0.3.6", "url": "https://satoshimail.pages.dev/conversations/p145-alert-upgrade-to-0-3-6/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T19:13:06Z", "text": "Please upgrade to 0.3.6 ASAP! We fixed an implementation bug where it was possible that bogus transactions could be displayed as accepted. Do not accept Bitcoin transactions as payment until you upgrade to version 0.3.6! If you can't upgrade to 0.3.6 right away, it's best to shut down your Bitcoin node until you do. Also in 0.3.6, faster hashing: - midstate cache optimisation thanks to tcatm - Crypto++ ASM SHA-256 thanks to BlackEye Total generating speedup 2.4x faster. Download: http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.6/ Windows and Linux users: if you got 0.3.5 you still need to upgrade to 0.3.6.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Olipro"}, "datePublished": "2010-07-29T19:25:38Z", "text": "is this in the SVN?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T19:26:39Z", "text": "I appreciate the quickness of this security update, but unfortunately none of the Linux builds work (32bit or 64 bit) because the file is missing. I'm assuming if I go find the file it will work, not sure what luck others will have though using the new build. Error ./bitcoin: error while loading shared libraries: libjpeg.so.62: cannot open shared object file: No such file or directory"}, {"@type": "Comment", "author": {"@type": "Person", "name": "andy_3_913"}, "datePublished": "2010-07-29T19:30:42Z", "text": "are satoshi and Olipro working together? if not, any chance you could? Smiley i'm well pleased with the speed enhancements Olipro is making, but i would like bc to be secure!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T19:30:57Z", "text": "Like Olipro, got a lot of people doing custom builds out there -- in fact, I must use a custom build on several machines. May we assume SVN has all necessary updates?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T19:34:22Z", "text": "So far, the new build (stock) has given a 100% speed increase on my Celeron Machines that couldn't run those custom builds before. I'll compare the new release to the older *optimized* builds to see what the speed difference is just out of curiosity. Grin"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Bitquux"}, "datePublished": "2010-07-29T19:39:46Z", "text": "So far I'm seeing a comparable hashing rate to the most recent of the Olipro 32-bit binaries. It might even be slightly faster."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T19:42:15Z", "text": "With the official Linux-64bit build, run on Fedora 13, I see it failing badly: ************************ EXCEPTION: 22DbRunRecoveryException DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery bitcoin in AppInit() ************************ EXCEPTION: 22DbRunRecoveryException DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery bitcoin in CMyApp::OnUnhandledException() terminate called after throwing an instance of 'DbRunRecoveryException' what(): DbEnv::open…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T19:47:37Z", "text": "I think you'll be ok, it blew up on me too. Run the older version, you should still see all your coins. Backup first for the next Linux release Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T19:49:32Z", "text": "Same result on another machine. BDB errors, and death. 0.3.5 on 64bit Linux is questionable. You didn't mix up the builds with 32-bit Linux, did you? debug.log says: Bitcoin version 0.3.5 beta Default data directory /g/g/.bitcoin Bound to port 8333 Loading addresses... dbenv.open strLogDir=/garz/bitcoin/data/database strErrorFile=/garz/bitcoin/data/db.log ************************ EXCEPTION: 22DbRunRecoveryException DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery bitcoin in…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T19:52:45Z", "text": "Double-ACK Smiley older version (SVN 117 + listtransactions + getinfo KHPS) works fine, all bitcoins there. And yes, I should back up before following \"please upgrade\" instructions... Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T19:54:27Z", "text": "Yes, I've tested on Windows XP, 2003, and 7 all went through just fine. You'll enjoy the speed increase as well. Wink [err, wait I guess, new version about to spawn]"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T19:55:51Z", "text": "Haven't had time to update the SVN yet. Wait for 0.3.6, I'm building it now. You can shut down your node in the meantime."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T20:30:15Z", "text": "SVN is updated with version 0.3.6. Uploading Windows build of 0.3.6 to Sourceforge now, then will rebuild linux."}, {"@type": "Comment", "author": {"@type": "Person", "name": "RudeDude"}, "datePublished": "2010-07-29T20:35:54Z", "text": "Ha! One of the changes in there is updated some v \"0.3.3\" stuff to \"0.3.6\" but that isn't the important part of the update. :-)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T20:48:35Z", "text": "SVN r119 seems to work fine here. No BDB explosion."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T20:51:29Z", "text": "Tested the Windows build across XP, 2003, Vista, 7 (both 32 and 64bit builds), no issues installing or running client. So far so good, looking forward to the Linux client. Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T21:20:38Z", "text": "0.3.6 Linux build is back to the old makefile.unix. It static links libjpeg so that shouldn't be a problem. Is that working better? If you got 22DbRunRecoveryException and you've used someone else's build before, you may need to delete (or move the files somewhere else) database/log.000000* Windows and Linux users: if you got 0.3.5 you still need to upgrade to 0.3.6."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T21:23:21Z", "text": "Still a no go on the Linux build though, this is the console error I get. I checked to make sure the file was there, but the versions don't match I guess? 64bit Client Error, will try out 32bit client and see if the error is similar. ./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11' not found (required by ./bitcoin) The machine I tested this on uses nothing but the stock builds, no modified builds were used prior. Same error for 32bit client ./bitcoin: /lib/libc.so.6: version `GLIBC_2.11' not…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-07-29T21:27:15Z", "text": "0.3.6 binaries for linux works fine on two my machines (64 and 32 bits) with Debian squeeze/sid"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T21:28:55Z", "text": "That's good to know, might just need to update mine, checking to see what versions I have currently installed."}, {"@type": "Comment", "author": {"@type": "Person", "name": "dwdollar"}, "datePublished": "2010-07-29T21:29:41Z", "text": "I'm getting this too on 32-bit Ubuntu 9.10. It works fine on 32-bit and 64-bit Ubuntu 10.04."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T21:30:08Z", "text": "If you (and others) are willing, please post your OS + OS version, when posting success/failure reports. I will echo a recommendation to satoshi from another forum member: build linux binaries on an older Linux OS, to ensure wider compatibility. Maybe something as old as CentOS 5 (caveat: requires custom openssl, boost, db4 and wx builds)."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T21:30:24Z", "text": "Ah, mine is linked to 2.10.1, I'll bring my system up to bleeding edge to see if that solves it Grin [edit] Well turns out I can't package wise as they top out at 2.10 for now"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T21:32:47Z", "text": "I would agree, would help those of us not on the bleeding edge of distro packages. Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bitcoinex"}, "datePublished": "2010-07-29T21:35:27Z", "text": "sorry. I'm checked binaries on Debian GNU/Linux squeeze/sid"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T21:43:15Z", "text": "\"./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11' not found (required by ./bitcoin)\" isn't a new problem that started with 0.3.6 is it? This was built on the same OS installations as 0.3.0. Unfortunately I upgraded to Ubuntu 10.04 before 0.3.0. I will not upgrade anymore. I don't know when I might have time to reinstall to downgrade, but at least by not upgrading, it'll gradually fix itself."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-07-29T21:44:02Z", "text": "v0.3.6 works on FreeBSD/i386 7.2,7.3 and on FreeBSD/amd64 8.0 Compiles cleanly without any warnings, and appears to be working fine."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Odin"}, "datePublished": "2010-07-29T21:45:06Z", "text": "Maybe the points listed in http://bitcointalk.org/index.php?topic=612.0 would help making the Linux binary distribution works for the widest audience. Getting the project to build under the OpenSUSE OBS service should allow the maintainer to get distribution specific compliation for free."}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2010-07-29T21:47:41Z", "text": "0.3.6 works great on Win7 Pro 64-Bit."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gooffy"}, "datePublished": "2010-07-29T22:08:14Z", "text": "Ubuntu Linux 9.10 Error: /lib/tls/i686/cmov/libc.so.6: version `GLIBC_2.11' not found Cry"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "*** ALERT *** Upgrade to 0.3.6", "item": "https://satoshimail.pages.dev/conversations/p145-alert-upgrade-to-0-3-6/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p145">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">*** ALERT *** Upgrade to 0.3.6</span></div></nav>
+<main class="in">
+<h1>*** ALERT *** Upgrade to 0.3.6</h1>
+<p class="lead">BitcoinTalk forum · 51 messages · from 29 July 2010 · with Anonymous, BitLex, Bitquux, Cdecker, Gooffy, HostFat…</p>
+<p class="actions"><a class="btn" href="../../#t-p145">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/145/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T19:13:06Z">29 July 2010, 19:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6451#msg6451" rel="nofollow noopener">original</a></span></header>
+<div class="t">Please upgrade to 0.3.6 ASAP!  We fixed an implementation bug where it was possible that bogus transactions could be displayed as accepted.  Do not accept Bitcoin transactions as payment until you upgrade to version 0.3.6!
+
+If you can&#x27;t upgrade to 0.3.6 right away, it&#x27;s best to shut down your Bitcoin node until you do.
+
+Also in 0.3.6, faster hashing:
+- midstate cache optimisation thanks to tcatm
+- Crypto++ ASM SHA-256 thanks to BlackEye
+Total generating speedup 2.4x faster.
+
+Download:
+<a href="http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.6/" rel="nofollow noopener">http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.6/</a>
+
+Windows and Linux users: if you got 0.3.5 you still need to upgrade to 0.3.6.</div></article><article class="msg" id="m1">
+<header><b>Olipro</b><span class="muted"> · <time datetime="2010-07-29T19:25:38Z">29 July 2010, 19:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6453#msg6453" rel="nofollow noopener">original</a></span></header>
+<div class="t">is this in the SVN?</div></article><article class="msg" id="m2">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T19:26:39Z">29 July 2010, 19:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6455#msg6455" rel="nofollow noopener">original</a></span></header>
+<div class="t">I appreciate the quickness of this security update, but unfortunately none of the Linux builds work (32bit or 64 bit) because the file is missing. I&#x27;m assuming if I go find the file it will work, not sure what luck others will have though using the new build.
+
+Error</div><pre><code>./bitcoin: error while loading shared libraries: libjpeg.so.62: cannot open shared object file: No such file or directory</code></pre></article><article class="msg" id="m3">
+<header><b>andy_3_913</b><span class="muted"> · <time datetime="2010-07-29T19:30:42Z">29 July 2010, 19:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6457#msg6457" rel="nofollow noopener">original</a></span></header>
+<div class="t">are satoshi and Olipro working together?
+if not, any chance you could? Smiley
+
+i&#x27;m well pleased with the speed enhancements Olipro is making, but i would like bc to be secure!</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T19:30:57Z">29 July 2010, 19:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6458#msg6458" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 29, 2010, 07:13:06 PM</div><div class="t">Please upgrade to 0.3.5 ASAP!  We fixed an implementation bug where it was possible that bogus transactions could be accepted.  Do not accept Bitcoin transactions as payment until you upgrade to version 0.3.5!</div></blockquote><div class="t">Like Olipro, got a lot of people doing custom builds out there -- in fact, I must use a custom build on several machines.
+
+May we assume SVN has all necessary updates?</div></article><article class="msg" id="m5">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T19:34:22Z">29 July 2010, 19:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6459#msg6459" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: andy_3_913 on July 29, 2010, 07:30:42 PM</div><div class="t">are satoshi and Olipro working together?
+if not, any chance you could? Smiley
+
+i&#x27;m well pleased with the speed enhancements Olipro is making, but i would like bc to be secure!</div></blockquote><div class="t">So far, the new build (stock) has given a 100% speed increase on my Celeron Machines that couldn&#x27;t run those custom builds before. I&#x27;ll compare the new release to the older *optimized* builds to see what the speed difference is just out of curiosity.  Grin</div></article><article class="msg" id="m6">
+<header><b>Bitquux</b><span class="muted"> · <time datetime="2010-07-29T19:39:46Z">29 July 2010, 19:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6461#msg6461" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 29, 2010, 07:34:22 PM</div><div class="t">&gt; Quote from: andy_3_913 on July 29, 2010, 07:30:42 PM
+&gt; are satoshi and Olipro working together?
+&gt; if not, any chance you could? Smiley
+&gt;
+&gt; i&#x27;m well pleased with the speed enhancements Olipro is making, but i would like bc to be secure!
+So far, the new build (stock) has given a 100% speed increase on my Celeron Machines that couldn&#x27;t run those custom builds before. I&#x27;ll compare the new release to the older *optimized* builds to see what the speed difference is just out of curiosity.  Grin</div></blockquote><div class="t">So far I&#x27;m seeing a comparable hashing rate to the most recent of the Olipro 32-bit binaries. It might even be slightly faster.</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T19:42:15Z">29 July 2010, 19:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6462#msg6462" rel="nofollow noopener">original</a></span></header>
+<div class="t">With the official Linux-64bit build, run on Fedora 13, I see it failing badly:</div><pre><code>************************
+EXCEPTION: 22DbRunRecoveryException       
+DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery       
+bitcoin in AppInit()       
+
+************************
+EXCEPTION: 22DbRunRecoveryException       
+DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery       
+bitcoin in CMyApp::OnUnhandledException()       
+
+terminate called after throwing an instance of &#x27;DbRunRecoveryException&#x27;
+  what():  DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery</code></pre><div class="t">Praying my bitcoins aren&#x27;t eaten...</div></article><article class="msg" id="m8">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T19:47:37Z">29 July 2010, 19:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6464#msg6464" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on July 29, 2010, 07:42:15 PM</div><div class="t">With the official Linux-64bit build, run on Fedora 13, I see it failing badly:
+
+************************
+EXCEPTION: 22DbRunRecoveryException       
+DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery       
+bitcoin in AppInit()       
+
+************************
+EXCEPTION: 22DbRunRecoveryException       
+DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery       
+bitcoin in CMyApp::OnUnhandledException()       
+
+terminate called after throwing an instance of &#x27;DbRunRecoveryException&#x27;
+  what():  DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery
+
+Praying my bitcoins aren&#x27;t eaten...</div></blockquote><div class="t">I think you&#x27;ll be ok, it blew up on me too. Run the older version, you should still see all your coins. Backup first for the next Linux release  Wink</div></article><article class="msg" id="m9">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T19:49:32Z">29 July 2010, 19:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6465#msg6465" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on July 29, 2010, 07:42:15 PM</div><div class="t">With the official Linux-64bit build, run on Fedora 13, I see it failing badly:</div></blockquote><div class="t">Same result on another machine.  BDB errors, and death.  0.3.5 on 64bit Linux is questionable.  You didn&#x27;t mix up the builds with 32-bit Linux, did you?
+
+debug.log says:</div><pre><code>Bitcoin version 0.3.5 beta
+Default data directory /g/g/.bitcoin
+Bound to port 8333
+Loading addresses...
+dbenv.open strLogDir=/garz/bitcoin/data/database strErrorFile=/garz/bitcoin/data/db.log
+
+************************
+EXCEPTION: 22DbRunRecoveryException      
+DbEnv::open: DB_RUNRECOVERY: Fatal error, run database recovery      
+bitcoin in AppInit()      </code></pre></article><article class="msg" id="m10">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T19:52:45Z">29 July 2010, 19:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6467#msg6467" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 29, 2010, 07:47:37 PM</div><div class="t">I think you&#x27;ll be ok, it blew up on me too. Run the older version, you should still see all your coins. Backup first for the next Linux release  Wink</div></blockquote><div class="t">Double-ACK Smiley
+
+older version (SVN 117 + listtransactions + getinfo KHPS) works fine, all bitcoins there.  And yes, I should back up before following &quot;please upgrade&quot; instructions...   Smiley</div></article><article class="msg" id="m11">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T19:54:27Z">29 July 2010, 19:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6468#msg6468" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on July 29, 2010, 07:51:38 PM</div><div class="t">Can windows users upgrade to the 3.5 for now?</div></blockquote><div class="t">Yes, I&#x27;ve tested on Windows XP, 2003, and 7 all went through just fine. You&#x27;ll enjoy the speed increase as well.  Wink
+
+[err, wait I guess, new version about to spawn]</div></article><article class="msg sat" id="m12">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T19:55:51Z">29 July 2010, 19:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6469#msg6469" rel="nofollow noopener">original</a></span></header>
+<div class="t">Haven&#x27;t had time to update the SVN yet.  Wait for 0.3.6, I&#x27;m building it now.  You can shut down your node in the meantime.  </div></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T20:30:15Z">29 July 2010, 20:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6480#msg6480" rel="nofollow noopener">original</a></span></header>
+<div class="t">SVN is updated with version 0.3.6.
+
+Uploading Windows build of 0.3.6 to Sourceforge now, then will rebuild linux.</div></article><article class="msg" id="m14">
+<header><b>RudeDude</b><span class="muted"> · <time datetime="2010-07-29T20:35:54Z">29 July 2010, 20:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6485#msg6485" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ha! One of the changes in there is updated some v &quot;0.3.3&quot; stuff to &quot;0.3.6&quot; but that isn&#x27;t the important part of the update. :-)</div></article><article class="msg" id="m15">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T20:48:35Z">29 July 2010, 20:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6486#msg6486" rel="nofollow noopener">original</a></span></header>
+<div class="t">SVN r119 seems to work fine here.  No BDB explosion.</div></article><article class="msg" id="m16">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T20:51:29Z">29 July 2010, 20:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6487#msg6487" rel="nofollow noopener">original</a></span></header>
+<div class="t">Tested the Windows build across XP, 2003, Vista, 7 (both 32 and 64bit builds), no issues installing or running client. So far so good, looking forward to the Linux client.  Wink</div></article><article class="msg sat" id="m17">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T21:20:38Z">29 July 2010, 21:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6490#msg6490" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3.6 Linux build is back to the old makefile.unix.  It static links libjpeg so that shouldn&#x27;t be a problem.
+
+Is that working better?
+
+If you got 22DbRunRecoveryException and you&#x27;ve used someone else&#x27;s build before, you may need to delete (or move the files somewhere else) database/log.000000*
+
+Windows and Linux users: if you got 0.3.5 you still need to upgrade to 0.3.6.</div></article><article class="msg" id="m18">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T21:23:21Z">29 July 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6492#msg6492" rel="nofollow noopener">original</a></span></header>
+<div class="t">Still a no go on the Linux build though, this is the console error I get. I checked to make sure the file was there, but the versions don&#x27;t match I guess?
+
+64bit Client Error, will try out 32bit client and see if the error is similar.</div><pre><code>./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)</code></pre><div class="t">The machine I tested this on uses nothing but the stock builds, no modified builds were used prior.
+
+Same error for 32bit client</div><pre><code>./bitcoin: /lib/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)</code></pre><div class="t">Linux - Mandriva 2010.0 [64bit and 32bit] OS systems setup</div></article><article class="msg" id="m19">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-07-29T21:27:15Z">29 July 2010, 21:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6493#msg6493" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3.6 binaries for linux works fine on two my machines (64 and 32 bits) with Debian squeeze/sid</div></article><article class="msg" id="m20">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T21:28:55Z">29 July 2010, 21:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6494#msg6494" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bitcoinex on July 29, 2010, 09:27:15 PM</div><div class="t">0.3.6 binaries for linux works fine on two my machines (64 and 32 bits)</div></blockquote><div class="t">That&#x27;s good to know, might just need to update mine, checking to see what versions I have currently installed.</div></article><article class="msg" id="m21">
+<header><b>dwdollar</b><span class="muted"> · <time datetime="2010-07-29T21:29:41Z">29 July 2010, 21:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6495#msg6495" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 29, 2010, 09:23:21 PM</div><div class="t">Still a no go on the Linux build though, this is the console error I get. I checked to make sure the file was there, but the versions don&#x27;t match I guess?
+
+64bit Client Error, will try out 32bit client and see if the error is similar.
+
+./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)
+
+The machine I tested this on uses nothing but the stock builds, no modified builds were used prior.
+
+Same error for 32bit client
+
+./bitcoin: /lib/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)</div></blockquote><div class="t">I&#x27;m getting this too on 32-bit Ubuntu 9.10.
+
+It works fine on 32-bit and 64-bit Ubuntu 10.04.</div></article><article class="msg" id="m22">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T21:30:08Z">29 July 2010, 21:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6497#msg6497" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bitcoinex on July 29, 2010, 09:27:15 PM</div><div class="t">0.3.6 binaries for linux works fine on two my machines (64 and 32 bits)</div></blockquote><div class="t">If you (and others) are willing, please post your OS + OS version, when posting success/failure reports.
+
+I will echo a recommendation to satoshi from another forum member:  build linux binaries on an older Linux OS, to ensure wider compatibility.  Maybe something as old as CentOS 5 (caveat: requires custom openssl, boost, db4 and wx builds).</div></article><article class="msg" id="m23">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T21:30:24Z">29 July 2010, 21:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6498#msg6498" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ah, mine is linked to 2.10.1, I&#x27;ll bring my system up to bleeding edge to see if that solves it  Grin
+
+[edit] Well turns out I can&#x27;t package wise as they top out at 2.10 for now</div></article><article class="msg" id="m24">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T21:32:47Z">29 July 2010, 21:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6499#msg6499" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on July 29, 2010, 09:30:08 PM</div><div class="t">&gt; Quote from: bitcoinex on July 29, 2010, 09:27:15 PM
+&gt; 0.3.6 binaries for linux works fine on two my machines (64 and 32 bits)
+
+If you (and others) are willing, please post your OS + OS version, when posting success/failure reports.
+
+I will echo a recommendation to satoshi from another forum member:  build linux binaries on an older Linux OS, to ensure wider compatibility.  Maybe something as old as CentOS 5 (caveat: requires custom openssl, boost, db4 and wx builds).</div></blockquote><div class="t">I would agree, would help those of us not on the bleeding edge of distro packages.  Smiley</div></article><article class="msg" id="m25">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-07-29T21:35:27Z">29 July 2010, 21:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6500#msg6500" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on July 29, 2010, 09:30:08 PM</div><div class="t">&gt; Quote from: bitcoinex on July 29, 2010, 09:27:15 PM
+&gt; 0.3.6 binaries for linux works fine on two my machines (64 and 32 bits)
+
+If you (and others) are willing, please post your OS + OS version, when posting success/failure reports.
+
+I will echo a recommendation to satoshi from another forum member:  build linux binaries on an older Linux OS, to ensure wider compatibility.  Maybe something as old as CentOS 5 (caveat: requires custom openssl, boost, db4 and wx builds).</div></blockquote><div class="t">sorry. I&#x27;m checked binaries on Debian GNU/Linux squeeze/sid</div></article><article class="msg sat" id="m26">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T21:43:15Z">29 July 2010, 21:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6502#msg6502" rel="nofollow noopener">original</a></span></header>
+<div class="t">&quot;./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)&quot; isn&#x27;t a new problem that started with 0.3.6 is it?  This was built on the same OS installations as 0.3.0.
+
+Unfortunately I upgraded to Ubuntu 10.04 before 0.3.0.  I will not upgrade anymore.  I don&#x27;t know when I might have time to reinstall to downgrade, but at least by not upgrading, it&#x27;ll gradually fix itself.</div></article><article class="msg" id="m27">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-07-29T21:44:02Z">29 July 2010, 21:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6503#msg6503" rel="nofollow noopener">original</a></span></header>
+<div class="t">v0.3.6 works on FreeBSD/i386 7.2,7.3 and on FreeBSD/amd64 8.0
+
+Compiles cleanly without any warnings, and appears to be working fine.</div></article><article class="msg" id="m28">
+<header><b>Odin</b><span class="muted"> · <time datetime="2010-07-29T21:45:06Z">29 July 2010, 21:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6504#msg6504" rel="nofollow noopener">original</a></span></header>
+<div class="t">Maybe the points listed in <a href="http://bitcointalk.org/index.php?topic=612.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=612.0</a> would help making the Linux binary distribution works for the widest audience.
+
+Getting the project to build under the OpenSUSE OBS service should allow the maintainer to get distribution specific compliation for free.</div></article><article class="msg" id="m29">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2010-07-29T21:47:41Z">29 July 2010, 21:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6505#msg6505" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3.6 works great on Win7 Pro 64-Bit.</div></article><article class="msg" id="m30">
+<header><b>Gooffy</b><span class="muted"> · <time datetime="2010-07-29T22:08:14Z">29 July 2010, 22:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6511#msg6511" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ubuntu Linux 9.10
+
+Error:
+
+/lib/tls/i686/cmov/libc.so.6: version `GLIBC_2.11&#x27; not found       Cry </div></article><article class="msg" id="m31">
+<header><b>bitcoinex</b><span class="muted"> · <time datetime="2010-07-29T22:11:15Z">29 July 2010, 22:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6514#msg6514" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: WMFrend on July 29, 2010, 10:08:14 PM</div><div class="t">Ubuntu Linux 9.10
+
+Error:
+
+/lib/tls/i686/cmov/libc.so.6: version `GLIBC_2.11&#x27; not found       Cry</div></blockquote><div class="t">$ dpkg -l|grep -i glibc
+ii  libdb1-compat                            2.1.3-9                         The Berkeley database routines [glibc 2.0/2.
+
+?</div></article><article class="msg" id="m32">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-29T22:14:36Z">29 July 2010, 22:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6515#msg6515" rel="nofollow noopener">original</a></span></header>
+<div class="t">On Debian testing 32-bit, I get a few build errors, all resembling:</div><pre><code>script.cpp:114: error: OP_NOP1 was not declared in this scope</code></pre><div class="t">I got these when attempting to &quot;make bitcoind&quot; without &quot;make clean&quot; or &quot;make&quot; first. It looks like the bitcoind build instructions don&#x27;t compile the headers first, but they also don&#x27;t delete the headers.h.gch, so the old headers are used if present.
+
+If anyone else gets this error, the simplest solution is to &quot;make clean&quot; and retry the build.</div></article><article class="msg" id="m33">
+<header><b>dwdollar</b><span class="muted"> · <time datetime="2010-07-29T22:53:48Z">29 July 2010, 22:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6533#msg6533" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 29, 2010, 09:43:15 PM</div><div class="t">&quot;./bitcoin: /lib64/libc.so.6: version `GLIBC_2.11&#x27; not found (required by ./bitcoin)&quot; isn&#x27;t a new problem that started with 0.3.6 is it?  This was built on the same OS installations as 0.3.0.
+
+Unfortunately I upgraded to Ubuntu 10.04 before 0.3.0.  I will not upgrade anymore.  I don&#x27;t know when I might have time to reinstall to downgrade, but at least by not upgrading, it&#x27;ll gradually fix itself.</div></blockquote><div class="t">That&#x27;s strange, 0.3.3 worked fine on it.  It&#x27;s no biggie, I need to upgrade that machine anyway.</div></article><article class="msg" id="m34">
+<header><b>Odin</b><span class="muted"> · <time datetime="2010-07-29T22:57:15Z">29 July 2010, 22:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6534#msg6534" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: WMFrend on July 29, 2010, 10:08:14 PM</div><div class="t">Ubuntu Linux 9.10
+
+Error:
+
+/lib/tls/i686/cmov/libc.so.6: version `GLIBC_2.11&#x27; not found       Cry </div></blockquote><div class="t">dpkg -l | egrep &quot;(libc6|glibc)&quot;
+# This will display what version you currently have installed
+
+# I guess you have glibc version 2.10 or older installed.
+
+apt-get update
+apt-cache showpkg libc6 | less
+# Look (near the bottom) for the versions available for a 2.11 version
+
+#Maybe you can just upgrade with:
+apt-get upgrade libc6
+
+# Above instruction for a real debian system, they might work with Ubuntu</div></article><article class="msg sat" id="m35">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T23:12:12Z">29 July 2010, 23:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6542#msg6542" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on July 29, 2010, 10:14:36 PM</div><div class="t">On Debian testing 32-bit, I get a few build errors, all resembling:
+
+script.cpp:114: error: OP_NOP1 was not declared in this scope
+I got these when attempting to &quot;make bitcoind&quot; without &quot;make clean&quot; or &quot;make&quot; first. It looks like the bitcoind build instructions don&#x27;t compile the headers first, but they also don&#x27;t delete the headers.h.gch, so the old headers are used if present.
+
+If anyone else gets this error, the simplest solution is to &quot;make clean&quot; and retry the build.</div></blockquote><div class="t">We don&#x27;t really need pre-compiled header.  It only makes it compile slightly faster.  I think I&#x27;ll just get rid of it.  Even still, you&#x27;d still need to remember to &quot;make -f makefile.unix clean&quot; or delete headers.h.gch one more time to get rid of the leftover file.
+
+Damn that GLIBC_2.11.  I thought I&#x27;d been careful not to accept any of the updates.</div></article><article class="msg" id="m36">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T00:27:27Z">30 July 2010, 00:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6556#msg6556" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 29, 2010, 11:12:12 PM</div><div class="t">We don&#x27;t really need pre-compiled header.  It only makes it compile slightly faster.  I think I&#x27;ll just get rid of it.  Even still, you&#x27;d still need to remember to &quot;make -f makefile.unix clean&quot; or delete headers.h.gch one more time to get rid of the leftover file.
+
+Damn that GLIBC_2.11.  I thought I&#x27;d been careful not to accept any of the updates.</div></blockquote><div class="t">I was going to compile a GLIBC_2.10 version until I noticed that I had to keep installing more and more to get through the check errors, LOL. Looks like I just need to fire up a Virtual Box with all the dev packages loaded to do this in a virtual machine to make life easier.</div></article><article class="msg" id="m37">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-07-30T01:05:40Z">30 July 2010, 01:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6566#msg6566" rel="nofollow noopener">original</a></span></header>
+<div class="t">Could someone help me understand why it matters that hashing is 2x faster?  If everyone were to upgrade the coin inflation rate would still remain the same.  Thus there is a &quot;slight&quot; advantage to early adopters.  I guess some could say it gives &quot;honest nodes&quot; more time and thus makes it even harder for dishonest nodes to gain an edge.
+
+The #1 aspect if a currency is divisibility and fixed supply and the relative value of the coins will adjust automatically relative to the supply of goods available to buy.  So I would think we would want to focus on aspects other than &quot;generation speed&quot; first.</div></article><article class="msg" id="m38">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T01:25:48Z">30 July 2010, 01:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6572#msg6572" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster on July 30, 2010, 01:05:40 AM</div><div class="t">Could someone help me understand why it matters that hashing is 2x faster?  If everyone were to upgrade the coin inflation rate would still remain the same.  Thus there is a &quot;slight&quot; advantage to early adopters.  I guess some could say it gives &quot;honest nodes&quot; more time and thus makes it even harder for dishonest nodes to gain an edge.
+
+The #1 aspect if a currency is divisibility and fixed supply and the relative value of the coins will adjust automatically relative to the supply of goods available to buy.  So I would think we would want to focus on aspects other than &quot;generation speed&quot; first.</div></blockquote><div class="t">Quite simply to level the playing field for coin generation and to help maintain block generation at a stable rate. If everyone was limited to just 100 khash/s by the client, someone would just compile a client that does not have the limit and load it up on a server farm where they could generate 10,000 khash/s per machine. It would put the coin generation supply in the hands of who ever had a large amount of money to invest in servers and discourage everyone else from trying to mint coin. If we could trust that clients would only act as transaction nodes and that everyone would get a fair shot at coin generation then no one would care if the client was generating at 5 khash/s all the time.
+
+So in a perfect world, no one would care that they can generate 2 or 3 times faster than someone else, but we don&#x27;t live in a perfect world.  Wink</div></article><article class="msg" id="m39">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-07-30T05:51:34Z">30 July 2010, 05:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6603#msg6603" rel="nofollow noopener">original</a></span></header>
+<div class="t">My khash rate went from 700 to 1700.Sweet!</div></article><article class="msg" id="m40">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-07-30T13:53:56Z">30 July 2010, 13:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6645#msg6645" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Odin on July 29, 2010, 09:45:06 PM</div><div class="t">Maybe the points listed in <a href="http://bitcointalk.org/index.php?topic=612.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=612.0</a> would help making the Linux binary distribution works for the widest audience.
+
+Getting the project to build under the OpenSUSE OBS service should allow the maintainer to get distribution specific compliation for free.</div></blockquote><div class="t">Great point. I got the bitcoind (without the wx GUI) compiling for Ubuntu 10.04 Cheesy
+
+I&#x27;ll try to get the other version to work too, but it&#x27;s quite annoying that BC needs such a new version of libdb and wx...
+
+<a href="https://build.opensuse.org/package/show?package=bitcoind" rel="nofollow noopener">https://build.opensuse.org/package/show?package=bitcoind</a>&amp;project=home:cdecker</div></article><article class="msg" id="m41">
+<header><b>BitLex</b><span class="muted"> · <time datetime="2010-07-30T14:02:25Z">30 July 2010, 14:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6648#msg6648" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3.6 up and running on w2k/xp32/xp64/w7
+
+nice speed-updates on all systems,
+guess we can prepare for another major step up in difficulty, now that all nodes do 2-3times the hashes they did before.
+is that a good or a bad thing?</div></article><article class="msg" id="m42">
+<header><b>m0mchil</b><span class="muted"> · <time datetime="2010-07-30T14:16:08Z">30 July 2010, 14:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6653#msg6653" rel="nofollow noopener">original</a></span></header>
+<div class="t">Fastest possible stock build removes any advantage other &#x27;special&#x27; builds would have. Which is good because generation will be more uniformly distributed. It&#x27;s important for the official build to be always the fastest available. It should use any known optimization (including CUDA, OpenCL, ability to work on the Cell proc etc).
+
+The one and only effect for now - another difficulty adjustment, still same chance to generate until more users/cores came in.</div></article><article class="msg" id="m43">
+<header><b>andy_3_913</b><span class="muted"> · <time datetime="2010-07-30T16:04:51Z">30 July 2010, 16:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6667#msg6667" rel="nofollow noopener">original</a></span></header>
+<div class="t">would an auto-update function built into bc be possible?</div></article><article class="msg" id="m44">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-07-30T16:49:25Z">30 July 2010, 16:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6673#msg6673" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: andy_3_913 on July 30, 2010, 04:04:51 PM</div><div class="t">would an auto-update function built into bc be possible?</div></blockquote><div class="t">It&#x27;s something that I have already suggested here :|
+<a href="http://bitcointalk.org/index.php?topic=259.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=259.0</a></div></article><article class="msg" id="m45">
+<header><b>andy_3_913</b><span class="muted"> · <time datetime="2010-07-30T16:51:12Z">30 July 2010, 16:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6674#msg6674" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Joozero on July 30, 2010, 04:49:25 PM</div><div class="t">&gt; Quote from: andy_3_913 on July 30, 2010, 04:04:51 PM
+&gt; would an auto-update function built into bc be possible?
+It&#x27;s something that I have already suggested here :|
+<a href="http://bitcointalk.org/index.php?topic=259.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=259.0</a></div></blockquote><div class="t">sorry! Smiley</div></article><article class="msg" id="m46">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-07-30T18:39:59Z">30 July 2010, 18:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6693#msg6693" rel="nofollow noopener">original</a></span></header>
+<div class="t">32Bit and 64Bit versions for Ubuntu 10.04 are available on the openSuse Build Service: <a href="https://www.bitcoin.org/smf/index.php?topic=644.0" rel="nofollow noopener">https://www.bitcoin.org/smf/index.php?topic=644.0</a></div></article><article class="msg" id="m47">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T19:24:07Z">30 July 2010, 19:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6702#msg6702" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can only imagine the pain you went through to get these builds because I&#x27;m trying to build the program on a Ubuntu 9.04 box and so far I can&#x27;t seem to find all the dependencies to compile no matter how much I keep installing packages and compiling source, LOL.</div></article><article class="msg sat" id="m48">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-30T19:53:06Z">30 July 2010, 19:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6711#msg6711" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 30, 2010, 07:24:07 PM</div><div class="t">I can only imagine the pain you went through to get these builds because I&#x27;m trying to build the program on a Ubuntu 9.04 box and so far I can&#x27;t seem to find all the dependencies to compile no matter how much I keep installing packages and compiling source, LOL.</div></blockquote><div class="t">I can&#x27;t understand why you&#x27;re having so much pain.  I just followed the instructions in build-unix.txt.  I made a couple little corrections for Boost 1.37, which I&#x27;ll put on SVN the next time I update it, noted below:
+
+Dependencies
+------------
+sudo apt-get install build-essential
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install libssl-dev
+sudo apt-get install libdb4.7-dev
+sudo apt-get install libdb4.7++-dev
+sudo apt-get install libboost-all-dev (or libboost1.37-dev)
+
+wxWidgets
+---------
+cd /usr/local
+tar -xzvf wxWidgets-2.9.0.tar.gz
+cd /usr/local/wxWidgets-2.9.0
+mkdir buildgtk
+cd buildgtk
+../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
+make
+sudo su
+make install
+ldconfig
+
+added a comment in makefile.unix:
+
+# for boost 1.37, add -mt to the boost libraries
+LIBS= \
+ -Wl,-Bstatic \
+   -l boost_system \
+   -l boost_filesystem \
+   -l boost_program_options \
+   -l boost_thread \
+   -l db_cxx \
+   -l crypto \
+ -Wl,-Bdynamic \
+   -l gthread-2.0</div></article><article class="msg" id="m49">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-30T20:04:19Z">30 July 2010, 20:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6713#msg6713" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 30, 2010, 07:53:06 PM</div><div class="t">I can&#x27;t understand why you&#x27;re having so much pain.  I just followed the instructions in build-unix.txt.  I made a couple little corrections for Boost 1.37, which I&#x27;ll put on SVN the next time I update it, noted below:
+
+Dependencies
+------------
+sudo apt-get install build-essential
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install libssl-dev
+sudo apt-get install libdb4.7-dev
+sudo apt-get install libdb4.7++-dev
+sudo apt-get install libboost-all-dev (or libboost1.37-dev)</div></blockquote><div class="t">That part I highlighted is what got me. You can&#x27;t install all the libboost packages with that command (I tried to cheat with a * also), but part of my issue is I took it too literal like install *everything* that had to do with libboost, LOL.
+
+Really, all that was needed was the libboost1.37-dev package and that made all the compile errors go away. Everything else worked out just fine as far as compiling your own wxWidgets, compiling Boost 1.4, etc.
+
+So that last command should simply be
+sudo apt-get install libboost1.37-dev
+
+On a side note, I compiled mine on a Ubuntu 64bit system, so the finished program came out 64bit aware. I&#x27;m testing it out on some 64bit systems to see how well things go.</div></article><article class="msg sat" id="m50">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-30T21:44:04Z">30 July 2010, 21:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=626.msg6728#msg6728" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 30, 2010, 08:04:19 PM</div><div class="t">So that last command should simply be
+sudo apt-get install libboost1.37-dev</div></blockquote><div class="t">Except that wouldn&#x27;t work for boost 1.40+ (on Ubuntu 10.04), where you need to get libboost-all-dev.
+
+Seems they changed everything around in Boost recently, &quot;-mt&quot; and all that, makes it hard.
+
+BTW, I tried Boost 1.34 but it didn&#x27;t have the boost.interprocess stuff.
+
+Mac OSX version is available now.  See bitcoin.org or the SourceForge link.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p144-transaction-disappeared-in-the-void/">← Transaction disappeared in the void...</a><a rel="next" href="../../conversations/p146-implementation-bug-prior-to-0-3-6/">Implementation bug prior to 0.3.6 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

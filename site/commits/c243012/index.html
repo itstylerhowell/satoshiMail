@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init and…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c243012/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init and…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c243012/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init and…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "GUI-less build target bitcoind that links to wxBase and shouldn't need GTK, split init and shutdown from ui.cpp into init.cpp, support wxUSE_GUI=0 -- version 0.2.7", "url": "https://satoshimail.pages.dev/commits/c243012/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-25T21:55:27Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c2430126d75318508836a24f90d3524320190465"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "GUI-less build target bitcoind that…", "item": "https://satoshimail.pages.dev/commits/c243012/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cc2430126d7">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">GUI-less build target bitcoind that…</span></div></nav>
+<main class="in">
+<h1>GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init and shutdown from ui.cpp into init.cpp, support wxUSE_GUI=0 -- version 0.2.7</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 25 February 2010 · SVN r71 · release v0.2.7 · 13 files, +817 −773</p>
+<p class="actions"><a class="btn" href="../../#t-cc2430126d7">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/c2430126d75318508836a24f90d3524320190465" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -21,9 +21,11 @@
+ #include &lt;wx/wx.h&gt;
+ #include &lt;wx/clipbrd.h&gt;
+ #include &lt;wx/snglinst.h&gt;
+-#include &lt;wx/taskbar.h&gt;
+ #include &lt;wx/stdpaths.h&gt;
+ #include &lt;wx/utils.h&gt;
++#if wxUSE_GUI
++#include &lt;wx/taskbar.h&gt;
++#endif
+ #include &lt;openssl/ecdsa.h&gt;
+ #include &lt;openssl/evp.h&gt;
+ #include &lt;openssl/rand.h&gt;
+@@ -100,8 +102,11 @@ using namespace boost;
+ #include &quot;irc.h&quot;
+ #include &quot;main.h&quot;
+ #include &quot;rpc.h&quot;
++#if wxUSE_GUI
+ #include &quot;uibase.h&quot;
++#endif
+ #include &quot;ui.h&quot;
++#include &quot;init.h&quot;
+ 
+ #include &quot;xpm/addressbook16.xpm&quot;
+ #include &quot;xpm/addressbook20.xpm&quot;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -0,0 +1,625 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++#include &quot;headers.h&quot;
++
++
++
++
++void ExitTimeout(void* parg)
++{
++#ifdef __WXMSW__
++    Sleep(5000);
++    ExitProcess(0);
++#endif
++}
++
++void Shutdown(void* parg)
++{
++    static CCriticalSection cs_Shutdown;
++    static bool fTaken;
++    bool fFirstThread;
++    CRITICAL_BLOCK(cs_Shutdown)
++    {
++        fFirstThread = !fTaken;
++        fTaken = true;
++    }
++    static bool fExit;
++    if (fFirstThread)
++    {
++        fShutdown = true;
++        nTransactionsUpdated++;
++        DBFlush(false);
++        StopNode();
++        DBFlush(true);
++        CreateThread(ExitTimeout, NULL);
++        Sleep(50);
++        printf(&quot;Bitcoin exiting\n\n&quot;);
++        fExit = true;
++        exit(0);
++    }
++    else
++    {
++        while (!fExit)
++            Sleep(500);
++        Sleep(100);
++        ExitThread(0);
++    }
++}
++
++
++
++
++
++
++//////////////////////////////////////////////////////////////////////////////
++//
++// Startup folder
++//
++
++#ifdef __WXMSW__
++typedef WINSHELLAPI BOOL (WINAPI *PSHGETSPECIALFOLDERPATHA)(HWND hwndOwner, LPSTR lpszPath, int nFolder, BOOL fCreate);
++
++string MyGetSpecialFolderPath(int nFolder, bool fCreate)
++{
++    char pszPath[MAX_PATH+100] = &quot;&quot;;
++
++    // SHGetSpecialFolderPath is not usually available on NT 4.0
++    HMODULE hShell32 = LoadLibraryA(&quot;shell32.dll&quot;);
++    if (hShell32)
++    {
++        PSHGETSPECIALFOLDERPATHA pSHGetSpecialFolderPath =
++            (PSHGETSPECIALFOLDERPATHA)GetProcAddress(hShell32, &quot;SHGetSpecialFolderPathA&quot;);
++        if (pSHGetSpecialFolderPath)
++            (*pSHGetSpecialFolderPath)(NULL, pszPath, nFolder, fCreate);
++        FreeModule(hShell32);
++    }
++
++    // Backup option
++    if (pszPath[0] == &#x27;\0&#x27;)
++    {
++        if (nFolder == CSIDL_STARTUP)
++        {
++            strcpy(pszPath, getenv(&quot;USERPROFILE&quot;));
++            strcat(pszPath, &quot;\\Start Menu\\Programs\\Startup&quot;);
++        }
++        else if (nFolder == CSIDL_APPDATA)
++        {
++            strcpy(pszPath, getenv(&quot;APPDATA&quot;));
++        }
++    }
++
++    return pszPath;
++}
++
++string StartupShortcutPath()
++{
++    return MyGetSpecialFolderPath(CSIDL_STARTUP, true) + &quot;\\Bitcoin.lnk&quot;;
++}
++
++bool GetStartOnSystemStartup()
++{
++    return wxFileExists(StartupShortcutPath());
++}
++
++void SetStartOnSystemStartup(bool fAutoStart)
++{
++    // If the shortcut exists already, remove it for updating
++    remove(StartupShortcutPath().c_str());
++
++    if (fAutoStart)
++    {
++        CoInitialize(NULL);
++
++        // Get a pointer to the IShellLink interface.
++        IShellLink* psl = NULL;
++        HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL,
++                                CLSCTX_INPROC_SERVER, IID_IShellLink,
++                                reinterpret_cast&lt;void**&gt;(&amp;psl));
++
++        if (SUCCEEDED(hres))
++        {
++            // Get the current executable path
++            TCHAR pszExePath[MAX_PATH];
++            GetModuleFileName(NULL, pszExePath, sizeof(pszExePath));
++
++            // Set the path to the shortcut target
++            psl-&gt;SetPath(pszExePath);
++            PathRemoveFileSpec(pszExePath);
++            psl-&gt;SetWorkingDirectory(pszExePath);
++            psl-&gt;SetShowCmd(SW_SHOWMINNOACTIVE);
++
++            // Query IShellLink for the IPersistFile interface for
++            // saving the shortcut in persistent storage.
++            IPersistFile* ppf = NULL;
++            hres = psl-&gt;QueryInterface(IID_IPersistFile,
++                                       reinterpret_cast&lt;void**&gt;(&amp;ppf));
++            if (SUCCEEDED(hres))
++            {
++                WCHAR pwsz[MAX_PATH];
++                // Ensure that the string is ANSI.
++                MultiByteToWideChar(CP_ACP, 0, StartupShortcutPath().c_str(), -1, pwsz, MAX_PATH);
++                // Save the link by calling IPersistFile::Save.
++                hres = ppf-&gt;Save(pwsz, TRUE);
++                ppf-&gt;Release();
++            }
++            psl-&gt;Release();
++        }
++        CoUninitialize();
++    }
++}
++#else
++bool GetStartOnSystemStartup() { return false; }
++void SetStartOnSystemStartup(bool fAutoStart) { }
++#endif
++
++
++
++
++
++
++
++//////////////////////////////////////////////////////////////////////////////
++//
++// CMyApp
++//
++
++// Define a new application
++class CMyApp: public wxApp
++{
++public:
++    wxLocale m_locale;
++
++    CMyApp(){};
++    ~CMyApp(){};
++    bool OnInit();
++    bool OnInit2();
++    int OnExit();
++
++    // Hook Initialize so we can start without GUI
++    virtual bool Initialize(int&amp; argc, wxChar** argv);
++
++    // 2nd-level exception handling: we get all the exceptions occurring in any
++    // event handler here
++    virtual bool OnExceptionInMainLoop();
++
++    // 3rd, and final, level exception handling: whenever an unhandled
++    // exception is caught, this function is called
++    virtual void OnUnhandledException();
++
++    // and now for something different: this function is called in case of a
++    // crash (e.g. dereferencing null pointer, division by 0, ...)
++    virtual void OnFatalException();
++};
++
++IMPLEMENT_APP(CMyApp)
++
++bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
++{
++    if (argc &gt; 1 &amp;&amp; argv[1][0] != &#x27;-&#x27; &amp;&amp; (!fWindows || argv[1][0] != &#x27;/&#x27;) &amp;&amp;
++        wxString(argv[1]) != &quot;start&quot;)
++    {
++        fCommandLine = true;
++    }
++    else if (!fGUI)
++    {
++        fDaemon = true;
++    }
++    else
++    {
++        // wxApp::Initialize will remove environment-specific parameters,
++        // so it&#x27;s too early to call ParseParameters yet
++        for (int i = 1; i &lt; argc; i++)
++        {
++            wxString str = argv[i];
++            #ifdef __WXMSW__
++            if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
++                str[0] = &#x27;-&#x27;;
++            str = str.MakeLower();
++            #endif
++            // haven&#x27;t decided which argument to use for this yet
++            if (str == &quot;-daemon&quot; || str == &quot;-d&quot; || str == &quot;start&quot;)
++                fDaemon = true;
++        }
++    }
++
++    if (fDaemon)
++        fprintf(stdout, &quot;bitcoin server starting\n&quot;);
++
++#ifdef __WXGTK__
++    if (fDaemon || fCommandLine)
++    {
++        // Call the original Initialize while suppressing error messages
++        // and ignoring failure.  If unable to initialize GTK, it fails
++        // near the end so hopefully the last few things don&#x27;t matter.
++        {
++            wxLogNull logNo;
++            wxApp::Initialize(argc, argv);
++        }
++
++        if (fDaemon)
++        {
++            // Daemonize
++            pid_t pid = fork();
++            if (pid &lt; 0)
++            {
++                fprintf(stderr, &quot;Error: fork() returned %d errno %d\n&quot;, pid, errno);
++                return false;
++            }
++            if (pid &gt; 0)
++                pthread_exit((void*)0);
++        }
++
++        return true;
++    }
++#endif
++
++    return wxApp::Initialize(argc, argv);
++}
++
++bool CMyApp::OnInit()
++{
++    bool fRet = false;
++    try
++    {
++        fRet = OnInit2();
++    }
++    catch (std::exception&amp; e) {
++        PrintException(&amp;e, &quot;OnInit()&quot;);
++    } catch (...) {
++        PrintException(NULL, &quot;OnInit()&quot;);
++    }
++    if (!fRet)
++        Shutdown(NULL);
++    return fRet;
++}
++
++extern int g_isPainting;
++
++bool CMyApp::OnInit2()
++{
++#ifdef _MSC_VER
++    // Turn off microsoft heap dump noise
++    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
++    _CrtSetReportFile(_CRT_WARN, CreateFileA(&quot;NUL&quot;, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0));
++#endif
++#if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__) &amp;&amp; wxUSE_GUI
++    // Disable malfunctioning wxWidgets debug assertion
++    g_isPainting = 10000;
++#endif
++#if wxUSE_GUI
++    wxImage::AddHandler(new wxPNGHandler);
++#endif
++#ifdef __WXMSW__
++    SetAppName(&quot;Bitcoin&quot;);
++#else
++    SetAppName(&quot;bitcoin&quot;);
++    umask(077);
++#endif</code></pre></details><details><summary><code>init.h</code></summary><pre><code>@@ -0,0 +1,7 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++void Shutdown(void* parg);
++bool GetStartOnSystemStartup();
++void SetStartOnSystemStartup(bool fAutoStart);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -55,6 +55,8 @@ int64 nTransactionFee = 0;
+ CAddress addrIncoming;
+ int fLimitProcessors = false;
+ int nLimitProcessors = 1;
++int fMinimizeToTray = true;
++int fMinimizeOnClose = true;
+ 
+ 
+ 
+@@ -2990,7 +2992,7 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+     if (nValue &lt;= 0)
+         return _(&quot;Invalid amount&quot;);
+     if (nValue + nTransactionFee &gt; GetBalance())
+-        return _(&quot;You don&#x27;t have enough money&quot;);
++        return _(&quot;Insufficient funds&quot;);
+ 
+     // Parse bitcoin address
+     CScript scriptPubKey;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -45,6 +45,8 @@ extern int64 nTransactionFee;
+ extern CAddress addrIncoming;
+ extern int fLimitProcessors;
+ extern int nLimitProcessors;
++extern int fMinimizeToTray;
++extern int fMinimizeOnClose;
+ 
+ 
+ </code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -18,69 +18,59 @@ LIBPATHS= \
+  -L&quot;/openssl/out&quot; \
+  -L&quot;/wxwidgets/lib/gcc_lib&quot;
+ 
++WXLIBS= \
++ -l wxmsw29ud_html -l wxmsw29ud_core -l wxmsw29ud_adv -l wxbase29ud -l wxtiffd -l wxjpegd -l wxpngd -l wxzlibd
++
+ LIBS= \
+  -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d \
+  -l db_cxx \
+  -l eay32 \
+- -l wxmsw29ud_html -l wxmsw29ud_core -l wxmsw29ud_adv -l wxbase29ud -l wxtiffd -l wxjpegd -l wxpngd -l wxzlibd \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
+ 
+ WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
+ DEBUGFLAGS=-g -D__WXDEBUG__
+ CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+-
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
++    script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h init.h sha.h
+ 
+ 
+ all: bitcoin.exe
+ 
+ 
+-headers.h.gch: headers.h            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/util.o: util.cpp                $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/script.o: script.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/db.o: db.cpp                    $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/net.o: net.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/main.o: main.cpp                $(HEADERS) sha.h
++headers.h.gch: headers.h $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp                    $(HEADERS)
++obj/%.o: %.cpp $(HEADERS) headers.h.gch
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/uibase.o: uibase.cpp            uibase.h
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/sha.o: sha.cpp                  sha.h
++obj/sha.o: sha.cpp sha.h
+ 	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+ 
+-obj/irc.o: irc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/rpc.o: rpc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+ 	windres $(WXDEFS) $(INCLUDEPATHS) -o $@ -i $&lt;
+ 
++OBJS= \
++    obj/util.o \
++    obj/script.o \
++    obj/db.o \
++    obj/net.o \
++    obj/irc.o \
++    obj/main.o \
++    obj/rpc.o \
++    obj/init.o
++
++bitcoin.exe: $(OBJS) obj/ui.o obj/uibase.o obj/sha.o obj/ui_res.o
++	g++ $(CFLAGS) -mwindows -Wl,--subsystem,windows -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++
+ 
++obj/nogui/%.o: %.cpp $(HEADERS)
++	g++ -c $(CFLAGS) -DwxUSE_GUI=0 -o $@ $&lt;
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o \
+-        obj/ui_res.o
++bitcoind.exe: $(OBJS:obj/%=obj/nogui/%) obj/sha.o obj/ui_res.o
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -l wxbase29ud $(LIBS)
+ 
+-bitcoin.exe: headers.h.gch $(OBJS)
+-	-kill /f bitcoin.exe
+-	g++ $(CFLAGS) -mwindows -Wl,--subsystem,windows -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+ 
+ clean:
+ 	-del /Q obj\*
++	-del /Q obj\nogui\*
+ 	-del /Q headers.h.gch</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -13,66 +13,61 @@ LIBPATHS= \
+  -L&quot;/usr/lib&quot; \
+  -L&quot;/usr/local/lib&quot;
+ 
++WXLIBS= \
++ -Wl,-Bstatic \
++   -l wx_gtk2ud-2.9 \
++ -Wl,-Bdynamic \
++   -l gtk-x11-2.0 -l SM
++
+ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system-mt -l boost_filesystem-mt \
+    -l db_cxx \
+-   -l wx_gtk2ud-2.9 \
+  -Wl,-Bdynamic \
+    -l crypto \
+-   -l gtk-x11-2.0 -l gthread-2.0 -l SM
++   -l gthread-2.0
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ DEBUGFLAGS=-g -D__WXDEBUG__
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+-
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
++    script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h init.h sha.h
+ 
+ 
+ all: bitcoin
+ 
+ 
+-headers.h.gch: headers.h            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/util.o: util.cpp                $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/script.o: script.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/db.o: db.cpp                    $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/net.o: net.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/main.o: main.cpp                $(HEADERS) sha.h
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+-obj/ui.o: ui.cpp                    $(HEADERS)
++headers.h.gch: headers.h $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/uibase.o: uibase.cpp            uibase.h
++obj/%.o: %.cpp $(HEADERS) headers.h.gch
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/sha.o: sha.cpp                  sha.h
++obj/sha.o: sha.cpp sha.h
+ 	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+ 
+-obj/irc.o: irc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
++OBJS= \
++    obj/util.o \
++    obj/script.o \
++    obj/db.o \
++    obj/net.o \
++    obj/irc.o \
++    obj/main.o \
++    obj/rpc.o \
++    obj/init.o
+ 
+-obj/rpc.o: rpc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
++bitcoin: $(OBJS) obj/ui.o obj/uibase.o obj/sha.o
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
+ 
+ 
++obj/nogui/%.o: %.cpp $(HEADERS)
++	g++ -c $(CFLAGS) -DwxUSE_GUI=0 -o $@ $&lt;
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
++bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -l wx_baseud-2.9 $(LIBS)
+ 
+-bitcoin: headers.h.gch $(OBJS)
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+ 
+ clean:
+ 	-rm obj/*
++	-rm obj/nogui/*
+ 	-rm headers.h.gch</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -28,57 +28,80 @@ LIBS= \
+ WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
+ DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
+ CFLAGS=/c /nologo /Ob0 /MDd /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+-
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
++    script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h init.h sha.h
+ 
+ 
+ all: bitcoin.exe
+ 
+ 
+-obj\util.obj: util.cpp        $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++.cpp{obj}.obj:
++	cl $(CFLAGS) /Fo$@ %s
++
++obj\util.obj: $(HEADERS)
+ 
+-obj\script.obj: script.cpp    $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\script.obj: $(HEADERS)
+ 
+-obj\db.obj: db.cpp            $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\db.obj: $(HEADERS)
+ 
+-obj\net.obj: net.cpp          $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\net.obj: $(HEADERS)
+ 
+-obj\main.obj: main.cpp        $(HEADERS) sha.h
+-    cl $(CFLAGS) /Fo$@ %s
++obj\irc.obj: $(HEADERS)
+ 
+-obj\ui.obj: ui.cpp            $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\main.obj: $(HEADERS)
+ 
+-obj\uibase.obj: uibase.cpp    uibase.h
+-    cl $(CFLAGS) /Fo$@ %s
++obj\rpc.obj: $(HEADERS)
+ 
+-obj\sha.obj: sha.cpp          sha.h
+-    cl $(CFLAGS) /O2 /Fo$@ %s
++obj\init.obj: $(HEADERS)
+ 
+-obj\irc.obj:  irc.cpp         $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\ui.obj: $(HEADERS)
+ 
+-obj\rpc.obj:  rpc.cpp         $(HEADERS)
+-    cl $(CFLAGS) /Fo$@ %s
++obj\uibase.obj: $(HEADERS)
++
++obj\sha.obj: sha.cpp sha.h
++	cl $(CFLAGS) /O2 /Fo$@ %s
+ 
+ obj\ui.res: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+-    rc $(INCLUDEPATHS) $(WXDEFS) /Fo$@ %s
++	rc $(INCLUDEPATHS) $(WXDEFS) /Fo$@ %s
++
++OBJS= \
++    obj\util.obj \
++    obj\script.obj \
++    obj\db.obj \
++    obj\net.obj \
++    obj\irc.obj \
++    obj\main.obj \
++    obj\rpc.obj \
++    obj\init.obj
++
++bitcoin.exe: $(OBJS) obj\ui.obj obj\uibase.obj obj\sha.obj obj\ui.res
++	link /nologo /DEBUG /SUBSYSTEM:WINDOWS /OUT:$@ $(LIBPATHS) $** $(LIBS)
++
++
++.cpp{obj\nogui}.obj:
++	cl $(CFLAGS) /DwxUSE_GUI=0 /Fo$@ %s
++
++obj\nogui\util.obj: $(HEADERS)
++
++obj\nogui\script.obj: $(HEADERS)
++
++obj\nogui\db.obj: $(HEADERS)
++
++obj\nogui\net.obj: $(HEADERS)
++
++obj\nogui\irc.obj: $(HEADERS)
++
++obj\nogui\main.obj: $(HEADERS)
+ 
++obj\nogui\rpc.obj: $(HEADERS)
+ 
++obj\nogui\init.obj: $(HEADERS)
+ 
+-OBJS=obj\util.obj obj\script.obj obj\db.obj obj\net.obj obj\main.obj \
+-    obj\ui.obj obj\uibase.obj obj\sha.obj obj\irc.obj obj\rpc.obj \
+-    obj\ui.res
++bitcoind.exe: $(OBJS:obj\=obj\nogui\) obj\sha.obj obj\ui.res
++	link /nologo /DEBUG /OUT:$@ $(LIBPATHS) $** $(LIBS)
+ 
+-bitcoin.exe: $(OBJS)
+-    -kill /f bitcoin.exe &amp; sleep 1
+-    link /nologo /DEBUG /SUBSYSTEM:WINDOWS /OUT:$@ $(LIBPATHS) $** $(LIBS)
+ 
+ clean:
+-    -del /Q obj\*
+-    -del *.ilk
+-    -del *.pdb
++	-del /Q obj\*
++	-del *.ilk
++	-del *.pdb</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -676,18 +676,18 @@ int CommandLineRPC(int argc, char *argv[])
+         string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));
+         if (result.type() != null_type)
+         {
+-            if (fWindows)
++            if (fWindows &amp;&amp; fGUI)
+                 // Windows GUI apps can&#x27;t print to command line,
+-                // so for now settle for a message box yuck
+-                wxMessageBox(strResult.c_str(), &quot;Bitcoin&quot;, wxOK);
++                // so settle for a message box yuck
++                MyMessageBox(strResult.c_str(), &quot;Bitcoin&quot;, wxOK);
+             else
+                 fprintf(stdout, &quot;%s\n&quot;, strResult.c_str());
+         }
+         return 0;
+     }
+     catch (std::exception&amp; e) {
+-        if (fWindows)
+-            wxMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
++        if (fWindows &amp;&amp; fGUI)
++            MyMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
+         else
+             fprintf(stderr, &quot;error: %s\n&quot;, e.what());
+     } catch (...) {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 206;
++static const int VERSION = 207;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,38 +7,18 @@
+ #include &lt;crtdbg.h&gt;
+ #endif
+ 
+-bool GetStartOnSystemStartup();
+-void SetStartOnSystemStartup(bool fAutoStart);
+-
+ 
+ 
+ DEFINE_EVENT_TYPE(wxEVT_UITHREADCALL)
+ 
+ CMainFrame* pframeMain = NULL;
+ CMyTaskBarIcon* ptaskbaricon = NULL;
+-extern int g_isPainting;
+ bool fClosedToTray = false;
+ 
+-// Settings
+-int fMinimizeToTray = true;
+-int fMinimizeOnClose = true;
+ 
+ 
+ 
+ 
+-int MyMessageBox(const wxString&amp; message, const wxString&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1)
+-{
+-    if (fDaemon)
+-    {
+-        printf(&quot;wxMessageBox %s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
+-        fprintf(stderr, &quot;%s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
+-        return wxOK;
+-    }
+-    return wxMessageBox(message, caption, style, parent, x, y);
+-}
+-#define wxMessageBox  MyMessageBox
+-
+-
+ 
+ 
+ 
+@@ -48,47 +28,6 @@ int MyMessageBox(const wxString&amp; message, const wxString&amp; caption=&quot;Message&quot;, int
+ // Util
+ //
+ 
+-void ExitTimeout(void* parg)
+-{
+-#ifdef __WXMSW__
+-    Sleep(5000);
+-    ExitProcess(0);
+-#endif
+-}
+-
+-void Shutdown(void* parg)
+-{
+-    static CCriticalSection cs_Shutdown;
+-    static bool fTaken;
+-    bool fFirstThread;
+-    CRITICAL_BLOCK(cs_Shutdown)
+-    {
+-        fFirstThread = !fTaken;
+-        fTaken = true;
+-    }
+-    static bool fExit;
+-    if (fFirstThread)
+-    {
+-        fShutdown = true;
+-        nTransactionsUpdated++;
+-        DBFlush(false);
+-        StopNode();
+-        DBFlush(true);
+-        CreateThread(ExitTimeout, NULL);
+-        Sleep(50);
+-        printf(&quot;Bitcoin exiting\n\n&quot;);
+-        fExit = true;
+-        exit(0);
+-    }
+-    else
+-    {
+-        while (!fExit)
+-            Sleep(500);
+-        Sleep(100);
+-        ExitThread(0);
+-    }
+-}
+-
+ void HandleCtrlA(wxKeyEvent&amp; event)
+ {
+     // Ctrl-a select all
+@@ -312,7 +251,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_staticTextBalance-&gt;SetSize(140, 17);
+     // resize to fit ubuntu&#x27;s huge default font
+     dResize = 1.22;
+-    SetSize(dResize * GetSize().GetWidth(), 1.09 * GetSize().GetHeight());
++    SetSize(dResize * GetSize().GetWidth(), 1.15 * GetSize().GetHeight());
+ #endif
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+@@ -1630,7 +1569,6 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 
+ 
+ 
+-
+ //////////////////////////////////////////////////////////////////////////////
+ //
+ // CAboutDialog
+@@ -2014,7 +1952,7 @@ void CSendingDialog::StartTransfer()
+     // Make sure we have enough money
+     if (nPrice + nTransactionFee &gt; GetBalance())
+     {
+-        Error(_(&quot;You don&#x27;t have enough money&quot;));
++        Error(_(&quot;Insufficient funds&quot;));
+         return;
+     }
+ 
+@@ -2081,7 +2019,7 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+             return;
+         if (nPrice + nTransactionFee &gt; GetBalance())
+         {
+-            Error(_(&quot;You don&#x27;t have enough money&quot;));
++            Error(_(&quot;Insufficient funds&quot;));
+             return;
+         }
+         CKey key;
+@@ -2562,602 +2500,21 @@ wxMenu* CMyTaskBarIcon::CreatePopupMenu()
+ 
+ 
+ 
+-//////////////////////////////////////////////////////////////////////////////
+-//
+-// CMyApp
+-//
+-
+-// Define a new application
+-class CMyApp: public wxApp
+-{
+-public:
+-    wxLocale m_locale;
+-
+-    CMyApp(){};
+-    ~CMyApp(){};
+-    bool OnInit();
+-    bool OnInit2();
+-    int OnExit();
+-
+-    // Hook Initialize so we can start without GUI
+-    virtual bool Initialize(int&amp; argc, wxChar** argv);
+-
+-    // 2nd-level exception handling: we get all the exceptions occurring in any
+-    // event handler here
+-    virtual bool OnExceptionInMainLoop();
+-
+-    // 3rd, and final, level exception handling: whenever an unhandled
+-    // exception is caught, this function is called
+-    virtual void OnUnhandledException();
+-
+-    // and now for something different: this function is called in case of a
+-    // crash (e.g. dereferencing null pointer, division by 0, ...)
+-    virtual void OnFatalException();
+-};
+-
+-IMPLEMENT_APP(CMyApp)
+-
+-bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
+-{
+-    if (argc &gt; 1 &amp;&amp; argv[1][0] != &#x27;-&#x27; &amp;&amp; (!fWindows || argv[1][0] != &#x27;/&#x27;) &amp;&amp;
+-        wxString(argv[1]) != &quot;start&quot;)
+-    {
+-        fCommandLine = true;
+-    }
+-    else
+-    {
+-        // wxApp::Initialize will remove environment-specific parameters,
+-        // so it&#x27;s too early to call ParseParameters yet
+-        for (int i = 1; i &lt; argc; i++)
+-        {
+-            wxString str = argv[i];
+-            #ifdef __WXMSW__
+-            if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
+-                str[0] = &#x27;-&#x27;;
+-            str = str.MakeLower();
+-            #endif
+-            // haven&#x27;t decided which argument to use for this yet
+-            if (str == &quot;-daemon&quot; || str == &quot;-d&quot; || str == &quot;start&quot;)
+-                fDaemon = true;
+-        }
+-    }
+-
+-#ifdef __WXGTK__
+-    if (fDaemon || fCommandLine)
+-    {
+-        // Call the original Initialize while suppressing error messages
+-        // and ignoring failure.  If unable to initialize GTK, it fails
+-        // near the end so hopefully the last few things don&#x27;t matter.
+-        {
+-            wxLogNull logNo;
+-            wxApp::Initialize(argc, argv);
+-        }
+-
+-        if (fDaemon)
+-        {
+-            fprintf(stdout, &quot;bitcoin server starting\n&quot;);
+-
+-            // Daemonize
+-            pid_t pid = fork();
+-            if (pid &lt; 0)
+-            {
+-                fprintf(stderr, &quot;Error: fork() returned %d errno %d\n&quot;, pid, errno);
+-                return false;
+-            }
+-            if (pid &gt; 0)
+-                pthread_exit((void*)0);
+-        }
+-
+-        return true;
+-    }
+-#endif
+-
+-    return wxApp::Initialize(argc, argv);
+-}
+-
+-bool CMyApp::OnInit()
+-{
+-    bool fRet = false;
+-    try
+-    {
+-        fRet = OnInit2();
+-    }
+-    catch (std::exception&amp; e) {
+-        PrintException(&amp;e, &quot;OnInit()&quot;);
+-    } catch (...) {
+-        PrintException(NULL, &quot;OnInit()&quot;);
+-    }
+-    if (!fRet)
+-        Shutdown(NULL);
+-    return fRet;
+-}
+-
+-bool CMyApp::OnInit2()
+-{
+-#ifdef _MSC_VER
+-    // Turn off microsoft heap dump noise
+-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+-    _CrtSetReportFile(_CRT_WARN, CreateFileA(&quot;NUL&quot;, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0));
+-#endif
+-#if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__)
+-    // Disable malfunctioning wxWidgets debug assertion
+-    g_isPainting = 10000;
+-#endif
+-    wxImage::AddHandler(new wxPNGHandler);
+-#ifdef __WXMSW__
+-    SetAppName(&quot;Bitcoin&quot;);
+-#else
+-    SetAppName(&quot;bitcoin&quot;);
+-    umask(077);
+-#endif
+-#ifdef __WXMSW__
+-#if wxUSE_UNICODE
+-    // Hack to set wxConvLibc codepage to UTF-8 on Windows,
+-    // may break if wxMBConv_win32 implementation in strconv.cpp changes.
+-    class wxMBConv_win32 : public wxMBConv
+-    {
+-    public:
+-        long m_CodePage;
+-        size_t m_minMBCharWidth;
+-    };
+-    if (((wxMBConv_win32*)&amp;wxConvLibc)-&gt;m_CodePage == CP_ACP)
+-        ((wxMBConv_win32*)&amp;wxConvLibc)-&gt;m_CodePage = CP_UTF8;
+-#endif
+-#endif
+-
+-    // Load locale/&lt;lang&gt;/LC_MESSAGES/bitcoin.mo language file
+-    m_locale.Init(wxLANGUAGE_DEFAULT, 0);
+-    m_locale.AddCatalogLookupPathPrefix(&quot;locale&quot;);
+-    if (!fWindows)
+-    {
+-        m_locale.AddCatalogLookupPathPrefix(&quot;/usr/share/locale&quot;);
+-        m_locale.AddCatalogLookupPathPrefix(&quot;/usr/local/share/locale&quot;);
+-    }
+-    m_locale.AddCatalog(&quot;wxstd&quot;); // wxWidgets standard translations, if any
+-    m_locale.AddCatalog(&quot;bitcoin&quot;);
+-
+-    //
+-    // Parameters
+-    //
+-    if (fCommandLine)
+-    {
+-        int ret = CommandLineRPC(argc, argv);
+-        exit(ret);
+-    }
+-
+-    ParseParameters(argc, argv);
+-    if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+-    {
+-        wxString strUsage = string() +
+-            _(&quot;Usage: bitcoin [options]&quot;) + &quot;\t\t\t\t\t\t\n&quot; +
+-            _(&quot;Options:\n&quot;) +
+-            &quot;  -gen            \t\t  &quot; + _(&quot;Generate coins\n&quot;) +
+-            &quot;  -gen=0          \t\t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
+-            &quot;  -min            \t\t  &quot; + _(&quot;Start minimized\n&quot;) +
+-            &quot;  -datadir=&lt;dir&gt;  \t  &quot;   + _(&quot;Specify data directory\n&quot;) +
+-            &quot;  -proxy=&lt;ip:port&gt;\t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -4,26 +4,61 @@
+ 
+ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+ 
++#if wxUSE_GUI
++static const bool fGUI=true;
++#else
++static const bool fGUI=false;
++#endif
+ 
+-extern map&lt;string, string&gt; mapArgs;
++inline int MyMessageBox(const wxString&amp; message, const wxString&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1)
++{
++#if wxUSE_GUI
++    if (!fDaemon)
++        return wxMessageBox(message, caption, style, parent, x, y);
++#endif
++    printf(&quot;wxMessageBox %s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
++    fprintf(stderr, &quot;%s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
++    return wxOK;
++}
++#define wxMessageBox  MyMessageBox
+ 
+-// Settings
+-extern int fMinimizeToTray;
+-extern int fMinimizeOnClose;
+ 
+ 
+ 
+ void HandleCtrlA(wxKeyEvent&amp; event);
+ string FormatTxStatus(const CWalletTx&amp; wtx);
+ void UIThreadCall(boost::function0&lt;void&gt;);
+-void MainFrameRepaint();
+-void Shutdown(void* parg);
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
+ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent);
++void MainFrameRepaint();
++void CreateMainWindow();
++
+ 
+ 
+ 
+ 
++#if !wxUSE_GUI
++inline int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
++{
++    return MyMessageBox(message, caption, style, parent, x, y);
++}
++
++inline bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent)
++{
++    return true;
++}
++
++inline void MainFrameRepaint()
++{
++}
++
++inline void CreateMainWindow()
++{
++}
++#else // wxUSE_GUI
++
++
++
+ 
+ 
+ class CMainFrame : public CMainFrameBase
+@@ -331,3 +366,5 @@ public:
+ 
+ DECLARE_EVENT_TABLE()
+ };
++
++#endif // wxUSE_GUI</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -459,6 +459,7 @@ const char* wxGetTranslation(const char* pszEnglish)
+         mapCache[pszEnglish] = pszCached;
+         return pszCached;
+     }
++    return NULL;
+ }
+ 
+ 
+@@ -502,8 +503,8 @@ void PrintException(std::exception* pex, const char* pszThread)
+     FormatException(pszMessage, pex, pszThread);
+     printf(&quot;\n\n************************\n%s\n&quot;, pszMessage);
+     fprintf(stderr, &quot;\n\n************************\n%s\n&quot;, pszMessage);
+-    if (wxTheApp &amp;&amp; !fDaemon)
+-        wxMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
++    if (wxTheApp &amp;&amp; !fDaemon &amp;&amp; fGUI)
++        MyMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
+     throw;
+     //DebugBreak();
+ }</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/cb420a1/">← run as daemon without GUI, hooked wxApp::Initialize to…</a><a rel="next" href="../../commits/6557910/">wx/utils.h and wx/clipbrd.h not needed on bitcoind wxbase… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

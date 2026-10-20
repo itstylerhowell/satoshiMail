@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin stuff – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 22 December 2009: Thanks for creating the maintenance account, it would have been impossible to do all that without it. I&#x27;m really…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x54-bitcoin-stuff/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin stuff – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 22 December 2009: Thanks for creating the maintenance account, it would have been impossible to do all that without it. I&#x27;m really…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x54-bitcoin-stuff/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin stuff – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 22 December 2009: Thanks for creating the maintenance account, it would have been impossible to do all that without it. I&#x27;m really…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Bitcoin stuff", "url": "https://satoshimail.pages.dev/conversations/x54-bitcoin-stuff/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-12-22T13:49:14Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-12-22T13:49:14Z", "text": "I have registered the domain name bitcoinexchange.com and will start coding the service sometime soon as a nice leisure activity. I'm envisioning a simple Google-like interface with no registration and only two texts fields on the front page, where you insert the amount of money you wish to trade, and either your PayPal address to buy dollars or bitcoin address to buy bitcoins. On the next page you'll get a new bitcoin address for sending the coins or a check code for the PayPal transaction…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-12-22T19:00:41Z", "text": "Thanks for creating the maintenance account, it would have been impossible to do all that without it. I'm really always going to need it. OK, I changed the password to a 20 character random password. That's a good domain. People rarely type domain names anymore, they use autocomplete or click links on search engines. I need to make a way for you to programmatically get new generated bitcoin addresses. Either that or you could have them send to your IP address, but then you have to rely on them…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-12-23T09:12:03Z", "text": "I'd also need at least the command line tools to check if coins have been received and to send coins. It would require some way to communicate with the Bitcoin process running in the background. I don't know how that should be done, maybe with something RPC related. It would also be great if the background process was non-graphical - the VPS on the current service level doesn't have enough memory to run the X Windowing environment, unless I come up with some ways to free memory. Yes, at least…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-12-23T17:53:18Z", "text": "I had been wondering why everyone keeps harping on no-UI, when already you can run it with only a small icon on the tray, which is common for server services on Windows. So I guess this is why. I had chalked it up to unix snobbery if they couldn't abide a tiny little icon on a desktop they never see. Not opening any windows is easy, but it may fail because the gtk libraries aren't there. wxWidgets has __WXBASE__ for \"Only wxBase, no GUI features\". You could try building for that instead of…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-12-25T13:25:43Z", "text": "The VPS has 320MB RAM, 50MB of which is currently free. There's also 500MB swap space. Sure about that? Windows task manager shows about 13MB memory usage here."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-12-25T16:11:14Z", "text": "You're right, I was looking at a test run with 250,000 blocks... duh. A normal one shows 17MB memory usage and 10MB VM size."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoin stuff", "item": "https://satoshimail.pages.dev/conversations/x54-bitcoin-stuff/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x54">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoin stuff</span></div></nav>
+<main class="in">
+<h1>Bitcoin stuff</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 6 messages · from 22 December 2009 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x54">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to satoshin@gmx.com</span><span class="muted"> · <time datetime="2009-12-22T13:49:14Z">22 December 2009, 13:49 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-133" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have registered the domain name bitcoinexchange.com and will start
+coding the service sometime soon as a nice leisure activity. I&#x27;m
+envisioning a simple Google-like interface with no registration and
+only two texts fields on the front page, where you insert the amount
+of money you wish to trade, and either your PayPal address to buy
+dollars or bitcoin address to buy bitcoins. On the next page you&#x27;ll
+get a new bitcoin address for sending the coins or a check code for
+the PayPal transaction text.
+
+PayPal is good for the beginning - it&#x27;s simple and has no startup
+costs, but later on I might accept credit cards also.
+
+Do you still need the maintenance account? It&#x27;s ok if you do, but
+change the password to something else.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-12-22T19:00:41Z">22 December 2009, 19:00 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-134" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for creating the maintenance account, it would have been
+impossible to do all that without it.  I&#x27;m really always going to need
+it.  OK, I changed the password to a 20 character random password.
+
+That&#x27;s a good domain.  People rarely type domain names anymore, they use
+autocomplete or click links on search engines.
+
+I need to make a way for you to programmatically get new generated
+bitcoin addresses.  Either that or you could have them send to your IP
+address, but then you have to rely on them to put the order number in
+the comment.
+
+When generating the new address, there can be an option to add an entry
+to the address book associated with the address, so the received
+transaction will be labelled.  I kinda hid the labels after early users
+found them confusing, but it would be very helpful for this application.
+  You have to widen up the comment column to see them.
+
+Are you going to manually review and enter orders, at least to begin
+with?  I sure would.
+
+I&#x27;m thinking I should move the UI in the direction of having the user
+ask for their bitcoin address when they want one.  &quot;give me a bitcoin to
+receive a payment with&quot;.  I suppose next to the send button, there would
+by a receive button, you press it and it says &quot;here&#x27;s a new address to
+use, here&#x27;s the button to copy it to the clipboard, do you want to label
+it?&quot; and maybe some explanation about why you shouldn&#x27;t reuse addresses.
+
+Or maybe just a &quot;New Address&quot; button next to the address box that you
+should hit each time to change it.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I have registered the domain name bitcoinexchange.com and will start
+coding the service sometime soon as a nice leisure activity. I&#x27;m
+envisioning a simple Google-like interface with no registration and only
+two texts fields on the front page, where you insert the amount of money
+you wish to trade, and either your PayPal address to buy dollars or
+bitcoin address to buy bitcoins. On the next page you&#x27;ll get a new
+bitcoin address for sending the coins or a check code for the PayPal
+transaction text.
+
+PayPal is good for the beginning - it&#x27;s simple and has no startup costs,
+but later on I might accept credit cards also.
+
+Do you still need the maintenance account? It&#x27;s ok if you do, but change
+the password to something else.</div></blockquote></article><article class="msg" id="m2">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-12-23T09:12:03Z">23 December 2009, 09:12 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-135" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">I need to make a way for you to programmatically get new generated
+bitcoin addresses.  Either that or you could have them send to your IP
+address, but then you have to rely on them to put the order number in
+the comment.</div></blockquote><div class="t">I&#x27;d also need at least the command line tools to check if coins have
+been received and to send coins. It would require some way to
+communicate with the Bitcoin process running in the background. I
+don&#x27;t know how that should be done, maybe with something RPC related.
+
+It would also be great if the background process was non-graphical -
+the VPS on the current service level doesn&#x27;t have enough memory to run
+the X Windowing environment, unless I come up with some ways to free
+memory.</div><blockquote><div class="t">Are you going to manually review and enter orders, at least to begin
+with?  I sure would.</div></blockquote><div class="t">Yes, at least to begin with, when the customer sells bc&#x27;s and receives
+dollars. I wouldn&#x27;t give a script the access to my dollar reserves so
+lightly. The other way around (customer&#x27;s dollars -&gt; bitcoins) it
+doesn&#x27;t feel that insecure, and it&#x27;s certainly nicer for the customer
+to receive his bitcoins immediately.</div><blockquote><div class="t">mmalmi@cc.hut.fi wrote:
+&gt; I have registered the domain name bitcoinexchange.com and will
+&gt; start coding the service sometime soon as a nice leisure activity.
+&gt; I&#x27;m envisioning a simple Google-like interface with no registration
+&gt;  and only two texts fields on the front page, where you insert the
+&gt; amount of money you wish to trade, and either your PayPal address
+&gt; to buy dollars or bitcoin address to buy bitcoins. On the next page
+&gt;  you&#x27;ll get a new bitcoin address for sending the coins or a check
+&gt; code for the PayPal transaction text.
+&gt;
+&gt; PayPal is good for the beginning - it&#x27;s simple and has no startup
+&gt; costs, but later on I might accept credit cards also.
+&gt;
+&gt; Do you still need the maintenance account? It&#x27;s ok if you do, but
+&gt; change the password to something else.
+&gt;</div></blockquote></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-12-23T17:53:18Z">23 December 2009, 17:53 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-136" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I&#x27;d also need at least the command line tools to check if coins have
+been received and to send coins. It would require some way to
+communicate with the Bitcoin process running in the background. I don&#x27;t
+know how that should be done, maybe with something RPC related.
+
+It would also be great if the background process was non-graphical - the
+VPS on the current service level doesn&#x27;t have enough memory to run the X
+Windowing environment, unless I come up with some ways to free memory.</div></blockquote><div class="t">I had been wondering why everyone keeps harping on no-UI, when already
+you can run it with only a small icon on the tray, which is common for
+server services on Windows.  So I guess this is why.  I had chalked it
+up to unix snobbery if they couldn&#x27;t abide a tiny little icon on a
+desktop they never see.
+
+Not opening any windows is easy, but it may fail because the gtk
+libraries aren&#x27;t there.  wxWidgets has __WXBASE__ for &quot;Only wxBase, no
+GUI features&quot;.  You could try building for that instead of __WXGTK__ and
+see what happens.  It would be preferable if there&#x27;s any way to do it as
+a command line switch on the same executable, rather than yet another
+build variation to release.
+
+How much memory do you have to work with?  Bitcoin necessarily takes a
+fair bit of memory; about 75MB on Windows.  Is that a problem?
+
+Command line control is one of the next things on the list.  I want to
+design the API carefully.
+
+Receiving payments is the part that has a lot of design choices to be
+made.  The caller needs to identify the transactions of interest, that&#x27;s
+where the one-bitcoin-address-per-transaction model helps.  Searching
+the comments text for an order number is another possibility.  There&#x27;s
+polled, asking what has been received to the given bitcoin address, and
+event driven.  I guess in event driven, bitcoin would be told to run a
+command line when a certain amount is received to a certain bitcoin address.</div></article><article class="msg" id="m4">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-12-25T13:25:43Z">25 December 2009, 13:25 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-137" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">How much memory do you have to work with?</div></blockquote><div class="t">The VPS has 320MB RAM, 50MB of which is currently free. There&#x27;s also
+500MB swap space.</div><blockquote><div class="t">Bitcoin necessarily takes a
+fair bit of memory; about 75MB on Windows.  Is that a problem?</div></blockquote><div class="t">Sure about that? Windows task manager shows about 13MB memory usage here.</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-12-25T16:11:14Z">25 December 2009, 16:11 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-138" rel="nofollow noopener">original</a></span></header>
+<div class="t">You&#x27;re right, I was looking at a test run with 250,000 blocks... duh.
+
+A normal one shows 17MB memory usage and 10MB VM size.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">&gt; How much memory do you have to work with?
+The VPS has 320MB RAM, 50MB of which is currently free. There&#x27;s also
+500MB swap space.
+
+&gt; Bitcoin necessarily takes a
+&gt; fair bit of memory; about 75MB on Windows.  Is that a problem?
+
+Sure about that? Windows task manager shows about 13MB memory usage here.</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x53-bitcoin-list-bitcoin-0-2-released/">← [bitcoin-list] Bitcoin 0.2 released</a><a rel="next" href="../../conversations/x55-bitcoin-exchange/">Bitcoin Exchange →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

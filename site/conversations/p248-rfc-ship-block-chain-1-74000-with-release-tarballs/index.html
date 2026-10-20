@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RFC: ship block chain 1-74000 with release… – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 25 November 2010: It&#x27;s not the downloading that takes the time, it&#x27;s verifying and indexing it. Bandwidthwise, it&#x27;s more efficient than…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p248-rfc-ship-block-chain-1-74000-with-release-tarballs/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="RFC: ship block chain 1-74000 with release… – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 25 November 2010: It&#x27;s not the downloading that takes the time, it&#x27;s verifying and indexing it. Bandwidthwise, it&#x27;s more efficient than…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p248-rfc-ship-block-chain-1-74000-with-release-tarballs/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="RFC: ship block chain 1-74000 with release… – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 25 November 2010: It&#x27;s not the downloading that takes the time, it&#x27;s verifying and indexing it. Bandwidthwise, it&#x27;s more efficient than…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "RFC: ship block chain 1-74000 with release tarballs?", "url": "https://satoshimail.pages.dev/conversations/p248-rfc-ship-block-chain-1-74000-with-release-tarballs/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-25T07:07:51Z", "text": "It appears that blk0001.dat, where bitcoin stores block chain information, is compatible across Windows, Linux, 32-bit and 64-bit. Therefore, why not save new users some time by shipping blocks 1-74000 with each release? Presumably, indexing and verifying a local file would be faster, and use fewer network resources, than downloading all those blocks via P2P.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-11-25T13:37:13Z", "text": "Huh, isn't P2P supposed to be faster because you can download from many users at once instead of one source? (also the reason why some gaming companies use bittorrent to distribute updates)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-11-25T14:25:37Z", "text": "I have mixed feelings about this. Part of the problem is that there is perceived to be a free good, a network hosting service in the form of Source Forge, which will certainly allow those performing software releases to include considerably more data than is currently the case for Bitcoins. If somehow we were paying for this service as a community in terms of $$$ per MiB, I think it would be a no brainer that this should stay out of the distribution. Unfortunately for this consideration, it is…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "wumpus"}, "datePublished": "2010-11-25T14:31:34Z", "text": "Indeed, shipping the data with the client is just a kludge. If the main reason that the bitcoin P2P protocol is so inefficient in transferring large amounts of blocks, that should be fixed. I think that's because of the HDD syncing going on. Maybe this should be held off for the initial download, or the protocol should be made more bittorrent-like for the blocks [0..last-10000], as they are basically set in stone."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-25T17:51:39Z", "text": "It's not the downloading that takes the time, it's verifying and indexing it. Bandwidthwise, it's more efficient than if you downloaded an archive. Bitcoin only downloads the data in blk0001.dat, which is currently 55MB, and builds blkindex.dat itself, which is 47MB. Building blkindex.dat is what causes all the disk activity. During the block download, it only flushes the database to disk every 500 blocks. You may see the block count pause at ??499 and ??999. That's when it's flushing. Doing…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "MrFlibble"}, "datePublished": "2010-11-25T23:19:55Z", "text": "My first reaction was \"+1 for fast setup\", but most of the 24hr delay I suffered was local disc. Disabling fsync (?) on the database while in catch-up mode would help the most. Good point. But since the sha-256 of the block is wired into the code, it is perfectly reasonable to ship the data too. When the blockchain is over 500meg, I think transfer efficiency will become important. We have options, • ship blockchain from SF until it's not politely within their AUP, then re-evaluate. I couldn't…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T01:47:43Z", "text": "This is not true of many novice users, who say things like \"well it took several hours to catch all the 90 000 blocks but finally it arrived\" (quoted from one new user, on IRC, today). Agreed. Compressed in an archive, blk0001.dat is around 36MB. It remains the download, not the verification, that has the highest variability of experience, where first time users see a delay of 30 minutes to several hours before the software is actually usable. Some P2P nodes may be extremely slow (I see high…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-26T02:07:43Z", "text": "Which of the ACID <http://en.wikipedia.org/wiki/ACID> properties do you need, while downloading? Adding BDB records is simply appending to a log file, until you issue a checkpoint <http://www.mathematik.uni-ulm.de/help/BerkeleyDB/ref/transapp/checkpoint.html>. The checkpoint then updates the main database file. Under a normal BDB transaction, you are guaranteed that each log record will be sync'd to disk platter, before the transaction commit succeeds. This is very strict, but required for…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-26T17:32:01Z", "text": "I tested it on a slow 7 year old drive, where bandwidth and CPU were clearly not the bottleneck. Initial download took 1 hour 20 minutes. If it's taking a lot longer than that, certainly 24 hours, then it must be downloading from a very slow node, or your connection is much slower than around 15KB per sec (120kbps), or something else is wrong. It would be nice to know what appears to be the bottleneck when that happens. Every 10 minutes or so when the latest block is sent, it should have the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-11-26T17:42:17Z", "text": "My personal suggestion is to have the block data as a separate download, but strongly recommended. If you want to simplify the installation for Windows users and otherwise clueless computer users that can't take a block file of this nature and put it into the correct directory, perhaps setting up a formal installation file to put it where it needs to go would be more \"user friendly\", but all it really has to contain is just the block data. The purpose of this is mainly so those who are…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "zipslack"}, "datePublished": "2010-11-26T18:08:40Z", "text": "I'm not sure how it is for you, but when I upgrade Bitcoin I don't have to re-download any blocks. It just picks up right where it left off before the upgrade."}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-11-26T19:17:25Z", "text": "That is the point. If the blocks are included in the update it would also by definition include blocks you already have obtained via the network. This is why I'm suggesting that it ought to be a separate but strongly recommended download for new users instead of something combined in the normal distros."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-28T02:33:29Z", "text": "Another new user on IRC, Linux this time, was downloading at a rate of 1 block every 4 seconds -- estimated total download time around 4 days. Other commenters in this thread are correct that upgrading users don't need a block database... but something needs to be done to improve the initial block download experience for new users. Improve the database all you want.. you'll still have peers giving you blocks slowly for any number of reasons. We have the hashes for genesis block through block…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tyler"}, "datePublished": "2010-11-28T07:23:04Z", "text": "*something* needs to be done, the block chain will be *huge* in the next year or so, correct?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-28T07:33:55Z", "text": "Yes, correct. Presumably at some point there will be a lightweight client that only downloads block headers, but there will still be hundreds of thousands of those..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "zipslack"}, "datePublished": "2010-11-28T08:53:00Z", "text": "Sorry, I misunderstood you. I suppose you are referring to the checkpoints? If so, as I understand it, they are only applied while verifying a block which has been downloaded. The contents of blk0001.dat and blkindex.dat are never checked by the client, because the client is designed to check that data before it gets written to those files. As satoshi indicated in this thread,"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-28T10:02:22Z", "text": "Not quite true. \"-checkblocks\" (CheckBlock()) performs quite a few checks on the contents of blk0001.dat / blkindex.dat. AcceptBlock() does a bit more, adding context, but not much more. But let's ignore that for the moment. I think a more important point you're missing is that nobody is proposing that verification be skipped. The bitcoin code is quite capable of verifying and indexing untrusted blk0001.dat data. It would just need a few modifications to behave sensibly if blkindex.dat is…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "RHorning"}, "datePublished": "2010-11-28T16:09:46Z", "text": "Unless I'm mistaken here, what this implies is that at the moment the \"official\" client presumes that blk0001.dat contains validated data, so if you download that data from another source which may have been compromised, at the moment there is no way to verify this information. This is but a temporary danger to be aware of while the software attempts to cope with this particular issue. On the other hand, somebody could also put into the UI or as a command-line switch on bitcoind some sort of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "MoonShadow"}, "datePublished": "2010-11-28T16:25:15Z", "text": "My understanding was that the client already did a blockchain recheck upon startup if the index was missing. I did this when I first started, and it sure seemed like it was marching through the chain. Doesn't it require an index to function anyway? Why would it assume that the blockchain was valid upon startup? Anyone could have edited it. The genesis block is encoded into the client, isn't it? That and the blockchain checkpoints are the only parts that are assumed correct, or am I wrong?…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-28T17:13:01Z", "text": "Despite everything else said, the current next step is: In particular, I suspect that more read caching might help a lot. Then something more specific was wrong. That's not due to normal initial download time. Without more details, it can't be diagnosed. If it was due to slow download, did it speed up after 10-20 minutes when the next block broadcast should have made it switch to a faster source? debug.log might have clues. How fast is their Internet connection? Was it steadily slow, or just…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-28T18:59:49Z", "text": "Sorry, these users' disk and CPU were not at 100%. It is clear the bottleneck is not the database or indexing, for many users. bzip2 gives you 33% compression ratio, saving many megabytes off a download: [jgarzik@bd data]$ tar cvf /tmp/1.tar blk0001.dat blk0001.dat [jgarzik@bd data]$ tar cvf /tmp/2.tar blk*.dat blk0001.dat blkindex.dat [jgarzik@bd data]$ bzip2 -9v /tmp/[12].tar /tmp/1.tar: 1.523:1, 5.253 bits/byte, 34.34% saved, 55439360 in, 36402074 out. /tmp/2.tar: 1.512:1, 5.291 bits/byte…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-11-28T22:34:53Z", "text": "It seemed to me that it was some sort of disk problem or network condition on his end. Some selected quotes from my IRC log: Also, replacing the blocks might have prevented him from noticing a transaction:"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-29T19:01:12Z", "text": "The following code in AddToBlockIndex(main.cpp) is horribly inefficient, and dramatically slows initial block download: CTxDB txdb; txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew)); // New best if (pindexNew->bnChainWork > bnBestChainWork) if (!SetBestChain(txdb, pindexNew)) return false; txdb.Close(); This makes it impossible to use a standard technique for loading large amounts of records into a database (db4 or SQL or otherwise): wrap multiple record insertions into a single database…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-11-29T20:19:12Z", "text": "It seems like you're inclined to assume everything is wrong more than is actually so. Writing the block index is light work. Building the tx index is much more random access per block. I suspect reading all the prev txins is what's slow. Read caching would help that. It's best if the DB does that. Maybe it has a setting for how much cache memory to use. Already does that. See CDB. The lifetime of the (for instance) CTxDB object is only to support database transactions and to know if anything…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-29T21:00:42Z", "text": "Yeah, I missed the database-open caching buried in all the C++ constructors. Major red herring, sorry about that. db4 cache control is http://download.oracle.com/docs/cd/E17076_01/html/api_reference/CXX/dbset_cachesize.html"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-30T00:06:57Z", "text": "I instrumented my import using the -initblock=FILE patch <http://bitcointalk.org/index.php?topic=1999.0> posted last night, putting printf tracepoints in TxnBegin, TxnCommit, TxnAbort, Read and Write: ProcessBlock: ACCEPTED CDB::Write() DB4: txn_begin CDB::Write() CDB::Write() CDB::Write() DB4: txn_commit SetBestChain: new best=000000005b5c1859db19 height=1751 work=7524897523416 ProcessBlock: ACCEPTED CDB::Write() DB4: txn_begin CDB::Write() CDB::Write() CDB::Write() DB4: txn_commit…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-11-30T07:28:00Z", "text": "I timed two runs with clean data directories (no contents), -noirc, -addnode=10.10.10.1, Linux 64-bit. Hardware: SATA SSD Mainline, no patches: 32 minutes to download 94660 blocks. Mainline + TxnBegin/TxnCommit in AddToBlockIndex(): 25 minutes to download 94660 blocks."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-12-01T21:25:39Z", "text": "That's a good optimisation. I'll add that next time I update SVN. More generally, we could also consider this: dbenv.set_lk_max_objects(10000); dbenv.set_errfile(fopen(strErrorFile.c_str(), \"a\")); /// debug dbenv.set_flags(DB_AUTO_COMMIT, 1); + dbenv.set_flags(DB_TXN_NOSYNC, 1); ret = dbenv.open(strDataDir.c_str(), DB_CREATE | DB_INIT_LOCK | DB_INIT_LOG | We would then rely on dbenv.txn_checkpoint(0, 0, 0) in CDB::Close() to flush after wallet writes."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "RFC: ship block chain 1-74000 with release…", "item": "https://satoshimail.pages.dev/conversations/p248-rfc-ship-block-chain-1-74000-with-release-tarballs/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p248">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">RFC: ship block chain 1-74000 with release…</span></div></nav>
+<main class="in">
+<h1>RFC: ship block chain 1-74000 with release tarballs?</h1>
+<p class="lead">BitcoinTalk forum · 28 messages · from 25 November 2010 · with MoonShadow, MrFlibble, RHorning, Satoshi Nakamoto, jgarzik, theymos…</p>
+<p class="actions"><a class="btn" href="../../#t-p248">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/248/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-25T07:07:51Z">25 November 2010, 07:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24277#msg24277" rel="nofollow noopener">original</a></span></header>
+<div class="t">It appears that blk0001.dat, where bitcoin stores block chain information, is compatible across Windows, Linux, 32-bit and 64-bit.
+
+Therefore, why not save new users some time by shipping blocks 1-74000 with each release?
+
+Presumably, indexing and verifying a local file would be faster, and use fewer network resources, than downloading all those blocks via P2P.</div></article><article class="msg" id="m1">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-11-25T13:37:13Z">25 November 2010, 13:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24352#msg24352" rel="nofollow noopener">original</a></span></header>
+<div class="t">Huh, isn&#x27;t P2P supposed to be faster because you can download from many users at once instead of one source?
+(also the reason why some gaming companies use bittorrent to distribute updates)</div></article><article class="msg" id="m2">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-11-25T14:25:37Z">25 November 2010, 14:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24369#msg24369" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have mixed feelings about this.  Part of the problem is that there is perceived to be a free good, a network hosting service in the form of Source Forge, which will certainly allow those performing software releases to include considerably more data than is currently the case for Bitcoins.  If somehow we were paying for this service as a community in terms of $$$ per MiB, I think it would be a no brainer that this should stay out of the distribution.  Unfortunately for this consideration, it is a free good from the perspective of most users.
+
+The other issue is that the network bandwidth between nodes is also a free good.  I&#x27;ve suggested in this thread &lt;<a href="http://bitcointalk.org/index.php?topic=1764.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=1764.0</a>&gt; that perhaps the presumption of network bandwidth may also not be considered a free good either.  In fact, I believe that it shouldn&#x27;t be the case, but that is a completely separate issue entirely.
+
+The network bandwidth for downloading the blocks is to me a wash either way, although a new client coming &quot;on-line&quot; trying to get the full block chain does suck up a whole bunch of blocks through the Bitcoin network and that impacts anybody who happens to be connected to those nodes.  BTW, this is one of the reasons I think it would be incredibly useful to start &quot;charging&quot; for bandwidth as a means to discourage this behavior... and of course to earn a few extra Bitcoins on the side.  If you can obtain blocks &quot;free&quot; from another source, some people might get more creative on how to get that accomplished including downloading a second package on some free file hosting service (perhaps included with the main client distributions) or coming up with a scheme on how to bootstrap new clients that impacts the network in a less obtrusive fashion.
+
+I guess what I&#x27;m saying is that while this is a simple solution to a complex problem, it doesn&#x27;t solve all of the problems including perhaps clients which may store the block data in another format.  There also isn&#x27;t any apparent reason to necessarily encourage other software client distros to include this kind of data or for that matter to put in more than the most minimum number of blocks.  Still, raising the issue is useful here and I hope it raises a discussion about the problem.</div><blockquote><div class=qh>Quote from: witchspace on November 25, 2010, 01:37:13 PM</div><div class="t">Huh, isn&#x27;t P2P supposed to be faster because you can download from many users at once instead of one source?
+(also the reason why some gaming companies use bittorrent to distribute updates)</div></blockquote><div class="t">I agree it seems very odd that you would take something which is by its nature distributed through P2P channels and instead put it into a conventional client-server distribution model.  Part of why I&#x27;m saying that perhaps more thought ought to go into this is perhaps to encourage a bittorrent distribution connection of some sort for a large collection of blocks if somebody has had their client off for awhile or some other kind of experimentation on how to solve this same problem.  The problem is that new clients are demanding the whole block chain and really can&#x27;t get into &quot;mining&quot; or confirming new transactions until they have that chain.  Let&#x27;s solve that problem, which is a larger issue.
+
+The other issue is that it seems like a waste of bandwidth to include these blocks in a client when all you are doing is updating the software.  I would be just as worried that the block chain might get wiped out by the installation software with this &quot;older&quot; version of the chain, forcing older clients to update to the current block all over again, although this is certainly an installation bug.  Just because it is a free good doesn&#x27;t imply there are no other consequences to going this route.</div></article><article class="msg" id="m3">
+<header><b>wumpus</b><span class="muted"> · <time datetime="2010-11-25T14:31:34Z">25 November 2010, 14:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24370#msg24370" rel="nofollow noopener">original</a></span></header>
+<div class="t">Indeed, shipping the data with the client is just a kludge.
+
+If the main reason that the bitcoin P2P protocol is so inefficient in transferring large amounts of blocks, that should be fixed. I think that&#x27;s because of the HDD syncing going on. Maybe this should be held off for the initial download, or the protocol should be made more bittorrent-like for the blocks [0..last-10000], as they are basically set in stone.</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-25T17:51:39Z">25 November 2010, 17:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24438#msg24438" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s not the downloading that takes the time, it&#x27;s verifying and indexing it.
+
+Bandwidthwise, it&#x27;s more efficient than if you downloaded an archive.  Bitcoin only downloads the data in blk0001.dat, which is currently 55MB, and builds blkindex.dat itself, which is 47MB.  Building blkindex.dat is what causes all the disk activity.
+
+During the block download, it only flushes the database to disk every 500 blocks.  You may see the block count pause at ??499 and ??999.  That&#x27;s when it&#x27;s flushing.
+
+Doing your own verifying and indexing is the only way to be sure your index data is secure.  If you copy blk0001.dat and blkindex.dat from an untrusted source, there&#x27;s no way to know if you can trust all the contents in them.
+
+Maybe Berkeley DB has some tweaks we can make to enable or increase cache memory.</div></article><article class="msg" id="m5">
+<header><b>MrFlibble</b><span class="muted"> · <time datetime="2010-11-25T23:19:55Z">25 November 2010, 23:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24499#msg24499" rel="nofollow noopener">original</a></span></header>
+<div class="t">My first reaction was &quot;+1 for fast setup&quot;, but most of the 24hr delay I suffered was local disc.  Disabling fsync (?) on the database while in catch-up mode would help the most.</div><blockquote><div class=qh>Quote from: witchspace on November 25, 2010, 01:37:13 PM</div><div class="t">Huh, isn&#x27;t P2P supposed to be faster because you can download from many users at once instead of one source?
+(also the reason why some gaming companies use bittorrent to distribute updates)</div></blockquote><div class="t">Good point.  But since the sha-256 of the block is wired into the code, it is perfectly reasonable to ship the data too.  When the blockchain is over 500meg, I think transfer efficiency will become important.
+
+We have options,
+
+• ship blockchain from SF until it&#x27;s not politely within their AUP, then re-evaluate.  I couldn&#x27;t find a file size limit, even for the project website service (only a quick surf of their docs).
+
+• ship &#x27;small&#x27; binaries from SF, and &#x27;large&#x27; releases with data via BitTorrent
+
+• ship &#x27;small&#x27; release, including the .torrent for the blockchain and a fetcher script. This looks for one of three popular command line BitTorrent clients for the platform and uses that to fetch the chain, or whinge if it can&#x27;t.
+
+<a href="http://sourceforge.net/apps/trac/sourceforge/wiki/Developer%20web" rel="nofollow noopener">http://sourceforge.net/apps/trac/sourceforge/wiki/Developer%20web</a> says</div><blockquote><div class=qh>Quote</div><div class="t">Note: All file releases should be a single file. Multiple files for the same release should be archived together (tar, deb, zip, etc.). We recommend using rsync for all uploads over 20 megabytes in size, as rsync allows for resuming canceled or interrupted transfers.</div></blockquote><div class="t">Hmm, shipping the blockchain for each binary arch would be perverse.
+
+Then, who provides the tracker &amp; seed for the data?  Someone with incentive or community spirit?  Well, this forum+wiki seem to live on <a href="http://www.slicehost.com/" rel="nofollow noopener">http://www.slicehost.com/</a> =&gt; min $20/month.  It could probably share without hurting the website, and (I think) the seed could be severely throttled to make other BT seeds pull more weight.</div></article><article class="msg" id="m6">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T01:47:43Z">26 November 2010, 01:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24518#msg24518" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on November 25, 2010, 05:51:39 PM</div><div class="t">It&#x27;s not the downloading that takes the time, it&#x27;s verifying and indexing it.</div></blockquote><div class="t">This is not true of many novice users, who say things like &quot;well it took several hours to catch all the 90 000 blocks but finally it arrived&quot; (quoted from one new user, on IRC, today).</div><blockquote><div class=qh>Quote</div><div class="t">Bandwidthwise, it&#x27;s more efficient than if you downloaded an archive.</div></blockquote><div class="t">Agreed.  Compressed in an archive, blk0001.dat is around 36MB.</div><blockquote><div class=qh>Quote</div><div class="t">Bitcoin only downloads the data in blk0001.dat, which is currently 55MB, and builds blkindex.dat itself, which is 47MB.  Building blkindex.dat is what causes all the disk activity.
+
+During the block download, it only flushes the database to disk every 500 blocks.  You may see the block count pause at ??499 and ??999.  That&#x27;s when it&#x27;s flushing.</div></blockquote><div class="t">It remains the download, not the verification, that has the highest variability of experience, where first time users see a delay of 30 minutes to several hours before the software is actually usable.  Some P2P nodes may be extremely slow (I see high variability in latency and throughput for old blocks, and blocks larger than 512 bytes).  End user bandwidth may be low, spotty or expensive.  Firewalls are often a problem.
+
+I&#x27;m betting that the above complaint from a new user was due to a Microsoft firewall; but the point stands:  large variance of network configuration and capability implies the P2P download impact may be far, far greater than impact of on-disk verification of 90,000 blocks.</div><blockquote><div class=qh>Quote</div><div class="t">Doing your own verifying and indexing is the only way to be sure your index data is secure.  If you copy blk0001.dat and blkindex.dat from an untrusted source, there&#x27;s no way to know if you can trust all the contents in them.</div></blockquote><div class="t">Who said untrusted?  The proposal is that you distribute blk0001.dat (and only blk0001.dat) in the bitcoin.org official client downloads.  And of course the client will spend some time verifying blk0001.dat upon first use.  This is unavoidable, and nobody has proposed changing or eliminating verification.
+
+Just shipping blk0001.dat with official bitcoin would eliminate several headaches that new bitcoin users continue to experience.</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-26T02:07:43Z">26 November 2010, 02:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24522#msg24522" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on November 25, 2010, 05:51:39 PM</div><div class="t">Maybe Berkeley DB has some tweaks we can make to enable or increase cache memory.</div></blockquote><div class="t">Which of the ACID &lt;<a href="http://en.wikipedia.org/wiki/ACID" rel="nofollow noopener">http://en.wikipedia.org/wiki/ACID</a>&gt; properties do you need, while downloading?
+
+Adding BDB records is simply appending to a log file, until you issue a checkpoint &lt;<a href="http://www.mathematik.uni-ulm.de/help/BerkeleyDB/ref/transapp/checkpoint.html" rel="nofollow noopener">http://www.mathematik.uni-ulm.de/help/BerkeleyDB/ref/transapp/checkpoint.html</a>&gt;.  The checkpoint then updates the main database file.
+
+Under a normal BDB transaction, you are guaranteed that each log record will be sync&#x27;d to disk platter, before the transaction commit succeeds. This is very strict, but required for full ACID. Enabling DB_TXN_NOSYNC &lt;<a href="http://www.mathematik.uni-ulm.de/help/BerkeleyDB/api_c/env_set_flags.html" rel="nofollow noopener">http://www.mathematik.uni-ulm.de/help/BerkeleyDB/api_c/env_set_flags.html</a>&gt; still gives you a lot:
+
+     &quot;database integrity will be maintained, but if the application or system fails, it is possible
+      some number of the most recently committed transactions may be undone during recovery&quot;
+
+bitcoin can obviously recover if recent transactions are undone, so, it seems useful for this flag to be set for 100% of the initial block download.
+
+That leaves checkpointing, which is a balance between amount of work performed at checkpoint time -- number of records that must be copied from log to database file -- and wall clock time.  Just gotta try some values and see what &quot;feels&quot; right -- maybe checkpoint every 10,000 blocks?</div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-26T17:32:01Z">26 November 2010, 17:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24662#msg24662" rel="nofollow noopener">original</a></span></header>
+<div class="t">I tested it on a slow 7 year old drive, where bandwidth and CPU were clearly not the bottleneck.  Initial download took 1 hour 20 minutes.
+
+If it&#x27;s taking a lot longer than that, certainly 24 hours, then it must be downloading from a very slow node, or your connection is much slower than around 15KB per sec (120kbps), or something else is wrong.  It would be nice to know what appears to be the bottleneck when that happens.
+
+Every 10 minutes or so when the latest block is sent, it should have the chance to change to a faster node.  When the latest block is broadcast, it requests the next 500 blocks from other nodes, and continues the download from the one that sends it fastest.  At least, that&#x27;s how it should work.</div><blockquote><div class=qh>Quote from: jgarzik on November 26, 2010, 02:07:43 AM</div><div class="t">&gt; Quote from: satoshi on November 25, 2010, 05:51:39 PM
+&gt; Maybe Berkeley DB has some tweaks we can make to enable or increase cache memory.
+Which of the ACID &lt;<a href="http://en.wikipedia.org/wiki/ACID" rel="nofollow noopener">http://en.wikipedia.org/wiki/ACID</a>&gt; properties do you need, while downloading?</div></blockquote><div class="t">It may only need more read caching.  It has to read randomly all over blk0001.dat and blkindex.dat to index.  It can&#x27;t assume the file is smaller than memory, although it currently still is.  Caching would be effective, since most dependencies are recent.
+
+Someone should experiment with different Berkeley DB settings and see if there&#x27;s something that makes the download substantially faster.  If something substantial is discovered, then we can work out the particulars.</div><blockquote><div class=qh>Quote</div><div class="t">Adding BDB records is simply appending to a log file, until you issue a checkpoint.  The checkpoint then updates the main database file.</div></blockquote><div class="t">We checkpoint every 500 blocks.</div></article><article class="msg" id="m9">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-11-26T17:42:17Z">26 November 2010, 17:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24664#msg24664" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 26, 2010, 01:47:43 AM</div><div class="t">Who said untrusted?  The proposal is that you distribute blk0001.dat (and only blk0001.dat) in the bitcoin.org official client downloads.  And of course the client will spend some time verifying blk0001.dat upon first use.  This is unavoidable, and nobody has proposed changing or eliminating verification.
+
+Just shipping blk0001.dat with official bitcoin would eliminate several headaches that new bitcoin users continue to experience.</div></blockquote><div class="t">My personal suggestion is to have the block data as a separate download, but strongly recommended.  If you want to simplify the installation for Windows users and otherwise clueless computer users that can&#x27;t take a block file of this nature and put it into the correct directory, perhaps setting up a formal installation file to put it where it needs to go would be more &quot;user friendly&quot;, but all it really has to contain is just the block data.
+
+The purpose of this is mainly so those who are updating to a new version can do so without having to also keep downloading the same block data, which by definition is going to grow over time.</div></article><article class="msg" id="m10">
+<header><b>zipslack</b><span class="muted"> · <time datetime="2010-11-26T18:08:40Z">26 November 2010, 18:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24670#msg24670" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: RHorning on November 26, 2010, 05:42:17 PM</div><div class="t">The purpose of this is mainly so those who are updating to a new version can do so without having to also keep downloading the same block data, which by definition is going to grow over time.</div></blockquote><div class="t">I&#x27;m not sure how it is for you, but when I upgrade Bitcoin I don&#x27;t have to re-download any blocks. It just picks up right where it left off before the upgrade.</div></article><article class="msg" id="m11">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-11-26T19:17:25Z">26 November 2010, 19:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg24679#msg24679" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: zipslack on November 26, 2010, 06:08:40 PM</div><div class="t">&gt; Quote from: RHorning on November 26, 2010, 05:42:17 PM
+&gt; The purpose of this is mainly so those who are updating to a new version can do so without having to also keep downloading the same block data, which by definition is going to grow over time.
+
+I&#x27;m not sure how it is for you, but when I upgrade Bitcoin I don&#x27;t have to re-download any blocks. It just picks up right where it left off before the upgrade.</div></blockquote><div class="t">That is the point.  If the blocks are included in the update it would also by definition include blocks you already have obtained via the network.  This is why I&#x27;m suggesting that it ought to be a separate but strongly recommended download for new users instead of something combined in the normal distros.</div></article><article class="msg" id="m12">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-28T02:33:29Z">28 November 2010, 02:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25017#msg25017" rel="nofollow noopener">original</a></span></header>
+<div class="t">Another new user on IRC, Linux this time, was downloading at a rate of 1 block every 4 seconds -- estimated total download time around 4 days.
+
+Other commenters in this thread are correct that upgrading users don&#x27;t need a block database...  but something needs to be done to improve the initial block download experience for new users.  Improve the database all you want.. you&#x27;ll still have peers giving you blocks slowly for any number of reasons.
+
+We have the hashes for genesis block through block 74000 hardcoded (compiled) into bitcoin, so there&#x27;s no reason why we shouldn&#x27;t be able to automatically download a compressed zipfile of the block database from anywhere, unpack it, verify it, and start running.</div></article><article class="msg" id="m13">
+<header><b>tyler</b><span class="muted"> · <time datetime="2010-11-28T07:23:04Z">28 November 2010, 07:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25054#msg25054" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 02:33:29 AM</div><div class="t">Other commenters in this thread are correct that upgrading users don&#x27;t need a block database...  but something needs to be done to improve the initial block download experience for new users.  Improve the database all you want.. you&#x27;ll still have peers giving you blocks slowly for any number of reasons.</div></blockquote><div class="t">*something* needs to be done, the block chain will be *huge* in the next year or so, correct?</div></article><article class="msg" id="m14">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-28T07:33:55Z">28 November 2010, 07:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25058#msg25058" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tyler on November 28, 2010, 07:23:04 AM</div><div class="t">&gt; Quote from: jgarzik on November 28, 2010, 02:33:29 AM
+&gt; Other commenters in this thread are correct that upgrading users don&#x27;t need a block database...  but something needs to be done to improve the initial block download experience for new users.  Improve the database all you want.. you&#x27;ll still have peers giving you blocks slowly for any number of reasons.
+
+*something* needs to be done, the block chain will be *huge* in the next year or so, correct?</div></blockquote><div class="t">Yes, correct.
+
+Presumably at some point there will be a lightweight client that only downloads block headers, but there will still be hundreds of thousands of those...</div></article><article class="msg" id="m15">
+<header><b>zipslack</b><span class="muted"> · <time datetime="2010-11-28T08:53:00Z">28 November 2010, 08:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25064#msg25064" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: RHorning on November 26, 2010, 07:17:25 PM</div><div class="t">This is why I&#x27;m suggesting that it ought to be a separate but strongly recommended download for new users instead of something combined in the normal distros.</div></blockquote><div class="t">Sorry, I misunderstood you.</div><blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 02:33:29 AM</div><div class="t">We have the hashes for genesis block through block 74000 hardcoded (compiled) into bitcoin, so there&#x27;s no reason why we shouldn&#x27;t be able to automatically download a compressed zipfile of the block database from anywhere, unpack it, verify it, and start running.</div></blockquote><div class="t">I suppose you are referring to the checkpoints? If so, as I understand it, they are only applied while verifying a block which has been downloaded. The contents of blk0001.dat and blkindex.dat are never checked by the client, because the client is designed to check that data before it gets written to those files. As satoshi indicated in this thread,</div><blockquote><div class=qh>Quote from: satoshi on November 25, 2010, 05:51:39 PM</div><div class="t">Doing your own verifying and indexing is the only way to be sure your index data is secure.  If you copy blk0001.dat and blkindex.dat from an untrusted source, there&#x27;s no way to know if you can trust all the contents in them.</div></blockquote></article><article class="msg" id="m16">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-28T10:02:22Z">28 November 2010, 10:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25073#msg25073" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: zipslack on November 28, 2010, 08:53:00 AM</div><div class="t">I suppose you are referring to the checkpoints? If so, as I understand it, they are only applied while verifying a block which has been downloaded. The contents of blk0001.dat and blkindex.dat are never checked by the client, because the client is designed to check that data before it gets written to those files.</div></blockquote><div class="t">Not quite true.  &quot;-checkblocks&quot; (CheckBlock()) performs quite a few checks on the contents of blk0001.dat / blkindex.dat.  AcceptBlock() does a bit more, adding context, but not much more.  But let&#x27;s ignore that for the moment.
+
+I think a more important point you&#x27;re missing is that nobody is proposing that verification be skipped.  The bitcoin code is quite capable of verifying and indexing untrusted blk0001.dat data.  It would just need a few modifications to behave sensibly if blkindex.dat is missing.
+
+The proposal is simply:  don&#x27;t download massive amounts of uncompressed data using a protocol (bitcoin P2P) that wasn&#x27;t designed for bulk data transfer.</div><blockquote><div class=qh>Quote</div><div class="t">As satoshi indicated in this thread,
+
+&gt; Quote from: satoshi on November 25, 2010, 05:51:39 PM
+&gt; Doing your own verifying and indexing is the only way to be sure your index data is secure.  If you copy blk0001.dat and blkindex.dat from an untrusted source, there&#x27;s no way to know if you can trust all the contents in them.</div></blockquote><div class="t">The client is clearly capable of verifying the cryptographic integrity of blk0001.dat from an untrusted source, because it does that for blocks coming in over the network, and blk0001.dat contains... serialized blocks originally received from untrusted sources over the network.
+
+It does not seem overly difficult to pass in blk0001.dat file position data to ProcessBlock(), and simply skip the WriteToDisk() storage call in downstream callee AcceptBlock().</div></article><article class="msg" id="m17">
+<header><b>RHorning</b><span class="muted"> · <time datetime="2010-11-28T16:09:46Z">28 November 2010, 16:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25122#msg25122" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 10:02:22 AM</div><div class="t">The client is clearly capable of verifying the cryptographic integrity of blk0001.dat from an untrusted source, because it does that for blocks coming in over the network, and blk0001.dat contains... serialized blocks originally received from untrusted sources over the network.
+
+It does not seem overly difficult to pass in blk0001.dat file position data to ProcessBlock(), and simply skip the WriteToDisk() storage call in downstream callee AcceptBlock()</div></blockquote><div class="t">Unless I&#x27;m mistaken here, what this implies is that at the moment the &quot;official&quot; client presumes that blk0001.dat contains validated data, so if you download that data from another source which may have been compromised, at the moment there is no way to verify this information.  This is but a temporary danger to be aware of while the software attempts to cope with this particular issue.
+
+On the other hand, somebody could also put into the UI or as a command-line switch on bitcoind some sort of &quot;reverifications&quot; of the block data which would be performed locally.  I think there are other applications for this including perhaps as a precaution against some virus on your computer manipulating data in the block chain where this would be useful anyway, but it seems like an option which ought to be added to the software.  Since the verification code is already in the software, it is merely setting up the algorithm and triggering mechanism to perform that verification.  Indeed if there is a particular block which is of concern during the verification process, an effort to &quot;heal&quot; the chain based upon block requests to peer nodes could be used to fix potential errors or even discard the whole chain.
+
+I hope such a feature eventually is added.</div></article><article class="msg" id="m18">
+<header><b>MoonShadow</b><span class="muted"> · <time datetime="2010-11-28T16:25:15Z">28 November 2010, 16:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25126#msg25126" rel="nofollow noopener">original</a></span></header>
+<div class="t">My understanding was that the client already did a blockchain recheck upon startup if the index was missing.  I did this when I first started, and it sure seemed like it was marching through the chain.  Doesn&#x27;t it require an index to function anyway?  Why would it assume that the blockchain was valid upon startup?  Anyone could have edited it.  The genesis block is encoded into the client, isn&#x27;t it?  That and the blockchain checkpoints are the only parts that are assumed correct, or am I wrong? There is no good reason to prevent a blockchain download via other methods.  In a future with the bitcoin network running close to it&#x27;s capacity, downloading the entire blockchain over the P2P network will be harmful. 
+
+Even a chain that has already been pruned of it&#x27;s merkle trees should be able to be verified from the start, otherwise what good is using a merkle tree at all?</div></article><article class="msg sat" id="m19">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-28T17:13:01Z">28 November 2010, 17:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25138#msg25138" rel="nofollow noopener">original</a></span></header>
+<div class="t">Despite everything else said, the current next step is:</div><blockquote><div class=qh>Quote</div><div class="t">Someone should experiment with different Berkeley DB settings and see if there&#x27;s something that makes the download substantially faster.  If something substantial is discovered, then we can work out the particulars.</div></blockquote><div class="t">In particular, I suspect that more read caching might help a lot.</div><blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 02:33:29 AM</div><div class="t">Another new user on IRC, Linux this time, was downloading at a rate of 1 block every 4 seconds -- estimated total download time around 4 days.</div></blockquote><div class="t">Then something more specific was wrong.  That&#x27;s not due to normal initial download time.  Without more details, it can&#x27;t be diagnosed.  If it was due to slow download, did it speed up after 10-20 minutes when the next block broadcast should have made it switch to a faster source?  debug.log might have clues.  How fast is their Internet connection?  Was it steadily slow, or just slow down at one point?</div><blockquote><div class=qh>Quote</div><div class="t">We have the hashes for genesis block through block 74000 hardcoded (compiled) into bitcoin, so there&#x27;s no reason why we shouldn&#x27;t be able to automatically download a compressed zipfile of the block database from anywhere, unpack it, verify it, and start running.</div></blockquote><div class="t">The 74000 checkpoint is not enough to protect you, and does nothing if the download is already past 74000.  -checkblocks does more, but is still easily defeated.  You still must trust the supplier of the zipfile.
+
+If there was a &quot;verify it&quot; step, that would take as long as the current normal initial download, in which it is the indexing, not the data download, that is the bottleneck.</div><blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 07:33:55 AM</div><div class="t">Presumably at some point there will be a lightweight client that only downloads block headers, but there will still be hundreds of thousands of those...</div></blockquote><div class="t">80 bytes per header and no indexing work.  Might take 1 minute.</div><blockquote><div class=qh>Quote</div><div class="t">uncompressed data using a protocol (bitcoin P2P) that wasn&#x27;t designed for bulk data transfer.</div></blockquote><div class="t">The data is mostly hashes and keys and signatures that are uncompressible.
+
+The speed of initial download is not a reflection of the bulk data transfer rate of the protocol.  The gating factor is the indexing while it downloads.</div></article><article class="msg" id="m20">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-28T18:59:49Z">28 November 2010, 18:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25164#msg25164" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on November 28, 2010, 05:13:01 PM</div><div class="t">If there was a &quot;verify it&quot; step, that would take as long as the current initial download, in which it is the indexing, not the data download, that is the bottleneck.
+[...]
+The speed of initial download is not a reflection of the bulk data transfer rate of the protocol.  The gating factor is the indexing while it downloads.</div></blockquote><div class="t">Sorry, these users&#x27; disk and CPU were not at 100%.  It is clear the bottleneck is not the database or indexing, for many users.</div><blockquote><div class=qh>Quote</div><div class="t">The data is mostly hashes and keys and signatures that are uncompressible.</div></blockquote><div class="t">bzip2 gives you 33% compression ratio, saving many megabytes off a download:</div><pre><code>[jgarzik@bd data]$ tar cvf /tmp/1.tar blk0001.dat
+blk0001.dat
+
+[jgarzik@bd data]$ tar cvf /tmp/2.tar blk*.dat
+blk0001.dat
+blkindex.dat
+
+[jgarzik@bd data]$ bzip2 -9v /tmp/[12].tar
+  /tmp/1.tar:  1.523:1,  5.253 bits/byte, 34.34% saved, 55439360 in, 36402074 out.
+  /tmp/2.tar:  1.512:1,  5.291 bits/byte, 33.86% saved, 103690240 in, 68577642 out.</code></pre><div class="t">I wouldn&#x27;t call 33% &quot;uncompressible&quot;</div></article><article class="msg" id="m21">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-11-28T22:34:53Z">28 November 2010, 22:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25219#msg25219" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on November 28, 2010, 06:59:49 PM</div><div class="t">Sorry, these users&#x27; disk and CPU were not at 100%.  It is clear the bottleneck is not the database or indexing, for many users.</div></blockquote><div class="t">It seemed to me that it was some sort of disk problem or network condition on his end. Some selected quotes from my IRC log:</div><blockquote><div class=qh>Quote</div><div class="t">&lt;manveru&gt; also, when i woke up, there were thousands of entries in the debug.log that look like: trying connection  lastseen=-135.6hrs lasttry=-358582.4hrs
+&lt;theymos&gt; How many connections do you have?
+&lt;manveru&gt; 2 right now
+&lt;theymos&gt; How many blocks do you have?
+&lt;manveru&gt; blockcount and blocknumber are 29124
+&lt;theymos&gt; How fast is that increasing?
+&lt;manveru&gt; around 1 every 4 seconds
+&lt;jgarzik&gt; manveru: 32-bit or 64-bit linux?
+&lt;manveru&gt; 64
+&lt;manveru&gt; now &#x27;blkindex.dat flush&#x27; takes a few minutes :|
+&lt;manveru&gt; still hangs on flush
+&lt;theymos&gt; manveru: Are you on some network file system?
+&lt;manveru&gt; no, just a normal harddisk
+&lt;manveru&gt; it&#x27;s only 5200 rpm though</div></blockquote><div class="t">Also, replacing the blocks might have prevented him from noticing a transaction:</div><blockquote><div class=qh>Quote</div><div class="t">&lt;manveru&gt; jgarzik: sent me the blocks, but it didn&#x27;t change my balance
+&lt;MT`AwAy&gt; manveru: in your getinfo you&#x27;re at block 94236 ?
+&lt;manveru&gt; yeah</div></blockquote></article><article class="msg" id="m22">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-29T19:01:12Z">29 November 2010, 19:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25434#msg25434" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on November 25, 2010, 05:51:39 PM</div><div class="t">Building blkindex.dat is what causes all the disk activity.
+[...]
+Maybe Berkeley DB has some tweaks we can make to enable or increase cache memory.</div></blockquote><div class="t">The following code in AddToBlockIndex(main.cpp) is horribly inefficient, and dramatically slows initial block download:</div><pre><code>    CTxDB txdb;
+    txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
+
+    // New best
+    if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+        if (!SetBestChain(txdb, pindexNew))
+            return false;
+
+    txdb.Close();</code></pre><div class="t">This makes it impossible to use a standard technique for loading large amounts of records into a database (db4 or SQL or otherwise):  wrap multiple record insertions into a single database transaction.  Ideally, bitcoin would only issue a TxnCommit() for each 1000 blocks or so, during initial block download.  If a crash occurs, the database remains in a consistent state.
+
+Furthermore, database open + close for each new block is incredibly expensive.  For each database-open and database-close operation, db4
+
+• diagnose health of database, to determine if recovery is needed.  this test may require data copying.
+
+• re-init memory pools
+
+• read database file metadata
+
+• acquire file locks
+
+• read and initialize b-tree or hash-specific metadata.  build hash table / b-tree roots.
+
+• forces a sync, even if transactions called with DB_TXN_NOSYNC
+
+• fsync memory pool
+
+And, additionally, bitcoin forces a database checkpoint, pushing all transactions from log into main database.
+
+That&#x27;s right, that long list of operations is executed per-database (DB), not per-environment (DB_ENV), for a database close+open cycle.  To bitcoin, that means we do this for every new block.  Incredibly inefficient, and not how db4 was designed to be used.
+
+Recommendations:
+
+1) bitcoin should be opening databases, not just environment, at program startup, and closing database at program shutdown.  db4 is designed to handle crashes, if proper transactional use is maintained -- and bitcoin already uses db4 transactions properly.
+
+2) For the initial block download, txn commit should occur once every N records, not every record.  I suggest N=1000.
+
+EDIT:  Updated a couple minor details, and corrected some typos.</div></article><article class="msg sat" id="m23">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-11-29T20:19:12Z">29 November 2010, 20:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25449#msg25449" rel="nofollow noopener">original</a></span></header>
+<div class="t">It seems like you&#x27;re inclined to assume everything is wrong more than is actually so.
+
+Writing the block index is light work.  Building the tx index is much more random access per block.  I suspect reading all the prev txins is what&#x27;s slow.  Read caching would help that.  It&#x27;s best if the DB does that.  Maybe it has a setting for how much cache memory to use.</div><blockquote><div class=qh>Quote</div><div class="t">1) bitcoin should be opening databases, not just environment, at program startup, and closing database at program shutdown.</div></blockquote><div class="t">Already does that.  See CDB.  The lifetime of the (for instance) CTxDB object is only to support database transactions and to know if anything is still using the database at shutdown.</div><blockquote><div class=qh>Quote</div><div class="t">And, additionally, bitcoin forces a database checkpoint, pushing all transactions from log into main database.</div></blockquote><div class="t">If it was doing that it would be much slower.  It&#x27;s supposed to be only once a minute or 500 blocks:
+
+    if (strFile == &quot;blkindex.dat&quot; &amp;&amp; IsInitialBlockDownload() &amp;&amp; nBestHeight % 500 != 0)
+        nMinutes = 1;
+    dbenv.txn_checkpoint(0, nMinutes, 0);
+
+Probably should add this:
+    if (!fReadOnly)
+        dbenv.txn_checkpoint(0, nMinutes, 0);</div><blockquote><div class=qh>Quote</div><div class="t">2) For the initial block download, txn commit should occur once every N records, not every record.  I suggest N=1000.</div></blockquote><div class="t">Does transaction commit imply flush?  That seems surprising to me.  I assume a database op wrapped in a transaction would be logged like any other database op.  Many database applications need to wrap almost every pair of ops in a transaction, such as moving money from one account to another. (debit a, credit b)  I can&#x27;t imagine they&#x27;re required to batch all their stuff up themselves.
+
+In the following cases, would case 1 flush once and case 2 flush twice?
+
+case 1:
+write
+write
+write
+write
+checkpoint
+
+case 2:
+begin transaction
+write
+write
+commit transaction
+begin transaction
+write
+write
+commit transaction
+checkpoint
+
+Contorting our database usage will not be the right approach.  It&#x27;s going to be BDB settings and caching.</div></article><article class="msg" id="m24">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-29T21:00:42Z">29 November 2010, 21:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25467#msg25467" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, I missed the database-open caching buried in all the C++ constructors.  Major red herring, sorry about that.
+
+db4 cache control is <a href="http://download.oracle.com/docs/cd/E17076_01/html/api_reference/CXX/dbset_cachesize.html" rel="nofollow noopener">http://download.oracle.com/docs/cd/E17076_01/html/api_reference/CXX/dbset_cachesize.html</a></div></article><article class="msg" id="m25">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-30T00:06:57Z">30 November 2010, 00:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25531#msg25531" rel="nofollow noopener">original</a></span></header>
+<div class="t">I instrumented my import using the -initblock=FILE patch &lt;<a href="http://bitcointalk.org/index.php?topic=1999.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=1999.0</a>&gt; posted last night, putting printf tracepoints in TxnBegin, TxnCommit, TxnAbort, Read and Write:</div><pre><code>ProcessBlock: ACCEPTED
+CDB::Write()
+DB4: txn_begin
+CDB::Write()
+CDB::Write()
+CDB::Write()
+DB4: txn_commit
+SetBestChain: new best=000000005b5c1859db19  height=1751  work=7524897523416
+ProcessBlock: ACCEPTED
+CDB::Write()
+DB4: txn_begin
+CDB::Write()
+CDB::Write()
+CDB::Write()
+DB4: txn_commit
+SetBestChain: new best=00000000f396ab6b62ba  height=1752  work=7529192556249
+ProcessBlock: ACCEPTED
+CDB::Write()
+DB4: txn_begin
+CDB::Write()
+CDB::Write()
+CDB::Write()
+DB4: txn_commit
+SetBestChain: new best=000000000c6bcf972117  height=1753  work=7533487589082</code></pre><div class="t">So, it appears that we have a CDB::Write() that occurs outside of a transaction (vTxn is empty??).
+
+txnid==NULL is perfectly legal for db4, but it does mean that callpath may be operating outside of the DB_TXN_NOSYNC flag that is set in ::TxnBegin().  Thus, a CDB::Write() outside of a transaction may have synchronous behavior (DB_TXN_SYNC) as governed by DB_AUTO_COMMIT database flag.
+
+EDIT:  Wrapping WriteBlockIndex() inside a transaction does seem to speed up local disk import (-initblocks).</div><pre><code>--- a/main.cpp
++++ b/main.cpp
+@@ -1427,7 +1427,10 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned
+     pindexNew-&gt;bnChainWork = (pindexNew-&gt;pprev ? pindexNew-&gt;pprev-&gt;bnChainWork
+ 
+     CTxDB txdb;
++    txdb.TxnBegin();
+     txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
++    if (!txdb.TxnCommit())
++       return false;
+ </code></pre><div class="t">Of course that implies begin+commit+begin+commit in quick succession (SetBestChain), so maybe a less naive approach might be preferred (nested transactions, or wrap both db4 writes in the same transaction).</div></article><article class="msg" id="m26">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-11-30T07:28:00Z">30 November 2010, 07:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg25675#msg25675" rel="nofollow noopener">original</a></span></header>
+<div class="t">I timed two runs with clean data directories (no contents), -noirc, -addnode=10.10.10.1, Linux 64-bit.  Hardware: SATA SSD
+
+Mainline, no patches:
+     32 minutes to download 94660 blocks.
+
+Mainline + TxnBegin/TxnCommit in AddToBlockIndex():
+     25 minutes to download 94660 blocks.</div></article><article class="msg sat" id="m27">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-12-01T21:25:39Z">1 December 2010, 21:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1931.msg26016#msg26016" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s a good optimisation.  I&#x27;ll add that next time I update SVN.
+
+More generally, we could also consider this:
+
+        dbenv.set_lk_max_objects(10000);
+        dbenv.set_errfile(fopen(strErrorFile.c_str(), &quot;a&quot;)); /// debug
+        dbenv.set_flags(DB_AUTO_COMMIT, 1);
++       dbenv.set_flags(DB_TXN_NOSYNC, 1);
+        ret = dbenv.open(strDataDir.c_str(),
+                         DB_CREATE     |
+                         DB_INIT_LOCK  |
+                         DB_INIT_LOG   |
+
+We would then rely on dbenv.txn_checkpoint(0, 0, 0) in CDB::Close() to flush after wallet writes.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p247-new-demonstration-cpu-miner-available/">← New demonstration CPU miner available</a><a rel="next" href="../../conversations/p249-version-0-3-17/">Version 0.3.17 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

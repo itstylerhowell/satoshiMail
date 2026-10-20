@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Version 0.3.8.1 update for Linux 64-bit – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 9 August 2010: When we switched to Crypto++ 5.6.0 SHA-256 in version 0.3.6, generation got broken on the Linux 64-bit build. Version…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p172-version-0-3-8-1-update-for-linux-64-bit/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Version 0.3.8.1 update for Linux 64-bit – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 9 August 2010: When we switched to Crypto++ 5.6.0 SHA-256 in version 0.3.6, generation got broken on the Linux 64-bit build. Version…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p172-version-0-3-8-1-update-for-linux-64-bit/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Version 0.3.8.1 update for Linux 64-bit – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 9 August 2010: When we switched to Crypto++ 5.6.0 SHA-256 in version 0.3.6, generation got broken on the Linux 64-bit build. Version…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Version 0.3.8.1 update for Linux 64-bit", "url": "https://satoshimail.pages.dev/conversations/p172-version-0-3-8-1-update-for-linux-64-bit/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-09T19:46:58Z", "text": "When we switched to Crypto++ 5.6.0 SHA-256 in version 0.3.6, generation got broken on the Linux 64-bit build. Version 0.3.8.1 is on SourceForge with the 64-bit binary updated. Download: http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.8/bitcoin-0.3.8.1-linux.tar.gz/download Future versions after 0.3.8 will probably require SSE2. Anyone have Pentium 3 or older where this would be a problem?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-09T20:26:15Z", "text": "The difficulty has gotten high enough that I wouldn't worry about dropping block generation support for old computers if it's hard to maintain compatibility. But the client should definitely provide some feedback explaining why the feature isn't available. Perhaps you could make a message pop up that explains why generating bitcoins is not supported on old hardware."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-09T20:46:14Z", "text": "IMO, SSE should be required for generation, not simply to run the client."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-09T20:55:06Z", "text": "That's a good point, I believe you could run with generation off if you don't have SSE2. How about add to the top of cryptopp/config.h: #if !defined(_M_X64) && !defined(__x86_64__) #define CRYPTOPP_DISABLE_SSE2 1 #endif that would disable SSE2 for 32-bit builds. (at least with GCC or MSVC)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "dkaparis"}, "datePublished": "2010-08-09T20:57:02Z", "text": "From what I understand, removing the offending define is required only for 64-bit builds and 64-bit architectures are already guaranteed to support SSE2 instructions. 32-bit builds can retain the flag and thus continue to disable SSE2 instructions and remain compatible with older computers."}, {"@type": "Comment", "author": {"@type": "Person", "name": "dkaparis"}, "datePublished": "2010-08-09T21:02:49Z", "text": "Yes, but better have that specified in the makefile. That way anyone who doesn't care for old CPU's can compile with SSE2 support by removing the flag, without fiddling with the source. I can also add a CMake property for that in the CMake build."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-10T00:02:25Z", "text": "Older CPU that don't support SSE2 shouldn't be excluded from coin generation in my opinion. They can still serve a vital role in block generation; I have many machines that don't support the SSE2 enhancements, but still generate blocks all the time, even if they are only churning 300-400 khash/s"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-10T00:04:45Z", "text": "I'm still running an old node without SSE2 @600khash/s. The algorithm works so I don't see why we should make SSE2 a requirement."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-10T02:45:47Z", "text": "My impression of the difficulty was based on my broken client, haha! I've already generated a block tonight for the first time in such a long time. Having older computers generate coins doesn't seem as futile as it did earlier today. If you can keep the compatibility intact, I think it would be well worth it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-10T03:38:23Z", "text": "Hah! This sure helps explain a long-standing mystery.. why my 10,000 khash/sec Linux 64-bit machine is the only one that has never, in two weeks, generated a block. Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-10T03:47:28Z", "text": "Just to confirm -- this fix is in SVN 125?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-08-10T06:18:28Z", "text": "You're not the only one. I haven't generated in over a month."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ArtForz"}, "datePublished": "2010-08-10T09:37:49Z", "text": "Fix is in svn r124, r125 added -maxconnections."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-10T23:46:00Z", "text": "SVN rev 128: disable SSE2 on 32-bit. This may only disable it for MSVC and GCC. Other compilers might have different 64-bit defines."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Version 0.3.8.1 update for Linux 64-bit", "item": "https://satoshimail.pages.dev/conversations/p172-version-0-3-8-1-update-for-linux-64-bit/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p172">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Version 0.3.8.1 update for Linux 64-bit</span></div></nav>
+<main class="in">
+<h1>Version 0.3.8.1 update for Linux 64-bit</h1>
+<p class="lead">BitcoinTalk forum · 14 messages · from 9 August 2010 · with ArtForz, Ground Loop, NewLibertyStandard, Satoshi Nakamoto, dkaparis, jgarzik…</p>
+<p class="actions"><a class="btn" href="../../#t-p172">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/172/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-09T19:46:58Z">9 August 2010, 19:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8402#msg8402" rel="nofollow noopener">original</a></span></header>
+<div class="t">When we switched to Crypto++ 5.6.0 SHA-256 in version 0.3.6, generation got broken on the Linux 64-bit build.  Version 0.3.8.1 is on SourceForge with the 64-bit binary updated.
+
+Download:
+<a href="http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.8/bitcoin-0.3.8.1-linux.tar.gz/download" rel="nofollow noopener">http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.8/bitcoin-0.3.8.1-linux.tar.gz/download</a>
+
+Future versions after 0.3.8 will probably require SSE2.  Anyone have Pentium 3 or older where this would be a problem?</div></article><article class="msg" id="m1">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-09T20:26:15Z">9 August 2010, 20:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8415#msg8415" rel="nofollow noopener">original</a></span></header>
+<div class="t">The difficulty has gotten high enough that I wouldn&#x27;t worry about dropping block generation support for old computers if it&#x27;s hard to maintain compatibility. But the client should definitely provide some feedback explaining why the feature isn&#x27;t available. Perhaps you could make a message pop up that explains why generating bitcoins is not supported on old hardware.</div></article><article class="msg" id="m2">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-09T20:46:14Z">9 August 2010, 20:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8421#msg8421" rel="nofollow noopener">original</a></span></header>
+<div class="t">IMO, SSE should be required for generation, not simply to run the client.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-09T20:55:06Z">9 August 2010, 20:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8422#msg8422" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s a good point, I believe you could run with generation off if you don&#x27;t have SSE2.
+
+How about add to the top of cryptopp/config.h:
+
+#if !defined(_M_X64) &amp;&amp; !defined(__x86_64__)
+#define CRYPTOPP_DISABLE_SSE2  1
+#endif
+
+that would disable SSE2 for 32-bit builds.  (at least with GCC or MSVC)</div></article><article class="msg" id="m4">
+<header><b>dkaparis</b><span class="muted"> · <time datetime="2010-08-09T20:57:02Z">9 August 2010, 20:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8423#msg8423" rel="nofollow noopener">original</a></span></header>
+<div class="t">From what I understand, removing the offending define is required only for 64-bit builds and 64-bit architectures are already guaranteed to support SSE2 instructions. 32-bit builds can retain the flag and thus continue to disable SSE2 instructions and remain compatible with older computers.</div></article><article class="msg" id="m5">
+<header><b>dkaparis</b><span class="muted"> · <time datetime="2010-08-09T21:02:49Z">9 August 2010, 21:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8425#msg8425" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 09, 2010, 08:55:06 PM</div><div class="t">That&#x27;s a good point, I believe you could run with generation off if you don&#x27;t have SSE2.
+
+How about add to the top of cryptopp/config.h:
+
+#if !defined(_M_X64) &amp;&amp; !defined(__x86_64__)
+#define CRYPTOPP_DISABLE_SSE2  1
+#endif
+
+that would disable SSE2 for 32-bit builds.  (at least with GCC or MSVC)</div></blockquote><div class="t">Yes, but better have that specified in the makefile. That way anyone who doesn&#x27;t care for old CPU&#x27;s can compile with SSE2 support by removing the flag, without fiddling with the source.
+
+I can also add a CMake property for that in the CMake build.</div></article><article class="msg" id="m6">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-10T00:02:25Z">10 August 2010, 00:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8447#msg8447" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: dkaparis on August 09, 2010, 08:57:02 PM</div><div class="t">From what I understand, removing the offending define is required only for 64-bit builds and 64-bit architectures are already guaranteed to support SSE2 instructions. 32-bit builds can retain the flag and thus continue to disable SSE2 instructions and remain compatible with older computers.</div></blockquote><div class="t">Older CPU that don&#x27;t support SSE2 shouldn&#x27;t be excluded from coin generation in my opinion. They can still serve a vital role in block generation; I have many machines that don&#x27;t support the SSE2 enhancements, but still generate blocks all the time, even if they are only churning 300-400 khash/s</div></article><article class="msg" id="m7">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-10T00:04:45Z">10 August 2010, 00:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8448#msg8448" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m still running an old node without SSE2 @600khash/s. The algorithm works so I don&#x27;t see why we should make SSE2 a requirement.</div></article><article class="msg" id="m8">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-10T02:45:47Z">10 August 2010, 02:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8461#msg8461" rel="nofollow noopener">original</a></span></header>
+<div class="t">My impression of the difficulty was based on my broken client, haha! I&#x27;ve already generated a block tonight for the first time in such a long time. Having older computers generate coins doesn&#x27;t seem as futile as it did earlier today. If you can keep the compatibility intact, I think it would be well worth it.</div></article><article class="msg" id="m9">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-10T03:38:23Z">10 August 2010, 03:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8464#msg8464" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hah!  This sure helps explain a long-standing mystery.. why my 10,000 khash/sec Linux 64-bit machine is the only one that has never, in two weeks, generated a block. Smiley</div></article><article class="msg" id="m10">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-10T03:47:28Z">10 August 2010, 03:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8466#msg8466" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just to confirm -- this fix is in SVN 125?</div></article><article class="msg" id="m11">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-08-10T06:18:28Z">10 August 2010, 06:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8485#msg8485" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Ground Loop on August 10, 2010, 03:38:23 AM</div><div class="t">Hah!  This sure helps explain a long-standing mystery.. why my 10,000 khash/sec Linux 64-bit machine is the only one that has never, in two weeks, generated a block. Smiley</div></blockquote><div class="t">You&#x27;re not the only one.  I haven&#x27;t generated in over a month.</div></article><article class="msg" id="m12">
+<header><b>ArtForz</b><span class="muted"> · <time datetime="2010-08-10T09:37:49Z">10 August 2010, 09:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8505#msg8505" rel="nofollow noopener">original</a></span></header>
+<div class="t">Fix is in svn r124, r125 added -maxconnections.</div></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-10T23:46:00Z">10 August 2010, 23:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=765.msg8628#msg8628" rel="nofollow noopener">original</a></span></header>
+<div class="t">SVN rev 128: disable SSE2 on 32-bit.  This may only disable it for MSVC and GCC.  Other compilers might have different 64-bit defines.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p171-what-could-be-the-transition-plan-to-y2038-compliant-bitcoin/">← What could be the transition plan to Y2038 compliant Bitcoin? (it already is)</a><a rel="next" href="../../conversations/p173-connection-limits/">Connection limits →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

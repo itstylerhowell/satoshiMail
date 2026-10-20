@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/20c6bfa/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/20c6bfa/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen: implementation of autostart on system startup option on Linux", "url": "https://satoshimail.pages.dev/commits/20c6bfa/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-09T02:11:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/20c6bfad1e0f5438b6f016f53d0eac9a0415236a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen: implementation of…", "item": "https://satoshimail.pages.dev/commits/20c6bfa/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c20c6bfad1e">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin Andresen: implementation of…</span></div></nav>
+<main class="in">
+<h1>Gavin Andresen: implementation of autostart on system startup option on Linux</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 9 July 2010 · SVN r101 · release v0.3.10 · 5 files, +86 −6</p>
+<p class="actions"><a class="btn" href="../../#t-c20c6bfad1e">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/20c6bfad1e0f5438b6f016f53d0eac9a0415236a" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -58,6 +58,7 @@
+ #include &lt;boost/bind.hpp&gt;
+ #include &lt;boost/function.hpp&gt;
+ #include &lt;boost/filesystem.hpp&gt;
++#include &lt;boost/filesystem/fstream.hpp&gt;
+ #include &lt;boost/algorithm/string.hpp&gt;
+ #include &lt;boost/interprocess/sync/interprocess_mutex.hpp&gt;
+ #include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -117,9 +117,86 @@ void SetStartOnSystemStartup(bool fAutoStart)
+         CoUninitialize();
+     }
+ }
++
++#elif defined(__WXGTK__)
++
++//
++// Follow the Desktop Application Autostart Spec:
++//  http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
++//
++
++boost::filesystem::path GetAutostartDir()
++{
++    namespace fs = boost::filesystem;
++
++    char* pszConfigHome = getenv(&quot;XDG_CONFIG_HOME&quot;);
++    if (pszConfigHome) return fs::path(pszConfigHome) / fs::path(&quot;autostart&quot;);
++    char* pszHome = getenv(&quot;HOME&quot;);
++    if (pszHome) return fs::path(pszHome) / fs::path(&quot;.config/autostart&quot;);
++    return fs::path();
++}
++
++boost::filesystem::path GetAutostartFilePath()
++{
++    return GetAutostartDir() / boost::filesystem::path(&quot;bitcoin.desktop&quot;);
++}
++
++bool GetStartOnSystemStartup()
++{
++    boost::filesystem::ifstream optionFile(GetAutostartFilePath());
++    if (!optionFile.good())
++        return false;
++    // Scan through file for &quot;Hidden=true&quot;:
++    string line;
++    while (!optionFile.eof())
++    {
++        getline(optionFile, line);
++        if (line.find(&quot;Hidden&quot;) != string::npos &amp;&amp;
++            line.find(&quot;true&quot;) != string::npos)
++            return false;
++    }
++    optionFile.close();
++
++    return true;
++}
++
++void SetStartOnSystemStartup(bool fAutoStart)
++{
++    if (!fAutoStart)
++    {
++        unlink(GetAutostartFilePath().native_file_string().c_str());
++    }
++    else
++    {
++        boost::filesystem::create_directories(GetAutostartDir());
++
++        boost::filesystem::ofstream optionFile(GetAutostartFilePath(), ios_base::out|ios_base::trunc);
++        if (!optionFile.good())
++        {
++            wxMessageBox(_(&quot;Cannot write autostart/bitcoin.desktop file&quot;), &quot;Bitcoin&quot;);
++            return;
++        }
++        // Write a bitcoin.desktop file to the autostart directory:
++        char pszExePath[MAX_PATH+1];
++        memset(pszExePath, 0, sizeof(pszExePath));
++        readlink(&quot;/proc/self/exe&quot;, pszExePath, sizeof(pszExePath)-1);
++        optionFile &lt;&lt; &quot;[Desktop Entry]\n&quot;;
++        optionFile &lt;&lt; &quot;Type=Application\n&quot;;
++        optionFile &lt;&lt; &quot;Name=Bitcoin\n&quot;;
++        optionFile &lt;&lt; &quot;Exec=&quot; &lt;&lt; pszExePath &lt;&lt; &quot;\n&quot;;
++        optionFile &lt;&lt; &quot;Terminal=false\n&quot;;
++        optionFile &lt;&lt; &quot;Hidden=false\n&quot;;
++        optionFile.close();
++    }
++}
+ #else
++
++// TODO: OSX startup stuff; see:
++// http://developer.apple.com/mac/library/documentation/MacOSX/Conceptual/BPSystemStartup/Articles/CustomLogin.html
++
+ bool GetStartOnSystemStartup() { return false; }
+ void SetStartOnSystemStartup(bool fAutoStart) { }
++
+ #endif
+ 
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 300;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1444,8 +1444,10 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     //m_listBox-&gt;Append(_(&quot;Test 2&quot;));
+     m_listBox-&gt;SetSelection(0);
+     SelectPage(0);
+-#ifndef __WXMSW__
+-    m_checkBoxMinimizeOnClose-&gt;SetLabel(_(&quot;&amp;Minimize on close&quot;));
++#ifdef __WXGTK__
++    m_checkBoxStartOnSystemStartup-&gt;SetLabel(_(&quot;&amp;Start Bitcoin on window system startup&quot;));
++#endif
++#ifdef __WXMAC_OSX__
+     m_checkBoxStartOnSystemStartup-&gt;Enable(false); // not implemented yet
+ #endif
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -559,9 +559,9 @@ string MyGetSpecialFolderPath(int nFolder, bool fCreate)
+ 
+ string GetDefaultDataDir()
+ {
+-    // Windows: C:\Documents and Settings\username\Application Data\Appname
+-    // Mac: ~/Library/Application Support/Appname
+-    // Unix: ~/.appname
++    // Windows: C:\Documents and Settings\username\Application Data\Bitcoin
++    // Mac: ~/Library/Application Support/Bitcoin
++    // Unix: ~/.bitcoin
+ #ifdef __WXMSW__
+     // Windows
+     return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + &quot;\\Bitcoin&quot;;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/50d49d9/">← Portuguese translation by Tiago Faria</a><a rel="next" href="../../commits/6e5d67e/">switched from wxStandardPaths to GetDefaultDataDir, fixes… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

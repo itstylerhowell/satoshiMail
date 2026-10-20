@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin API – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 3 February 2010: Is there any way to find out what the missing shared libraries are? It would help to know. It probably needs the gtk…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x56-bitcoin-api/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin API – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 3 February 2010: Is there any way to find out what the missing shared libraries are? It would help to know. It probably needs the gtk…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x56-bitcoin-api/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin API – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 3 February 2010: Is there any way to find out what the missing shared libraries are? It would help to know. It probably needs the gtk…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Bitcoin API", "url": "https://satoshimail.pages.dev/conversations/x56-bitcoin-api/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2010-02-03T09:27:17Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-03T09:27:17Z", "text": "Have you decided upon the inter-process calling method of the Bitcoin API yet? An easy solution would be the socket interface provided by wxWidgets: http://docs.wxwidgets.org/trunk/overview_ipc.html. The Bitcoin program running a wxServer could be then accessed by calling the bitcoin executable from the command line or by coding your own wxClient app. Another option would be to just use the plain BSD sockets. Can you send me a 64-bit Linux binary of Bitcoin if you have one? I tried compiling…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-03T20:25:53Z", "text": "Is there any way to find out what the missing shared libraries are? It would help to know. It probably needs the gtk libraries, in which case you'll have the same problem with the 64-bit version. I would like to have a single executable that can also run on a UI-less system, but I'm not sure how on linux to link to things but still be able to run and not use them if the library is not present. Maybe we should statically link the GTK. Licensewise, it's LGPL, but since it's only used on unix…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-04T17:47:36Z", "text": "This is what \"ldd bitcoin\" says: linux-gate.so.1 => (0xf778c000) libcrypto.so.0.9.8 => /usr/lib32/i686/cmov/libcrypto.so.0.9.8 (0xf762a000) libgtk-x11-2.0.so.0 => not found libgthread-2.0.so.0 => not found libSM.so.6 => /usr/lib32/libSM.so.6 (0xf7621000) libstdc++.so.6 => /usr/lib32/libstdc++.so.6 (0xf7533000) libm.so.6 => /lib32/libm.so.6 (0xf750f000) libgcc_s.so.1 => /usr/lib32/libgcc_s.so.1 (0xf7502000) libc.so.6 => /lib32/libc.so.6 (0xf73b0000) libdl.so.2 => /lib32/libdl.so.2 (0xf73ac000)…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-04T18:50:35Z", "text": "I must have accidentally typed j instead of z. It's bz2 format. Rename to .tar.bz2 or just do tar -jxvf"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-04T19:59:48Z", "text": "Good, then no need to consider d-bus. Is there something like IPC sockets on Windows? I guess we could look how wx does it, or maybe the XML-RPC library will already know what to do. Windows has named pipes, maybe that's the best analogue. I don't think I want to invent my own RPC protocol, I want to use an existing standard. PHP, Java, Python or anything will be able to talk to the server directly the same way the command line commands do. I'm going to start reading on XML-RPC. It's coming up…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoin API", "item": "https://satoshimail.pages.dev/conversations/x56-bitcoin-api/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x56">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoin API</span></div></nav>
+<main class="in">
+<h1>Bitcoin API</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 5 messages · from 3 February 2010 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x56">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to satoshin@gmx.com</span><span class="muted"> · <time datetime="2010-02-03T09:27:17Z">3 February 2010, 09:27 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-140" rel="nofollow noopener">original</a></span></header>
+<div class="t">Have you decided upon the inter-process calling method of the Bitcoin
+API yet? An easy solution would be the socket interface provided by
+wxWidgets: <a href="http://docs.wxwidgets.org/trunk/overview_ipc.html." rel="nofollow noopener">http://docs.wxwidgets.org/trunk/overview_ipc.html.</a> The
+Bitcoin program running a wxServer could be then accessed by calling
+the bitcoin executable from the command line or by coding your own
+wxClient app.
+
+Another option would be to just use the plain BSD sockets.
+
+Can you send me a 64-bit Linux binary of Bitcoin if you have one? I
+tried compiling on the VPS, but it ran out of memory. Tried the 32-bit
+version (with ia32-libs) also, but it didn&#x27;t find the shared libraries.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-03T20:25:53Z">3 February 2010, 20:25 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-143" rel="nofollow noopener">original</a></span></header>
+<div class="t">Is there any way to find out what the missing shared libraries are?  It
+would help to know.
+
+It probably needs the gtk libraries, in which case you&#x27;ll have the same
+problem with the 64-bit version.  I would like to have a single
+executable that can also run on a UI-less system, but I&#x27;m not sure how
+on linux to link to things but still be able to run and not use them if
+the library is not present.  Maybe we should statically link the GTK.
+Licensewise, it&#x27;s LGPL, but since it&#x27;s only used on unix, that would be
+OK.  (we can&#x27;t link LGPL stuff on windows because we provide the OpenSSL
+DLL, but on linux OpenSSL comes with the OS)
+
+My 64-bit (debug stripped) executable is attached.  It includes untested
+changes that are not in SVN yet: UI changes and the wallet fSpent flag
+resync stuff.
+
+I&#x27;ve been researching options for interprocess calling.  I want
+something that will be easy for a variety of server side languages to
+call, particularly PHP.  Cross-platform to windows is a plus.
+
+I&#x27;m not sure if I want it to be something that can be accessed across
+the network.  That would introduce security issues.  If it can only be
+accessed on the local system, then local security authentication covers
+it, and it is incapable of being hacked remotely.
+
+At surface level, not looking into any details yet, the current front
+runners are:
+D-Bus:
+    local system only
+    used by qt, gnome and skype
+    bindings: c, python, java, c++,
+          php listed as &quot;in progress&quot;
+          .net listed as unmaintained
+          not sure how ready it is on windows
+XML-RPC:
+    widely used, built in libraries on PHP
+    it&#x27;s more for web clients to talk to server, transport is http, so
+its a security question
+
+Is it possible to open a socket that can only be accessed locally?</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Have you decided upon the inter-process calling method of the Bitcoin
+API yet? An easy solution would be the socket interface provided by
+wxWidgets: <a href="http://docs.wxwidgets.org/trunk/overview_ipc.html." rel="nofollow noopener">http://docs.wxwidgets.org/trunk/overview_ipc.html.</a> The
+Bitcoin program running a wxServer could be then accessed by calling the
+bitcoin executable from the command line or by coding your own wxClient
+app.
+
+Another option would be to just use the plain BSD sockets.
+
+Can you send me a 64-bit Linux binary of Bitcoin if you have one? I
+tried compiling on the VPS, but it ran out of memory. Tried the 32-bit
+version (with ia32-libs) also, but it didn&#x27;t find the shared libraries.</div></blockquote></article><article class="msg" id="m2">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-02-04T17:47:36Z">4 February 2010, 17:47 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-144" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Is there any way to find out what the missing shared libraries are?  It
+would help to know.</div></blockquote><div class="t">This is what &quot;ldd bitcoin&quot; says:
+
+         linux-gate.so.1 =&gt;  (0xf778c000)
+         libcrypto.so.0.9.8 =&gt; /usr/lib32/i686/cmov/libcrypto.so.0.9.8
+(0xf762a000)
+         libgtk-x11-2.0.so.0 =&gt; not found
+         libgthread-2.0.so.0 =&gt; not found
+         libSM.so.6 =&gt; /usr/lib32/libSM.so.6 (0xf7621000)
+         libstdc++.so.6 =&gt; /usr/lib32/libstdc++.so.6 (0xf7533000)
+         libm.so.6 =&gt; /lib32/libm.so.6 (0xf750f000)
+         libgcc_s.so.1 =&gt; /usr/lib32/libgcc_s.so.1 (0xf7502000)
+         libc.so.6 =&gt; /lib32/libc.so.6 (0xf73b0000)
+         libdl.so.2 =&gt; /lib32/libdl.so.2 (0xf73ac000)
+         libgdk-x11-2.0.so.0 =&gt; not found
+         libXinerama.so.1 =&gt; /usr/lib32/libXinerama.so.1 (0xf73a8000)
+         libgdk_pixbuf-2.0.so.0 =&gt; not found
+         libX11.so.6 =&gt; /usr/lib32/libX11.so.6 (0xf72b9000)
+         libpango-1.0.so.0 =&gt; not found
+         libgobject-2.0.so.0 =&gt; not found
+         libglib-2.0.so.0 =&gt; not found
+         libpthread.so.0 =&gt; /lib32/libpthread.so.0 (0xf72a1000)
+         libpng12.so.0 =&gt; /usr/lib32/libpng12.so.0 (0xf727e000)
+         libz.so.1 =&gt; /usr/lib32/libz.so.1 (0xf7269000)
+         libICE.so.6 =&gt; /usr/lib32/libICE.so.6 (0xf7251000)
+         /lib/ld-linux.so.2 (0xf778d000)
+         libXext.so.6 =&gt; /usr/lib32/libXext.so.6 (0xf7243000)
+         libxcb-xlib.so.0 =&gt; /usr/lib32/libxcb-xlib.so.0 (0xf7241000)
+         libxcb.so.1 =&gt; /usr/lib32/libxcb.so.1 (0xf7229000)
+         libXau.so.6 =&gt; /usr/lib32/libXau.so.6 (0xf7226000)
+         libXdmcp.so.6 =&gt; /usr/lib32/libXdmcp.so.6 (0xf7220000)
+
+Notfounds seem to be gtk-libraries indeed. I have those files in my
+/usr/lib folder, but maybe they&#x27;re ignored because they&#x27;re 64bit, or
+maybe only /usr/lib32 is searched. I haven&#x27;t tested on other 64bit
+machines.</div><blockquote><div class="t">My 64-bit (debug stripped) executable is attached.  It includes
+untested changes that are not in SVN yet: UI changes and the wallet
+fSpent flag resync stuff.</div></blockquote><div class="t">The package doesn&#x27;t open, it says &quot;not in gzip format&quot;.</div><blockquote><div class="t">Is it possible to open a socket that can only be accessed locally?</div></blockquote><div class="t">Yes, you can use IPC sockets (&quot;Unix domain sockets&quot;) which are local
+only. That&#x27;s done in the wx-api by using a filename in place of a port
+number. I committed an example of how the wxServer-Client
+communication is used, you can revert if you want to. Now there&#x27;s the
+-blockamount command line option which asks the running instance for
+the block chain length.
+
+I think this command line method could already be used from PHP, but
+it might be lighter if php itself could call the socket server
+directly. The wx&#x27;s IPC overview mentions wxSocketEvent, wxSocketBase,
+wxSocketClient and wxSocketServer as being &quot;Classes for the low-level
+TCP/IP API&quot;, which might be easier to use from php than what I used
+now (wxServer, wxClient, wxConnection). I&#x27;ll look more into it.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-04T18:50:35Z">4 February 2010, 18:50 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-145" rel="nofollow noopener">original</a></span></header>
+<div class="t">I must have accidentally typed j instead of z.  It&#x27;s bz2 format.  Rename
+to .tar.bz2 or just do tar -jxvf</div><blockquote><div class="t">The package doesn&#x27;t open, it says &quot;not in gzip format&quot;.</div></blockquote></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-04T19:59:48Z">4 February 2010, 19:59 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-147" rel="nofollow noopener">original</a></span></header>
+<div class="t">Good, then no need to consider d-bus.  Is there something like IPC
+sockets on Windows?  I guess we could look how wx does it, or maybe the
+XML-RPC library will already know what to do.  Windows has named pipes,
+maybe that&#x27;s the best analogue.
+
+I don&#x27;t think I want to invent my own RPC protocol, I want to use an
+existing standard.  PHP, Java, Python or anything will be able to talk
+to the server directly the same way the command line commands do.
+
+I&#x27;m going to start reading on XML-RPC.  It&#x27;s coming up in searches as
+the most widely used protocol and widely supported.  PHP includes it in
+its standard libraries.</div><blockquote><div class="t">&gt; Is it possible to open a socket that can only be accessed locally?
+
+Yes, you can use IPC sockets (&quot;Unix domain sockets&quot;) which are local
+only. That&#x27;s done in the wx-api by using a filename in place of a port
+number. I committed an example of how the wxServer-Client communication
+is used, you can revert if you want to. Now there&#x27;s the -blockamount
+command line option which asks the running instance for the block chain
+length.
+
+I think this command line method could already be used from PHP, but it
+might be lighter if php itself could call the socket server directly.
+The wx&#x27;s IPC overview mentions wxSocketEvent, wxSocketBase,
+wxSocketClient and wxSocketServer as being &quot;Classes for the low-level
+TCP/IP API&quot;, which might be easier to use from php than what I used now
+(wxServer, wxClient, wxConnection). I&#x27;ll look more into it.</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x55-bitcoin-exchange/">← Bitcoin Exchange</a><a rel="next" href="../../conversations/x57-exchange-options/">Exchange options →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

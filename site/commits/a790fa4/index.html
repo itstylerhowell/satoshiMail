@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>don&#x27;t count or spend payments… (r158) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 September 2010: don&#x27;t count or spend payments until they have 1 confirmation, misc cleanup, changed internal…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/a790fa4/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="don&#x27;t count or spend payments… (r158) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 September 2010: don&#x27;t count or spend payments until they have 1 confirmation, misc cleanup, changed internal…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/a790fa4/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="don&#x27;t count or spend payments… (r158) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 September 2010: don&#x27;t count or spend payments until they have 1 confirmation, misc cleanup, changed internal…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "don't count or spend payments until they have 1 confirmation, misc cleanup, changed internal version number from 312 to 31300 -- version 0.3.13", "url": "https://satoshimail.pages.dev/commits/a790fa4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-30T16:23:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a790fa46f40d751307f86c37a709eb119768ce5b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "don't count or spend payments until…", "item": "https://satoshimail.pages.dev/commits/a790fa4/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ca790fa46f4">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">don&#x27;t count or spend payments until…</span></div></nav>
+<main class="in">
+<h1>don&#x27;t count or spend payments until they have 1 confirmation, misc cleanup, changed internal version number from 312 to 31300 -- version 0.3.13</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 30 September 2010 · SVN r158 · release v0.3.13 · 22 files, +187 −130</p>
+<p class="actions"><a class="btn" href="../../#t-ca790fa46f4">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/a790fa46f40d751307f86c37a709eb119768ce5b" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -465,7 +465,7 @@ bool CTxDB::LoadBlockIndex()
+     CBlockIndex* pindexFork = NULL;
+     for (CBlockIndex* pindex = pindexBest; pindex &amp;&amp; pindex-&gt;pprev; pindex = pindex-&gt;pprev)
+     {
+-        if (pindex-&gt;nHeight &lt; 74000 &amp;&amp; !mapArgs.count(&quot;-checkblocks&quot;))
++        if (pindex-&gt;nHeight &lt; nBestHeight-2500 &amp;&amp; !mapArgs.count(&quot;-checkblocks&quot;))
+             break;
+         CBlock block;
+         if (!block.ReadFromDisk(pindex))</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -203,7 +203,7 @@ bool AppInit2(int argc, char* argv[])
+     if (!fDebug &amp;&amp; !pszSetDataDir[0])
+         ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d.%d.%d%s beta\n&quot;, VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer);
++    printf(&quot;Bitcoin version %s%s beta\n&quot;, FormatVersion(VERSION).c_str(), pszSubVer);
+ #ifdef GUI
+     printf(&quot;OS version %s\n&quot;, ((string)wxGetOsDescription()).c_str());
+     printf(&quot;System default language is %d %s\n&quot;, g_locale.GetSystemLanguage(), ((string)g_locale.GetSysName()).c_str());</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -321,8 +321,8 @@ msgstr &quot;Beim schließen &amp;Minimieren&quot;
+ 
+ #: ../../../ui.cpp:1595
+ #, c-format
+-msgid &quot;version 0.%d.%d beta&quot;
+-msgstr &quot;Version 0.%d.%d Beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;Version %s%s Beta&quot;
+ 
+ #: ../../../ui.cpp:1681
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -350,8 +350,8 @@ msgstr &quot;&amp;Minimizar al cerrar&quot;
+ 
+ #: ../../../ui.cpp:1610
+ #, c-format
+-msgid &quot;version %d.%d.%d beta&quot;
+-msgstr &quot;version %d.%d.%d beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;version %s%s beta&quot;
+ 
+ #: ../../../ui.cpp:1696
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -351,8 +351,8 @@ msgstr &quot;&amp;Réduire à la fermeture&quot;
+ 
+ #: ../../../ui.cpp:1610
+ #, c-format
+-msgid &quot;version %d.%d.%d beta&quot;
+-msgstr &quot;version %d.%d.%d beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;version %s%s beta&quot;
+ 
+ #: ../../../ui.cpp:1696
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -319,8 +319,8 @@ msgstr &quot;&amp;Minimizza se chiuso&quot;
+ 
+ #: ../../../ui.cpp:1595
+ #, c-format
+-msgid &quot;version 0.%d.%d beta&quot;
+-msgstr &quot;versione 0.%d.%d beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;versione %s%s beta&quot;
+ 
+ #: ../../../ui.cpp:1681
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -320,8 +320,8 @@ msgstr &quot;&amp;Minimalizeer bij sluiten&quot;
+ 
+ #: ../../../ui.cpp:1595
+ #, c-format
+-msgid &quot;version 0.%d.%d beta&quot;
+-msgstr &quot;versie 0.%d.%d beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;versie %s%s beta&quot;
+ 
+ #: ../../../ui.cpp:1681
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -319,8 +319,8 @@ msgstr &quot;&amp;Minimizar ao fechar&quot;
+ 
+ #: ../../../ui.cpp:1595
+ #, c-format
+-msgid &quot;version 0.%d.%d beta&quot;
+-msgstr &quot;versão 0.%d.%d beta&quot;
++msgid &quot;version %s%s beta&quot;
++msgstr &quot;versão %s%s beta&quot;
+ 
+ #: ../../../ui.cpp:1681
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -487,18 +487,56 @@ void CWalletTx::AddSupportingTransactions(CTxDB&amp; txdb)
+ 
+ 
+ 
++bool CTransaction::CheckTransaction() const
++{
++    // Basic checks that don&#x27;t depend on any context
++    if (vin.empty() || vout.empty())
++        return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
++
++    // Size limits
++    if (::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
++        return error(&quot;CTransaction::CheckTransaction() : size limits failed&quot;);
++
++    // Check for negative or overflow output values
++    int64 nValueOut = 0;
++    foreach(const CTxOut&amp; txout, vout)
++    {
++        if (txout.nValue &lt; 0)
++            return error(&quot;CTransaction::CheckTransaction() : txout.nValue negative&quot;);
++        if (txout.nValue &gt; MAX_MONEY)
++            return error(&quot;CTransaction::CheckTransaction() : txout.nValue too high&quot;);
++        nValueOut += txout.nValue;
++        if (!MoneyRange(nValueOut))
++            return error(&quot;CTransaction::CheckTransaction() : txout total out of range&quot;);
++    }
++
++    if (IsCoinBase())
++    {
++        if (vin[0].scriptSig.size() &lt; 2 || vin[0].scriptSig.size() &gt; 100)
++            return error(&quot;CTransaction::CheckTransaction() : coinbase script size&quot;);
++    }
++    else
++    {
++        foreach(const CTxIn&amp; txin, vin)
++            if (txin.prevout.IsNull())
++                return error(&quot;CTransaction::CheckTransaction() : prevout is null&quot;);
++    }
++
++    return true;
++}
++
+ bool CTransaction::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMissingInputs)
+ {
+     if (pfMissingInputs)
+         *pfMissingInputs = false;
+ 
++    if (!CheckTransaction())
++        return error(&quot;AcceptToMemoryPool() : CheckTransaction failed&quot;);
++
+     // Coinbase is only valid in a block, not as a loose transaction
+     if (IsCoinBase())
+         return error(&quot;AcceptToMemoryPool() : coinbase as individual tx&quot;);
+ 
+-    if (!CheckTransaction())
+-        return error(&quot;AcceptToMemoryPool() : CheckTransaction failed&quot;);
+-
+     // To help v0.1.5 clients who would see it as a negative number
+     if ((int64)nLockTime &gt; INT_MAX)
+         return error(&quot;AcceptToMemoryPool() : not accepting nLockTime beyond 2038 yet&quot;);
+@@ -815,7 +853,7 @@ uint256 GetOrphanRoot(const CBlock* pblock)
+     return pblock-&gt;GetHash();
+ }
+ 
+-int64 CBlock::GetBlockValue(int nHeight, int64 nFees) const
++int64 GetBlockValue(int nHeight, int64 nFees)
+ {
+     int64 nSubsidy = 50 * COIN;
+ 
+@@ -1024,6 +1062,11 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+             if (!txindex.vSpent[prevout.n].IsNull())
+                 return fMiner ? false : error(&quot;ConnectInputs() : %s prev tx already used at %s&quot;, GetHash().ToString().substr(0,6).c_str(), txindex.vSpent[prevout.n].ToString().c_str());
+ 
++            // Check for negative or overflow input values
++            nValueIn += txPrev.vout[prevout.n].nValue;
++            if (!MoneyRange(txPrev.vout[prevout.n].nValue) || !MoneyRange(nValueIn))
++                return error(&quot;ConnectInputs() : txin values out of range&quot;);
++
+             // Mark outpoints as spent
+             txindex.vSpent[prevout.n] = posThisTx;
+ 
+@@ -1032,12 +1075,6 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+                 txdb.UpdateTxIndex(prevout.hash, txindex);
+             else if (fMiner)
+                 mapTestPool[prevout.hash] = txindex;
+-
+-            nValueIn += txPrev.vout[prevout.n].nValue;
+-
+-            // Check for negative or overflow input values
+-            if (!MoneyRange(txPrev.vout[prevout.n].nValue) || !MoneyRange(nValueIn))
+-                return error(&quot;ConnectInputs() : txin values out of range&quot;);
+         }
+ 
+         if (nValueIn &lt; GetValueOut())
+@@ -2967,7 +3004,7 @@ void BitcoinMiner()
+             }
+         }
+         pblock-&gt;nBits = nBits;
+-        pblock-&gt;vtx[0].vout[0].nValue = pblock-&gt;GetBlockValue(pindexPrev-&gt;nHeight+1, nFees);
++        pblock-&gt;vtx[0].vout[0].nValue = GetBlockValue(pindexPrev-&gt;nHeight+1, nFees);
+         printf(&quot;Running BitcoinMiner with %d transactions in block\n&quot;, pblock-&gt;vtx.size());
+ 
+ 
+@@ -3169,6 +3206,8 @@ int64 GetBalance()
+             CWalletTx* pcoin = &amp;(*it).second;
+             if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent)
+                 continue;
++            if (pcoin-&gt;GetDepthInMainChain() &lt; 1 &amp;&amp; pcoin-&gt;GetDebit() &lt;= 0)
++                continue;
+             nTotal += pcoin-&gt;GetCredit(true);
+         }
+     }
+@@ -3200,6 +3239,8 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+        {
+             if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent)
+                 continue;
++            if (pcoin-&gt;GetDepthInMainChain() &lt; 1 &amp;&amp; pcoin-&gt;GetDebit() &lt;= 0)
++                continue;
+             int64 n = pcoin-&gt;GetCredit();
+             if (n &lt;= 0)
+                 continue;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -469,44 +469,6 @@ public:
+         return (vin.size() == 1 &amp;&amp; vin[0].prevout.IsNull());
+     }
+ 
+-    bool CheckTransaction() const
+-    {
+-        // Basic checks that don&#x27;t depend on any context
+-        if (vin.empty() || vout.empty())
+-            return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
+-
+-        // Size limits
+-        if (::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
+-            return error(&quot;CTransaction::CheckTransaction() : size limits failed&quot;);
+-
+-        // Check for negative or overflow output values
+-        int64 nValueOut = 0;
+-        foreach(const CTxOut&amp; txout, vout)
+-        {
+-            if (txout.nValue &lt; 0)
+-                return error(&quot;CTransaction::CheckTransaction() : txout.nValue negative&quot;);
+-            if (txout.nValue &gt; MAX_MONEY)
+-                return error(&quot;CTransaction::CheckTransaction() : txout.nValue too high&quot;);
+-            nValueOut += txout.nValue;
+-            if (!MoneyRange(nValueOut))
+-                return error(&quot;CTransaction::CheckTransaction() : txout total out of range&quot;);
+-        }
+-
+-        if (IsCoinBase())
+-        {
+-            if (vin[0].scriptSig.size() &lt; 2 || vin[0].scriptSig.size() &gt; 100)
+-                return error(&quot;CTransaction::CheckTransaction() : coinbase script size&quot;);
+-        }
+-        else
+-        {
+-            foreach(const CTxIn&amp; txin, vin)
+-                if (txin.prevout.IsNull())
+-                    return error(&quot;CTransaction::CheckTransaction() : prevout is null&quot;);
+-        }
+-
+-        return true;
+-    }
+-
+     int GetSigOpCount() const
+     {
+         int n = 0;
+@@ -655,20 +617,17 @@ public:
+     }
+ 
+ 
+-
+     bool DisconnectInputs(CTxDB&amp; txdb);
+     bool ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx,
+                        CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
+     bool ClientConnectInputs();
+-
++    bool CheckTransaction() const;
+     bool AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
+-
+     bool AcceptToMemoryPool(bool fCheckInputs=true, bool* pfMissingInputs=NULL)
+     {
+         CTxDB txdb(&quot;r&quot;);
+         return AcceptToMemoryPool(txdb, fCheckInputs, pfMissingInputs);
+     }
+-
+ protected:
+     bool AddToMemoryPoolUnchecked();
+ public:
+@@ -690,9 +649,7 @@ public:
+     int nIndex;
+ 
+     // memory only
+-    mutable bool fMerkleVerified;
+-    mutable bool fGetCreditCached;
+-    mutable int64 nGetCreditCached;
++    mutable char fMerkleVerified;
+ 
+ 
+     CMerkleTx()
+@@ -710,8 +667,6 @@ public:
+         hashBlock = 0;
+         nIndex = -1;
+         fMerkleVerified = false;
+-        fGetCreditCached = false;
+-        nGetCreditCached = 0;
+     }
+ 
+     IMPLEMENT_SERIALIZE
+@@ -723,20 +678,6 @@ public:
+         READWRITE(nIndex);
+     )
+ 
+-    int64 GetCredit(bool fUseCache=false) const
+-    {
+-        // Must wait until coinbase is safely deep enough in the chain before valuing it
+-        if (IsCoinBase() &amp;&amp; GetBlocksToMaturity() &gt; 0)
+-            return 0;
+-
+-        // GetBalance can assume transactions in mapWallet won&#x27;t change
+-        if (fUseCache &amp;&amp; fGetCreditCached)
+-            return nGetCreditCached;
+-        nGetCreditCached = CTransaction::GetCredit();
+-        fGetCreditCached = true;
+-        return nGetCreditCached;
+-    }
+-
+ 
+     int SetMerkleBranch(const CBlock* pblock=NULL);
+     int GetDepthInMainChain(int&amp; nHeightRet) const;
+@@ -767,9 +708,16 @@ public:
+     char fSpent;
+     //// probably need to sign the order info so know it came from payer
+ 
++    // memory only
++    mutable char fDebitCached;
++    mutable char fCreditCached;
++    mutable int64 nDebitCached;
++    mutable int64 nCreditCached;
++
+     // memory only UI hints
+     mutable unsigned int nTimeDisplayed;
+     mutable int nLinesDisplayed;
++    mutable char fConfirmedDisplayed;
+ 
+ 
+     CWalletTx()
+@@ -793,6 +741,10 @@ public:
+         nTimeReceived = 0;
+         fFromMe = false;
+         fSpent = false;
++        fDebitCached = false;
++        fCreditCached = false;
++        nDebitCached = 0;
++        nCreditCached = 0;
+         nTimeDisplayed = 0;
+         nLinesDisplayed = 0;
+     }
+@@ -810,6 +762,31 @@ public:
+         READWRITE(fSpent);
+     )
+ 
++    int64 GetDebit() const
++    {
++        if (vin.empty())
++            return 0;
++        if (fDebitCached)
++            return nDebitCached;
++        nDebitCached = CTransaction::GetDebit();
++        fDebitCached = true;
++        return nDebitCached;
++    }
++
++    int64 GetCredit(bool fUseCache=false) const
++    {
++        // Must wait until coinbase is safely deep enough in the chain before valuing it
++        if (IsCoinBase() &amp;&amp; GetBlocksToMaturity() &gt; 0)
++            return 0;
++
++        // GetBalance can assume transactions in mapWallet won&#x27;t change
++        if (fUseCache &amp;&amp; fCreditCached)
++            return nCreditCached;
++        nCreditCached = CTransaction::GetCredit();
++        fCreditCached = true;
++        return nCreditCached;
++    }
++
+     bool WriteToDisk()
+     {
+         return CWalletDB().WriteTx(GetHash(), *this);
+@@ -1103,7 +1080,6 @@ public:
+     }
+ 
+ 
+-    int64 GetBlockValue(int nHeight, int64 nFees) const;
+     bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions=true);</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -778,6 +778,14 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     int nKeysCount = CastToBigNum(stacktop(-i)).getint();
+                     if (nKeysCount &lt; 0)
+                         return false;
++                    if (nBestHeight &gt; 84000)
++                    {
++                        if (nKeysCount &gt; 20)
++                            return false;
++                        nOpCount += nKeysCount;
++                        if (nOpCount &gt; 201)
++                            return false;
++                    }
+                     int ikey = ++i;
+                     i += nKeysCount;
+                     if (stack.size() &lt; i)</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,8 +22,8 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.8&quot;;
++static const int VERSION = 31300;
++static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+ 
+@@ -85,13 +85,6 @@ enum
+ 
+ #define READWRITE(obj)      (nSerSize += ::SerReadWrite(s, (obj), nType, nVersion, ser_action))
+ 
+-#define READWRITEVER(obj)       \
+-    do {                        \
+-        READWRITE((obj));       \
+-        if ((obj) == 10300)     \
+-            (obj) = 300;        \
+-    } while (false)
+-
+ 
+ 
+ 
+@@ -163,7 +156,7 @@ template&lt;typename Stream&gt; inline void Unserialize(Stream&amp; s, bool&amp; a, int, int=0
+ //
+ inline unsigned int GetSizeOfCompactSize(uint64 nSize)
+ {
+-    if (nSize &lt; UCHAR_MAX-2)     return sizeof(unsigned char);
++    if (nSize &lt; 253)             return sizeof(unsigned char);
+     else if (nSize &lt;= USHRT_MAX) return sizeof(unsigned char) + sizeof(unsigned short);
+     else if (nSize &lt;= UINT_MAX)  return sizeof(unsigned char) + sizeof(unsigned int);
+     else                         return sizeof(unsigned char) + sizeof(uint64);
+@@ -172,30 +165,31 @@ inline unsigned int GetSizeOfCompactSize(uint64 nSize)
+ template&lt;typename Stream&gt;
+ void WriteCompactSize(Stream&amp; os, uint64 nSize)
+ {
+-    if (nSize &lt; UCHAR_MAX-2)
++    if (nSize &lt; 253)
+     {
+         unsigned char chSize = nSize;
+         WRITEDATA(os, chSize);
+     }
+     else if (nSize &lt;= USHRT_MAX)
+     {
+-        unsigned char chSize = UCHAR_MAX-2;
++        unsigned char chSize = 253;
+         unsigned short xSize = nSize;
+         WRITEDATA(os, chSize);
+         WRITEDATA(os, xSize);
+     }
+     else if (nSize &lt;= UINT_MAX)
+     {
+-        unsigned char chSize = UCHAR_MAX-1;
++        unsigned char chSize = 254;
+         unsigned int xSize = nSize;
+         WRITEDATA(os, chSize);
+         WRITEDATA(os, xSize);
+     }
+     else
+     {
+-        unsigned char chSize = UCHAR_MAX;
++        unsigned char chSize = 255;
++        uint64 xSize = nSize;
+         WRITEDATA(os, chSize);
+-        WRITEDATA(os, nSize);
++        WRITEDATA(os, xSize);
+     }
+     return;
+ }
+@@ -206,27 +200,27 @@ uint64 ReadCompactSize(Stream&amp; is)
+     unsigned char chSize;
+     READDATA(is, chSize);
+     uint64 nSizeRet = 0;
+-    if (chSize &lt; UCHAR_MAX-2)
++    if (chSize &lt; 253)
+     {
+         nSizeRet = chSize;
+     }
+-    else if (chSize == UCHAR_MAX-2)
++    else if (chSize == 253)
+     {
+-        unsigned short nSize;
+-        READDATA(is, nSize);
+-        nSizeRet = nSize;
++        unsigned short xSize;
++        READDATA(is, xSize);
++        nSizeRet = xSize;
+     }
+-    else if (chSize == UCHAR_MAX-1)
++    else if (chSize == 254)
+     {
+-        unsigned int nSize;
+-        READDATA(is, nSize);
+-        nSizeRet = nSize;
++        unsigned int xSize;
++        READDATA(is, xSize);
++        nSizeRet = xSize;
+     }
+     else
+     {
+-        uint64 nSize;
+-        READDATA(is, nSize);
+-        nSizeRet = nSize;
++        uint64 xSize;
++        READDATA(is, xSize);
++        nSizeRet = xSize;
+     }
+     if (nSizeRet &gt; (uint64)MAX_SIZE)
+         throw std::ios_base::failure(&quot;ReadCompactSize() : size too large&quot;);</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.12
++!define VERSION 0.3.13
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.12-win32-setup.exe
++OutFile bitcoin-0.3.13-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.12.0
++VIProductVersion 0.3.13.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -103,6 +103,16 @@ int InsertLine(wxListCtrl* listCtrl, void* pdata, const wxString&amp; str0, const wx
+     return nIndex;
+ }
+ 
++void SetItemTextColour(wxListCtrl* listCtrl, int nIndex, const wxColour&amp; colour)
++{
++    // Repaint on Windows is more flickery if the colour has ever been set,
++    // so don&#x27;t want to set it unless it&#x27;s different.  Default colour has
++    // alpha 0 transparent, so our colours don&#x27;t match using operator==.
++    wxColour c1 = listCtrl-&gt;GetItemTextColour(nIndex);
++    if (colour.Red() != c1.Red() || colour.Green() != c1.Green() || colour.Blue() != c1.Blue())
++        listCtrl-&gt;SetItemTextColour(nIndex, colour);
++}
++
+ void SetSelection(wxListCtrl* listCtrl, int nIndex)
+ {
+     int nSize = listCtrl-&gt;GetItemCount();
+@@ -434,7 +444,7 @@ int CMainFrame::GetSortIndex(const string&amp; strSort)
+ #endif
+ }
+ 
+-void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5, const wxString&amp; str6)
++void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxColour&amp; colour, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5, const wxString&amp; str6)
+ {
+     strSort = &quot; &quot; + strSort;       // leading space to workaround wx2.9.0 ubuntu 9.10 bug
+     long nData = *(long*)&amp;hashKey; //  where first char of hidden column is displayed
+@@ -470,6 +480,7 @@ void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSo
+     m_listCtrl-&gt;SetItem(nIndex, 5, str5);
+     m_listCtrl-&gt;SetItem(nIndex, 6, str6);
+     m_listCtrl-&gt;SetItemData(nIndex, nData);
++    SetItemTextColour(m_listCtrl, nIndex, colour);
+ }
+ 
+ bool CMainFrame::DeleteLine(uint256 hashKey)
+@@ -489,9 +500,10 @@ bool CMainFrame::DeleteLine(uint256 hashKey)
+     return nIndex != -1;
+ }
+ 
+-string FormatTxStatus(const CWalletTx&amp; wtx)
++string FormatTxStatus(const CWalletTx&amp; wtx, bool&amp; fConfirmed)
+ {
+     // Status
++    fConfirmed = false;
+     if (!wtx.IsFinal())
+     {
+         if (wtx.nLockTime &lt; 500000000)
+@@ -502,6 +514,8 @@ string FormatTxStatus(const CWalletTx&amp; wtx)
+     else
+     {
+         int nDepth = wtx.GetDepthInMainChain();
++        if (nDepth &gt;= 1 || wtx.GetDebit() &gt; 0)
++            fConfirmed = true;
+         if (GetAdjustedTime() - wtx.nTimeReceived &gt; 2 * 60 &amp;&amp; wtx.GetRequestCount() == 0)
+             return strprintf(_(&quot;%d/offline?&quot;), nDepth);
+         else if (nDepth &lt; 6)
+@@ -511,6 +525,12 @@ string FormatTxStatus(const CWalletTx&amp; wtx)
+     }
+ }
+ 
++string FormatTxStatus(const CWalletTx&amp; wtx)
++{
++    bool fConfirmed;
++    return FormatTxStatus(wtx, fConfirmed);
++}
++
+ string SingleLine(const string&amp; strIn)
+ {
+     string strOut;
+@@ -539,7 +559,10 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+     int64 nDebit = wtx.GetDebit();
+     int64 nNet = nCredit - nDebit;
+     uint256 hash = wtx.GetHash();
+-    string strStatus = FormatTxStatus(wtx);
++    bool fConfirmed;
++    string strStatus = FormatTxStatus(wtx, fConfirmed);
++    wtx.fConfirmedDisplayed = fConfirmed;
++    wxColour colour = (fConfirmed ? wxColour(0,0,0) : wxColour(128,128,128));
+     map&lt;string, string&gt; mapValue = wtx.mapValue;
+     wtx.nLinesDisplayed = 1;
+     nListViewUpdated++;
+@@ -658,12 +681,16 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             }
+         }
+ 
+-        InsertLine(fNew, nIndex, hash, strSort,
++        string strCredit = FormatMoney(nNet, true);
++        if (!fConfirmed)
++            strCredit = &quot;[&quot; + strCredit + &quot;]&quot;;
++
++        InsertLine(fNew, nIndex, hash, strSort, colour,
+                    strStatus,
+                    nTime ? DateTimeStr(nTime) : &quot;&quot;,
+                    SingleLine(strDescription),
+                    &quot;&quot;,
+-                   FormatMoney(nNet, true));
++                   strCredit);
+     }
+     else
+     {
+@@ -679,7 +706,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         {
+             // Payment to self
+             int64 nValue = wtx.vout[0].nValue;
+-            InsertLine(fNew, nIndex, hash, strSort,
++            InsertLine(fNew, nIndex, hash, strSort, colour,
+                        strStatus,
+                        nTime ? DateTimeStr(nTime) : &quot;&quot;,
+                        _(&quot;Payment to yourself&quot;),
+@@ -738,7 +765,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                     nTxFee = 0;
+                 }
+ 
+-                InsertLine(fNew, nIndex, hash, strprintf(&quot;%s-%d&quot;, strSort.c_str(), nOut),
++                InsertLine(fNew, nIndex, hash, strprintf(&quot;%s-%d&quot;, strSort.c_str(), nOut), colour,
+                            strStatus,
+                            nTime ? DateTimeStr(nTime) : &quot;&quot;,
+                            SingleLine(strDescription),
+@@ -758,7 +785,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             foreach(const CTxIn&amp; txin, wtx.vin)
+                 fAllMine = fAllMine &amp;&amp; txin.IsMine();
+ 
+-            InsertLine(fNew, nIndex, hash, strSort,
++            InsertLine(fNew, nIndex, hash, strSort, colour,
+                        strStatus,
+                        nTime ? DateTimeStr(nTime) : &quot;&quot;,
+                        &quot;&quot;,
+@@ -885,13 +912,17 @@ void CMainFrame::RefreshStatusColumn()
+                 continue;
+             }
+             CWalletTx&amp; wtx = (*mi).second;
+-            if (wtx.IsCoinBase() || wtx.GetTxTime() != wtx.nTimeDisplayed)
++            bool fConfirmed;
++            string strStatus = FormatTxStatus(wtx, fConfirmed);
++            if (wtx.IsCoinBase() || wtx.GetTxTime() != wtx.nTimeDisplayed || fConfirmed != wtx.fConfirmedDisplayed)
+             {
+                 if (!InsertTransaction(wtx, false, nIndex))
+                     m_listCtrl-&gt;DeleteItem(nIndex--);
+             }
+             else
+-                m_listCtrl-&gt;SetItem(nIndex, 2, FormatTxStatus(wtx));
++            {
++                m_listCtrl-&gt;SetItem(nIndex, 2, strStatus);
++            }
+         }
+     }
+ }
+@@ -1772,7 +1803,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+-    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
++    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %s%s beta&quot;), FormatVersion(VERSION).c_str(), pszSubVer));
+ 
+     // Change (c) into UTF-8 or ANSI copyright symbol
+     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -11,7 +11,6 @@ extern wxLocale g_locale;
+ 
+ 
+ void HandleCtrlA(wxKeyEvent&amp; event);
+-string FormatTxStatus(const CWalletTx&amp; wtx);
+ void UIThreadCall(boost::function0&lt;void&gt;);
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
+ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent);
+@@ -96,7 +95,7 @@ public:
+ 
+     void OnUIThreadCall(wxCommandEvent&amp; event);
+     int GetSortIndex(const string&amp; strSort);
+-    void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
++    void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxColour&amp; colour, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
+     bool DeleteLine(uint256 hashKey);
+     bool InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
+     void RefreshListCtrl();</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -416,6 +416,14 @@ inline int64 GetArg(const string&amp; strArg, int64 nDefault)
+     return nDefault;
+ }
+ 
++inline string FormatVersion(int nVersion)
++{
++    if (nVersion%100 == 0)
++        return strprintf(&quot;%d.%d.%d&quot;, nVersion/1000000, (nVersion/10000)%100, (nVersion/100)%100);
++    else
++        return strprintf(&quot;%d.%d.%d.%d&quot;, nVersion/1000000, (nVersion/10000)%100, (nVersion/100)%100, nVersion%100);
++}
++
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8d13ca1/">← changed free transactions per block threshold</a><a rel="next" href="../../commits/178152f/">fixed linux build, dkaparis: _WIN32_WINNT 0x500 -- version… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

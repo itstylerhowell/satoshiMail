@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c5c7911/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c5c7911/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases open, close db cursors, initial block download in batches of 500 blocks, fix misc warnings, subver linux-test8", "url": "https://satoshimail.pages.dev/commits/c5c7911/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-18T19:19:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c5c7911dab8732861affbe66849a100da62f7464"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "bugfix Db::open/close and zombie…", "item": "https://satoshimail.pages.dev/commits/c5c7911/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cc5c7911dab">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">bugfix Db::open/close and zombie…</span></div></nav>
+<main class="in">
+<h1>bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases open, close db cursors, initial block download in batches of 500 blocks, fix misc warnings, subver linux-test8</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 18 November 2009 · SVN r40 · release v0.2.0 · 23 files, +304 −184</p>
+<p class="actions"><a class="btn" href="../../#t-cc5c7911dab">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/c5c7911dab8732861affbe66849a100da62f7464" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -13,18 +13,18 @@ UNIX BUILD NOTES
+ 
+ Dependencies
+ ------------
+-Install the dev files for the shared libraries:
+ apt-get install build-essential
+ apt-get install libgtk2.0-dev
+ apt-get install libssl-dev
++apt-get install libdb4.7-dev
++apt-get install libdb4.7++-dev
++apt-get install libboost-dev
+ 
+ Libraries you need to obtain separately and build:
+               default path   download
+ wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
+-Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+-Boost          \boost         http://www.boost.org/users/download/
+ 
+-Their licenses:
++Licenses:
+ wxWidgets      LGPL 2.1 with very liberal exceptions
+ Berkeley DB    New BSD license with additional requirement that linked software must be free open source
+ Boost          MIT-like license
+@@ -59,15 +59,9 @@ make install
+ ldconfig
+ 
+ 
+-Berkeley DB
+------------
+-cd /usr/local/db-4.7.25.NC/build_unix
+-../dist/configure --enable-cxx
+-make
+-
+-
+ Boost
+ -----
++If you download and build Boost yourself
+ cd /usr/local/boost_1_40_0
+ su
+ ./bootstrap.sh</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -20,6 +20,7 @@ static CCriticalSection cs_db;
+ static bool fDbEnvInit = false;
+ DbEnv dbenv(0);
+ static map&lt;string, int&gt; mapFileUseCount;
++static map&lt;string, Db*&gt; mapDb;
+ 
+ class CDBInit
+ {
+@@ -39,21 +40,17 @@ public:
+ instance_of_cdbinit;
+ 
+ 
+-CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
++CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+ {
+     int ret;
+     if (pszFile == NULL)
+         return;
+ 
++    fReadOnly = (!strchr(pszMode, &#x27;+&#x27;) &amp;&amp; !strchr(pszMode, &#x27;w&#x27;));
+     bool fCreate = strchr(pszMode, &#x27;c&#x27;);
+-    bool fReadOnly = (!strchr(pszMode, &#x27;+&#x27;) &amp;&amp; !strchr(pszMode, &#x27;w&#x27;));
+     unsigned int nFlags = DB_THREAD;
+     if (fCreate)
+         nFlags |= DB_CREATE;
+-    else if (fReadOnly)
+-        nFlags |= DB_RDONLY;
+-    if (!fReadOnly || fTxn)
+-        nFlags |= DB_AUTO_COMMIT;
+ 
+     CRITICAL_BLOCK(cs_db)
+     {
+@@ -72,7 +69,7 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+             dbenv.set_lk_max_locks(10000);
+             dbenv.set_lk_max_objects(10000);
+             dbenv.set_errfile(fopen(strErrorFile.c_str(), &quot;a&quot;)); /// debug
+-            ///dbenv.log_set_config(DB_LOG_AUTO_REMOVE, 1); /// causes corruption
++            dbenv.set_flags(DB_AUTO_COMMIT, 1);
+             ret = dbenv.open(strDataDir.c_str(),
+                              DB_CREATE     |
+                              DB_INIT_LOCK  |
+@@ -90,31 +87,39 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+ 
+         strFile = pszFile;
+         ++mapFileUseCount[strFile];
+-    }
+-
+-    pdb = new Db(&amp;dbenv, 0);
++        pdb = mapDb[strFile];
++        if (pdb == NULL)
++        {
++            pdb = new Db(&amp;dbenv, 0);
+ 
+-    ret = pdb-&gt;open(NULL,      // Txn pointer
+-                    pszFile,   // Filename
+-                    &quot;main&quot;,    // Logical db name
+-                    DB_BTREE,  // Database type
+-                    nFlags,    // Flags
+-                    0);
++            ret = pdb-&gt;open(NULL,      // Txn pointer
++                            pszFile,   // Filename
++                            &quot;main&quot;,    // Logical db name
++                            DB_BTREE,  // Database type
++                            nFlags,    // Flags
++                            0);
+ 
+-    if (ret &gt; 0)
+-    {
+-        delete pdb;
+-        pdb = NULL;
+-        CRITICAL_BLOCK(cs_db)
+-            --mapFileUseCount[strFile];
+-        strFile = &quot;&quot;;
+-        throw runtime_error(strprintf(&quot;CDB() : can&#x27;t open database file %s, error %d\n&quot;, pszFile, ret));
+-    }
++            if (ret &gt; 0)
++            {
++                delete pdb;
++                pdb = NULL;
++                CRITICAL_BLOCK(cs_db)
++                    --mapFileUseCount[strFile];
++                strFile = &quot;&quot;;
++                throw runtime_error(strprintf(&quot;CDB() : can&#x27;t open database file %s, error %d\n&quot;, pszFile, ret));
++            }
+ 
+-    if (fCreate &amp;&amp; !Exists(string(&quot;version&quot;)))
+-        WriteVersion(VERSION);
++            if (fCreate &amp;&amp; !Exists(string(&quot;version&quot;)))
++            {
++                bool fTmp = fReadOnly;
++                fReadOnly = false;
++                WriteVersion(VERSION);
++                fReadOnly = fTmp;
++            }
+ 
+-    RandAddSeed();
++            mapDb[strFile] = pdb;
++        }
++    }
+ }
+ 
+ void CDB::Close()
+@@ -124,8 +129,6 @@ void CDB::Close()
+     if (!vTxn.empty())
+         vTxn.front()-&gt;abort();
+     vTxn.clear();
+-    pdb-&gt;close(0);
+-    delete pdb;
+     pdb = NULL;
+     dbenv.txn_checkpoint(0, 0, 0);
+ 
+@@ -135,6 +138,21 @@ void CDB::Close()
+     RandAddSeed();
+ }
+ 
++void CloseDb(const string&amp; strFile)
++{
++    CRITICAL_BLOCK(cs_db)
++    {
++        if (mapDb[strFile] != NULL)
++        {
++            // Close the database handle
++            Db* pdb = mapDb[strFile];
++            pdb-&gt;close(0);
++            delete pdb;
++            mapDb[strFile] = NULL;
++        }
++    }
++}
++
+ void DBFlush(bool fShutdown)
+ {
+     // Flush log data to the actual data file
+@@ -144,14 +162,18 @@ void DBFlush(bool fShutdown)
+         return;
+     CRITICAL_BLOCK(cs_db)
+     {
+-        dbenv.txn_checkpoint(0, 0, 0);
+         map&lt;string, int&gt;::iterator mi = mapFileUseCount.begin();
+         while (mi != mapFileUseCount.end())
+         {
+             string strFile = (*mi).first;
+             int nRefCount = (*mi).second;
++            printf(&quot;%s refcount=%d\n&quot;, strFile.c_str(), nRefCount);
+             if (nRefCount == 0)
+             {
++                // Move log data to the dat file
++                CloseDb(strFile);
++                dbenv.txn_checkpoint(0, 0, 0);
++                printf(&quot;%s flush\n&quot;, strFile.c_str());
+                 dbenv.lsn_reset(strFile.c_str(), 0);
+                 mapFileUseCount.erase(mi++);
+             }
+@@ -238,7 +260,10 @@ bool CTxDB::ReadOwnerTxes(uint160 hash160, int nMinHeight, vector&lt;CTransaction&gt;&amp;
+         if (ret == DB_NOTFOUND)
+             break;
+         else if (ret != 0)
++        {
++            pcursor-&gt;close();
+             return false;
++        }
+ 
+         // Unserialize
+         string strType;
+@@ -255,9 +280,14 @@ bool CTxDB::ReadOwnerTxes(uint160 hash160, int nMinHeight, vector&lt;CTransaction&gt;&amp;
+         {
+             vtx.resize(vtx.size()+1);
+             if (!vtx.back().ReadFromDisk(pos))
++            {
++                pcursor-&gt;close();
+                 return false;
++            }
+         }
+     }
++
++    pcursor-&gt;close();
+     return true;
+ }
+ 
+@@ -379,6 +409,7 @@ bool CTxDB::LoadBlockIndex()
+             break;
+         }
+     }
++    pcursor-&gt;close();
+ 
+     if (!ReadHashBestChain(hashBestChain))
+     {
+@@ -391,7 +422,7 @@ bool CTxDB::LoadBlockIndex()
+         return error(&quot;CTxDB::LoadBlockIndex() : blockindex for hashBestChain not found&quot;);
+     pindexBest = mapBlockIndex[hashBestChain];
+     nBestHeight = pindexBest-&gt;nHeight;
+-    printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,14).c_str(), nBestHeight);
++    printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+ 
+     return true;
+ }
+@@ -456,6 +487,7 @@ bool CAddrDB::LoadAddresses()
+                 mapAddresses.insert(make_pair(addr.GetKey(), addr));
+             }
+         }
++        pcursor-&gt;close();
+ 
+         printf(&quot;Loaded %d addresses\n&quot;, mapAddresses.size());
+ 
+@@ -558,7 +590,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+                 //printf(&quot; %12I64d  %s  %s  %s\n&quot;,
+                 //    wtx.vout[0].nValue,
+                 //    DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, wtx.nTime).c_str(),
+-                //    wtx.hashBlock.ToString().substr(0,14).c_str(),
++                //    wtx.hashBlock.ToString().substr(0,16).c_str(),
+                 //    wtx.mapValue[&quot;message&quot;].c_str());
+             }
+             else if (strType == &quot;key&quot;)
+@@ -596,6 +628,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ 
+             }
+         }
++        pcursor-&gt;close();
+     }
+ 
+     printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
+@@ -655,6 +688,8 @@ void ThreadFlushWalletDB(void* parg)
+     if (fOneThread)
+         return;
+     fOneThread = true;
++    if (mapArgs.count(&quot;-noflushwallet&quot;))
++        return;
+ 
+     unsigned int nLastSeen = nWalletDBUpdated;
+     unsigned int nLastFlushed = nWalletDBUpdated;
+@@ -669,24 +704,37 @@ void ThreadFlushWalletDB(void* parg)
+             nLastWalletUpdate = GetTime();
+         }
+ 
+-        if (nLastFlushed != nWalletDBUpdated &amp;&amp; nLastWalletUpdate &lt; GetTime() - 1)
++        if (nLastFlushed != nWalletDBUpdated &amp;&amp; GetTime() - nLastWalletUpdate &gt;= 2)
+         {
+             TRY_CRITICAL_BLOCK(cs_db)
+             {
+-                string strFile = &quot;wallet.dat&quot;;
+-                map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
+-                if (mi != mapFileUseCount.end())
++                // Don&#x27;t do this if any databases are in use
++                int nRefCount = 0;
++                map&lt;string, int&gt;::iterator mi = mapFileUseCount.begin();
++                while (mi != mapFileUseCount.end())
+                 {
+-                    int nRefCount = (*mi).second;
+-                    if (nRefCount == 0 &amp;&amp; !fShutdown)
++                    nRefCount += (*mi).second;
++                    mi++;
++                }
++
++                if (nRefCount == 0 &amp;&amp; !fShutdown)
++                {
++                    string strFile = &quot;wallet.dat&quot;;
++                    map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
++                    if (mi != mapFileUseCount.end())
+                     {
+-                        // Flush wallet.dat so it&#x27;s self contained
++                        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
++                        printf(&quot;Flushing wallet.dat\n&quot;);
+                         nLastFlushed = nWalletDBUpdated;
+                         int64 nStart = GetTimeMillis();
++
++                        // Flush wallet.dat so it&#x27;s self contained
++                        CloseDb(strFile);
+                         dbenv.txn_checkpoint(0, 0, 0);
+                         dbenv.lsn_reset(strFile.c_str(), 0);
+-                        printf(&quot;Flushed wallet.dat %&quot;PRI64d&quot;ms\n&quot;, GetTimeMillis() - nStart);
++
+                         mapFileUseCount.erase(mi++);
++                        printf(&quot;Flushed wallet.dat %&quot;PRI64d&quot;ms\n&quot;, GetTimeMillis() - nStart);
+                     }
+                 }
+             }</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -32,8 +32,9 @@ protected:
+     Db* pdb;
+     string strFile;
+     vector&lt;DbTxn*&gt; vTxn;
++    bool fReadOnly;
+ 
+-    explicit CDB(const char* pszFile, const char* pszMode=&quot;r+&quot;, bool fTxn=false);
++    explicit CDB(const char* pszFile, const char* pszMode=&quot;r+&quot;);
+     ~CDB() { Close(); }
+ public:
+     void Close();
+@@ -77,6 +78,8 @@ protected:
+     {
+         if (!pdb)
+             return false;
++        if (fReadOnly)
++            assert((&quot;Write called on database in read-only mode&quot;, false));
+ 
+         // Key
+         CDataStream ssKey(SER_DISK);
+@@ -104,6 +107,8 @@ protected:
+     {
+         if (!pdb)
+             return false;
++        if (fReadOnly)
++            assert((&quot;Erase called on database in read-only mode&quot;, false));
+ 
+         // Key
+         CDataStream ssKey(SER_DISK);
+@@ -254,7 +259,7 @@ public:
+ class CTxDB : public CDB
+ {
+ public:
+-    CTxDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(!fClient ? &quot;blkindex.dat&quot; : NULL, pszMode, fTxn) { }
++    CTxDB(const char* pszMode=&quot;r+&quot;) : CDB(!fClient ? &quot;blkindex.dat&quot; : NULL, pszMode) { }
+ private:
+     CTxDB(const CTxDB&amp;);
+     void operator=(const CTxDB&amp;);
+@@ -283,7 +288,7 @@ public:
+ class CReviewDB : public CDB
+ {
+ public:
+-    CReviewDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;reviews.dat&quot;, pszMode, fTxn) { }
++    CReviewDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;reviews.dat&quot;, pszMode) { }
+ private:
+     CReviewDB(const CReviewDB&amp;);
+     void operator=(const CReviewDB&amp;);
+@@ -309,7 +314,7 @@ public:
+ class CMarketDB : public CDB
+ {
+ public:
+-    CMarketDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;market.dat&quot;, pszMode, fTxn) { }
++    CMarketDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;market.dat&quot;, pszMode) { }
+ private:
+     CMarketDB(const CMarketDB&amp;);
+     void operator=(const CMarketDB&amp;);
+@@ -322,7 +327,7 @@ private:
+ class CAddrDB : public CDB
+ {
+ public:
+-    CAddrDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;addr.dat&quot;, pszMode, fTxn) { }
++    CAddrDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;addr.dat&quot;, pszMode) { }
+ private:
+     CAddrDB(const CAddrDB&amp;);
+     void operator=(const CAddrDB&amp;);
+@@ -341,7 +346,7 @@ bool LoadAddresses();
+ class CWalletDB : public CDB
+ {
+ public:
+-    CWalletDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;wallet.dat&quot;, pszMode, fTxn) { }
++    CWalletDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;wallet.dat&quot;, pszMode) { }
+ private:
+     CWalletDB(const CWalletDB&amp;);
+     void operator=(const CWalletDB&amp;);</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -159,15 +159,12 @@ void ThreadIRCSeed(void* parg)
+     SetThreadPriority(THREAD_PRIORITY_NORMAL);
+     int nErrorWait = 10;
+     int nRetryWait = 10;
+-
+-    // IRC server blocks TOR users
+-    if (fUseProxy &amp;&amp; addrProxy.port == htons(9050))
+-        return;
++    bool fTOR = (fUseProxy &amp;&amp; addrProxy.port == htons(9050));
+ 
+     while (!fShutdown)
+     {
+         CAddress addrConnect(&quot;216.155.130.130:6667&quot;);
+-        if (!(fUseProxy &amp;&amp; addrProxy.port == htons(9050)))
++        if (!fTOR)
+         {
+             struct hostent* phostent = gethostbyname(&quot;chat.freenode.net&quot;);
+             if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
+@@ -188,6 +185,7 @@ void ThreadIRCSeed(void* parg)
+         if (!RecvUntil(hSocket, &quot;Found your hostname&quot;, &quot;using your IP address instead&quot;, &quot;Couldn&#x27;t look up your hostname&quot;))
+         {
+             closesocket(hSocket);
++            hSocket = INVALID_SOCKET;
+             nErrorWait = nErrorWait * 11 / 10;
+             if (Wait(nErrorWait += 60))
+                 continue;
+@@ -208,6 +206,7 @@ void ThreadIRCSeed(void* parg)
+         if (!RecvUntil(hSocket, &quot; 004 &quot;))
+         {
+             closesocket(hSocket);
++            hSocket = INVALID_SOCKET;
+             nErrorWait = nErrorWait * 11 / 10;
+             if (Wait(nErrorWait += 60))
+                 continue;
+@@ -269,6 +268,11 @@ void ThreadIRCSeed(void* parg)
+             }
+         }
+         closesocket(hSocket);
++        hSocket = INVALID_SOCKET;
++
++        // IRC usually blocks TOR, so only try once
++        if (fTOR)
++            return;
+ 
+         if (GetTime() - nStart &gt; 20 * 60)
+         {</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -760,7 +760,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+         bnNew = bnProofOfWorkLimit;
+ 
+     /// debug print
+-    printf(&quot;\n\n\nGetNextWorkRequired RETARGET *****\n&quot;);
++    printf(&quot;GetNextWorkRequired RETARGET\n&quot;);
+     printf(&quot;nTargetTimespan = %d    nActualTimespan = %d\n&quot;, nTargetTimespan, nActualTimespan);
+     printf(&quot;Before: %08x  %s\n&quot;, pindexLast-&gt;nBits, CBigNum().SetCompact(pindexLast-&gt;nBits).getuint256().ToString().c_str());
+     printf(&quot;After:  %08x  %s\n&quot;, bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+@@ -1013,7 +1013,7 @@ bool CBlock::ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex)
+ 
+ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+ {
+-    printf(&quot;*** REORGANIZE ***\n&quot;);
++    printf(&quot;REORGANIZE\n&quot;);
+ 
+     // Find the fork
+     CBlockIndex* pfork = pindexBest;
+@@ -1114,7 +1114,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+     // Check for duplicate
+     uint256 hash = GetHash();
+     if (mapBlockIndex.count(hash))
+-        return error(&quot;AddToBlockIndex() : %s already exists&quot;, hash.ToString().substr(0,14).c_str());
++        return error(&quot;AddToBlockIndex() : %s already exists&quot;, hash.ToString().substr(0,16).c_str());
+ 
+     // Construct new block index object
+     CBlockIndex* pindexNew = new CBlockIndex(nFile, nBlockPos, *this);
+@@ -1174,7 +1174,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         pindexBest = pindexNew;
+         nBestHeight = pindexBest-&gt;nHeight;
+         nTransactionsUpdated++;
+-        printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,14).c_str(), nBestHeight);
++        printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+     }
+ 
+     txdb.TxnCommit();
+@@ -1294,9 +1294,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
+     // Check for duplicate
+     uint256 hash = pblock-&gt;GetHash();
+     if (mapBlockIndex.count(hash))
+-        return error(&quot;ProcessBlock() : already have block %d %s&quot;, mapBlockIndex[hash]-&gt;nHeight, hash.ToString().substr(0,14).c_str());
++        return error(&quot;ProcessBlock() : already have block %d %s&quot;, mapBlockIndex[hash]-&gt;nHeight, hash.ToString().substr(0,16).c_str());
+     if (mapOrphanBlocks.count(hash))
+-        return error(&quot;ProcessBlock() : already have block (orphan) %s&quot;, hash.ToString().substr(0,14).c_str());
++        return error(&quot;ProcessBlock() : already have block (orphan) %s&quot;, hash.ToString().substr(0,16).c_str());
+ 
+     // Preliminary checks
+     if (!pblock-&gt;CheckBlock())
+@@ -1308,7 +1308,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
+     // If don&#x27;t already have its previous block, shunt it off to holding area until we get it
+     if (!mapBlockIndex.count(pblock-&gt;hashPrevBlock))
+     {
+-        printf(&quot;ProcessBlock: ORPHAN BLOCK, prev=%s\n&quot;, pblock-&gt;hashPrevBlock.ToString().substr(0,14).c_str());
++        printf(&quot;ProcessBlock: ORPHAN BLOCK, prev=%s\n&quot;, pblock-&gt;hashPrevBlock.ToString().substr(0,16).c_str());
+         mapOrphanBlocks.insert(make_pair(hash, pblock));
+         mapOrphanBlocksByPrev.insert(make_pair(pblock-&gt;hashPrevBlock, pblock));
+ 
+@@ -1503,11 +1503,11 @@ bool LoadBlockIndex(bool fAllowNew)
+         //   vMerkleTree: 4a5e1e
+ 
+         // Genesis block
+-        char* pszTimestamp = &quot;The Times 03/Jan/2009 Chancellor on brink of second bailout for banks&quot;;
++        const char* pszTimestamp = &quot;The Times 03/Jan/2009 Chancellor on brink of second bailout for banks&quot;;
+         CTransaction txNew;
+         txNew.vin.resize(1);
+         txNew.vout.resize(1);
+-        txNew.vin[0].scriptSig     = CScript() &lt;&lt; 486604799 &lt;&lt; CBigNum(4) &lt;&lt; vector&lt;unsigned char&gt;((unsigned char*)pszTimestamp, (unsigned char*)pszTimestamp + strlen(pszTimestamp));
++        txNew.vin[0].scriptSig     = CScript() &lt;&lt; 486604799 &lt;&lt; CBigNum(4) &lt;&lt; vector&lt;unsigned char&gt;((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+         txNew.vout[0].nValue       = 50 * COIN;
+         txNew.vout[0].scriptPubKey = CScript() &lt;&lt; CBigNum(&quot;0x5F1DF16B2B704C8A578D0BBAF74D385CDE12C11EE50455F3C438EF4C3FBCF649B6DE611FEAE06279A60939E028A8D65C10B73071A6F16719274855FEB0FD8A6704&quot;) &lt;&lt; OP_CHECKSIG;
+         CBlock block;
+@@ -1519,7 +1519,7 @@ bool LoadBlockIndex(bool fAllowNew)
+         block.nBits    = 0x1d00ffff;
+         block.nNonce   = 2083236893;
+ 
+-            //// debug print, delete this later
++            //// debug print
+             printf(&quot;%s\n&quot;, block.GetHash().ToString().c_str());
+             printf(&quot;%s\n&quot;, block.hashMerkleRoot.ToString().c_str());
+             printf(&quot;%s\n&quot;, hashGenesisBlock.ToString().c_str());
+@@ -1592,7 +1592,7 @@ void PrintBlockTree()
+             pindex-&gt;nHeight,
+             pindex-&gt;nFile,
+             pindex-&gt;nBlockPos,
+-            block.GetHash().ToString().substr(0,14).c_str(),
++            block.GetHash().ToString().substr(0,16).c_str(),
+             DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, block.nTime).c_str(),
+             block.vtx.size());
+ 
+@@ -1912,6 +1912,18 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                     CBlock block;
+                     block.ReadFromDisk((*mi).second, !pfrom-&gt;fClient);
+                     pfrom-&gt;PushMessage(&quot;block&quot;, block);
++
++                    // Trigger them to send a getblocks request for the next batch of inventory
++                    if (inv.hash == pfrom-&gt;hashContinue)
++                    {
++                        // Bypass PushInventory, this must send even if redundant,
++                        // and we want it right after the last block so they don&#x27;t
++                        // wait for other stuff first.
++                        vector&lt;CInv&gt; vInv;
++                        vInv.push_back(CInv(MSG_BLOCK, hashBestChain));
++                        pfrom-&gt;PushMessage(&quot;inv&quot;, vInv);
++                        pfrom-&gt;hashContinue = 0;
++                    }
+                 }
+             }
+             else if (inv.IsKnownType())
+@@ -1948,25 +1960,23 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         // Send the rest of the chain
+         if (pindex)
+             pindex = pindex-&gt;pnext;
+-        printf(&quot;getblocks %d to %s\n&quot;, (pindex ? pindex-&gt;nHeight : -1), hashStop.ToString().substr(0,14).c_str());
++        printf(&quot;getblocks %d to %s\n&quot;, (pindex ? pindex-&gt;nHeight : -1), hashStop.ToString().substr(0,16).c_str());
++        int nLimit = 500;
+         for (; pindex; pindex = pindex-&gt;pnext)
+         {
+             if (pindex-&gt;GetBlockHash() == hashStop)
+             {
+-                printf(&quot;  getblocks stopping at %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,14).c_str());
++                printf(&quot;  getblocks stopping at %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,16).c_str());
+                 break;
+             }
+-
+-            // Bypass setInventoryKnown in case an inventory message got lost
+-            CRITICAL_BLOCK(pfrom-&gt;cs_inventory)
++            pfrom-&gt;PushInventory(CInv(MSG_BLOCK, pindex-&gt;GetBlockHash()));
++            if (--nLimit &lt;= 0)
+             {
+-                CInv inv(MSG_BLOCK, pindex-&gt;GetBlockHash());
+-                // returns true if wasn&#x27;t already contained in the set
+-                if (pfrom-&gt;setInventoryKnown2.insert(inv).second)
+-                {
+-                    pfrom-&gt;setInventoryKnown.erase(inv);
+-                    pfrom-&gt;vInventoryToSend.push_back(inv);
+-                }
++                // When this block is requested, we&#x27;ll send an inv that&#x27;ll make them
++                // getblocks the next batch of inventory.
++                printf(&quot;  getblocks stopping at limit %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,16).c_str());
++                pfrom-&gt;hashContinue = pindex-&gt;GetBlockHash();
++                break;
+             }
+         }
+     }
+@@ -2049,7 +2059,13 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vRecv &gt;&gt; *pblock;
+ 
+         //// debug print
+-        printf(&quot;received block:\n&quot;); pblock-&gt;print();
++        if (false)
++        {
++            printf(&quot;received block:\n&quot;);
++            pblock-&gt;print();
++        }
++        else
++            printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,16).c_str());
+ 
+         CInv inv(MSG_BLOCK, pblock-&gt;GetHash());
+         pfrom-&gt;AddInventoryKnown(inv);
+@@ -2175,9 +2191,13 @@ bool SendMessages(CNode* pto)
+         if (pto-&gt;nVersion == 0)
+             return true;
+ 
++        // Keep-alive ping
++        if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 12 * 60 &amp;&amp; pto-&gt;vSend.empty())
++            pto-&gt;PushMessage(&quot;ping&quot;);
++
+         // Address refresh broadcast
+         static int64 nLastRebroadcast;
+-        if (nLastRebroadcast &lt; GetTime() - 24 * 60 * 60) // every 24 hours
++        if (GetTime() - nLastRebroadcast &gt; 24 * 60 * 60) // every 24 hours
+         {
+             nLastRebroadcast = GetTime();
+             CRITICAL_BLOCK(cs_vNodes)
+@@ -2194,9 +2214,16 @@ bool SendMessages(CNode* pto)
+             }
+         }
+ 
+-        // Keep-alive ping
+-        if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 12 * 60 &amp;&amp; pto-&gt;vSend.empty())
+-            pto-&gt;PushMessage(&quot;ping&quot;);
++        // Clear inventory known periodically in case an inv message was missed,
++        // although usually they would just get it from another node.
++        static int64 nLastInventoryKnownClear;
++        if (GetTime() - nLastInventoryKnownClear &gt; 2 * 60 * 60) // every 2 hours
++        {
++            nLastInventoryKnownClear = GetTime();
++            CRITICAL_BLOCK(cs_vNodes)
++                foreach(CNode* pnode, vNodes)
++                    pnode-&gt;setInventoryKnown.clear();
++        }
+ 
+ 
+         //
+@@ -2243,7 +2270,6 @@ bool SendMessages(CNode* pto)
+                 }
+             }
+             pto-&gt;vInventoryToSend.clear();
+-            pto-&gt;setInventoryKnown2.clear();
+         }
+         if (!vInventoryToSend.empty())
+             pto-&gt;PushMessage(&quot;inv&quot;, vInventoryToSend);
+@@ -2817,8 +2843,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+ 
+         // This is only to keep the database open to defeat the auto-flush for the
+         // duration of this scope.  This is the only place where this optimization
+-        // maybe makes sense; please don&#x27;t do it anywhere else.  Keeping databases
+-        // open longer than necessary can create deadlocks.
++        // maybe makes sense; please don&#x27;t do it anywhere else.
+         CWalletDB walletdb(&quot;r&quot;);
+ 
+         // Add the change&#x27;s private key to wallet</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1009,9 +1009,9 @@ public:
+     void print() const
+     {
+         printf(&quot;CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%d)\n&quot;,
+-            GetHash().ToString().substr(0,14).c_str(),
++            GetHash().ToString().substr(0,16).c_str(),
+             nVersion,
+-            hashPrevBlock.ToString().substr(0,14).c_str(),
++            hashPrevBlock.ToString().substr(0,16).c_str(),
+             hashMerkleRoot.ToString().substr(0,6).c_str(),
+             nTime, nBits, nNonce,
+             vtx.size());
+@@ -1159,7 +1159,7 @@ public:
+         return strprintf(&quot;CBlockIndex(nprev=%08x, pnext=%08x, nFile=%d, nBlockPos=%-6d nHeight=%d, merkle=%s, hashBlock=%s)&quot;,
+             pprev, pnext, nFile, nBlockPos, nHeight,
+             hashMerkleRoot.ToString().substr(0,6).c_str(),
+-            GetBlockHash().ToString().substr(0,14).c_str());
++            GetBlockHash().ToString().substr(0,16).c_str());
+     }
+ 
+     void print() const
+@@ -1229,8 +1229,8 @@ public:
+         str += CBlockIndex::ToString();
+         str += strprintf(&quot;\n                hashBlock=%s, hashPrev=%s, hashNext=%s)&quot;,
+             GetBlockHash().ToString().c_str(),
+-            hashPrev.ToString().substr(0,14).c_str(),
+-            hashNext.ToString().substr(0,14).c_str());
++            hashPrev.ToString().substr(0,16).c_str(),
++            hashNext.ToString().substr(0,16).c_str());
+         return str;
+     }
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -17,24 +17,21 @@ endif
+ 
+ INCLUDEPATHS= \
+  -I&quot;/usr/include&quot; \
+- -I&quot;/usr/local/boost_1_40_0&quot; \
+- -I&quot;/usr/local/db-4.7.25.NC/build_unix&quot; \
+  -I&quot;/usr/local/include/wx-2.8&quot; \
+  -I&quot;/usr/local/lib/wx/include/gtk2-ansi-debug-static-2.8&quot;
+ 
+ LIBPATHS= \
+  -L&quot;/usr/lib&quot; \
+  -L&quot;/usr/local/lib&quot; \
+- -L&quot;/usr/local/db-4.7.25.NC/build_unix&quot;
+ 
+ LIBS= \
+- -Wl,-Bstatic -l boost_thread -l boost_system -l boost_filesystem -Wl,-Bdynamic \
++ -Wl,-Bstatic -l boost_system -l boost_filesystem -Wl,-Bdynamic \
+  -Wl,-Bstatic -l db_cxx -l wx_gtk2$(D)-2.8 -Wl,-Bdynamic \
+  -l crypto \
+  -l gtk-x11-2.0 -l gthread-2.0 -l SM
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+-CFLAGS=-O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
+ 
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -148,8 +148,8 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ {
+     CAddress addrConnect;
+-    char* pszGet;
+-    char* pszKeyword;
++    const char* pszGet;
++    const char* pszKeyword;
+ 
+     if (fUseProxy)
+         return false;
+@@ -463,14 +463,21 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+     }
+ }
+ 
+-void CNode::DoDisconnect()
++void CNode::CloseSocketDisconnect()
+ {
+-    if (fDebug)
+-        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+-    printf(&quot;disconnecting node %s\n&quot;, addr.ToStringLog().c_str());
+-
+-    closesocket(hSocket);
++    fDisconnect = true;
++    if (hSocket != INVALID_SOCKET)
++    {
++        if (fDebug)
++            printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
++        printf(&quot;disconnecting node %s\n&quot;, addr.ToStringLog().c_str());
++        closesocket(hSocket);
++        hSocket = INVALID_SOCKET;
++    }
++}
+ 
++void CNode::Cleanup()
++{
+     // All of a nodes broadcasts and subscriptions are automatically torn down
+     // when it goes down, so a node has to stay up to keep its broadcast going.
+ 
+@@ -540,11 +547,12 @@ void ThreadSocketHandler2(void* parg)
+                     // remove from vNodes
+                     vNodes.erase(remove(vNodes.begin(), vNodes.end(), pnode), vNodes.end());
+ 
+-                    // close socket
+-                    pnode-&gt;DoDisconnect();
++                    // close socket and cleanup
++                    pnode-&gt;CloseSocketDisconnect();
++                    pnode-&gt;Cleanup();
+ 
+                     // hold in disconnected pool until all refs are released
+-                    pnode-&gt;nReleaseTime = max(pnode-&gt;nReleaseTime, GetTime() + 5 * 60);
++                    pnode-&gt;nReleaseTime = max(pnode-&gt;nReleaseTime, GetTime() + 15 * 60);
+                     if (pnode-&gt;fNetworkNode || pnode-&gt;fInbound)
+                         pnode-&gt;Release();
+                     vNodesDisconnected.push_back(pnode);
+@@ -599,6 +607,8 @@ void ThreadSocketHandler2(void* parg)
+         {
+             foreach(CNode* pnode, vNodes)
+             {
++                if (pnode-&gt;hSocket == INVALID_SOCKET || pnode-&gt;hSocket &lt; 0)
++                    continue;
+                 FD_SET(pnode-&gt;hSocket, &amp;fdsetRecv);
+                 FD_SET(pnode-&gt;hSocket, &amp;fdsetError);
+                 hSocketMax = max(hSocketMax, pnode-&gt;hSocket);
+@@ -659,17 +669,22 @@ void ThreadSocketHandler2(void* parg)
+         //
+         vector&lt;CNode*&gt; vNodesCopy;
+         CRITICAL_BLOCK(cs_vNodes)
++        {
+             vNodesCopy = vNodes;
++            foreach(CNode* pnode, vNodesCopy)
++                pnode-&gt;AddRef();
++        }
+         foreach(CNode* pnode, vNodesCopy)
+         {
+             if (fShutdown)
+                 return;
+-            SOCKET hSocket = pnode-&gt;hSocket;
+ 
+             //
+             // Receive
+             //
+-            if (FD_ISSET(hSocket, &amp;fdsetRecv) || FD_ISSET(hSocket, &amp;fdsetError))
++            if (pnode-&gt;hSocket == INVALID_SOCKET)
++                continue;
++            if (FD_ISSET(pnode-&gt;hSocket, &amp;fdsetRecv) || FD_ISSET(pnode-&gt;hSocket, &amp;fdsetError))
+             {
+                 TRY_CRITICAL_BLOCK(pnode-&gt;cs_vRecv)
+                 {
+@@ -678,7 +693,7 @@ void ThreadSocketHandler2(void* parg)
+ 
+                     // typical socket buffer is 8K-64K
+                     char pchBuf[0x10000];
+-                    int nBytes = recv(hSocket, pchBuf, sizeof(pchBuf), MSG_DONTWAIT);
++                    int nBytes = recv(pnode-&gt;hSocket, pchBuf, sizeof(pchBuf), MSG_DONTWAIT);
+                     if (nBytes &gt; 0)
+                     {
+                         vRecv.resize(nPos + nBytes);
+@@ -690,7 +705,7 @@ void ThreadSocketHandler2(void* parg)
+                         // socket closed gracefully
+                         if (!pnode-&gt;fDisconnect)
+                             printf(&quot;socket closed\n&quot;);
+-                        pnode-&gt;fDisconnect = true;
++                        pnode-&gt;CloseSocketDisconnect();
+                     }
+                     else if (nBytes &lt; 0)
+                     {
+@@ -700,7 +715,7 @@ void ThreadSocketHandler2(void* parg)
+                         {
+                             if (!pnode-&gt;fDisconnect)
+                                 printf(&quot;socket recv error %d\n&quot;, nErr);
+-                            pnode-&gt;fDisconnect = true;
++                            pnode-&gt;CloseSocketDisconnect();
+                         }
+                     }
+                 }
+@@ -709,14 +724,16 @@ void ThreadSocketHandler2(void* parg)
+             //
+             // Send
+             //
+-            if (FD_ISSET(hSocket, &amp;fdsetSend))
++            if (pnode-&gt;hSocket == INVALID_SOCKET)
++                continue;
++            if (FD_ISSET(pnode-&gt;hSocket, &amp;fdsetSend))
+             {
+                 TRY_CRITICAL_BLOCK(pnode-&gt;cs_vSend)
+                 {
+                     CDataStream&amp; vSend = pnode-&gt;vSend;
+                     if (!vSend.empty())
+                     {
+-                        int nBytes = send(hSocket, &amp;vSend[0], vSend.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
++                        int nBytes = send(pnode-&gt;hSocket, &amp;vSend[0], vSend.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+                         if (nBytes &gt; 0)
+                         {
+                             vSend.erase(vSend.begin(), vSend.begin() + nBytes);
+@@ -729,7 +746,7 @@ void ThreadSocketHandler2(void* parg)
+                             if (nErr != WSAEWOULDBLOCK &amp;&amp; nErr != WSAEMSGSIZE &amp;&amp; nErr != WSAEINTR &amp;&amp; nErr != WSAEINPROGRESS)
+                             {
+                                 printf(&quot;socket send error %d\n&quot;, nErr);
+-                                pnode-&gt;fDisconnect = true;
++                                pnode-&gt;CloseSocketDisconnect();
+                             }
+                         }
+                     }
+@@ -760,18 +777,12 @@ void ThreadSocketHandler2(void* parg)
+                 }
+             }
+         }
+-
+-
+-        //// debug heartbeat
+-        static int64 nHeartbeat1;
+-        if (GetTime() - nHeartbeat1 &gt;= 5 * 60)
++        CRITICAL_BLOCK(cs_vNodes)
+         {
+-            printf(&quot;%s sendrecv\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+-            nHeartbeat1 = GetTime();
+-            fDebug = true;
++            foreach(CNode* pnode, vNodesCopy)
++                pnode-&gt;Release();
+         }
+ 
+-
+         nThreadSocketHandlerHeartbeat = GetTime();
+         Sleep(10);
+     }
+@@ -812,18 +823,21 @@ void ThreadOpenConnections2(void* parg)
+     printf(&quot;ThreadOpenConnections started\n&quot;);
+ 
+     // Connect to specific addresses
+-    while (mapArgs.count(&quot;-connect&quot;))
++    if (mapArgs.count(&quot;-connect&quot;))
+     {
+-        foreach(string strAddr, mapMultiArgs[&quot;-connect&quot;])
++        for (int64 nLoop = 0;; nLoop++)
+         {
+-            CAddress addr(strAddr, NODE_NETWORK);
+-            if (addr.IsValid())
+-                OpenNetworkConnection(addr);
+-            for (int i = 0; i &lt; 10; i++)
++            foreach(string strAddr, mapMultiArgs[&quot;-connect&quot;])
+             {
+-                Sleep(1000);
+-                if (fShutdown)
+-                    return;
++                CAddress addr(strAddr, NODE_NETWORK);
++                if (addr.IsValid())
++                    OpenNetworkConnection(addr);
++                for (int i = 0; i &lt; 10 &amp;&amp; i &lt; nLoop; i++)
++                {
++                    Sleep(500);
++                    if (fShutdown)
++                        return;
++                }
+             }
+         }
+     }
+@@ -837,7 +851,7 @@ void ThreadOpenConnections2(void* parg)
+             if (addr.IsValid())
+             {
+                 OpenNetworkConnection(addr);
+-                Sleep(1000);
++                Sleep(500);
+                 if (fShutdown)
+                     return;
+             }
+@@ -898,7 +912,7 @@ void ThreadOpenConnections2(void* parg)
+                 //   30 days   27 hours
+                 //   90 days   46 hours
+                 //  365 days   93 hours
+-                int64 nDelay = 3600.0 * sqrt(fabs(nSinceLastSeen) / 3600.0) + nRandomizer;
++                int64 nDelay = (int64)(3600.0 * sqrt(fabs(nSinceLastSeen) / 3600.0) + nRandomizer);
+ 
+                 // Fast reconnect for one hour after last seen
+                 if (nSinceLastSeen &lt; 60 * 60)
+@@ -1013,11 +1027,13 @@ void ThreadMessageHandler2(void* parg)
+         // Poll the connected nodes for messages
+         vector&lt;CNode*&gt; vNodesCopy;
+         CRITICAL_BLOCK(cs_vNodes)
++        {
+             vNodesCopy = vNodes;
++            foreach(CNode* pnode, vNodesCopy)
++                pnode-&gt;AddRef();
++        }
+         foreach(CNode* pnode, vNodesCopy)
+         {
+-            pnode-&gt;AddRef();
+-
+             // Receive messages
+             TRY_CRITICAL_BLOCK(pnode-&gt;cs_vRecv)
+                 ProcessMessages(pnode);
+@@ -1029,8 +1045,11 @@ void ThreadMessageHandler2(void* parg)
+                 SendMessages(pnode);
+             if (fShutdown)
+                 return;
+-
+-            pnode-&gt;Release();
++        }
++        CRITICAL_BLOCK(cs_vNodes)
++        {
++            foreach(CNode* pnode, vNodesCopy)
++                pnode-&gt;Release();
+         }
+ 
+         // Wait and allow messages to bunch up
+@@ -1257,8 +1276,7 @@ void StartNode(void* parg)
+                     if (!fGot)
+                     {
+                         printf(&quot;*** closing socket\n&quot;);
+-                        closesocket(pnode-&gt;hSocket);
+-                        pnode-&gt;fDisconnect = true;
++                        pnode-&gt;CloseSocketDisconnect();
+                     }
+                 }
+             }
+@@ -1292,7 +1310,7 @@ bool StopNode()
+     int64 nStart = GetTime();
+     while (vnThreadsRunning[0] &gt; 0 || vnThreadsRunning[2] &gt; 0 || vnThreadsRunning[3] &gt; 0)
+     {
+-        if (GetTime() - nStart &gt; 15)
++        if (GetTime() - nStart &gt; 20)
+             break;
+         Sleep(20);
+     }</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -414,7 +414,7 @@ public:
+ 
+     string ToString() const
+     {
+-        return strprintf(&quot;%s %s&quot;, GetCommand(), hash.ToString().substr(0,14).c_str());
++        return strprintf(&quot;%s %s&quot;, GetCommand(), hash.ToString().substr(0,16).c_str());
+     }
+ 
+     void print() const
+@@ -504,6 +504,7 @@ public:
+     int64 nReleaseTime;
+     map&lt;uint256, CRequestTracker&gt; mapRequests;
+     CCriticalSection cs_mapRequests;
++    uint256 hashContinue;
+ 
+     // flood
+     vector&lt;CAddress&gt; vAddrToSend;
+@@ -512,7 +513,6 @@ public:
+ 
+     // inventory based relay
+     set&lt;CInv&gt; setInventoryKnown;
+-    set&lt;CInv&gt; setInventoryKnown2;
+     vector&lt;CInv&gt; vInventoryToSend;
+     CCriticalSection cs_inventory;
+     multimap&lt;int64, CInv&gt; mapAskFor;
+@@ -541,6 +541,7 @@ public:
+         fDisconnect = false;
+         nRefCount = 0;
+         nReleaseTime = 0;
++        hashContinue = 0;
+         fGetAddr = false;
+         vfSubscribe.assign(256, false);
+ 
+@@ -550,13 +551,16 @@ public:
+         CAddress addrYou = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addr);
+         CAddress addrMe = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addrLocalHost);
+         RAND_bytes((unsigned char*)&amp;nLocalHostNonce, sizeof(nLocalHostNonce));
+-        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addrYou, addrMe, nLocalHostNonce, string(&quot;test5&quot;));
++        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addrYou, addrMe, nLocalHostNonce, string(pszSubVer));
+     }
+ 
+     ~CNode()
+     {
+         if (hSocket != INVALID_SOCKET)
++        {
+             closesocket(hSocket);
++            hSocket = INVALID_SOCKET;
++        }
+     }
+ 
+ private:
+@@ -570,12 +574,13 @@ public:
+         return max(nRefCount, 0) + (GetTime() &lt; nReleaseTime ? 1 : 0);
+     }
+ 
+-    void AddRef(int64 nTimeout=0)
++    CNode* AddRef(int64 nTimeout=0)
+     {
+         if (nTimeout != 0)
+             nReleaseTime = max(nReleaseTime, GetTime() + nTimeout);
+         else
+             nRefCount++;
++        return this;
+     }
+ 
+     void Release()
+@@ -899,7 +904,8 @@ public:
+     bool IsSubscribed(unsigned int nChannel);
+     void Subscribe(unsigned int nChannel, unsigned int nHops=0);
+     void CancelSubscribe(unsigned int nChannel);
+-    void DoDisconnect();
++    void CloseSocketDisconnect();
++    void Cleanup();
+ };
+ 
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,6 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 106;
++static const char* pszSubVer = &quot; linux-test8&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1664,7 +1664,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+-    m_staticTextVersion-&gt;SetLabel(strprintf(&quot;version 0.%d.%d Beta&quot;, VERSION/100, VERSION%100));
++    m_staticTextVersion-&gt;SetLabel(strprintf(&quot;version 0.%d.%d beta&quot;, VERSION/100, VERSION%100));
+ 
+     // Workaround until upgrade to wxWidgets supporting UTF-8
+     wxString str = m_staticTextMain-&gt;GetLabel();
+@@ -2030,7 +2030,7 @@ void CSendingDialog::StartTransfer()
+     // We may have connected already for product details
+     if (!Status(&quot;Connecting...&quot;))
+         return;
+-    CNode* pnode = ConnectNode(addr, 5 * 60);
++    CNode* pnode = ConnectNode(addr, 15 * 60);
+     if (!pnode)
+     {
+         Error(&quot;Unable to connect&quot;);
+@@ -2075,14 +2075,6 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+         return;
+     }
+ 
+-    // Should already be connected
+-    CNode* pnode = ConnectNode(addr, 5 * 60);
+-    if (!pnode)
+-    {
+-        Error(&quot;Lost connection&quot;);
+-        return;
+-    }
+-
+     // Pause to give the user a chance to cancel
+     while (wxDateTime::UNow() &lt; start + wxTimeSpan(0, 0, 0, 2 * 1000))
+     {
+@@ -2112,6 +2104,14 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+             return;
+         }
+ 
++        // Make sure we&#x27;re still connected
++        CNode* pnode = ConnectNode(addr, 2 * 60 * 60);
++        if (!pnode)
++        {
++            Error(&quot;Lost connection, transaction cancelled&quot;);
++            return;
++        }
++
+         // Last chance to cancel
+         Sleep(50);
+         if (!Status())
+@@ -3495,12 +3495,14 @@ bool CMyApp::OnInit2()
+ 
+     if (mapArgs.count(&quot;-debug&quot;))
+         fDebug = true;
++    if (strstr(pszSubVer, &quot;test&quot;))
++        fDebug = true;
+ 
+     if (mapArgs.count(&quot;-printtodebugger&quot;))
+         fPrintToDebugger = true;
+ 
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d, OS version %s\n&quot;, VERSION, wxGetOsDescription().mb_str());
++    printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, wxGetOsDescription().mb_str());
+ 
+     if (mapArgs.count(&quot;-loadblockindextest&quot;))
+     {
+@@ -3843,9 +3845,8 @@ void SetStartOnSystemStartup(bool fAutoStart)
+         CoInitialize(NULL);
+ 
+         // Get a pointer to the IShellLink interface.
+-        HRESULT hres = NULL;
+         IShellLink* psl = NULL;
+-        hres = CoCreateInstance(CLSID_ShellLink, NULL,
++        HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL,
+                                 CLSCTX_INPROC_SERVER, IID_IShellLink,
+                                 reinterpret_cast&lt;void**&gt;(&amp;psl));
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -56,9 +56,11 @@ public:
+ 
+         // Close sockets
+         foreach(CNode* pnode, vNodes)
+-            closesocket(pnode-&gt;hSocket);
+-        if (closesocket(hListenSocket) == SOCKET_ERROR)
+-            printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
++            if (pnode-&gt;hSocket != INVALID_SOCKET)
++                closesocket(pnode-&gt;hSocket);
++        if (hListenSocket != INVALID_SOCKET)
++            if (closesocket(hListenSocket) == SOCKET_ERROR)
++                printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
+ 
+ #ifdef __WXMSW__
+         // Shutdown Windows Sockets
+@@ -348,7 +350,7 @@ void ParseParameters(int argc, char* argv[])
+     {
+         char psz[10000];
+         strlcpy(psz, argv[i], sizeof(psz));
+-        char* pszValue = &quot;&quot;;
++        char* pszValue = (char*)&quot;&quot;;
+         if (strchr(psz, &#x27;=&#x27;))
+         {
+             pszValue = strchr(psz, &#x27;=&#x27;);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -57,9 +57,11 @@ inline T&amp; REF(const T&amp; val)
+ #ifdef __WXMSW__
+ #define MSG_NOSIGNAL        0
+ #define MSG_DONTWAIT        0
++#ifndef UINT64_MAX
+ #define UINT64_MAX          _UI64_MAX
+ #define INT64_MAX           _I64_MAX
+ #define INT64_MIN           _I64_MIN
++#endif
+ #else
+ #define WSAGetLastError()   errno
+ #define WSAEWOULDBLOCK      EWOULDBLOCK
+@@ -67,7 +69,7 @@ inline T&amp; REF(const T&amp; val)
+ #define WSAEINTR            EINTR
+ #define WSAEINPROGRESS      EINPROGRESS
+ #define WSAEADDRINUSE       EADDRINUSE
+-#define closesocket(s)      close(s)
++#define WSAENOTSOCK         EBADF
+ #define INVALID_SOCKET      (SOCKET)(~0)
+ #define SOCKET_ERROR        -1
+ typedef u_int SOCKET;
+@@ -80,6 +82,23 @@ typedef u_int SOCKET;
+ #define Beep(n1,n2)         (0)
+ #endif
+ 
++inline int myclosesocket(SOCKET&amp; hSocket)
++{
++    if (hSocket == INVALID_SOCKET)
++        return WSAENOTSOCK;
++#ifdef __WXMSW__
++    int ret = closesocket(hSocket);
++#else
++    int ret = close(hSocket);
++#endif
++    hSocket = INVALID_SOCKET;
++    return ret;
++}
++#define closesocket(s)      myclosesocket(s)
++
++
++
++
+ 
+ 
+ 
+@@ -149,7 +168,7 @@ public:
+     bool TryEnter() { return mutex.TryLock() == wxMUTEX_NO_ERROR; }
+ #endif
+ public:
+-    char* pszFile;
++    const char* pszFile;
+     int nLine;
+ };
+ </code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * addressbook16_xpm[] = {
++static const char * addressbook16_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;16 16 256 2&quot;,
+ &quot;   c #FFFFFF&quot;,</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * addressbook20_xpm[] = {
++static const char * addressbook20_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;20 20 256 2&quot;,
+ &quot;   c #FFFFFF&quot;,</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * bitcoin16_xpm[] = {
++static const char * bitcoin16_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;16 16 181 2&quot;,
+ &quot;   c #775605&quot;,</code></pre></details><details><summary><code>xpm/bitcoin20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * bitcoin20_xpm[] = {
++static const char * bitcoin20_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;20 20 200 2&quot;,
+ &quot;   c #7B5500&quot;,</code></pre></details><details><summary><code>xpm/bitcoin32.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * bitcoin32_xpm[] = {
++static const char * bitcoin32_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;32 32 185 2&quot;,
+ &quot;   c #715103&quot;,</code></pre></details><details><summary><code>xpm/bitcoin48.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * bitcoin48_xpm[] = {
++static const char * bitcoin48_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;48 48 224 2&quot;,
+ &quot;   c #715103&quot;,</code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * check_xpm[] = {
++static const char * check_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;32 32 3 1&quot;,
+ &quot;  c #008000&quot;,</code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * send16_xpm[] = {
++static const char * send16_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;16 16 256 2&quot;,
+ &quot;   c #ADF7AD&quot;,</code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * send16noshadow_xpm[] = {
++static const char * send16noshadow_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;16 16 256 2&quot;,
+ &quot;   c #ADF7AD&quot;,</code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ /* XPM */
+-static char * send20_xpm[] = {
++static const char * send20_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+ &quot;20 20 256 2&quot;,
+ &quot;   c #CEFFCE&quot;,</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b349e3d/">← misc compile error</a><a rel="next" href="../../commits/52f4cb4/">minor fix to batched initial download in case requester… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

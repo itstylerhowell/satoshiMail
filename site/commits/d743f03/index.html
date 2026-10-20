@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin Andresen: json-rpc return… (r147) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 September 2010: Gavin Andresen: json-rpc return standard error objects with error code numbers, json-rpc command…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/d743f03/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin Andresen: json-rpc return… (r147) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 September 2010: Gavin Andresen: json-rpc return standard error objects with error code numbers, json-rpc command…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/d743f03/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin Andresen: json-rpc return… (r147) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 September 2010: Gavin Andresen: json-rpc return standard error objects with error code numbers, json-rpc command…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen: json-rpc return standard error objects with error code numbers, json-rpc command line client return exit code, added rpc backupwallet command", "url": "https://satoshimail.pages.dev/commits/d743f03/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-06T21:03:04Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d743f0355269e2e03fe3f982e250d07999d72b98"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen: json-rpc return…", "item": "https://satoshimail.pages.dev/commits/d743f03/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cd743f03552">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin Andresen: json-rpc return…</span></div></nav>
+<main class="in">
+<h1>Gavin Andresen: json-rpc return standard error objects with error code numbers, json-rpc command line client return exit code, added rpc backupwallet command</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 6 September 2010 · SVN r147 · release v0.3.12 · 4 files, +186 −83</p>
+<p class="actions"><a class="btn" href="../../#t-cd743f03552">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/d743f0355269e2e03fe3f982e250d07999d72b98" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -81,7 +81,7 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+                              DB_RECOVER,
+                              S_IRUSR | S_IWUSR);
+             if (ret &gt; 0)
+-                throw runtime_error(strprintf(&quot;CDB() : error %d opening database environment\n&quot;, ret));
++                throw runtime_error(strprintf(&quot;CDB() : error %d opening database environment&quot;, ret));
+             fDbEnvInit = true;
+         }
+ 
+@@ -106,7 +106,7 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+                 CRITICAL_BLOCK(cs_db)
+                     --mapFileUseCount[strFile];
+                 strFile = &quot;&quot;;
+-                throw runtime_error(strprintf(&quot;CDB() : can&#x27;t open database file %s, error %d\n&quot;, pszFile, ret));
++                throw runtime_error(strprintf(&quot;CDB() : can&#x27;t open database file %s, error %d&quot;, pszFile, ret));
+             }
+ 
+             if (fCreate &amp;&amp; !Exists(string(&quot;version&quot;)))
+@@ -803,3 +803,32 @@ void ThreadFlushWalletDB(void* parg)
+         }
+     }
+ }
++
++void BackupWallet(const string&amp; strDest)
++{
++    while (!fShutdown)
++    {
++        CRITICAL_BLOCK(cs_db)
++        {
++            const string strFile = &quot;wallet.dat&quot;;
++            if (!mapFileUseCount.count(strFile) || mapFileUseCount[strFile] == 0)
++            {
++                // Flush log data to the dat file
++                CloseDb(strFile);
++                dbenv.txn_checkpoint(0, 0, 0);
++                dbenv.lsn_reset(strFile.c_str(), 0);
++                mapFileUseCount.erase(strFile);
++
++                // Copy wallet.dat
++                filesystem::path pathDest(strDest);
++                if (filesystem::is_directory(pathDest))
++                    pathDest = pathDest / strFile;
++                filesystem::copy_file(filesystem::path(GetDataDir() + &quot;/&quot; + strFile), pathDest, filesystem::copy_option::overwrite_if_exists);
++                printf(&quot;copied wallet.dat to %s\n&quot;, pathDest.string().c_str());
++
++                return;
++            }
++        }
++        Sleep(100);
++    }
++}</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -399,6 +399,7 @@ public:
+ };
+ 
+ bool LoadWallet(bool&amp; fFirstRunRet);
++void BackupWallet(const string&amp; strDest);
+ 
+ inline bool SetAddressBookName(const string&amp; strAddress, const string&amp; strName)
+ {</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -22,6 +22,14 @@ typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
+ extern map&lt;string, rpcfn_type&gt; mapCallTable;
+ 
+ 
++Object JSONRPCError(int code, const string&amp; message)
++{
++    Object error;
++    error.push_back(Pair(&quot;code&quot;, code));
++    error.push_back(Pair(&quot;message&quot;, message));
++    return error;
++}
++
+ 
+ void PrintConsole(const char* format, ...)
+ {
+@@ -352,7 +360,7 @@ Value sendtoaddress(const Array&amp; params, bool fHelp)
+ 
+     // Amount
+     if (params[1].get_real() &lt;= 0.0 || params[1].get_real() &gt; 21000000.0)
+-        throw runtime_error(&quot;Invalid amount&quot;);
++        throw JSONRPCError(-3, &quot;Invalid amount&quot;);
+     int64 nAmount = roundint64(params[1].get_real() * 100.00) * CENT;
+ 
+     // Wallet comments
+@@ -364,7 +372,7 @@ Value sendtoaddress(const Array&amp; params, bool fHelp)
+ 
+     string strError = SendMoneyToBitcoinAddress(strAddress, nAmount, wtx);
+     if (strError != &quot;&quot;)
+-        throw runtime_error(strError);
++        throw JSONRPCError(-4, strError);
+     return &quot;sent&quot;;
+ }
+ 
+@@ -401,7 +409,7 @@ Value getreceivedbyaddress(const Array&amp; params, bool fHelp)
+     string strAddress = params[0].get_str();
+     CScript scriptPubKey;
+     if (!scriptPubKey.SetBitcoinAddress(strAddress))
+-        throw runtime_error(&quot;Invalid bitcoin address&quot;);
++        throw JSONRPCError(-5, &quot;Invalid bitcoin address&quot;);
+     if (!IsMine(scriptPubKey))
+         return (double)0.0;
+ 
+@@ -627,6 +635,20 @@ Value listreceivedbylabel(const Array&amp; params, bool fHelp)
+ }
+ 
+ 
++Value backupwallet(const Array&amp; params, bool fHelp)
++{
++    if (fHelp || params.size() != 1)
++        throw runtime_error(
++            &quot;backupwallet &lt;destination&gt;\n&quot;
++            &quot;Safely copies wallet.dat to destination, which can be a directory or a path with filename.&quot;);
++
++    string strDest = params[0].get_str();
++    BackupWallet(strDest);
++
++    return Value::null;
++}
++
++
+ 
+ 
+ 
+@@ -666,6 +688,7 @@ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+     make_pair(&quot;getreceivedbylabel&quot;,    &amp;getreceivedbylabel),
+     make_pair(&quot;listreceivedbyaddress&quot;, &amp;listreceivedbyaddress),
+     make_pair(&quot;listreceivedbylabel&quot;,   &amp;listreceivedbylabel),
++    make_pair(&quot;backupwallet&quot;,          &amp;backupwallet),
+ };
+ map&lt;string, rpcfn_type&gt; mapCallTable(pCallTable, pCallTable + sizeof(pCallTable)/sizeof(pCallTable[0]));
+ 
+@@ -685,6 +708,7 @@ string pAllowInSafeMode[] =
+     &quot;setlabel&quot;,
+     &quot;getlabel&quot;,
+     &quot;getaddressesbylabel&quot;,
++    &quot;backupwallet&quot;,
+ };
+ set&lt;string&gt; setAllowInSafeMode(pAllowInSafeMode, pAllowInSafeMode + sizeof(pAllowInSafeMode)/sizeof(pAllowInSafeMode[0]));
+ 
+@@ -707,14 +731,14 @@ string HTTPPost(const string&amp; strMsg, const map&lt;string,string&gt;&amp; mapRequestHeader
+       &lt;&lt; &quot;Content-Type: application/json\r\n&quot;
+       &lt;&lt; &quot;Content-Length: &quot; &lt;&lt; strMsg.size() &lt;&lt; &quot;\r\n&quot;
+       &lt;&lt; &quot;Accept: application/json\r\n&quot;;
+-    for (map&lt;string,string&gt;::const_iterator it = mapRequestHeaders.begin(); it != mapRequestHeaders.end(); ++it)
+-        s &lt;&lt; it-&gt;first &lt;&lt; &quot;: &quot; &lt;&lt; it-&gt;second &lt;&lt; &quot;\r\n&quot;;
++    foreach(const PAIRTYPE(string, string)&amp; item, mapRequestHeaders)
++        s &lt;&lt; item.first &lt;&lt; &quot;: &quot; &lt;&lt; item.second &lt;&lt; &quot;\r\n&quot;;
+     s &lt;&lt; &quot;\r\n&quot; &lt;&lt; strMsg;
+ 
+     return s.str();
+ }
+ 
+-string HTTPReply(const string&amp; strMsg, int nStatus=200)
++string HTTPReply(int nStatus, const string&amp; strMsg)
+ {
+     if (nStatus == 401)
+         return &quot;HTTP/1.0 401 Authorization Required\r\n&quot;
+@@ -734,8 +758,10 @@ string HTTPReply(const string&amp; strMsg, int nStatus=200)
+             &quot;&lt;BODY&gt;&lt;H1&gt;401 Unauthorized.&lt;/H1&gt;&lt;/BODY&gt;\r\n&quot;
+             &quot;&lt;/HTML&gt;\r\n&quot;;
+     string strStatus;
+-    if (nStatus == 200) strStatus = &quot;OK&quot;;
+-    if (nStatus == 500) strStatus = &quot;Internal Server Error&quot;;
++         if (nStatus == 200) strStatus = &quot;OK&quot;;
++    else if (nStatus == 400) strStatus = &quot;Bad Request&quot;;
++    else if (nStatus == 404) strStatus = &quot;Not Found&quot;;
++    else if (nStatus == 500) strStatus = &quot;Internal Server Error&quot;;
+     return strprintf(
+             &quot;HTTP/1.1 %d %s\r\n&quot;
+             &quot;Connection: close\r\n&quot;
+@@ -795,13 +821,16 @@ int ReadHTTP(tcp::iostream&amp; stream, map&lt;string, string&gt;&amp; mapHeadersRet, string&amp;
+ 
+     // Read header
+     int nLen = ReadHTTPHeader(stream, mapHeadersRet);
+-    if (nLen &lt;= 0)
++    if (nLen &lt; 0 || nLen &gt; MAX_SIZE)
+         return 500;
+ 
+     // Read message
+-    vector&lt;char&gt; vch(nLen);
+-    stream.read(&amp;vch[0], nLen);
+-    strMessageRet = string(vch.begin(), vch.end());
++    if (nLen &gt; 0)
++    {
++        vector&lt;char&gt; vch(nLen);
++        stream.read(&amp;vch[0], nLen);
++        strMessageRet = string(vch.begin(), vch.end());
++    }
+ 
+     return nStatus;
+ }
+@@ -859,9 +888,12 @@ bool HTTPAuthorized(map&lt;string, string&gt;&amp; mapHeaders)
+ }
+ 
+ //
+-// JSON-RPC protocol
++// JSON-RPC protocol.  Bitcoin speaks version 1.0 for maximum compatibility,
++// but uses JSON-RPC 1.1/2.0 standards for parts of the 1.0 standard that were
++// unspecified (HTTP errors and contents of &#x27;error&#x27;).
+ //
+-// http://json-rpc.org/wiki/specification
++// 1.0 spec: http://json-rpc.org/wiki/specification
++// 1.2 spec: http://groups.google.com/group/json-rpc/web/json-rpc-over-http
+ // http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx
+ //
+ 
+@@ -956,7 +988,7 @@ void ThreadRPCServer2(void* parg)
+         // Check authorization
+         if (mapHeaders.count(&quot;Authorization&quot;) == 0)
+         {
+-            stream &lt;&lt; HTTPReply(&quot;&quot;, 401) &lt;&lt; std::flush;
++            stream &lt;&lt; HTTPReply(401, &quot;&quot;) &lt;&lt; std::flush;
+             continue;
+         }
+         if (!HTTPAuthorized(mapHeaders))
+@@ -965,57 +997,83 @@ void ThreadRPCServer2(void* parg)
+             if (mapArgs[&quot;-rpcpassword&quot;].size() &lt; 15)
+                 Sleep(50);
+ 
+-            stream &lt;&lt; HTTPReply(&quot;&quot;, 401) &lt;&lt; std::flush;
++            stream &lt;&lt; HTTPReply(401, &quot;&quot;) &lt;&lt; std::flush;
+             printf(&quot;ThreadRPCServer incorrect password attempt\n&quot;);
+             continue;
+         }
+ 
+-        // Handle multiple invocations per request
+-        string::iterator begin = strRequest.begin();
+-        while (skipspaces(begin), begin != strRequest.end())
++        Value id = Value::null;
++        try
+         {
+-            string::iterator prev = begin;
+-            Value id;
++            // Parse request
++            Value valRequest;
++            if (!read_string(strRequest, valRequest) || valRequest.type() != obj_type)
++                throw JSONRPCError(-32700, &quot;Parse error&quot;);
++            const Object&amp; request = valRequest.get_obj();
++
++            // Parse id now so errors from here on will have the id
++            id = find_value(request, &quot;id&quot;);
++
++            // Parse method
++            Value valMethod = find_value(request, &quot;method&quot;);
++            if (valMethod.type() == null_type)
++                throw JSONRPCError(-32600, &quot;Missing method&quot;);
++            if (valMethod.type() != str_type)
++                throw JSONRPCError(-32600, &quot;Method must be a string&quot;);
++            string strMethod = valMethod.get_str();
++            printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
++
++            // Parse params
++            Value valParams = find_value(request, &quot;params&quot;);
++            Array params;
++            if (valParams.type() == array_type)
++                params = valParams.get_array();
++            else if (valParams.type() == null_type)
++                params = Array();
++            else
++                throw JSONRPCError(-32600, &quot;Params must be an array&quot;);
++
++            // Find method
++            map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
++            if (mi == mapCallTable.end())
++                throw JSONRPCError(-32601, &quot;Method not found&quot;);
++
++            // Observe safe mode
++            string strWarning = GetWarnings(&quot;rpc&quot;);
++            if (strWarning != &quot;&quot; &amp;&amp; !mapArgs.count(&quot;-disablesafemode&quot;) &amp;&amp; !setAllowInSafeMode.count(strMethod))
++                throw JSONRPCError(-2, string(&quot;Safe mode: &quot;) + strWarning);
++
+             try
+             {
+-                // Parse request
+-                Value valRequest;
+-                if (!read_range(begin, strRequest.end(), valRequest))
+-                    throw runtime_error(&quot;Parse error.&quot;);
+-                const Object&amp; request = valRequest.get_obj();
+-                if (find_value(request, &quot;method&quot;).type() != str_type ||
+-                    find_value(request, &quot;params&quot;).type() != array_type)
+-                    throw runtime_error(&quot;Invalid request.&quot;);
+-
+-                string strMethod    = find_value(request, &quot;method&quot;).get_str();
+-                const Array&amp; params = find_value(request, &quot;params&quot;).get_array();
+-                id                  = find_value(request, &quot;id&quot;);
+-
+-                printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
+-
+-                // Observe safe mode
+-                string strWarning = GetWarnings(&quot;rpc&quot;);
+-                if (strWarning != &quot;&quot; &amp;&amp; !mapArgs.count(&quot;-disablesafemode&quot;) &amp;&amp; !setAllowInSafeMode.count(strMethod))
+-                    throw runtime_error(string(&quot;Safe mode: &quot;) + strWarning);
+-
+                 // Execute
+-                map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+-                if (mi == mapCallTable.end())
+-                    throw runtime_error(&quot;Method not found.&quot;);
+                 Value result = (*(*mi).second)(params, false);
+ 
+                 // Send reply
+                 string strReply = JSONRPCReply(result, Value::null, id);
+-                stream &lt;&lt; HTTPReply(strReply, 200) &lt;&lt; std::flush;
++                stream &lt;&lt; HTTPReply(200, strReply) &lt;&lt; std::flush;
+             }
+             catch (std::exception&amp; e)
+             {
+-                // Send error reply
+-                string strReply = JSONRPCReply(Value::null, e.what(), id);
+-                stream &lt;&lt; HTTPReply(strReply, 500) &lt;&lt; std::flush;
++                // Send error reply from method
++                string strReply = JSONRPCReply(Value::null, JSONRPCError(-1, e.what()), id);
++                stream &lt;&lt; HTTPReply(500, strReply) &lt;&lt; std::flush;
+             }
+-            if (begin == prev)
+-                break;
++        }
++        catch (Object&amp; objError)
++        {
++            // Send error reply from json-rpc error object
++            int nStatus = 500;
++            int code = find_value(objError, &quot;code&quot;).get_int();
++            if (code == -32600) nStatus = 400;
++            else if (code == -32601) nStatus = 404;
++            string strReply = JSONRPCReply(Value::null, objError, id);
++            stream &lt;&lt; HTTPReply(nStatus, strReply) &lt;&lt; std::flush;
++        }
++        catch (std::exception&amp; e)
++        {
++            // Send error reply from other json-rpc parsing errors
++            string strReply = JSONRPCReply(Value::null, JSONRPCError(-32700, e.what()), id);
++            stream &lt;&lt; HTTPReply(500, strReply) &lt;&lt; std::flush;
+         }
+     }
+ }
+@@ -1023,7 +1081,7 @@ void ThreadRPCServer2(void* parg)
+ 
+ 
+ 
+-Value CallRPC(const string&amp; strMethod, const Array&amp; params)
++Object CallRPC(const string&amp; strMethod, const Array&amp; params)
+ {
+     if (mapArgs[&quot;-rpcuser&quot;] == &quot;&quot; &amp;&amp; mapArgs[&quot;-rpcpassword&quot;] == &quot;&quot;)
+         throw runtime_error(strprintf(
+@@ -1052,7 +1110,7 @@ Value CallRPC(const string&amp; strMethod, const Array&amp; params)
+     int nStatus = ReadHTTP(stream, mapHeaders, strReply);
+     if (nStatus == 401)
+         throw runtime_error(&quot;incorrect rpcuser or rpcpassword (authorization failed)&quot;);
+-    else if (nStatus &gt;= 400 &amp;&amp; nStatus != 500)
++    else if (nStatus &gt;= 400 &amp;&amp; nStatus != 400 &amp;&amp; nStatus != 404 &amp;&amp; nStatus != 500)
+         throw runtime_error(strprintf(&quot;server returned HTTP error %d&quot;, nStatus));
+     else if (strReply.empty())
+         throw runtime_error(&quot;no response from server&quot;);
+@@ -1065,15 +1123,7 @@ Value CallRPC(const string&amp; strMethod, const Array&amp; params)
+     if (reply.empty())
+         throw runtime_error(&quot;expected reply to have result, error and id properties&quot;);
+ 
+-    const Value&amp; result = find_value(reply, &quot;result&quot;);
+-    const Value&amp; error  = find_value(reply, &quot;error&quot;);
+-    const Value&amp; id     = find_value(reply, &quot;id&quot;);
+-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -2,8 +2,10 @@
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
++#include &lt;string&gt;
+ #include &lt;vector&gt;
+ #include &lt;map&gt;
++#include &lt;set&gt;
+ #include &lt;boost/type_traits/is_fundamental.hpp&gt;
+ #if defined(_MSC_VER) || defined(__BORLANDC__)
+ typedef __int64  int64;
+@@ -18,10 +20,9 @@ typedef unsigned long long  uint64;
+ class CScript;
+ class CDataStream;
+ class CAutoFile;
+-
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 311;
++static const int VERSION = 312;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0a61b0d/">← propset svn:eol-style native</a><a rel="next" href="../../commits/f1e1fb4/">cleanup, catch some recoverable exceptions and continue →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

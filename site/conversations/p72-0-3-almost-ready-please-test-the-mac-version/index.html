@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>0.3 almost ready -- please test the Mac… – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 22 June 2010: I finished everything on my list to do for version 0.3. The code on SVN is about ready to release. Testing at this point…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p72-0-3-almost-ready-please-test-the-mac-version/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="0.3 almost ready -- please test the Mac… – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 22 June 2010: I finished everything on my list to do for version 0.3. The code on SVN is about ready to release. Testing at this point…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p72-0-3-almost-ready-please-test-the-mac-version/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="0.3 almost ready -- please test the Mac… – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 22 June 2010: I finished everything on my list to do for version 0.3. The code on SVN is about ready to release. Testing at this point…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "0.3 almost ready -- please test the Mac version!", "url": "https://satoshimail.pages.dev/conversations/p72-0-3-almost-ready-please-test-the-mac-version/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T04:01:53Z", "text": "I finished everything on my list to do for version 0.3. The code on SVN is about ready to release. Testing at this point is much appreciated.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-22T04:06:45Z", "text": "I'm just here Cheesy Windows 7 x64 4 GB RAM Intel i7 860"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-22T06:20:02Z", "text": "Very nice! There have definitely been some major improvements, including the hashmeter, RPC support, and a command-line daemon. It would be nice if the listtransactions RPC method were finished before the next release, though. Also, some code should be added to the JSON-RPC methods to list out dHashesPerSec. Great work Satoshi!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Xunie"}, "datePublished": "2010-06-22T07:28:56Z", "text": "Whoohoo! Can't wait! Note, is there somewhere I can get a devel build? Maybe we can setup nightly builds or something..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "teppy"}, "datePublished": "2010-06-22T14:15:24Z", "text": "Should we try for some publicity? Slashdot is good if we can get it. I've had a number of submissions accepted, though always by one editor that no longer works there. Anyone else with a Slashdot connection?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-06-22T14:20:31Z", "text": "We should try to get publicity, and focus the campaign on the time right after the release to get the maximum impact: simultaneously advertising on forums, irc, Youtube, Facebook, Google Ads and other places. Slashdot with its millions of tech-savvy readers would be awesome, perhaps the best imaginable! I just hope the server can stand getting \"slashdotted\" Tongue Maybe it should be upscaled beforehand just in case."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T17:02:07Z", "text": "My fear is too many programmers would latch onto that for checking for received payments. It can never be reliable that way. The list/getreceivedbyaddress/label functions are the only way to do it reliably. We shouldn't delay forever until every possible feature is done. There's always going to be one more thing to do."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T17:37:08Z", "text": "Here's RC1 for windows for testing: (removed, see RC2 below) Please only download this if you're going to test and report back whether everything seems fine or not. Make sure to look through the files in \"c:\\program files\\bitcoin\""}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-06-22T17:58:56Z", "text": "I just finished creating a clean Amazon EC2 debian 5.0 machine image with everything I needed to compile bitcoind, and it compiled (using a variation of Laszlo's makefile.unix) and is running fine (just finished downloading the block chain). I'll let you know if it misbehaves. I had trouble compiling the gtk version, but I think that's because I did something wrong compiling wxWidgets. I don't need no stinkin' graphics (and am not a wxWidgets expert), so I'm not going to bother trying to fix…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-22T19:08:09Z", "text": "I have the same problem :|"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T19:11:41Z", "text": "What operating system? Normally when it does that it's because the directory where the data directory should go doesn't exist. See if the \"%appdata%\" directory exists. Do you get that error with 0.2 also? It's hard to see how you could get that with 0.3 and not with 0.2 since there's nothing different in that regard."}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-22T19:14:39Z", "text": "Windows 7 x64 ENG 4 GB RAM Intel i7 860 I was using the v0.2.10 build by laszlo before yours."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T19:25:13Z", "text": "davidonpda, were you also running laszlo's build previously? Check if the \"%appdata%\" directory exists, and \"%appdata%\\bitcoin\" Try: rename \"%appdata%\\bitcoin\" bitcoin2 does it work then?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-22T19:33:24Z", "text": "Both are existing Smiley Yes it works. so I closed it, copied the walled.dat from the old folder to the new one, and now it's downloading blocks Address book and old transfers seem ok, but there aren't anyone of old \"generated coins\" ... I just need to wait? Anyway, I can just go back with the old v0.2.10 Smiley EDIT: I did another thing. Closed it, copied addr.dat / blk0001.dat / blkindex.dat from old folder to the new one. Restarted bitcoin ( v0.30 ), and now it seems that everything is…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T19:46:23Z", "text": "You figured it out faster than I could post a reply. Smiley It looks like laszlo's build of Berkeley DB has database/log.* files that are not compatible with ours. The .dat files are fine, their format shouldn't ever change. All data is stored in the .dat files. All your own data is stored in wallet.dat. If you had waited for it to redownload the block chain, your missing transactions and generateds would have appeared as the block chain reached the point where those transactions were…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-22T19:49:50Z", "text": "yes, I'm just using 0.30 by now. Thank you! Cheesy"}, {"@type": "Comment", "author": {"@type": "Person", "name": "D҉ataWraith"}, "datePublished": "2010-06-22T21:01:58Z", "text": "Runs fine under WINE. *rhymes* It automatically switched the language to German, too. Now that I can see the translation in the client itself, I noticed a few things to improve, and will post a new .po file within the next two or so days."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-22T22:00:47Z", "text": "Yeah, 0.3.0 seems to have a performance increase over svn r84 with Laszlo's performance patch."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-22T22:23:39Z", "text": "Laszlo figured out that enabling some more optimisation increased performance about 20%, so 0.3 hashes 20% faster than 0.2.0, but I assume he used that in his own build. 30khash increase to what total rate? (to figure the % increase)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-06-22T23:07:30Z", "text": "Much faster than Laszlo's build for me. Went from 600-700khash/s to 1000-1100khash/s on my Intel Core 2 Duo E8500. From 700-800khash/s on a laptop i7 to ~1100khash/s. edit: Keeping the \"Run Bitcoin\" option checked in the installer seems to run it with admin privileges on the first launch. (in Win7)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-24T17:40:05Z", "text": "Here's RC1 for linux for testing: (link removed, see below) It contains both 32-bit and 64-bit binaries. Recent changes: build-unix.txt: - Added instructions for building wxBase, which is needed to compile bitcoind. - The package libboost-dev doesn't install anything anymore, you need to get libboost-all-dev. - Updated version numbers. makefile.unix: - The libboost libraries have removed the \"-mt\" from their filenames in 1.40. If you're compiling with Boost 1.38 or lower, like on Ubuntu…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "virtualcoin"}, "datePublished": "2010-06-24T20:49:24Z", "text": "Nice. :-) 64-bit version works fine on Ubuntu 10.04, of course it's (much) faster than through WINE emulation (and because it's 64-bit!?) 4 cores: 2850 khash/s 3 cores: 2130 khash/s 2 cores: 1420 khash/s 1 core: 700 khash/s WINE (32-bit): 4 cores - 2300 khash/s 3 cores - 1740 khash/s 2 cores - 1150 khash/s 1 core - 580 khash/s Thank you - looks pretty nice, too. http://i50.tinypic.com/2ih1h0p.jpg edit: What's the difference between \"Sent/Received\" and \"All transactions\"?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-24T22:19:34Z", "text": "will it change something if you release a x64 bit version for Windows?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-06-24T23:26:03Z", "text": "Ubuntu 9.04 x86: vlad@vlad:~/bitcoin/bin/32$ ./bitcoind ./bitcoind: /usr/lib/libstdc++.so.6: version `GLIBCXX_3.4.11' not found (required by ./bitcoind) Anybody know what Bitcoin needs?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-25T02:17:41Z", "text": "I don't know. Maybe someone with more Linux experience knows how to install the library it needs. I built it on Ubuntu 10.04. I hope that wasn't a mistake. Maybe it should have been built on an older version for more backward compatibility. Is this a problem on Linux, that if you build on the latest version, then it has trouble working on older versions? Is there any way I can downgrade to an older version of GCC on 10.04? The 64-bit version shouldn't be any faster than the 32-bit version, but…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-06-25T04:47:28Z", "text": "Windows 7 x64 4 GB RAM Intel i7 860 4 cores ( 8 virtuals ): 2200 khash/s It's lower than Ubuntu :|"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-06-25T07:18:54Z", "text": "Linux on an overclocked Pentium D: - 1 core: 565 khash/s, 1.01 kW h/day - 2 cores: 1100 khash/s, 1.78 kW h/day The new version seems to give me an improvement of 20-30 khash/s (with two cores) over SVN 80 with laszlo's patch. Does anyone know what I have to change in the makefile so that I don't have to add LD_LIBRARY_PATH pointing to the dependency libraries when executing BitCoin? I already have -I and -L pointing to the single, correct location. (This isn't caused by the new version; I've…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "virtualcoin"}, "datePublished": "2010-06-25T10:29:54Z", "text": "But look here: 32-bit Linux version on Ubuntu 10.04 4 cores: 2500 khash/s 3 cores: 1900 khash/s 2 cores: 1260 khash/s 1 core: 630 khash/s 64-bit Linux version on Ubuntu 10.04 (new measure) 4 cores: 2880 khash/s 3 cores: 2150 khash/s 2 cores: 1450 khash/s 1 core: 720 khash/s (Though I never created one coin, yet - but I don't let bitcoin run on 4 cores the whole day, not even on 1 core...) @Joozero - The Intel i7 860 is @ 2.8 Ghz, isn't it? My Phenom II is @ 3 Ghz, that's another important fact…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-25T14:10:06Z", "text": "Thanks virtualcoin, that's a perfect comparison. The 8% speedup from 32-bit Windows (2310k) to 32-bit Linux (2500k) is probably from the newer version of GCC on Linux (4.4.3 vs 3.4.5). The 15% speedup from 32-bit to 64-bit Linux is more of a mystery. The code is completely 32-bit. Hmm, I think the 8 extra registers added by x86-64 must be what's helping. That would make a significant difference to SHA if it could hold most of the 16 state variables in registers."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-26T00:32:09Z", "text": "Lets try using Laszlo's irc.lfnet.org instead of freenode. Here's RC2, that's the only change in it: (see below for download links)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-06-26T01:19:35Z", "text": "It looks good! The number of hashes per second intermittently disappears for a few seconds at a time. I think it might be triggered by clicking on the file menu multiple times. I'm using the Linux 64-bit build."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "0.3 almost ready -- please test the Mac version!", "item": "https://satoshimail.pages.dev/conversations/p72-0-3-almost-ready-please-test-the-mac-version/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p72">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">0.3 almost ready -- please test the Mac version!</span></div></nav>
+<main class="in">
+<h1>0.3 almost ready -- please test the Mac version!</h1>
+<p class="lead">BitcoinTalk forum · 42 messages · from 22 June 2010 · with BitLex, D҉ataWraith, Gavin Andresen, HostFat, NewLibertyStandard, Satoshi Nakamoto…</p>
+<p class="actions"><a class="btn" href="../../#t-p72">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/72/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T04:01:53Z">22 June 2010, 04:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1654#msg1654" rel="nofollow noopener">original</a></span></header>
+<div class="t">I finished everything on my list to do for version 0.3.  The code on SVN is about ready to release.
+
+Testing at this point is much appreciated.</div></article><article class="msg" id="m1">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-22T04:06:45Z">22 June 2010, 04:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1655#msg1655" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m just here Cheesy
+
+Windows 7 x64
+4 GB RAM
+Intel i7 860 </div></article><article class="msg" id="m2">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-22T06:20:02Z">22 June 2010, 06:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1658#msg1658" rel="nofollow noopener">original</a></span></header>
+<div class="t">Very nice! There have definitely been some major improvements, including the hashmeter, RPC support, and a command-line daemon. It would be nice if the listtransactions RPC method were finished before the next release, though. Also, some code should be added to the JSON-RPC methods to list out dHashesPerSec.
+
+Great work Satoshi!</div></article><article class="msg" id="m3">
+<header><b>Xunie</b><span class="muted"> · <time datetime="2010-06-22T07:28:56Z">22 June 2010, 07:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1659#msg1659" rel="nofollow noopener">original</a></span></header>
+<div class="t">Whoohoo! Can&#x27;t wait!
+
+Note, is there somewhere I can get a devel build?
+Maybe we can setup nightly builds or something...</div></article><article class="msg" id="m4">
+<header><b>teppy</b><span class="muted"> · <time datetime="2010-06-22T14:15:24Z">22 June 2010, 14:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1662#msg1662" rel="nofollow noopener">original</a></span></header>
+<div class="t">Should we try for some publicity? Slashdot is good if we can get it.
+
+I&#x27;ve had a number of submissions accepted, though always by one editor that no longer works there. Anyone else with a Slashdot connection?</div></article><article class="msg" id="m5">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-06-22T14:20:31Z">22 June 2010, 14:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1664#msg1664" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: teppy on June 22, 2010, 02:15:24 PM</div><div class="t">Should we try for some publicity? Slashdot is good if we can get it.
+
+I&#x27;ve had a number of submissions accepted, though always by one editor that no longer works there. Anyone else with a Slashdot connection?</div></blockquote><div class="t">We should try to get publicity, and focus the campaign on the time right after the release to get the maximum impact: simultaneously advertising on forums, irc, Youtube, Facebook, Google Ads and other places. Slashdot with its millions of tech-savvy readers would be awesome, perhaps the best imaginable! I just hope the server can stand getting &quot;slashdotted&quot; Tongue Maybe it should be upscaled beforehand just in case.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T17:02:07Z">22 June 2010, 17:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1670#msg1670" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on June 22, 2010, 06:20:02 AM</div><div class="t">It would be nice if the listtransactions RPC method were finished before the next release, though.</div></blockquote><div class="t">My fear is too many programmers would latch onto that for checking for received payments.  It can never be reliable that way.  The list/getreceivedbyaddress/label functions are the only way to do it reliably.
+
+We shouldn&#x27;t delay forever until every possible feature is done.  There&#x27;s always going to be one more thing to do.</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T17:37:08Z">22 June 2010, 17:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1671#msg1671" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s RC1 for windows for testing:
+(removed, see RC2 below)
+
+Please only download this if you&#x27;re going to test and report back whether everything seems fine or not.  Make sure to look through the files in &quot;c:\program files\bitcoin&quot;</div></article><article class="msg" id="m8">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-06-22T17:58:56Z">22 June 2010, 17:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1672#msg1672" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on June 22, 2010, 04:01:53 AM</div><div class="t">I finished everything on my list to do for version 0.3.  The code on SVN is about ready to release.
+Testing at this point is much appreciated.</div></blockquote><div class="t">I just finished creating a clean Amazon EC2 debian 5.0 machine image with everything I needed to compile bitcoind, and it compiled (using a variation of Laszlo&#x27;s makefile.unix) and is running fine (just finished downloading the block chain).  I&#x27;ll let you know if it misbehaves.
+
+I had trouble compiling the gtk version, but I think that&#x27;s because I did something wrong compiling wxWidgets.  I don&#x27;t need no stinkin&#x27; graphics (and am not a wxWidgets expert), so I&#x27;m not going to bother trying to fix that.</div></article><article class="msg" id="m9">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-22T19:08:09Z">22 June 2010, 19:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1674#msg1674" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote</div><div class="t">EXCEPTION: 22DbRunRecoveryException
+DBENv::open: DB_RUNRECOVERY: Fatal error, run database recovery
+C:\Program Files\Bitcoin\bitcoin.exe in OnInit()</div></blockquote><div class="t">I have the same problem :|</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T19:11:41Z">22 June 2010, 19:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1675#msg1675" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on June 22, 2010, 06:23:26 PM</div><div class="t">EXCEPTION: 22DbRunRecoveryException
+DBENv::open: DB_RUNRECOVERY: Fatal error, run database recovery
+C:\Program Files\Bitcoin\bitcoin.exe in OnInit()</div></blockquote><div class="t">What operating system?
+
+Normally when it does that it&#x27;s because the directory where the data directory should go doesn&#x27;t exist.  See if the &quot;%appdata%&quot; directory exists.
+
+Do you get that error with 0.2 also?  It&#x27;s hard to see how you could get that with 0.3 and not with 0.2 since there&#x27;s nothing different in that regard.</div></article><article class="msg" id="m11">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-22T19:14:39Z">22 June 2010, 19:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1676#msg1676" rel="nofollow noopener">original</a></span></header>
+<div class="t">Windows 7 x64 ENG
+4 GB RAM
+Intel i7 860
+
+I was using the v0.2.10 build by laszlo before yours.</div></article><article class="msg sat" id="m12">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T19:25:13Z">22 June 2010, 19:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1677#msg1677" rel="nofollow noopener">original</a></span></header>
+<div class="t">davidonpda, were you also running laszlo&#x27;s build previously?
+
+Check if the &quot;%appdata%&quot; directory exists, and &quot;%appdata%\bitcoin&quot;
+
+Try:
+ rename &quot;%appdata%\bitcoin&quot; bitcoin2
+
+does it work then?</div></article><article class="msg" id="m13">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-22T19:33:24Z">22 June 2010, 19:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1678#msg1678" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on June 22, 2010, 07:25:13 PM</div><div class="t">Check if the &quot;%appdata%&quot; directory exists, and &quot;%appdata%\bitcoin&quot;</div></blockquote><div class="t">Both are existing Smiley</div><blockquote><div class=qh>Quote from: satoshi on June 22, 2010, 07:25:13 PM</div><div class="t">Try:
+ rename &quot;%appdata%\bitcoin&quot; bitcoin2
+
+does it work then?</div></blockquote><div class="t">Yes it works.
+
+so I closed it, copied the walled.dat from the old folder to the new one, and now it&#x27;s downloading blocks
+Address book and old transfers seem ok, but there aren&#x27;t anyone of old &quot;generated coins&quot; ... I just need to wait?
+Anyway, I can just go back with the old v0.2.10 Smiley
+
+EDIT:
+I did another thing.
+Closed it, copied addr.dat / blk0001.dat / blkindex.dat from old folder to the new one.
+Restarted bitcoin ( v0.30 ), and now it seems that everything is working. ( I can see also old generated coins now )
+I just did NOT copied &quot;log.0000000002&quot; from the database folder ...</div></article><article class="msg sat" id="m14">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T19:46:23Z">22 June 2010, 19:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1679#msg1679" rel="nofollow noopener">original</a></span></header>
+<div class="t">You figured it out faster than I could post a reply.  Smiley
+
+It looks like laszlo&#x27;s build of Berkeley DB has database/log.* files that are not compatible with ours.  The .dat files are fine, their format shouldn&#x27;t ever change.  All data is stored in the .dat files.  All your own data is stored in wallet.dat.  If you had waited for it to redownload the block chain, your missing transactions and generateds would have appeared as the block chain reached the point where those transactions were recorded.
+
+When you copied the directory except log.0000000002, that&#x27;s the best solution.  You should be good now.
+
+The database/log.* files only contain temporary database data.  If you exited bitcoin normally the last time, not exited by forced terminating it or crashing, then the database/log.* files can normally be deleted safely.  They&#x27;re only used so that if the database is in the middle of a transaction when the computer crashes or the program is killed or crashes, then it could recover without losing data.
+
+Please keep running v0.3 if at all possible, don&#x27;t go back to v0.2.10.
+
+Anyone else who hits this problem, move the database\log.000000000* files somewhere else.  (if it works fine after that, you can delete them later)
+
+I&#x27;m reluctant to make the installer delete or move those files.  If the previous run was stopped by crashing or killed, that would be the wrong thing to do.</div></article><article class="msg" id="m15">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-22T19:49:50Z">22 June 2010, 19:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1680#msg1680" rel="nofollow noopener">original</a></span></header>
+<div class="t">yes, I&#x27;m just using 0.30 by now.
+Thank you! Cheesy</div></article><article class="msg" id="m16">
+<header><b>D҉ataWraith</b><span class="muted"> · <time datetime="2010-06-22T21:01:58Z">22 June 2010, 21:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1683#msg1683" rel="nofollow noopener">original</a></span></header>
+<div class="t">Runs fine under WINE. *rhymes*
+
+It automatically switched the language to German, too. Now that I can see the translation in the client itself, I noticed a few things to improve, and will post a new .po file within the next two or so days.</div></article><article class="msg" id="m17">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-22T22:00:47Z">22 June 2010, 22:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1685#msg1685" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, 0.3.0 seems to have a performance increase over svn r84 with Laszlo&#x27;s performance patch.</div></article><article class="msg sat" id="m18">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-22T22:23:39Z">22 June 2010, 22:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1686#msg1686" rel="nofollow noopener">original</a></span></header>
+<div class="t">Laszlo figured out that enabling some more optimisation increased performance about 20%, so 0.3 hashes 20% faster than 0.2.0, but I assume he used that in his own build.
+
+30khash increase to what total rate?  (to figure the % increase)</div></article><article class="msg" id="m19">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-06-22T23:07:30Z">22 June 2010, 23:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1687#msg1687" rel="nofollow noopener">original</a></span></header>
+<div class="t">Much faster than Laszlo&#x27;s build for me. Went from 600-700khash/s to 1000-1100khash/s on my Intel Core 2 Duo E8500. From 700-800khash/s on a laptop i7 to ~1100khash/s.
+
+edit: Keeping the &quot;Run Bitcoin&quot; option checked in the installer seems to run it with admin privileges on the first launch. (in Win7)</div></article><article class="msg sat" id="m20">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-24T17:40:05Z">24 June 2010, 17:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1748#msg1748" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s RC1 for linux for testing:
+(link removed, see below)
+
+It contains both 32-bit and 64-bit binaries.
+
+Recent changes:
+
+build-unix.txt:
+- Added instructions for building wxBase, which is needed to compile bitcoind.
+- The package libboost-dev doesn&#x27;t install anything anymore, you need to get libboost-all-dev.
+- Updated version numbers.
+
+makefile.unix:
+- The libboost libraries have removed the &quot;-mt&quot; from their filenames in 1.40.  If you&#x27;re compiling with Boost 1.38 or lower, like on Ubuntu Karmic, you would need to change it back to boost_system-mt and boost_filesystem-mt.</div></article><article class="msg" id="m21">
+<header><b>virtualcoin</b><span class="muted"> · <time datetime="2010-06-24T20:49:24Z">24 June 2010, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1750#msg1750" rel="nofollow noopener">original</a></span></header>
+<div class="t">Nice. :-)
+
+64-bit version works fine on Ubuntu 10.04, of course it&#x27;s (much) faster than through WINE emulation (and because it&#x27;s 64-bit!?)
+
+4 cores: 2850 khash/s
+3 cores: 2130 khash/s
+2 cores: 1420 khash/s
+1 core: 700 khash/s
+
+WINE (32-bit):
+
+4 cores - 2300 khash/s
+3 cores - 1740 khash/s
+2 cores - 1150 khash/s
+1 core - 580 khash/s
+
+Thank you - looks pretty nice, too.
+
+<a href="http://i50.tinypic.com/2ih1h0p.jpg" rel="nofollow noopener">http://i50.tinypic.com/2ih1h0p.jpg</a>
+
+edit: What&#x27;s the difference between &quot;Sent/Received&quot; and &quot;All transactions&quot;?</div></article><article class="msg" id="m22">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-24T22:19:34Z">24 June 2010, 22:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1756#msg1756" rel="nofollow noopener">original</a></span></header>
+<div class="t">will it change something if you release a x64 bit version for Windows?</div></article><article class="msg" id="m23">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-06-24T23:26:03Z">24 June 2010, 23:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1758#msg1758" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ubuntu 9.04 x86:
+
+vlad@vlad:~/bitcoin/bin/32$ ./bitcoind
+./bitcoind: /usr/lib/libstdc++.so.6: version `GLIBCXX_3.4.11&#x27; not found (required by ./bitcoind)
+
+Anybody know what Bitcoin needs?</div></article><article class="msg sat" id="m24">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-25T02:17:41Z">25 June 2010, 02:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1760#msg1760" rel="nofollow noopener">original</a></span></header>
+<div class="t">I don&#x27;t know.  Maybe someone with more Linux experience knows how to install the library it needs.
+
+I built it on Ubuntu 10.04.  I hope that wasn&#x27;t a mistake.  Maybe it should have been built on an older version for more backward compatibility.  Is this a problem on Linux, that if you build on the latest version, then it has trouble working on older versions?  Is there any way I can downgrade to an older version of GCC on 10.04?
+
+The 64-bit version shouldn&#x27;t be any faster than the 32-bit version, but it would be great if someone could do a side-by-side comparison of the two linux versions and check.  SHA-256 is a 32-bit algorithm and nothing in BitcoinMiner uses 64-bit at all.
+
+We don&#x27;t need to bother with a 64-bit version for Windows.  32-bit programs work on all versions of Windows.  It&#x27;s not like Linux where the 64-bit OS wants 64-bit programs.
+
+I&#x27;m also curious if it&#x27;s a little faster on linux than windows.
+
+Do you think I should make the directories:
+/bin32/
+/bin64/
+instead of
+/bin/32/
+/bin/64/</div></article><article class="msg" id="m25">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-06-25T04:47:28Z">25 June 2010, 04:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1763#msg1763" rel="nofollow noopener">original</a></span></header>
+<div class="t">Windows 7 x64
+4 GB RAM
+Intel i7 860
+
+4 cores ( 8 virtuals ): 2200 khash/s
+
+It&#x27;s lower than Ubuntu :|</div></article><article class="msg" id="m26">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-06-25T07:18:54Z">25 June 2010, 07:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1765#msg1765" rel="nofollow noopener">original</a></span></header>
+<div class="t">Linux on an overclocked Pentium D:
+- 1 core: 565 khash/s, 1.01 kW h/day
+- 2 cores: 1100 khash/s, 1.78 kW h/day
+
+The new version seems to give me an improvement of 20-30 khash/s (with two cores) over SVN 80 with laszlo&#x27;s patch.
+
+Does anyone know what I have to change in the makefile so that I don&#x27;t have to add LD_LIBRARY_PATH pointing to the dependency libraries when executing BitCoin? I already have -I and -L pointing to the single, correct location. (This isn&#x27;t caused by the new version; I&#x27;ve always had this problem.)</div></article><article class="msg" id="m27">
+<header><b>virtualcoin</b><span class="muted"> · <time datetime="2010-06-25T10:29:54Z">25 June 2010, 10:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1766#msg1766" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on June 25, 2010, 02:17:41 AM</div><div class="t">The 64-bit version shouldn&#x27;t be any faster than the 32-bit version, but it would be great if someone could do a side-by-side comparison of the two linux versions and check.  SHA-256 is a 32-bit algorithm and nothing in BitcoinMiner uses 64-bit at all.</div></blockquote><div class="t">But look here:
+
+32-bit Linux version on Ubuntu 10.04
+
+4 cores: 2500 khash/s
+3 cores: 1900 khash/s
+2 cores: 1260 khash/s
+1 core: 630 khash/s
+
+64-bit Linux version on Ubuntu 10.04 (new measure)
+
+4 cores: 2880 khash/s
+3 cores: 2150 khash/s
+2 cores: 1450 khash/s
+1 core: 720 khash/s
+
+(Though I never created one coin, yet - but I don&#x27;t let bitcoin run on 4 cores the whole day, not even on 1 core...)
+
+@Joozero - The Intel i7 860 is @ 2.8 Ghz, isn&#x27;t it? My Phenom II is @ 3 Ghz, that&#x27;s another important fact I think. I will try bitcoin on Windows 7 at the same machine later.
+
+/edit
+
+32-bit Win version on Windows 7 64-bit
+
+4 cores: 2310 khash/s
+3 cores: 1740 khash/s
+2 cores: 1160 khash/s
+1 core: 580 khash/s</div></article><article class="msg sat" id="m28">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-25T14:10:06Z">25 June 2010, 14:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1769#msg1769" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks virtualcoin, that&#x27;s a perfect comparison.
+
+The 8% speedup from 32-bit Windows (2310k) to 32-bit Linux (2500k) is probably from the newer version of GCC on Linux (4.4.3 vs 3.4.5).
+
+The 15% speedup from 32-bit to 64-bit Linux is more of a mystery.  The code is completely 32-bit.
+
+Hmm, I think the 8 extra registers added by x86-64 must be what&#x27;s helping.  That would make a significant difference to SHA if it could hold most of the 16 state variables in registers.</div></article><article class="msg sat" id="m29">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-26T00:32:09Z">26 June 2010, 00:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1787#msg1787" rel="nofollow noopener">original</a></span></header>
+<div class="t">Lets try using Laszlo&#x27;s irc.lfnet.org instead of freenode.  Here&#x27;s RC2, that&#x27;s the only change in it:
+
+(see below for download links)</div></article><article class="msg" id="m30">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-06-26T01:19:35Z">26 June 2010, 01:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1788#msg1788" rel="nofollow noopener">original</a></span></header>
+<div class="t">It looks good! The number of hashes per second intermittently disappears for a few seconds at a time. I think it might be triggered by clicking on the file menu multiple times. I&#x27;m using the Linux 64-bit build.</div></article><article class="msg sat" id="m31">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-26T15:10:10Z">26 June 2010, 15:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1800#msg1800" rel="nofollow noopener">original</a></span></header>
+<div class="t">The first panel of the status bar is shared with the help description of menu items as you hover over them.  Since all our menu item descriptions are blank, it replaces it with blank when you&#x27;re hovering in a menu.</div></article><article class="msg sat" id="m32">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-26T19:21:05Z">26 June 2010, 19:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1806#msg1806" rel="nofollow noopener">original</a></span></header>
+<div class="t">Changed the version number to 1.3 and removed &quot;Beta&quot;.
+
+(links removed, see below)
+
+Uses irc.lfnet.org.</div></article><article class="msg" id="m33">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-27T14:45:28Z">27 June 2010, 14:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1832#msg1832" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m not sure why but I noticed that as well - my Win32 build was a lot slower than the linux/mac builds I did.  I used MinGW and all that but maybe I made a mistake somewhere..  I probably used a different version of Berkeley DB than Satoshi too so that&#x27;s why the logs weren&#x27;t binary compatible.</div></article><article class="msg sat" id="m34">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-27T15:30:13Z">27 June 2010, 15:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1834#msg1834" rel="nofollow noopener">original</a></span></header>
+<div class="t">MinGW still only has good old stable 3.4.5.  There&#x27;s not much reason for them to update it.
+
+When I looked at the 3.4.5 compiled SHA disassembly, I couldn&#x27;t see any room for improvement at all.  I can&#x27;t imagine how 8% more could be squeezed out of it.  Is it possible Windows could have 8% more overhead?  Not making system calls or anything, just plain busy computational code, could task switching and other housekeeping operations take away that much?</div></article><article class="msg" id="m35">
+<header><b>dkaparis</b><span class="muted"> · <time datetime="2010-06-27T22:02:25Z">27 June 2010, 22:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1842#msg1842" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on June 27, 2010, 03:30:13 PM</div><div class="t">MinGW still only has good old stable 3.4.5.  There&#x27;s not much reason for them to update it.
+
+When I looked at the 3.4.5 compiled SHA disassembly, I couldn&#x27;t see any room for improvement at all.  I can&#x27;t imagine how 8% more could be squeezed out of it.  Is it possible Windows could have 8% more overhead?  Not making system calls or anything, just plain busy computational code, could task switching and other housekeeping operations take away that much?</div></blockquote><div class="t">Maybe best to look at the 4.4.3 compiled disassembly as well and see if there are any differences.
+
+On a related note, is the thing compilable by Visual C++? I&#x27;m inclined to give it a try when I get around to it.
+
+Dimitri</div></article><article class="msg sat" id="m36">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-02T20:37:17Z">2 July 2010, 20:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1926#msg1926" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: dkaparis on June 27, 2010, 10:02:25 PM</div><div class="t">On a related note, is the thing compilable by Visual C++? I&#x27;m inclined to give it a try when I get around to it.</div></blockquote><div class="t">It is, but generating is more than twice as slow.</div></article><article class="msg sat" id="m37">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-02T21:57:45Z">2 July 2010, 21:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1927#msg1927" rel="nofollow noopener">original</a></span></header>
+<div class="t">(reverted to rc2)
+
+Links removed, 0.3 is now released, so go to <a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a> to download it.</div></article><article class="msg" id="m38">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-07-04T19:39:32Z">4 July 2010, 19:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1945#msg1945" rel="nofollow noopener">original</a></span></header>
+<div class="t">Mac OS version - requires Intel processor and 10.5 (10.4 not supported)
+
+<a href="http://heliacal.net/~solar/bitcoin/builds/MacOSX-Intel-0.3/bitcoin-0.3.0.zip" rel="nofollow noopener">http://heliacal.net/~solar/bitcoin/builds/MacOSX-Intel-0.3/bitcoin-0.3.0.zip</a></div></article><article class="msg sat" id="m39">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-04T21:52:28Z">4 July 2010, 21:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg1947#msg1947" rel="nofollow noopener">original</a></span></header>
+<div class="t">Laszlo&#x27;s build is going to be our first Mac release so please test it!</div></article><article class="msg" id="m40">
+<header><b>BitLex</b><span class="muted"> · <time datetime="2010-07-06T17:52:58Z">6 July 2010, 17:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg2002#msg2002" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m running rc4 on xp32/64 and everything seems ok so far,
+installed without problems, ~50connections on a forwarded node, 8 on others,
+limited to 1(of2) and 1-2(of3) cores, which scales up nicely, but hasnt generated any coins yet.
+Hopefully i&#x27;ll get some tonight.  Cool</div></article><article class="msg sat" id="m41">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-06T19:43:18Z">6 July 2010, 19:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=199.msg2006#msg2006" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3 released
+<a href="http://bitcointalk.org/index.php?topic=238.msg2004#msg2004" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=238.msg2004#msg2004</a></div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p71-dying-bitcoins/">← Dying bitcoins</a><a rel="next" href="../../conversations/p73-major-meltdown/">Major Meltdown →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

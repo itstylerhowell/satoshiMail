@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>version 0.3 release (r97) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 July 2010: version 0.3 release. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/d77eac2/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="version 0.3 release (r97) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 July 2010: version 0.3 release. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/d77eac2/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="version 0.3 release (r97) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 July 2010: version 0.3 release. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "version 0.3 release", "url": "https://satoshimail.pages.dev/commits/d77eac2/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-04T06:15:06Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d77eac25b2ecd8e6ff5619cfa57d0ebc0682ed09"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "version 0.3 release", "item": "https://satoshimail.pages.dev/commits/d77eac2/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cd77eac25b2">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">version 0.3 release</span></div></nav>
+<main class="in">
+<h1>version 0.3 release</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 4 July 2010 · SVN r97 · release v0.3.0 · 2 files, +2 −11</p>
+<p class="actions"><a class="btn" href="../../#t-cd77eac25b2">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/d77eac25b2ecd8e6ff5619cfa57d0ebc0682ed09" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>init.cpp</code></summary><pre><code>@@ -383,7 +383,7 @@ bool CMyApp::OnInit2()
+     if (!fDebug &amp;&amp; !pszSetDataDir[0])
+         ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d.%d.%d%s, OS version %s\n&quot;, VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer, ((string)wxGetOsDescription()).c_str());
++    printf(&quot;Bitcoin version %d.%d.%d%s beta, OS version %s\n&quot;, VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer, ((string)wxGetOsDescription()).c_str());
+     printf(&quot;System default language is %d %s\n&quot;, m_locale.GetSystemLanguage(), ((string)m_locale.GetSysName()).c_str());
+     printf(&quot;Language file %s (%s)\n&quot;, (string(&quot;locale/&quot;) + (string)m_locale.GetCanonicalName() + &quot;/LC_MESSAGES/bitcoin.mo&quot;).c_str(), ((string)m_locale.GetLocale()).c_str());
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1598,7 +1598,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+-    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
++    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
+ 
+     // Change (c) into UTF-8 or ANSI copyright symbol
+     wxString str = m_staticTextMain-&gt;GetLabel();
+@@ -2541,12 +2541,3 @@ void CreateMainWindow()
+     ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+     CreateThread(ThreadDelayedRepaint, NULL);
+ }
+-
+-
+-
+-
+-
+-
+-
+-
+-</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/f077bc0/">← reduced max outbound connections from 15 to 8 --version…</a><a rel="next" href="../../commits/d882773/">Laszlo&#x27;s fix to make generate threads idle priority on… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

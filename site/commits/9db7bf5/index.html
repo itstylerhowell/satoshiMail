@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>gethashespersec and added version and… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: gethashespersec and added version and hashespersec to getinfo. 4 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/9db7bf5/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="gethashespersec and added version and… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: gethashespersec and added version and hashespersec to getinfo. 4 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/9db7bf5/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="gethashespersec and added version and… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: gethashespersec and added version and hashespersec to getinfo. 4 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "gethashespersec and added version and hashespersec to getinfo", "url": "https://satoshimail.pages.dev/commits/9db7bf5/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-12T13:23:02Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/9db7bf5f52194b0018272ce3f719115f8637da5c"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "gethashespersec and added version and…", "item": "https://satoshimail.pages.dev/commits/9db7bf5/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c9db7bf5f52">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">gethashespersec and added version and…</span></div></nav>
+<main class="in">
+<h1>gethashespersec and added version and hashespersec to getinfo</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 12 August 2010 · release v0.3.11_notexact · 4 files, +41 −12</p>
+<p class="actions"><a class="btn" href="../../#t-c9db7bf5f52">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/9db7bf5f52194b0018272ce3f719115f8637da5c" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -53,6 +53,9 @@ CCriticalSection cs_mapAddressBook;
+ 
+ vector&lt;unsigned char&gt; vchDefaultKey;
+ 
++double dHashesPerSec;
++int64 nHPSTimerStart;
++
+ // Settings
+ int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+@@ -2542,6 +2545,9 @@ void ThreadBitcoinMiner(void* parg)
+         PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
+     }
+     UIThreadCall(bind(CalledSetStatusBar, &quot;&quot;, 0));
++    nHPSTimerStart = 0;
++    if (vnThreadsRunning[3] == 0)
++        dHashesPerSec = 0;
+     printf(&quot;ThreadBitcoinMiner exiting, %d threads remaining\n&quot;, vnThreadsRunning[3]);
+ }
+ 
+@@ -2768,25 +2774,28 @@ void BitcoinMiner()
+ 
+             // Update nTime every few seconds
+             const unsigned int nMask = 0xffff;
++            const int nHashesPerCycle = (nMask+1);
+             if ((++tmp.block.nNonce &amp; nMask) == 0)
+             {
+                 // Meter hashes/sec
+-                static int64 nTimerStart;
+-                static int nHashCounter;
+-                if (nTimerStart == 0)
+-                    nTimerStart = GetTimeMillis();
++                static int nCycleCounter;
++                if (nHPSTimerStart == 0)
++                {
++                    nHPSTimerStart = GetTimeMillis();
++                    nCycleCounter = 0;
++                }
+                 else
+-                    nHashCounter++;
+-                if (GetTimeMillis() - nTimerStart &gt; 4000)
++                    nCycleCounter++;
++                if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
+                 {
+                     static CCriticalSection cs;
+                     CRITICAL_BLOCK(cs)
+                     {
+-                        if (GetTimeMillis() - nTimerStart &gt; 4000)
++                        if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
+                         {
+-                            double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
+-                            nTimerStart = GetTimeMillis();
+-                            nHashCounter = 0;
++                            dHashesPerSec = 1000.0 * nHashesPerCycle * nCycleCounter / (GetTimeMillis() - nHPSTimerStart);
++                            nHPSTimerStart = GetTimeMillis();
++                            nCycleCounter = 0;
+                             string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+                             UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
+                             static int64 nLogTime;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -42,6 +42,8 @@ extern CCriticalSection cs_mapRequestCount;
+ extern map&lt;string, string&gt; mapAddressBook;
+ extern CCriticalSection cs_mapAddressBook;
+ extern vector&lt;unsigned char&gt; vchDefaultKey;
++extern double dHashesPerSec;
++extern int64 nHPSTimerStart;
+ 
+ // Settings
+ extern int fGenerateBitcoins;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -217,13 +217,28 @@ Value setgenerate(const Array&amp; params, bool fHelp)
+ }
+ 
+ 
++Value gethashespersec(const Array&amp; params, bool fHelp)
++{
++    if (fHelp || params.size() != 0)
++        throw runtime_error(
++            &quot;gethashespersec\n&quot;
++            &quot;Returns a recent hashes per second performance measurement while generating.&quot;);
++
++    if (GetTimeMillis() - nHPSTimerStart &gt; 8000)
++        return (int64)0;
++    return (int64)dHashesPerSec;
++}
++
++
+ Value getinfo(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getinfo&quot;);
++            &quot;getinfo\n&quot;
++            &quot;Returns an object containing various state info.&quot;);
+ 
+     Object obj;
++    obj.push_back(Pair(&quot;version&quot;,       (int)VERSION));
+     obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
+     obj.push_back(Pair(&quot;blocks&quot;,        (int)nBestHeight + 1));
+     obj.push_back(Pair(&quot;connections&quot;,   (int)vNodes.size()));
+@@ -231,6 +246,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+     obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));
+     obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
+     obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
++    obj.push_back(Pair(&quot;hashespersec&quot;,  gethashespersec(params, false)));
+     return obj;
+ }
+ 
+@@ -467,6 +483,7 @@ Value getreceivedbylabel(const Array&amp; params, bool fHelp)
+ }
+ 
+ 
++
+ struct tallyitem
+ {
+     int64 nAmount;
+@@ -635,6 +652,7 @@ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+     make_pair(&quot;getbalance&quot;,            &amp;getbalance),
+     make_pair(&quot;getgenerate&quot;,           &amp;getgenerate),
+     make_pair(&quot;setgenerate&quot;,           &amp;setgenerate),
++    make_pair(&quot;gethashespersec&quot;,       &amp;gethashespersec),
+     make_pair(&quot;getinfo&quot;,               &amp;getinfo),
+     make_pair(&quot;getnewaddress&quot;,         &amp;getnewaddress),
+     make_pair(&quot;setlabel&quot;,              &amp;setlabel),</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 308;
+-static const char* pszSubVer = &quot;.2&quot;;
++static const char* pszSubVer = &quot;.3&quot;;
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/410b618/">← json-spirit print reals with 8 decimal places, bitcoind…</a><a rel="next" href="../../commits/f5d2bc8/">disable SSE2 on 32-bit →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

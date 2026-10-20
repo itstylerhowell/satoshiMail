@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin v0.1 released – Satoshi Nakamoto, Cryptography</title>
+<meta name="description" content="Satoshi Nakamoto, 8 January 2009: Announcing the first release of Bitcoin, a new electronic cash system that uses a peer-to-peer network to prevent…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/e2-bitcoin-v0-1-released/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin v0.1 released – Satoshi Nakamoto, Cryptography">
+<meta property="og:description" content="Satoshi Nakamoto, 8 January 2009: Announcing the first release of Bitcoin, a new electronic cash system that uses a peer-to-peer network to prevent…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/e2-bitcoin-v0-1-released/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin v0.1 released – Satoshi Nakamoto, Cryptography">
+<meta name="twitter:description" content="Satoshi Nakamoto, 8 January 2009: Announcing the first release of Bitcoin, a new electronic cash system that uses a peer-to-peer network to prevent…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Bitcoin v0.1 released", "url": "https://satoshimail.pages.dev/conversations/e2-bitcoin-v0-1-released/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-01-08T19:27:40Z", "text": "Announcing the first release of Bitcoin, a new electronic cash system that uses a peer-to-peer network to prevent double-spending. It's completely decentralized with no server or central authority. See bitcoin.org for screenshots. Download link: http://downloads.sourceforge.net/bitcoin/bitcoin-0.1.0.rar Windows only for now. Open source C++ code is included. - Unpack the files into a directory - Run BITCOIN.EXE - It automatically connects to other nodes If you can keep a node running that accepts incoming connections, you'll really be helping the network a lot. Port 8333 on your firewall needs to be open to receive incoming connections. The software is still alpha and experimental. There's no guarantee the system's state won't have to be restarted at some point if it becomes necessary, although I've done everything I can to build in extensibility and versioning. You can get coins by getting someone to send you some, or turn on Options->Generate Coins to run a node and generate blocks. I made the proof-of-work difficulty ridiculously easy to start with, so for a little while in the beginning a typical PC will be able to generate coins in just a few hours. It'll get a lot harder when competition makes the automatic adjustment drive up the difficulty. Generated coins must wait 120 blocks to mature before they can be spent. There are two ways to send money. If the recipient is online, you can enter their IP address and it will connect, get a new public key and send the transaction with comments. If the recipient is not online, it is possible to send to their Bitcoin address, which is a hash of their public key that they give you. They'll receive the transaction the next time they connect and get the block it's in. This method has the disadvantage that no comment information is sent, and a bit of privacy may be lost if the address is used multiple times, but it is a useful alternative if both users can't be online at the same time or the recipient can't receive…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Hal Finney"}, "datePublished": "2009-01-11T02:22:01Z", "text": "Congratulations to Satoshi on this first alpha release. I am looking forward to trying it out. It's interesting that the system can be configured to only allow a certain maximum number of coins ever to be generated. I guess the idea is that the amount of work needed to generate a new coin will become more difficult as time goes on. One immediate problem with any new currency is how to value it. Even ignoring the practical problem that virtually no one will accept it at first, there is still a…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-01-16T16:03:14Z", "text": "I would be surprised if 10 years from now we're not using electronic currency in some way, now that we know a way to do it that won't inevitably get dumbed down when the trusted third party gets cold feet. It could get started in a narrow niche like reward points, donation tokens, currency for a game or micropayments for adult sites. Initially it can be used in proof-of-work applications for services that could almost be free but not quite. It can already be used for pay-to-send e-mail. The…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Jonathan Thornburg"}, "datePublished": "2009-01-17T16:49:45Z", "text": "On Sat, 17 Jan 2009, Satoshi Nakamoto wrote: [[various possible uses of Bitcoin et al]] In the modern world, no major government wants to allow untracable international financial transactions above some fairly modest size thresholds. (The usual catch-phrases are things like \"laundering drug money\", \"tax evasion\", and/or \"financing terrorist groups\".) To this end, electronic financial transactions are currently monitored by various governments & their agencies, and any but the smallest of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Hal Finney"}, "datePublished": "2009-01-24T16:48:03Z", "text": "Certainly a valid point, and one which has been widely discussed in the debates over the years about electronic cash. Bitcoin has a couple of things going for it: one is that it is distributed, with no single point of failure, no \"mint\", no company with officers that can be subpoenaed and arrested and shut down. It is more like a P2P network, and as we have seen, despite degrees of at least governmental distaste, those are still around. Bitcoin could also conceivably operate in a less…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Bill Frantz"}, "datePublished": "2009-01-24T23:22:21Z", "text": "Some people tell me that the 0wned machines are among the most secure on the network because botnet operators work hard to keep others from compromising \"their\" machines. I could see the operators moving toward being legitimate security firms, protecting computers against compromise in exchange for some of the proof of work (POW) money. Cheers - Bill ------------------------------------------------------------------------- Bill Frantz | When it comes to the world | Periwinkle (408)356-8506 |…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "dan at geer.org"}, "datePublished": "2009-01-25T04:07:17Z", "text": "Bill Frantz writes: -+----------------- | Some people tell me that the 0wned machines are among the most | secure on the network because botnet operators work hard to | keep others from compromising \"their\" machines. I could see the | operators moving toward being legitimate security firms, | protecting computers against compromise in exchange for some of | the proof of work (POW) money. I'm one of those people. Quoting from my speech of 1/20: Rest of text upon request. Incidentally, I…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-01-25T15:47:10Z", "text": "Another factor that would mitigate spam if POW tokens have value: there would be a profit motive for people to set up massive quantities of fake e-mail accounts to harvest POW tokens from spam. They'd essentially be reverse-spamming the spammers with automated mailboxes that collect their POW and don't read the message. The ratio of fake mailboxes to real people could become too high for spam to be cost effective. The process has the potential to establish the POW token's value in the first…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Cryptography mailing list", "item": "https://satoshimail.pages.dev/conversations/cryptography/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoin v0.1 released", "item": "https://satoshimail.pages.dev/conversations/e2-bitcoin-v0-1-released/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-e2">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/cryptography/">Cryptography mailing list</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoin v0.1 released</span></div></nav>
+<main class="in">
+<h1>Bitcoin v0.1 released</h1>
+<p class="lead">Cryptography mailing list · 8 messages · from 8 January 2009 · with Bill Frantz, Hal Finney, Jonathan Thornburg, Satoshi Nakamoto, dan at geer.org</p>
+<p class="actions"><a class="btn" href="../../#t-e2">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/emails/cryptography/threads/2/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-01-08T19:27:40Z">8 January 2009, 19:27 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/014994.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">Announcing the first release of Bitcoin, a new electronic cash
+system that uses a peer-to-peer network to prevent double-spending.
+It&#x27;s completely decentralized with no server or central authority.
+
+See bitcoin.org for screenshots.
+
+Download link:
+<a href="http://downloads.sourceforge.net/bitcoin/bitcoin-0.1.0.rar" rel="nofollow noopener">http://downloads.sourceforge.net/bitcoin/bitcoin-0.1.0.rar</a>
+
+Windows only for now.  Open source C++ code is included.
+
+- Unpack the files into a directory
+- Run BITCOIN.EXE
+- It automatically connects to other nodes
+
+If you can keep a node running that accepts incoming connections,
+you&#x27;ll really be helping the network a lot.  Port 8333 on your
+firewall needs to be open to receive incoming connections.
+
+The software is still alpha and experimental.  There&#x27;s no guarantee
+the system&#x27;s state won&#x27;t have to be restarted at some point if it
+becomes necessary, although I&#x27;ve done everything I can to build in
+extensibility and versioning.
+
+You can get coins by getting someone to send you some, or turn on
+Options-&gt;Generate Coins to run a node and generate blocks.  I made
+the proof-of-work difficulty ridiculously easy to start with, so
+for a little while in the beginning a typical PC will be able to
+generate coins in just a few hours.  It&#x27;ll get a lot harder when
+competition makes the automatic adjustment drive up the difficulty.
+Generated coins must wait 120 blocks to mature before they can be
+spent.
+
+There are two ways to send money.  If the recipient is online, you
+can enter their IP address and it will connect, get a new public
+key and send the transaction with comments.  If the recipient is
+not online, it is possible to send to their Bitcoin address, which
+is a hash of their public key that they give you.  They&#x27;ll receive
+the transaction the next time they connect and get the block it&#x27;s
+in.  This method has the disadvantage that no comment information
+is sent, and a bit of privacy may be lost if the address is used
+multiple times, but it is a useful alternative if both users can&#x27;t
+be online at the same time or the recipient can&#x27;t receive incoming
+connections.
+
+Total circulation will be 21,000,000 coins.  It&#x27;ll be distributed
+to network nodes when they make blocks, with the amount cut in half
+every 4 years.
+
+first 4 years: 10,500,000 coins
+next 4 years: 5,250,000 coins
+next 4 years: 2,625,000 coins
+next 4 years: 1,312,500 coins
+etc...
+
+When that runs out, the system can support transaction fees if
+needed.  It&#x27;s based on open market competition, and there will
+probably always be nodes willing to process transactions for free.
+
+Satoshi Nakamoto</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg" id="m1">
+<header><b>Hal Finney</b><span class="muted"> · <time datetime="2009-01-11T02:22:01Z">11 January 2009, 02:22 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015004.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Satoshi Nakamoto writes:</div><div class="t">Announcing the first release of Bitcoin, a new electronic cash
+system that uses a peer-to-peer network to prevent double-spending.
+It&#x27;s completely decentralized with no server or central authority.
+
+See bitcoin.org for screenshots.
+
+Download link:
+<a href="http://downloads.sourceforge.net/bitcoin/bitcoin-0.1.0.rar" rel="nofollow noopener">http://downloads.sourceforge.net/bitcoin/bitcoin-0.1.0.rar</a></div></blockquote><div class="t">Congratulations to Satoshi on this first alpha release.  I am looking
+forward to trying it out.</div><blockquote><div class="t">Total circulation will be 21,000,000 coins.  It&#x27;ll be distributed
+to network nodes when they make blocks, with the amount cut in half
+every 4 years.
+
+first 4 years: 10,500,000 coins
+next 4 years: 5,250,000 coins
+next 4 years: 2,625,000 coins
+next 4 years: 1,312,500 coins
+etc...</div></blockquote><div class="t">It&#x27;s interesting that the system can be configured to only allow a
+certain maximum number of coins ever to be generated. I guess the
+idea is that the amount of work needed to generate a new coin will
+become more difficult as time goes on.
+
+One immediate problem with any new currency is how to value it. Even
+ignoring the practical problem that virtually no one will accept it
+at first, there is still a difficulty in coming up with a reasonable
+argument in favor of a particular non-zero value for the coins.
+
+As an amusing thought experiment, imagine that Bitcoin is successful and
+becomes the dominant payment system in use throughout the world.  Then the
+total value of the currency should be equal to the total value of all
+the wealth in the world. Current estimates of total worldwide household
+wealth that I have found range from $100 trillion to $300 trillion. With
+20 million coins, that gives each coin a value of about $10 million.
+
+So the possibility of generating coins today with a few cents of compute
+time may be quite a good bet, with a payoff of something like 100 million
+to 1! Even if the odds of Bitcoin succeeding to this degree are slim,
+are they really 100 million to one against? Something to think about...
+
+Hal</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-01-16T16:03:14Z">16 January 2009, 16:03 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015014.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Dustin D. Trammell wrote:
+&gt; Satoshi Nakamoto wrote:
+&gt; You know, I think there were a lot more people interested in the 90&#x27;s,
+&gt; but after more than a decade of failed Trusted Third Party based systems
+&gt; (Digicash, etc), they see it as a lost cause. I hope they can make the
+&gt; distinction that this is the first time I know of that we&#x27;re trying a
+&gt; non-trust-based system.
+
+Yea, that was the primary feature that caught my eye. The real trick
+will be to get people to actually value the BitCoins so that they become
+currency.</div></blockquote><div class="t">I would be surprised if 10 years from now we&#x27;re not using
+electronic currency in some way, now that we know a way to do it
+that won&#x27;t inevitably get dumbed down when the trusted third party
+gets cold feet.
+
+It could get started in a narrow niche like reward points,
+donation tokens, currency for a game or micropayments for adult
+sites.  Initially it can be used in proof-of-work applications
+for services that could almost be free but not quite.
+
+It can already be used for pay-to-send e-mail.  The send dialog is
+resizeable and you can enter as long of a message as you like.
+It&#x27;s sent directly when it connects.  The recipient doubleclicks
+on the transaction to see the full message.  If someone famous is
+getting more e-mail than they can read, but would still like to
+have a way for fans to contact them, they could set up Bitcoin and
+give out the IP address on their website.  &quot;Send X bitcoins to my
+priority hotline at this IP and I&#x27;ll read the message personally.&quot;
+
+Subscription sites that need some extra proof-of-work for their
+free trial so it doesn&#x27;t cannibalize subscriptions could charge
+bitcoins for the trial.
+
+It might make sense just to get some in case it catches on.  If
+enough people think the same way, that becomes a self fulfilling
+prophecy.  Once it gets bootstrapped, there are so many
+applications if you could effortlessly pay a few cents to a
+website as easily as dropping coins in a vending machine.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg" id="m3">
+<header><b>Jonathan Thornburg</b><span class="muted"> · <time datetime="2009-01-17T16:49:45Z">17 January 2009, 16:49 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015016.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">On Sat, 17 Jan 2009, Satoshi Nakamoto wrote:
+[[various possible uses of Bitcoin et al]]</div><blockquote><div class="t">Once it gets bootstrapped, there are so many
+applications if you could effortlessly pay a few cents to a
+website as easily as dropping coins in a vending machine.  </div></blockquote><div class="t">In the modern world, no major government wants to allow untracable
+international financial transactions above some fairly modest size
+thresholds.  (The usual catch-phrases are things like &quot;laundering
+drug money&quot;, &quot;tax evasion&quot;, and/or &quot;financing terrorist groups&quot;.)
+To this end, electronic financial transactions are currently monitored
+by various governments &amp; their agencies, and any but the smallest of
+transactions now come with various ID requirements for the humans
+on each end.
+
+But if each machine in a million-node botnet sends 10 cents to a
+randomly chosen machine in another botnet on the other side of the
+world, you&#x27;ve just moved $100K, in a way that seems very hard to
+trace.  To me, this means that no major government is likely to allow
+Bitcoin in its present form to operate on a large scale.
+
+I also worry about other &quot;domestic&quot; ways nasty people could exploit
+a widespread Bitcoin deployment:
+* Spammer botnets could burn through pay-per-send email filters
+  trivially (as usual, the costs would fall on people other than the
+  botnet herders &amp; spammers).
+* If each machine in a botnet sends 1 cent to a herder, that can add
+  up to a significant amount of money.  In other words, Bitcoin would
+  make botnet herding and the assorted malware industry even more
+  profitable than it already is.
+
+Is there something obvious I&#x27;ve missed?  Is there a clever aspect of
+the design which prevents botnets from exploiting the system?  Is there
+a way for every major government to monitor all Bitcoin transactions
+to watch for botnet-to-botnet sending?
+
+--
+-- From: &quot;Jonathan Thornburg [remove -animal to reply]&quot; &lt;jthorn at astro.indiana-zebra.edu&gt;
+   Dept of Astronomy, Indiana University, Bloomington, Indiana, USA
+   &quot;Washing one&#x27;s hands of the conflict between the powerful and the
+    powerless means to side with the powerful, not to be neutral.&quot;
+                                      -- quote by Freire / poster by Oxfam</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg" id="m4">
+<header><b>Hal Finney</b><span class="muted"> · <time datetime="2009-01-24T16:48:03Z">24 January 2009, 16:48 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015036.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Jonathan Thornburg writes:</div><div class="t">In the modern world, no major government wants to allow untracable
+international financial transactions above some fairly modest size
+thresholds.  (The usual catch-phrases are things like &quot;laundering
+drug money&quot;, &quot;tax evasion&quot;, and/or &quot;financing terrorist groups&quot;.)
+To this end, electronic financial transactions are currently monitored
+by various governments &amp; their agencies, and any but the smallest of
+transactions now come with various ID requirements for the humans
+on each end.
+
+But if each machine in a million-node botnet sends 10 cents to a
+randomly chosen machine in another botnet on the other side of the
+world, you&#x27;ve just moved $100K, in a way that seems very hard to
+trace.  To me, this means that no major government is likely to allow
+Bitcoin in its present form to operate on a large scale.</div></blockquote><div class="t">Certainly a valid point, and one which has been widely discussed in
+the debates over the years about electronic cash. Bitcoin has a couple
+of things going for it: one is that it is distributed, with no single
+point of failure, no &quot;mint&quot;, no company with officers that can be
+subpoenaed and arrested and shut down. It is more like a P2P network,
+and as we have seen, despite degrees of at least governmental distaste,
+those are still around.
+
+Bitcoin could also conceivably operate in a less anonymous mode, with
+transfers being linked to individuals, rather than single-use keys. It
+would still be useful to have a large scale, decentralized electronic
+payment system.
+
+It also might be possible to refactor and restructure Bitcoin to separate
+out the key new idea, a decentralized, global, irreversible transaction
+database. Such a functionality might be useful for other purposes. Once
+it exists, using it to record monetary transfers would be a sort of side
+effect and might be harder to shut down.</div><blockquote><div class="t">I also worry about other &quot;domestic&quot; ways nasty people could exploit
+a widespread Bitcoin deployment:
+* Spammer botnets could burn through pay-per-send email filters
+  trivially (as usual, the costs would fall on people other than the
+  botnet herders &amp; spammers).
+* If each machine in a botnet sends 1 cent to a herder, that can add
+  up to a significant amount of money.  In other words, Bitcoin would
+  make botnet herding and the assorted malware industry even more
+  profitable than it already is.</div></blockquote><div class="t">It&#x27;s important to understand that the proof-of-work (POW) aspect of
+Bitcoin is primarily oriented around ensuring the soundness of the
+historical transaction database. Each Bitcoin data block records a set
+of transactions, and includes a hash collision. Subsequent data blocks
+have their own transactions, their own collisions, and also chain to
+all earlier hashes.  The result is that once a block is &quot;buried&quot; under
+enough new blocks, it is essentially certain (given the threat model,
+namely that attackers cannot muster more than X% of the compute power
+of legitimate node operators) that old transactions can&#x27;t be reversed.
+
+Creating new coins is indeed currently also being done by POW, but I
+think that is seen as a temporary expedient, and in fact the current
+software phases that out over several years. Hence worries about botnets
+being able to manufacture large quantities of POW tokens are only a
+temporary concern, in the context of Bitcoin.
+
+There have been a number of discussions in the past about POW tokens as
+anti spam measures, given the botnet threat. References are available from
+&quot;Proof-of-work system&quot; on Wikipedia. Analyses have yielded mixed results,
+depending on the assumptions and system design.
+
+If POW tokens do become useful, and especially if they become money,
+machines will no longer sit idle. Users will expect their computers to
+be earning them money (assuming the reward is greater than the cost to
+operate). A computer whose earnings are being stolen by a botnet will
+be more noticeable to its owner than is the case today, hence we might
+expect that in that world, users will work harder to maintain their
+computers and clean them of botnet infestations.
+
+Countermeasures by botnet operators would include moderating their take,
+perhaps only stealing 10% of the productive capacity of invaded computers,
+so that their owners would be unlikely to notice. This kind of thinking
+quickly degenerates into unreliable speculation, but it points out the
+difficulties of analyzing the full ramifications of a world where POW
+tokens are valuble.
+
+Hal Finney</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg" id="m5">
+<header><b>Bill Frantz</b><span class="muted"> · <time datetime="2009-01-24T23:22:21Z">24 January 2009, 23:22 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015038.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>hal at finney.org (&quot;Hal Finney&quot;) on Saturday, January 24, 2009 wrote:</div><div class="t">Countermeasures by botnet operators would include moderating their take,
+perhaps only stealing 10% of the productive capacity of invaded computers,
+so that their owners would be unlikely to notice. This kind of thinking
+quickly degenerates into unreliable speculation, but it points out the
+difficulties of analyzing the full ramifications of a world where POW
+tokens are valuble.</div></blockquote><div class="t">Some people tell me that the 0wned machines are among the most secure on
+the network because botnet operators work hard to keep others from
+compromising &quot;their&quot; machines. I could see the operators moving toward
+being legitimate security firms, protecting computers against compromise in
+exchange for some of the proof of work (POW) money.
+
+Cheers - Bill
+
+-------------------------------------------------------------------------
+Bill Frantz        | When it comes to the world     | Periwinkle
+(408)356-8506      | around us, is there any choice | 16345 Englewood Ave
+www.pwpconsult.com | but to explore? - Lisa Randall | Los Gatos, CA 95032</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg" id="m6">
+<header><b>dan at geer.org</b><span class="muted"> · <time datetime="2009-01-25T04:07:17Z">25 January 2009, 04:07 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015040.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">Bill Frantz writes:
+-+-----------------
+ | Some people tell me that the 0wned machines are among the most
+ | secure on the network because botnet operators work hard to
+ | keep others from compromising &quot;their&quot; machines. I could see the
+ | operators moving toward being legitimate security firms,
+ | protecting computers against compromise in exchange for some of
+ | the proof of work (POW) money.
+
+I&#x27;m one of those people.  Quoting from my speech of 1/20:</div><blockquote><div class="t">Virus attacks have, of course, become rarer over time, which is
+to say that where infectious agents once ruled, today it is
+parasites.  Parasites have no reason to kill their hosts -- on
+the contrary they want their hosts to survive well enough to
+feed the parasite.  A parasite will generally not care to be all
+that visible, either.  The difference between parasitism and
+symbiosis can be a close call in some settings, and of the folks
+who famously bragged of being able to take the Internet down in
+twenty minutes, one has said that a computer may be better
+managed once it is in a botnet than before since the bot-master
+will be serious about closing the machine up tight against
+further penetration and similarly serious about patch
+management.  Therefore, since one can then say that both the
+machine&#x27;s nominal owner and the bot master are mutually helped,
+what we see is evolution from parasite to symbiont in action.
+According to Margulis and Sagan, &quot;Life did not take over the
+globe by combat, but by networking.&quot;  On this basis and others,
+bot-nets are a life form.</div></blockquote><div class="t">Rest of text upon request.  Incidentally, I *highly* recommend
+Daniel Suarez&#x27;s _Daemon_; trust me as to its relevance.  Try
+this for a non-fiction taste:
+
+<a href="http://fora.tv/2008/08/08/Daniel_Suarez_Daemon_Bot-Mediated_Reality" rel="nofollow noopener">http://fora.tv/2008/08/08/Daniel_Suarez_Daemon_Bot-Mediated_Reality</a>
+
+--dan</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-01-25T15:47:10Z">25 January 2009, 15:47 UTC</time> · <a href="http://www.metzdowd.com/pipermail/cryptography/2009-January/015041.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Hal Finney wrote:</div><div class="t">&gt; * Spammer botnets could burn through pay-per-send email filters
+&gt;   trivially
+If POW tokens do become useful, and especially if they become money,
+machines will no longer sit idle. Users will expect their computers to
+be earning them money (assuming the reward is greater than the cost to
+operate). A computer whose earnings are being stolen by a botnet will
+be more noticeable to its owner than is the case today, hence we might
+expect that in that world, users will work harder to maintain their
+computers and clean them of botnet infestations.</div></blockquote><div class="t">Another factor that would mitigate spam if POW tokens have value:
+there would be a profit motive for people to set up massive
+quantities of fake e-mail accounts to harvest POW tokens from
+spam.  They&#x27;d essentially be reverse-spamming the spammers with
+automated mailboxes that collect their POW and don&#x27;t read the
+message.  The ratio of fake mailboxes to real people could become
+too high for spam to be cost effective.
+
+The process has the potential to establish the POW token&#x27;s value
+in the first place, since spammers that don&#x27;t have a botnet could
+buy tokens from harvesters.  While the buying back would
+temporarily let more spam through, it would only hasten the
+self-defeating cycle leading to too many harvesters exploiting the
+spammers.
+
+Interestingly, one of the e-gold systems already has a form of
+spam called &quot;dusting&quot;.  Spammers send a tiny amount of gold dust
+in order to put a spam message in the transaction&#x27;s comment field.
+ If the system let users configure the minimum payment they&#x27;re
+willing to receive, or at least the minimum that can have a
+message with it, users could set how much they&#x27;re willing to get
+paid to receive spam.
+
+Satoshi Nakamoto</div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo at metzdowd.com</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/bitcoin-v0-1/">Bitcoin v0.1</a> <span class="muted">The first release of the Bitcoin software, for Windows, in January 2009.</span></li><li><a href="../../satoshipedia/hal-finney/">Hal Finney</a> <span class="muted">Cypherpunk who ran Bitcoin from its first release and received its first transaction.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/e1-bitcoin-p2p-e-cash-paper/">← Bitcoin P2P e-cash paper</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

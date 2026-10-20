@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin client and website translation – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 8 February 2010: Thank you for the offer to help translate. That is probably the best way you could help. I will need to prepare the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p26-bitcoin-client-and-website-translation/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin client and website translation – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 8 February 2010: Thank you for the offer to help translate. That is probably the best way you could help. I will need to prepare the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p26-bitcoin-client-and-website-translation/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin client and website translation – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 8 February 2010: Thank you for the offer to help translate. That is probably the best way you could help. I will need to prepare the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Bitcoin client and website translation", "url": "https://satoshimail.pages.dev/conversations/p26-bitcoin-client-and-website-translation/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-08T01:27:02Z", "text": "Thank you for the offer to help translate. That is probably the best way you could help. I will need to prepare the code for translation first. wxWidgets has locale support, and most strings are in generated code that is already wrapped, so it shouldn't be too hard. We also must finish upgrading to wxWidgets-2.9.0 to get UTF-8 support. I've done test builds with 2.9.0 and there is one bug left to fix. What operating system are you using? Windows, Linux 32-bit or 64 bit? Split from another thread <https://www.bitcoin.org/smf/index.php?topic=44>. sirius-m", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "BlueSky"}, "datePublished": "2010-02-08T08:47:08Z", "text": "I am running Windows 32 (But have AMD64 dual core machine), but could, if required have a version of Linux using virtualisation(I must install this). The most simple way at present is to have different language binaries(e.g. bitcoin_en.exe, bitcoin_zh.exe etc.). Please post when you want this translated, this would mean there could be a dual language release for the next version (Why not a tri-language release, you do speak Japanese no?)."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-08T16:10:37Z", "text": "It's much easier to have a single binary and multiple .mo files. It's too much maintenance work to have lots of build variations. Once the software support is implemented, anyone could contribute translations. wxWidgets uses the gettext standard. You use the gettext tools or something like poedit to create a .po file by scanning the sourcefiles for strings and editing the translations into the .po file, then compile it into a .mo file. The program loads the .mo file at runtime and reskins all…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "giik"}, "datePublished": "2010-02-08T19:28:28Z", "text": "I'm willing to help you translate to Dutch. Just let us know, when it's possible!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2010-02-08T21:36:01Z", "text": "I can translate it into German, if you wish."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-02-09T16:08:39Z", "text": "You can send me translations of the bitcoin.org site as private messages (or if it's too long, I'll pm you my e-mail address). If you can translate only the front page, it's ok too."}, {"@type": "Comment", "author": {"@type": "Person", "name": "riX"}, "datePublished": "2010-02-09T20:47:58Z", "text": "Sweet! I've been looking for something to make some kind of semi-cloud setup, and JSON-RPC looks promising. Keep up the good work!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2010-02-09T21:33:33Z", "text": "Do you want it as plain-text or a .html or .php file ?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-02-10T15:11:47Z", "text": "Plain text is good, but add the heading and list html tags if possible."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-02-10T18:15:05Z", "text": "It looks like the Bitcoin Wikipedia article <http://en.wikipedia.org/wiki/Bitcoin> is only available in English. How about some of you either translate or write a new article in your language."}, {"@type": "Comment", "author": {"@type": "Person", "name": "giik"}, "datePublished": "2010-02-16T10:23:05Z", "text": "My Dutch translation is almost finished. I will send it to sirius-m this week."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-17T19:19:43Z", "text": "I updated the SVN with changes to support translation. Translatable strings are all enclosed in _(\"\"), and we're using UTF-8 on all platforms. When the program runs, it looks in the directory of the EXE for the file: locale\\<langcode>\\LC_MESSAGES\\bitcoin.mo <langcode> is the two letter code of the language your OS is set to, like \"de\" or \"nl\". On Linux, it also looks for: /usr/share/locale/<langcode>/LC_MESSAGES/bitcoin.mo /usr/local/share/locale/<langcode>/LC_MESSAGES/bitcoin.mo (are there…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoin client and website translation", "item": "https://satoshimail.pages.dev/conversations/p26-bitcoin-client-and-website-translation/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p26">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoin client and website translation</span></div></nav>
+<main class="in">
+<h1>Bitcoin client and website translation</h1>
+<p class="lead">BitcoinTalk forum · 12 messages · from 8 February 2010 · with BlueSky, NewLibertyStandard, Satoshi Nakamoto, SmokeTooMuch, giik, riX…</p>
+<p class="actions"><a class="btn" href="../../#t-p26">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/26/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T01:27:02Z">8 February 2010, 01:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg279#msg279" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thank you for the offer to help translate.  That is probably the best way you could help.
+
+I will need to prepare the code for translation first.  wxWidgets has locale support, and most strings are in generated code that is already wrapped, so it shouldn&#x27;t be too hard.  We also must finish upgrading to wxWidgets-2.9.0 to get UTF-8 support.  I&#x27;ve done test builds with 2.9.0 and there is one bug left to fix.
+
+What operating system are you using?  Windows, Linux 32-bit or 64 bit?
+
+Split from another thread &lt;<a href="https://www.bitcoin.org/smf/index.php?topic=44" rel="nofollow noopener">https://www.bitcoin.org/smf/index.php?topic=44</a>&gt;.
+sirius-m</div></article><article class="msg" id="m1">
+<header><b>BlueSky</b><span class="muted"> · <time datetime="2010-02-08T08:47:08Z">8 February 2010, 08:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg280#msg280" rel="nofollow noopener">original</a></span></header>
+<div class="t">I am running Windows 32 (But have AMD64 dual core machine), but could, if required have a version of Linux using virtualisation(I must install this).
+
+The most simple way at present is to have different language binaries(e.g. bitcoin_en.exe, bitcoin_zh.exe etc.). Please post when you want this translated, this would mean there could be a dual language release for the next version (Why not a tri-language release, you do speak Japanese no?).</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T16:10:37Z">8 February 2010, 16:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg283#msg283" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s much easier to have a single binary and multiple .mo files.  It&#x27;s too much maintenance work to have lots of build variations.  Once the software support is implemented, anyone could contribute translations.
+
+wxWidgets uses the gettext standard.  You use the gettext tools or something like poedit to create a .po file by scanning the sourcefiles for strings and editing the translations into the .po file, then compile it into a .mo file.  The program loads the .mo file at runtime and reskins all the strings.  Additional languages can be added to an existing program by adding .mo files without recompiling the program.
+
+On Windows, the .mo files would go in a lang subdirectory in the directory where the EXE is located.
+
+Right now I&#x27;m working on JSON-RPC and command line support, but when I&#x27;m finished with that I hope to do this next.</div></article><article class="msg" id="m3">
+<header><b>giik</b><span class="muted"> · <time datetime="2010-02-08T19:28:28Z">8 February 2010, 19:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg285#msg285" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on February 08, 2010, 01:27:02 AM</div><div class="t">Thank you for the offer to help translate.  That is probably the best way you could help.</div></blockquote><div class="t">I&#x27;m willing to help you translate to Dutch. Just let us know, when it&#x27;s possible!</div></article><article class="msg" id="m4">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2010-02-08T21:36:01Z">8 February 2010, 21:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg288#msg288" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can translate it into German, if you wish.</div></article><article class="msg" id="m5">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-02-09T16:08:39Z">9 February 2010, 16:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg298#msg298" rel="nofollow noopener">original</a></span></header>
+<div class="t">You can send me translations of the bitcoin.org site as private messages (or if it&#x27;s too long, I&#x27;ll pm you my e-mail address). If you can translate only the front page, it&#x27;s ok too.</div></article><article class="msg" id="m6">
+<header><b>riX</b><span class="muted"> · <time datetime="2010-02-09T20:47:58Z">9 February 2010, 20:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg302#msg302" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on February 08, 2010, 04:10:37 PM</div><div class="t">[...]JSON-RPC and command line support[...]</div></blockquote><div class="t">Sweet! I&#x27;ve been looking for something to make some kind of semi-cloud setup, and JSON-RPC looks promising. Keep up the good work!</div></article><article class="msg" id="m7">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2010-02-09T21:33:33Z">9 February 2010, 21:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg303#msg303" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sirius-m on February 09, 2010, 04:08:39 PM</div><div class="t">You can send me translations of the bitcoin.org site as private messages (or if it&#x27;s too long, I&#x27;ll pm you my e-mail address). If you can translate only the front page, it&#x27;s ok too.</div></blockquote><div class="t">Do you want it as plain-text or a .html or .php file ?</div></article><article class="msg" id="m8">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-02-10T15:11:47Z">10 February 2010, 15:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg308#msg308" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: SmokeTooMuch on February 09, 2010, 09:33:33 PM</div><div class="t">&gt; Quote from: sirius-m on February 09, 2010, 04:08:39 PM
+&gt; You can send me translations of the bitcoin.org site as private messages (or if it&#x27;s too long, I&#x27;ll pm you my e-mail address). If you can translate only the front page, it&#x27;s ok too.
+Do you want it as plain-text or a .html or .php file ?</div></blockquote><div class="t">Plain text is good, but add the heading and list html tags if possible.</div></article><article class="msg" id="m9">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-02-10T18:15:05Z">10 February 2010, 18:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg309#msg309" rel="nofollow noopener">original</a></span></header>
+<div class="t">It looks like the Bitcoin Wikipedia article &lt;<a href="http://en.wikipedia.org/wiki/Bitcoin" rel="nofollow noopener">http://en.wikipedia.org/wiki/Bitcoin</a>&gt; is only available in English. How about some of you either translate or write a new article in your language.</div></article><article class="msg" id="m10">
+<header><b>giik</b><span class="muted"> · <time datetime="2010-02-16T10:23:05Z">16 February 2010, 10:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg374#msg374" rel="nofollow noopener">original</a></span></header>
+<div class="t">My Dutch translation is almost finished. I will send it to sirius-m this week.</div></article><article class="msg sat" id="m11">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-17T19:19:43Z">17 February 2010, 19:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg389#msg389" rel="nofollow noopener">original</a></span></header>
+<div class="t">I updated the SVN with changes to support translation.  Translatable strings are all enclosed in _(&quot;&quot;), and we&#x27;re using UTF-8 on all platforms.
+
+When the program runs, it looks in the directory of the EXE for the file: locale\&lt;langcode&gt;\LC_MESSAGES\bitcoin.mo
+
+&lt;langcode&gt; is the two letter code of the language your OS is set to, like &quot;de&quot; or &quot;nl&quot;.
+
+On Linux, it also looks for:
+/usr/share/locale/&lt;langcode&gt;/LC_MESSAGES/bitcoin.mo
+/usr/local/share/locale/&lt;langcode&gt;/LC_MESSAGES/bitcoin.mo
+(are there other standard places it should look on linux?)
+
+Here&#x27;s a quick walkthrough using poedit to make a .po and .mo file:
+
+- Download the bitcoin sourcecode from SVN
+- In the trunk directory, mkdir locale\&lt;lang&gt;\LC_MESSAGES
+- In poedit, File-&gt;New catalog-&gt;Paths tab
+- Click the &quot;New item&quot; dotted rectangle button
+- Put &quot;../../..&quot; and MAKE SURE TO PRESS ENTER to add the path
+- Click OK
+- Save the file as &quot;bitcoin.po&quot; in the LC_MESSAGES directory you made
+- It should then scan the sourcecode and find about 170 strings
+- If it didn&#x27;t find anything, check Catalog-&gt;Settings-&gt;Path tab, make sure the &quot;../../..&quot; was added
+
+When you&#x27;re done translating, commit both bitcoin.po (the editable catalog file) and bitcoin.mo (compiled data used by the program).</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p24-make-your-we-accept-bitcoin-logo/">← Make your &quot;we accept Bitcoin&quot; logo</a><a rel="next" href="../../conversations/p25-simple-to-implement-feature-requests/">Simple to implement feature requests →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

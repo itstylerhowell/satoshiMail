@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>try to auto-detect whether to use… (r150) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 September 2010: try to auto-detect whether to use 128-bit 4-way SSE2. 4 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/7629d36/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="try to auto-detect whether to use… (r150) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 September 2010: try to auto-detect whether to use 128-bit 4-way SSE2. 4 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/7629d36/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="try to auto-detect whether to use… (r150) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 September 2010: try to auto-detect whether to use 128-bit 4-way SSE2. 4 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "try to auto-detect whether to use 128-bit 4-way SSE2", "url": "https://satoshimail.pages.dev/commits/7629d36/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-09T01:00:40Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/7629d36a530087806e80ed3c5866e8ec64319828"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "try to auto-detect whether to use…", "item": "https://satoshimail.pages.dev/commits/7629d36/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c7629d36a53">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">try to auto-detect whether to use…</span></div></nav>
+<main class="in">
+<h1>try to auto-detect whether to use 128-bit 4-way SSE2</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 9 September 2010 · SVN r150 · release v0.3.13 · 4 files, +71 −5</p>
+<p class="actions"><a class="btn" href="../../#t-c7629d36a53">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/7629d36a530087806e80ed3c5866e8ec64319828" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>cryptopp/secblock.h</code></summary><pre><code>@@ -184,8 +184,8 @@ public:
+ 
+ 	void deallocate(void *p, size_type n)
+ 	{
+-        //// Bitcoin: can&#x27;t figure out why this is tripping on a few compiles.
+-        //assert(false);
++		//// Bitcoin: don&#x27;t know why this trips, probably a false alarm, depends on the compiler used. 
++		//assert(false);
+ 	}
+ 
+ 	size_type max_size() const {return 0;}</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2767,6 +2767,68 @@ inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
+ static const int NPAR = 32;
+ extern void Double_BlockSHA256(const void* pin, void* pout, const void* pinit, unsigned int hash[8][NPAR], const void* init2);
+ 
++#ifdef __GNUC__
++void CallCPUID(int in, int&amp; aret, int&amp; cret)
++{
++    int a, c;
++    asm (
++        &quot;mov %2, %%eax; &quot; // in into eax
++        &quot;cpuid;&quot;
++        &quot;mov %%eax, %0;&quot; // eax into ret
++        &quot;mov %%ecx, %1;&quot; // eax into ret
++        :&quot;=r&quot;(a),&quot;=r&quot;(c) /* output */
++        :&quot;r&quot;(in) /* input */
++        :&quot;%eax&quot;,&quot;%ecx&quot; /* clobbered register */
++    );
++    aret = a;
++    cret = c;
++}
++
++bool Detect128BitSSE2()
++{
++    int a, c, nBrand;
++    CallCPUID(0, a, nBrand);
++    bool fIntel = (nBrand == 0x6c65746e); // ntel
++    bool fAMD = (nBrand == 0x444d4163); // cAMD
++
++    struct
++    {
++        unsigned int nStepping : 4;
++        unsigned int nModel : 4;
++        unsigned int nFamily : 4;
++        unsigned int nProcessorType : 2;
++        unsigned int nUnused : 2;
++        unsigned int nExtendedModel : 4;
++        unsigned int nExtendedFamily : 8;
++    }
++    cpu;
++    CallCPUID(1, a, c);
++    memcpy(&amp;cpu, &amp;a, sizeof(cpu));
++    int nFamily = cpu.nExtendedFamily + cpu.nFamily;
++    int nModel = cpu.nExtendedModel*16 + cpu.nModel;
++
++    // We need Intel Nehalem or AMD K10 or better for 128bit SSE2
++    // Nehalem = i3/i5/i7 and some Xeon
++    // K10 = Opterons with 4 or more cores, Phenom, Phenom II, Athlon II
++    //  Intel Core i5  family 6, model 26 or 30
++    //  Intel Core i7  family 6, model 26 or 30
++    //  Intel Core i3  family 6, model 37
++    //  AMD Phenom    family 16, model 10
++    bool fUseSSE2 = ((fIntel &amp;&amp; nFamily * 10000 + nModel &gt;=  60026) ||
++                     (fAMD   &amp;&amp; nFamily * 10000 + nModel &gt;= 160010));
++
++    static bool fPrinted;
++    if (!fPrinted)
++    {
++        fPrinted = true;
++        printf(&quot;CPUID %08x family %d, model %d, stepping %d, fUseSSE2=%d\n&quot;, nBrand, nFamily, nModel, cpu.nStepping, fUseSSE2);
++    }
++    return fUseSSE2;
++}
++#else
++bool Detect128BitSSE2() { return false; }
++#endif
++
+ 
+ 
+ 
+@@ -2774,6 +2836,9 @@ void BitcoinMiner()
+ {
+     printf(&quot;BitcoinMiner started\n&quot;);
+     SetThreadPriority(THREAD_PRIORITY_LOWEST);
++    bool f4WaySSE2 = Detect128BitSSE2();
++    if (mapArgs.count(&quot;-4way&quot;))
++        f4WaySSE2 = (mapArgs[&quot;-4way&quot;] != &quot;0&quot;);
+ 
+     CKey key;
+     key.MakeNewKey();
+@@ -2913,7 +2978,6 @@ void BitcoinMiner()
+         //
+         // Search
+         //
+-        bool f4WaySSE2 = mapArgs.count(&quot;-4way&quot;);
+         int64 nStart = GetTime();
+         uint256 hashTarget = CBigNum().SetCompact(pblock-&gt;nBits).getuint256();
+         uint256 hashbuf[2];</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -1160,7 +1160,9 @@ void ThreadMessageHandler2(void* parg)
+                 pnode-&gt;Release();
+         }
+ 
+-        // Wait and allow messages to bunch up
++        // Wait and allow messages to bunch up.
++        // Reduce vnThreadsRunning so StopNode has permission to exit while
++        // we&#x27;re sleeping, but we must always check fShutdown after doing this.
+         vnThreadsRunning[2]--;
+         Sleep(100);
+         if (fRequestShutdown)</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -23,7 +23,7 @@ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+ static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/14002c8/">← Gavin Andresen: clean shutdown on SIGTERM</a><a rel="next" href="../../commits/8555125/">try to auto-detect whether to use 128-bit 4-way SSE2 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

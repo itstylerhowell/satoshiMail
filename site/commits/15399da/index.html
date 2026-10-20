@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>blocks-1, verify block chain on… (r137) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 16 August 2010: blocks-1, verify block chain on load, so wouldn&#x27;t have needed to delete blk*.dat, it would have…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/15399da/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="blocks-1, verify block chain on… (r137) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 16 August 2010: blocks-1, verify block chain on load, so wouldn&#x27;t have needed to delete blk*.dat, it would have…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/15399da/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="blocks-1, verify block chain on… (r137) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 16 August 2010: blocks-1, verify block chain on load, so wouldn&#x27;t have needed to delete blk*.dat, it would have…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "blocks-1, verify block chain on load, so wouldn't have needed to delete blk*.dat, it would have done a reorg automatically", "url": "https://satoshimail.pages.dev/commits/15399da/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-16T17:05:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/15399da9fe29336f119121340146d78973b601a5"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "blocks-1, verify block chain on load…", "item": "https://satoshimail.pages.dev/commits/15399da/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c15399da9fe">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">blocks-1, verify block chain on load…</span></div></nav>
+<main class="in">
+<h1>blocks-1, verify block chain on load, so wouldn&#x27;t have needed to delete blk*.dat, it would have done a reorg automatically</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 16 August 2010 · SVN r137 · release v0.3.12 · 6 files, +81 −48</p>
+<p class="actions"><a class="btn" href="../../#t-c15399da9fe">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/15399da9fe29336f119121340146d78973b601a5" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -459,6 +459,29 @@ bool CTxDB::LoadBlockIndex()
+     // Load bnBestInvalidWork, OK if it doesn&#x27;t exist
+     ReadBestInvalidWork(bnBestInvalidWork);
+ 
++    // Verify blocks in the best chain
++    CBlockIndex* pindexFork = NULL;
++    for (CBlockIndex* pindex = pindexBest; pindex &amp;&amp; pindex-&gt;pprev; pindex = pindex-&gt;pprev)
++    {
++        CBlock block;
++        if (!block.ReadFromDisk(pindex))
++            return error(&quot;LoadBlockIndex() : block.ReadFromDisk failed&quot;);
++        if (!block.CheckBlock())
++        {
++            printf(&quot;LoadBlockIndex() : *** found bad block at %d, hash=%s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().c_str());
++            pindexFork = pindex-&gt;pprev;
++        }
++    }
++    if (pindexFork)
++    {
++        printf(&quot;LoadBlockIndex() : *** moving best chain pointer back to block %d\n&quot;, pindexFork-&gt;nHeight);
++        CBlock block;
++        if (!block.ReadFromDisk(pindexFork))
++            return error(&quot;LoadBlockIndex() : block.ReadFromDisk failed&quot;);
++        CTxDB txdb;
++        block.SetBestChain(txdb, pindexFork);
++    }
++
+     return true;
+ }
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1234,6 +1234,57 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+ }
+ 
+ 
++bool CBlock::SetBestChain(CTxDB&amp; txdb, CBlockIndex* pindexNew)
++{
++    uint256 hash = GetHash();
++
++    txdb.TxnBegin();
++    if (pindexGenesisBlock == NULL &amp;&amp; hash == hashGenesisBlock)
++    {
++        pindexGenesisBlock = pindexNew;
++        txdb.WriteHashBestChain(hash);
++    }
++    else if (hashPrevBlock == hashBestChain)
++    {
++        // Adding to current best branch
++        if (!ConnectBlock(txdb, pindexNew) || !txdb.WriteHashBestChain(hash))
++        {
++            txdb.TxnAbort();
++            Lockdown(pindexNew);
++            return error(&quot;SetBestChain() : ConnectBlock failed&quot;);
++        }
++        txdb.TxnCommit();
++        pindexNew-&gt;pprev-&gt;pnext = pindexNew;
++
++        // Delete redundant memory transactions
++        foreach(CTransaction&amp; tx, vtx)
++            tx.RemoveFromMemoryPool();
++    }
++    else
++    {
++        // New best branch
++        if (!Reorganize(txdb, pindexNew))
++        {
++            txdb.TxnAbort();
++            Lockdown(pindexNew);
++            return error(&quot;SetBestChain() : Reorganize failed&quot;);
++        }
++    }
++    txdb.TxnCommit();
++
++    // New best block
++    hashBestChain = hash;
++    pindexBest = pindexNew;
++    nBestHeight = pindexBest-&gt;nHeight;
++    bnBestChainWork = pindexNew-&gt;bnChainWork;
++    nTimeBestReceived = GetTime();
++    nTransactionsUpdated++;
++    printf(&quot;SetBestChain: new best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
++
++    return true;
++}
++
++
+ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+ {
+     // Check for duplicate
+@@ -1260,50 +1311,8 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+ 
+     // New best
+     if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+-    {
+-        txdb.TxnBegin();
+-        if (pindexGenesisBlock == NULL &amp;&amp; hash == hashGenesisBlock)
+-        {
+-            pindexGenesisBlock = pindexNew;
+-            txdb.WriteHashBestChain(hash);
+-        }
+-        else if (hashPrevBlock == hashBestChain)
+-        {
+-            // Adding to current best branch
+-            if (!ConnectBlock(txdb, pindexNew) || !txdb.WriteHashBestChain(hash))
+-            {
+-                txdb.TxnAbort();
+-                Lockdown(pindexNew);
+-                return error(&quot;AddToBlockIndex() : ConnectBlock failed&quot;);
+-            }
+-            txdb.TxnCommit();
+-            pindexNew-&gt;pprev-&gt;pnext = pindexNew;
+-
+-            // Delete redundant memory transactions
+-            foreach(CTransaction&amp; tx, vtx)
+-                tx.RemoveFromMemoryPool();
+-        }
+-        else
+-        {
+-            // New best branch
+-            if (!Reorganize(txdb, pindexNew))
+-            {
+-                txdb.TxnAbort();
+-                Lockdown(pindexNew);
+-                return error(&quot;AddToBlockIndex() : Reorganize failed&quot;);
+-            }
+-        }
+-        txdb.TxnCommit();
+-
+-        // New best block
+-        hashBestChain = hash;
+-        pindexBest = pindexNew;
+-        nBestHeight = pindexBest-&gt;nHeight;
+-        bnBestChainWork = pindexNew-&gt;bnChainWork;
+-        nTimeBestReceived = GetTime();
+-        nTransactionsUpdated++;
+-        printf(&quot;AddToBlockIndex: new best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
+-    }
++        if (!SetBestChain(txdb, pindexNew))
++            return false;
+ 
+     txdb.Close();
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1065,6 +1065,7 @@ public:
+     bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
++    bool SetBestChain(CTxDB&amp; txdb, CBlockIndex* pindexNew);
+     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos);
+     bool CheckBlock() const;
+     bool AcceptBlock();</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -120,7 +120,7 @@ Value getblockcount(const Array&amp; params, bool fHelp)
+             &quot;getblockcount\n&quot;
+             &quot;Returns the number of blocks in the longest block chain.&quot;);
+ 
+-    return nBestHeight + 1;
++    return nBestHeight;
+ }
+ 
+ 
+@@ -240,7 +240,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+     Object obj;
+     obj.push_back(Pair(&quot;version&quot;,       (int)VERSION));
+     obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
+-    obj.push_back(Pair(&quot;blocks&quot;,        (int)nBestHeight + 1));
++    obj.push_back(Pair(&quot;blocks&quot;,        (int)nBestHeight));
+     obj.push_back(Pair(&quot;connections&quot;,   (int)vNodes.size()));
+     obj.push_back(Pair(&quot;proxy&quot;,         (fUseProxy ? addrProxy.ToStringIPPort() : string())));
+     obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 310;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1027,7 +1027,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+         strGen = _(&quot;(not connected)&quot;);
+     m_statusBar-&gt;SetStatusText(strGen, 1);
+ 
+-    string strStatus = strprintf(_(&quot;     %d connections     %d blocks     %d transactions&quot;), vNodes.size(), nBestHeight + 1, nTransactionCount);
++    string strStatus = strprintf(_(&quot;     %d connections     %d blocks     %d transactions&quot;), vNodes.size(), nBestHeight, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
+     if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6da916d/">← wrap sha256.cpp in FOURWAYSSE2 #ifdef</a><a rel="next" href="../../commits/a01d587/">erase the bad chain after disconnecting it →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

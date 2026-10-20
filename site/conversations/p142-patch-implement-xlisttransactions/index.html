@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>implement &#x27;xlisttransactions&#x27; – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 30 July 2010: What are you needing to use listtransactions for? The reason I didn&#x27;t implement listtransactions is I want to make sure…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p142-patch-implement-xlisttransactions/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="implement &#x27;xlisttransactions&#x27; – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 30 July 2010: What are you needing to use listtransactions for? The reason I didn&#x27;t implement listtransactions is I want to make sure…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p142-patch-implement-xlisttransactions/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="implement &#x27;xlisttransactions&#x27; – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 30 July 2010: What are you needing to use listtransactions for? The reason I didn&#x27;t implement listtransactions is I want to make sure…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "[PATCH] implement 'xlisttransactions'", "url": "https://satoshimail.pages.dev/conversations/p142-patch-implement-xlisttransactions/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T00:34:53Z", "text": "Here is a patch against SVN 117, implementing 'xlisttransactions' RPC: http://pastebin.ca/1910553 At present, the options are ignored, and it dumps all transactions it finds. Raw patch: http://pastebin.ca/raw/1910553 Edit: Patch's current home is http://yyz.us/bitcoin/patch.bitcoin-listtransactions Edit2: RPC command has been renamed to 'xlisttransactions'", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T00:48:34Z", "text": "Here's an updated version, that sorts by number of confirmations: http://pastebin.ca/1910564 Raw patch: http://pastebin.ca/raw/1910564"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T03:00:24Z", "text": "OK, here's version 4. Output now matches what you see in the UI, and gives you information on debits/credit/generated/etc. The 'count' and 'includegenerated' parameters are now honored. Patch: http://pastebin.ca/1910623 Raw patch: http://pastebin.ca/raw/1910623 Here's sample output from my dev box: $ /usr/local/src/bitcoin/bitcoind -datadir=/usr/local/bitcoin/data listtransactions [ { \"address\" : \"15uyjNbNzizz5r8UgWpF1ZayV82Pq3FHQ5\", \"label\" : \"\", \"class\" : \"credit\", \"amount\" …"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T21:22:06Z", "text": "Added a couple small cleanups, and verified it still works under 0.3.6 / SVN r119. Version 5 of listtransactions: http://pastebin.ca/1911295 Raw patch: http://pastebin.ca/raw/1911295 FAQ: Q1) How does 'listtransactions' behave if tail of the block chain changes, eg. 0 confirmations -> 1 confirmation -> 0 confirmations? A1) 'listtransactions' behaves the same way 'listreceivedbyaddress' behaves... the output changes accordingly."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-29T22:38:49Z", "text": "Very nice! Send Satoshi an email and ask him to add it to trunk. By the way, anyone having trouble applying this on unix can use: curl http://pastebin.ca/raw/1911295 | awk 'sub(\"$\", \" \")' | patch That'll make the line endings on the removed parts match the Windows line endings in the code files."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T22:45:26Z", "text": "He is welcome to pick it up now. But I didn't want to push the patch to him until the two FIXME's are resolved. Those FIXMEs are for 0.01% cases, but still..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-29T22:53:00Z", "text": "Could you make count=0 return all transactions?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T23:02:49Z", "text": "Returning all transactions is pretty easy, sure. I wonder if a better interface might be to follow 'listreceivedbyaddress' and print everything by default, only applying limits if limits were specified. ie. make your \"count=0\" the default."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-30T00:51:03Z", "text": "Perhaps. In that case, you should switch the order of includegenerated and count. Perhaps even make includegenerated true? Generations are included by default in the UI, after all."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-30T05:44:23Z", "text": "Version 6 of listtransactions: http://pastebin.ca/1911570 Raw patch: http://pastebin.ca/raw/1911570 listtransactions implementation should be complete at this point. The following command syntax is used: listtransactions [count=10] [minconf=1] [includegenerated=true] As lachesis suggested, count=0 will dump all transactions. FAQ: Q1) How does 'listtransactions' behave if tail of the block chain changes, eg. 0 confirmations -> 1 confirmation -> 0 confirmations? A1) 'listtransactions' behaves…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-07-30T13:18:06Z", "text": "Couple of quick suggestions: Using the key name \"class\" will cause problems for, at least, JavaScript, and probably other languages where \"class\" is a reserved word. \"type\" or \"variety\" or some other synonym will cause fewer problems later. Or, maybe better, get rid of that field and just report credits as positive numbers and debits as negative. And add a separate \"generated\" field (boolean true or false). Since each entry refers to a transaction, I'd suggest adding a \"tx_id\" SHA256…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-30T18:30:40Z", "text": "Can you be more specific? All mainstream programming language seem sensibly insensitive to abitrary string contents, JS included. String content can certainly include language-reserved keywords and parsing tokens. Added, thanks for the suggestion."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-30T18:43:37Z", "text": "Here is 'listtransaction' version 7: http://gtf.org/garzik/bitcoin/patch.bitcoin-listtransactions This adds the suggested txn_id field -- very nice suggestion, gavin! I wanted a unique transaction id, and now I have one Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-30T19:40:54Z", "text": "What are you needing to use listtransactions for? The reason I didn't implement listtransactions is I want to make sure web programmers don't use it. It would be very easy to latch onto that for watching for received payments. There is no reliable way to do it that way and make sure nothing can slip through the cracks. Until we have solid example code using getreceivedbyaddress and getreceivedbylabel to point to and say \"use this! use this! don't use listtransactions!\", I don't think we should…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "[PATCH] implement 'xlisttransactions'", "item": "https://satoshimail.pages.dev/conversations/p142-patch-implement-xlisttransactions/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p142">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">[PATCH] implement &#x27;xlisttransactions&#x27;</span></div></nav>
+<main class="in">
+<h1>[PATCH] implement &#x27;xlisttransactions&#x27;</h1>
+<p class="lead">BitcoinTalk forum · 14 messages · from 29 July 2010 · with Gavin Andresen, Satoshi Nakamoto, jgarzik, lachesis</p>
+<p class="actions"><a class="btn" href="../../#t-p142">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/142/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T00:34:53Z">29 July 2010, 00:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6295#msg6295" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here is a patch against SVN 117, implementing &#x27;xlisttransactions&#x27; RPC: <a href="http://pastebin.ca/1910553" rel="nofollow noopener">http://pastebin.ca/1910553</a>   At present, the options are ignored, and it dumps all transactions it finds.
+
+Raw patch: <a href="http://pastebin.ca/raw/1910553" rel="nofollow noopener">http://pastebin.ca/raw/1910553</a>
+
+Edit: Patch&#x27;s current home is <a href="http://yyz.us/bitcoin/patch.bitcoin-listtransactions" rel="nofollow noopener">http://yyz.us/bitcoin/patch.bitcoin-listtransactions</a>
+
+Edit2: RPC command has been renamed to &#x27;xlisttransactions&#x27;</div></article><article class="msg" id="m1">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T00:48:34Z">29 July 2010, 00:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6297#msg6297" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s an updated version, that sorts by number of confirmations:  <a href="http://pastebin.ca/1910564" rel="nofollow noopener">http://pastebin.ca/1910564</a>
+
+Raw patch:  <a href="http://pastebin.ca/raw/1910564" rel="nofollow noopener">http://pastebin.ca/raw/1910564</a></div></article><article class="msg" id="m2">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T03:00:24Z">29 July 2010, 03:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6309#msg6309" rel="nofollow noopener">original</a></span></header>
+<div class="t">OK, here&#x27;s version 4.  Output now matches what you see in the UI, and gives you information on debits/credit/generated/etc.  The &#x27;count&#x27; and &#x27;includegenerated&#x27; parameters are now honored.
+
+Patch: <a href="http://pastebin.ca/1910623" rel="nofollow noopener">http://pastebin.ca/1910623</a>
+Raw patch: <a href="http://pastebin.ca/raw/1910623" rel="nofollow noopener">http://pastebin.ca/raw/1910623</a>
+
+Here&#x27;s sample output from my dev box:</div><pre><code>$ /usr/local/src/bitcoin/bitcoind -datadir=/usr/local/bitcoin/data listtransactions
+[
+    {
+        &quot;address&quot; : &quot;15uyjNbNzizz5r8UgWpF1ZayV82Pq3FHQ5&quot;,
+        &quot;label&quot; : &quot;&quot;,
+        &quot;class&quot; : &quot;credit&quot;,
+        &quot;amount&quot; : 0.02000000000000000,
+        &quot;confirmations&quot; : 160
+    },
+    {
+        &quot;address&quot; : &quot;15uyjNbNzizz5r8UgWpF1ZayV82Pq3FHQ5&quot;,
+        &quot;label&quot; : &quot;&quot;,
+        &quot;class&quot; : &quot;credit&quot;,
+        &quot;amount&quot; : 0.01000000000000000,
+        &quot;confirmations&quot; : 162
+    },
+    {
+        &quot;address&quot; : &quot;1GKgKYtV79jYHR2mr1SSDp9EjXQuLTmUTw&quot;,
+        &quot;label&quot; : &quot;&quot;,
+        &quot;class&quot; : &quot;debit&quot;,
+        &quot;amount&quot; : 0.02000000000000000,
+        &quot;confirmations&quot; : 1525
+    },
+    {
+        &quot;address&quot; : &quot;191ALqREPdXCGE6mhfS7HqRZCeQB2AHT6y&quot;,
+        &quot;label&quot; : &quot;&quot;,
+        &quot;class&quot; : &quot;credit&quot;,
+        &quot;amount&quot; : 0.02000000000000000,
+        &quot;confirmations&quot; : 1531
+    },
+    {
+        &quot;address&quot; : &quot;1HVYQQ5K489fMx5Aqt48M5oTJPsmUhrpkx&quot;,
+        &quot;label&quot; : &quot;&quot;,
+        &quot;class&quot; : &quot;debit&quot;,
+        &quot;amount&quot; : 0.01000000000000000,
+        &quot;confirmations&quot; : 1572
+    },
+    {
+        &quot;address&quot; : &quot;1KTpPjGWyhTBC5NNYFwNzkyjW6UDL9jKPG&quot;,
+        &quot;label&quot; : &quot;Your Address&quot;,
+        &quot;class&quot; : &quot;credit&quot;,
+        &quot;amount&quot; : 0.01000000000000000,
+        &quot;confirmations&quot; : 1587
+    }
+]</code></pre></article><article class="msg" id="m3">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T21:22:06Z">29 July 2010, 21:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6491#msg6491" rel="nofollow noopener">original</a></span></header>
+<div class="t">Added a couple small cleanups, and verified it still works under 0.3.6 / SVN r119.
+
+Version 5 of listtransactions: <a href="http://pastebin.ca/1911295" rel="nofollow noopener">http://pastebin.ca/1911295</a>
+Raw patch: <a href="http://pastebin.ca/raw/1911295" rel="nofollow noopener">http://pastebin.ca/raw/1911295</a>
+
+FAQ:
+
+Q1) How does &#x27;listtransactions&#x27; behave if tail of the block chain changes, eg. 0 confirmations -&gt; 1 confirmation -&gt; 0 confirmations?
+
+A1) &#x27;listtransactions&#x27; behaves the same way &#x27;listreceivedbyaddress&#x27; behaves...  the output changes accordingly.</div></article><article class="msg" id="m4">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-29T22:38:49Z">29 July 2010, 22:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6525#msg6525" rel="nofollow noopener">original</a></span></header>
+<div class="t">Very nice! Send Satoshi an email and ask him to add it to trunk.
+
+By the way, anyone having trouble applying this on unix can use:</div><pre><code>curl http://pastebin.ca/raw/1911295 | awk &#x27;sub(&quot;$&quot;, &quot;&quot;)&#x27; | patch</code></pre><div class="t">That&#x27;ll make the line endings on the removed parts match the Windows line endings in the code files.</div></article><article class="msg" id="m5">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T22:45:26Z">29 July 2010, 22:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6530#msg6530" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on July 29, 2010, 10:38:49 PM</div><div class="t">Very nice! Send Satoshi an email and ask him to add it to trunk.</div></blockquote><div class="t">He is welcome to pick it up now.
+
+But I didn&#x27;t want to push the patch to him until the two FIXME&#x27;s are resolved.  Those FIXMEs are for 0.01% cases, but still...</div></article><article class="msg" id="m6">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-29T22:53:00Z">29 July 2010, 22:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6532#msg6532" rel="nofollow noopener">original</a></span></header>
+<div class="t">Could you make count=0 return all transactions?</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T23:02:49Z">29 July 2010, 23:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6537#msg6537" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on July 29, 2010, 10:53:00 PM</div><div class="t">Could you make count=0 return all transactions?</div></blockquote><div class="t">Returning all transactions is pretty easy, sure.
+
+I wonder if a better interface might be to follow &#x27;listreceivedbyaddress&#x27; and print everything by default, only applying limits if limits were specified.  ie.  make your &quot;count=0&quot; the default.</div></article><article class="msg" id="m8">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-30T00:51:03Z">30 July 2010, 00:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6559#msg6559" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on July 29, 2010, 11:02:49 PM</div><div class="t">I wonder if a better interface might be to follow &#x27;listreceivedbyaddress&#x27; and print everything by default, only applying limits if limits were specified.  ie.  make your &quot;count=0&quot; the default.</div></blockquote><div class="t">Perhaps. In that case, you should switch the order of includegenerated and count. Perhaps even make includegenerated true? Generations are included by default in the UI, after all.</div></article><article class="msg" id="m9">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-30T05:44:23Z">30 July 2010, 05:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6602#msg6602" rel="nofollow noopener">original</a></span></header>
+<div class="t">Version 6 of listtransactions: <a href="http://pastebin.ca/1911570" rel="nofollow noopener">http://pastebin.ca/1911570</a>
+Raw patch: <a href="http://pastebin.ca/raw/1911570" rel="nofollow noopener">http://pastebin.ca/raw/1911570</a>
+
+listtransactions implementation should be complete at this point.  The following command syntax is used:</div><pre><code>listtransactions [count=10] [minconf=1] [includegenerated=true]</code></pre><div class="t">As lachesis suggested, count=0 will dump all transactions.
+
+FAQ:
+
+Q1) How does &#x27;listtransactions&#x27; behave if tail of the block chain changes, eg. 0 confirmations -&gt; 1 confirmation -&gt; 0 confirmations?
+
+A1) &#x27;listtransactions&#x27; behaves the same way &#x27;listreceivedbyaddress&#x27; behaves...  the output changes accordingly.</div></article><article class="msg" id="m10">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-30T13:18:06Z">30 July 2010, 13:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6642#msg6642" rel="nofollow noopener">original</a></span></header>
+<div class="t">Couple of quick suggestions:
+
+Using the key name &quot;class&quot; will cause problems for, at least, JavaScript, and probably other languages where &quot;class&quot; is a reserved word.  &quot;type&quot; or &quot;variety&quot; or some other synonym will cause fewer problems later.
+
+Or, maybe better, get rid of that field and just report credits as positive numbers and debits as negative.  And add a separate &quot;generated&quot; field (boolean true or false).
+
+Since each entry refers to a transaction, I&#x27;d suggest adding a &quot;tx_id&quot; SHA256 hex-encoded transaction id.  Then listtransactions would play nicely with the refundtransaction JSON-RPC extension (and maybe a future gettransactiondetails that let you get transaction parents, which block the transaction was in, and so on).
+
+Code to get that would look something like:</div><pre><code>            uint256 tx_hash = transaction.GetHash();
+            string tx_id = tx_hash.GetHex();
+            mapJSONResponse.push_back(Pair(&quot;tx_id&quot;, tx_id));</code></pre></article><article class="msg" id="m11">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-30T18:30:40Z">30 July 2010, 18:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6687#msg6687" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on July 30, 2010, 01:18:06 PM</div><div class="t">Couple of quick suggestions:
+
+Using the key name &quot;class&quot; will cause problems for, at least, JavaScript, and probably other languages where &quot;class&quot; is a reserved word.  &quot;type&quot; or &quot;variety&quot; or some other synonym will cause fewer problems later.</div></blockquote><div class="t">Can you be more specific?  All mainstream programming language seem sensibly insensitive to abitrary string contents, JS included.  String content can certainly include language-reserved keywords and parsing tokens.</div><blockquote><div class=qh>Quote from: gavinandresen on July 30, 2010, 01:18:06 PM</div><div class="t">Since each entry refers to a transaction, I&#x27;d suggest adding a &quot;tx_id&quot; SHA256 hex-encoded transaction id.  Then listtransactions would play nicely with the refundtransaction JSON-RPC extension (and maybe a future gettransactiondetails that let you get transaction parents, which block the transaction was in, and so on).
+
+Code to get that would look something like:
+
+            uint256 tx_hash = transaction.GetHash();
+            string tx_id = tx_hash.GetHex();
+            mapJSONResponse.push_back(Pair(&quot;tx_id&quot;, tx_id));</div></blockquote><div class="t">Added, thanks for the suggestion.</div></article><article class="msg" id="m12">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-30T18:43:37Z">30 July 2010, 18:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6694#msg6694" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here is &#x27;listtransaction&#x27; version 7:
+<a href="http://gtf.org/garzik/bitcoin/patch.bitcoin-listtransactions" rel="nofollow noopener">http://gtf.org/garzik/bitcoin/patch.bitcoin-listtransactions</a>
+
+This adds the suggested txn_id field -- very nice suggestion, gavin!  I wanted a unique transaction id, and now I have one Smiley</div></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-30T19:40:54Z">30 July 2010, 19:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=611.msg6706#msg6706" rel="nofollow noopener">original</a></span></header>
+<div class="t">What are you needing to use listtransactions for?
+
+The reason I didn&#x27;t implement listtransactions is I want to make sure web programmers don&#x27;t use it.  It would be very easy to latch onto that for watching for received payments.  There is no reliable way to do it that way and make sure nothing can slip through the cracks.  Until we have solid example code using getreceivedbyaddress and getreceivedbylabel to point to and say &quot;use this! use this! don&#x27;t use listtransactions!&quot;, I don&#x27;t think we should implement listtransactions.
+
+When we do implement listtransactions, maybe one way to fight that is to make it all text.  It should not break down the fields into e.g. comment, confirmations, credit, debit.  It could be one pretty formatted string like &quot;0/unconfirmed   0:0:0 date   comment      debit 4  credit 0&quot; or something so it&#x27;s hard for programmers to do the wrong thing and process it.  It&#x27;s only for viewing the status of your server.  I guess that would be kinda annoying for web interfaces that would rather format it into html columns though.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p141-build-error-svn-r115-on-my-mac-workaround/">← Build error SVN r115 on my Mac: workaround</a><a rel="next" href="../../conversations/p143-linux-distribution-download/">Linux distribution download →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

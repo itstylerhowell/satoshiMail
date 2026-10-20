@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Access permissions required to fix Drupal – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 23 November 2009: Drupal&#x27;s .htaccess file which uses mod_rewrite to allow clean URLs without the ? parameter is not working because its…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x42-access-permissions-required-to-fix-drupal/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Access permissions required to fix Drupal – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 23 November 2009: Drupal&#x27;s .htaccess file which uses mod_rewrite to allow clean URLs without the ? parameter is not working because its…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x42-access-permissions-required-to-fix-drupal/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Access permissions required to fix Drupal – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 November 2009: Drupal&#x27;s .htaccess file which uses mod_rewrite to allow clean URLs without the ? parameter is not working because its…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Access permissions required to fix Drupal", "url": "https://satoshimail.pages.dev/conversations/x42-access-permissions-required-to-fix-drupal/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-23T05:48:19Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-23T05:48:19Z", "text": "Drupal's .htaccess file which uses mod_rewrite to allow clean URLs without the ? parameter is not working because its changes are rejected because Apache is not configured with \"AllowOverride All\". This is needed to make Drupal coexist with the other site the way we want. I need access to change these files to fix it: /etc/apache2/sites-available/default /etc/apache2/sites-available/default-ssl /etc/apache2/httpd.conf Here's the planned fix. If you do it yourself, please still give me access…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-11-23T06:44:35Z", "text": "Done. I granted you access to all the files."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Access permissions required to fix Drupal", "item": "https://satoshimail.pages.dev/conversations/x42-access-permissions-required-to-fix-drupal/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x42">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Access permissions required to fix Drupal</span></div></nav>
+<main class="in">
+<h1>Access permissions required to fix Drupal</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 2 messages · from 23 November 2009 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x42">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2009-11-23T05:48:19Z">23 November 2009, 05:48 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-108" rel="nofollow noopener">original</a></span></header>
+<div class="t">Drupal&#x27;s .htaccess file which uses mod_rewrite to allow clean URLs
+without the ? parameter is not working because its changes are rejected
+because Apache is not configured with &quot;AllowOverride All&quot;.  This is
+needed to make Drupal coexist with the other site the way we want.
+
+I need access to change these files to fix it:
+  /etc/apache2/sites-available/default
+  /etc/apache2/sites-available/default-ssl
+  /etc/apache2/httpd.conf
+
+Here&#x27;s the planned fix.  If you do it yourself, please still give me
+access to httpd.conf in case I need to change it again later.
+
+In /etc/apache2/sites-available/default
+change the 2nd instance of &quot;AllowOverride None&quot;
+      to &quot;AllowOverride All&quot;
+
+and in /etc/apache2/sites-available/default-ssl
+change the 2nd instance of &quot;AllowOverride AuthConfig&quot;
+      to &quot;AllowOverride All&quot;
+
+replace
+  /etc/apache2/httpd.conf
+with
+  /home/maintenance/httpd.conf
+
+This probably requires Apache to be restarted after.
+(apache2ctl graceful)</div></article><article class="msg" id="m1">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-11-23T06:44:35Z">23 November 2009, 06:44 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-109" rel="nofollow noopener">original</a></span></header>
+<div class="t">Done. I granted you access to all the files.</div><blockquote><div class="t">Drupal&#x27;s .htaccess file which uses mod_rewrite to allow clean URLs
+without the ? parameter is not working because its changes are rejected
+because Apache is not configured with &quot;AllowOverride All&quot;.  This is
+needed to make Drupal coexist with the other site the way we want.
+
+I need access to change these files to fix it:
+ /etc/apache2/sites-available/default
+ /etc/apache2/sites-available/default-ssl
+ /etc/apache2/httpd.conf
+
+Here&#x27;s the planned fix.  If you do it yourself, please still give me
+access to httpd.conf in case I need to change it again later.
+
+In /etc/apache2/sites-available/default
+change the 2nd instance of &quot;AllowOverride None&quot;
+     to &quot;AllowOverride All&quot;
+
+and in /etc/apache2/sites-available/default-ssl
+change the 2nd instance of &quot;AllowOverride AuthConfig&quot;
+     to &quot;AllowOverride All&quot;
+
+replace
+ /etc/apache2/httpd.conf
+with
+ /home/maintenance/httpd.conf
+
+This probably requires Apache to be restarted after.
+(apache2ctl graceful)</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x41-seo-friendly-site-transition/">← SEO friendly site transition</a><a rel="next" href="../../conversations/x43-bitcoin-org-dns-change-went-through/">bitcoin.org DNS change went through →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

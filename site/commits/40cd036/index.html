@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin Andresen&#x27;s JSON-RPC HTTP… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 26 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 12…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/40cd036/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin Andresen&#x27;s JSON-RPC HTTP… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 26 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 12…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/40cd036/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin Andresen&#x27;s JSON-RPC HTTP… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 26 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 12…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen's JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3", "url": "https://satoshimail.pages.dev/commits/40cd036/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-26T17:40:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/40cd0369419323f8d7385950e20342e998c994e1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen's JSON-RPC HTTP…", "item": "https://satoshimail.pages.dev/commits/40cd036/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c40cd036941">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin Andresen&#x27;s JSON-RPC HTTP…</span></div></nav>
+<main class="in">
+<h1>Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 26 July 2010 · release v0.3.3 · 12 files, +93 −25</p>
+<p class="actions"><a class="btn" href="../../#t-c40cd036941">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/40cd0369419323f8d7385950e20342e998c994e1" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -130,7 +130,14 @@ void CDB::Close()
+         vTxn.front()-&gt;abort();
+     vTxn.clear();
+     pdb = NULL;
+-    dbenv.txn_checkpoint(0, 0, 0);
++
++    // Flush database activity from memory pool to disk log
++    unsigned int nMinutes = 0;
++    if (strFile == &quot;addr.dat&quot;)
++        nMinutes = 2;
++    if (strFile == &quot;blkindex.dat&quot; &amp;&amp; IsInitialBlockDownload() &amp;&amp; nBestHeight % 500 != 0)
++        nMinutes = 1;
++    dbenv.txn_checkpoint(0, nMinutes, 0);
+ 
+     CRITICAL_BLOCK(cs_db)
+         --mapFileUseCount[strFile];
+@@ -357,11 +364,12 @@ CBlockIndex* InsertBlockIndex(uint256 hash)
+ 
+ bool CTxDB::LoadBlockIndex()
+ {
+-    // Get cursor
++    // Get database cursor
+     Dbc* pcursor = GetCursor();
+     if (!pcursor)
+         return false;
+ 
++    // Load mapBlockIndex
+     unsigned int fFlags = DB_SET_RANGE;
+     loop
+     {
+@@ -398,7 +406,7 @@ bool CTxDB::LoadBlockIndex()
+             pindexNew-&gt;nBits          = diskindex.nBits;
+             pindexNew-&gt;nNonce         = diskindex.nNonce;
+ 
+-            // Watch for genesis block and best block
++            // Watch for genesis block
+             if (pindexGenesisBlock == NULL &amp;&amp; diskindex.GetBlockHash() == hashGenesisBlock)
+                 pindexGenesisBlock = pindexNew;
+         }
+@@ -409,17 +417,33 @@ bool CTxDB::LoadBlockIndex()
+     }
+     pcursor-&gt;close();
+ 
++    // Calculate bnChainWork
++    vector&lt;pair&lt;int, CBlockIndex*&gt; &gt; vSortedByHeight;
++    vSortedByHeight.reserve(mapBlockIndex.size());
++    foreach(const PAIRTYPE(uint256, CBlockIndex*)&amp; item, mapBlockIndex)
++    {
++        CBlockIndex* pindex = item.second;
++        vSortedByHeight.push_back(make_pair(pindex-&gt;nHeight, pindex));
++    }
++    sort(vSortedByHeight.begin(), vSortedByHeight.end());
++    foreach(const PAIRTYPE(int, CBlockIndex*)&amp; item, vSortedByHeight)
++    {
++        CBlockIndex* pindex = item.second;
++        pindex-&gt;bnChainWork = (pindex-&gt;pprev ? pindex-&gt;pprev-&gt;bnChainWork : 0) + pindex-&gt;GetBlockWork();
++    }
++
++    // Load hashBestChain pointer to end of best chain
+     if (!ReadHashBestChain(hashBestChain))
+     {
+         if (pindexGenesisBlock == NULL)
+             return true;
+-        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not loaded&quot;);
+     }
+-
+     if (!mapBlockIndex.count(hashBestChain))
+-        return error(&quot;CTxDB::LoadBlockIndex() : blockindex for hashBestChain not found&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found in the block index&quot;);
+     pindexBest = mapBlockIndex[hashBestChain];
+     nBestHeight = pindexBest-&gt;nHeight;
++    bnBestChainWork = pindexBest-&gt;bnChainWork;
+     printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+ 
+     return true;</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -16,7 +16,7 @@ extern map&lt;string, string&gt; mapAddressBook;
+ extern CCriticalSection cs_mapAddressBook;
+ extern vector&lt;unsigned char&gt; vchDefaultKey;
+ extern bool fClient;
+-
++extern int nBestHeight;
+ 
+ 
+ extern unsigned int nWalletDBUpdated;
+@@ -210,7 +210,7 @@ public:
+         if (!pdb)
+             return false;
+         DbTxn* ptxn = NULL;
+-        int ret = dbenv.txn_begin(GetTxn(), &amp;ptxn, 0);
++        int ret = dbenv.txn_begin(GetTxn(), &amp;ptxn, DB_TXN_NOSYNC);
+         if (!ptxn || ret != 0)
+             return false;
+         vTxn.push_back(ptxn);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -24,6 +24,7 @@ map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+ const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;);
+ CBlockIndex* pindexGenesisBlock = NULL;
+ int nBestHeight = -1;
++CBigNum bnBestChainWork = 0;
+ uint256 hashBestChain = 0;
+ CBlockIndex* pindexBest = NULL;
+ int64 nTimeBestReceived = 0;
+@@ -848,6 +849,23 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+     return bnNew.GetCompact();
+ }
+ 
++vector&lt;int&gt; vStartingHeight;
++void AddStartingHeight(int nStartingHeight)
++{
++    if (nStartingHeight != -1)
++    {
++        vStartingHeight.push_back(nStartingHeight);
++        sort(vStartingHeight.begin(), vStartingHeight.end());
++    }
++}
++
++bool IsInitialBlockDownload()
++{
++    int nMedian = 69000;
++    if (vStartingHeight.size() &gt;= 5)
++        nMedian = vStartingHeight[vStartingHeight.size()/2];
++    return nBestHeight &lt; nMedian-1000;
++}
+ 
+ 
+ 
+@@ -1208,13 +1226,14 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         pindexNew-&gt;pprev = (*miPrev).second;
+         pindexNew-&gt;nHeight = pindexNew-&gt;pprev-&gt;nHeight + 1;
+     }
++    pindexNew-&gt;bnChainWork = (pindexNew-&gt;pprev ? pindexNew-&gt;pprev-&gt;bnChainWork : 0) + pindexNew-&gt;GetBlockWork();
+ 
+     CTxDB txdb;
+     txdb.TxnBegin();
+     txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
+ 
+     // New best
+-    if (pindexNew-&gt;nHeight &gt; nBestHeight)
++    if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+     {
+         if (pindexGenesisBlock == NULL &amp;&amp; hash == hashGenesisBlock)
+         {
+@@ -1253,6 +1272,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         hashBestChain = hash;
+         pindexBest = pindexNew;
+         nBestHeight = pindexBest-&gt;nHeight;
++        bnBestChainWork = pindexNew-&gt;bnChainWork;
+         nTimeBestReceived = GetTime();
+         nTransactionsUpdated++;
+         printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+@@ -1900,6 +1920,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         }
+ 
+         AddTimeData(pfrom-&gt;addr.ip, nTime);
++        AddStartingHeight(pfrom-&gt;nStartingHeight);
+ 
+         // Change version
+         if (pfrom-&gt;nVersion &gt;= 209)
+@@ -2845,6 +2866,10 @@ int64 GetBalance()
+ }
+ 
+ 
++int GetRandInt(int nMax)
++{
++    return GetRand(nMax);
++}
+ 
+ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ {
+@@ -2858,9 +2883,14 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ 
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+-        for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+-        {
+-            CWalletTx* pcoin = &amp;(*it).second;
++       vector&lt;CWalletTx*&gt; vCoins;
++       vCoins.reserve(mapWallet.size());
++       for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
++           vCoins.push_back(&amp;(*it).second);
++       random_shuffle(vCoins.begin(), vCoins.end(), GetRandInt);
++
++       foreach(CWalletTx* pcoin, vCoins)
++       {
+             if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent)
+                 continue;
+             int64 n = pcoin-&gt;GetCredit();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -32,6 +32,7 @@ extern map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+ extern const uint256 hashGenesisBlock;
+ extern CBlockIndex* pindexGenesisBlock;
+ extern int nBestHeight;
++extern CBigNum bnBestChainWork;
+ extern uint256 hashBestChain;
+ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
+@@ -78,6 +79,7 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();
++bool IsInitialBlockDownload();
+ 
+ 
+ 
+@@ -986,11 +988,14 @@ public:
+ 
+         // Flush stdio buffers and commit to disk before returning
+         fflush(fileout);
++        if (!IsInitialBlockDownload() || (nBestHeight+1) % 500 == 0)
++        {
+ #ifdef __WXMSW__
+-        _commit(_fileno(fileout));
++            _commit(_fileno(fileout));
+ #else
+-        fsync(fileno(fileout));
++            fsync(fileno(fileout));
+ #endif
++        }
+ 
+         return true;
+     }
+@@ -1072,6 +1077,7 @@ public:
+     unsigned int nFile;
+     unsigned int nBlockPos;
+     int nHeight;
++    CBigNum bnChainWork;
+ 
+     // block header
+     int nVersion;
+@@ -1089,6 +1095,7 @@ public:
+         nFile = 0;
+         nBlockPos = 0;
+         nHeight = 0;
++        bnChainWork = 0;
+ 
+         nVersion       = 0;
+         hashMerkleRoot = 0;
+@@ -1105,6 +1112,7 @@ public:
+         nFile = nFileIn;
+         nBlockPos = nBlockPosIn;
+         nHeight = 0;
++        bnChainWork = 0;
+ 
+         nVersion       = block.nVersion;
+         hashMerkleRoot = block.hashMerkleRoot;
+@@ -1118,6 +1126,11 @@ public:
+         return *phashBlock;
+     }
+ 
++    CBigNum GetBlockWork() const
++    {
++        return (CBigNum(1)&lt;&lt;256) / (CBigNum().SetCompact(nBits)+1);
++    }
++
+     bool IsInMainChain() const
+     {
+         return (pnext || this == pindexBest);</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
+ 
+ LIBS= \
+  -Wl,-Bstatic \
+-   -l boost_system -l boost_filesystem  -l boost_program_options \
++   -l boost_system -l boost_filesystem -l boost_program_options \
+    -l db_cxx \
+    -l crypto \
+  -Wl,-Bdynamic \</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -39,7 +39,7 @@ void PrintConsole(const char* format, ...)
+ #if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
+     MyMessageBox(buffer, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+ #else
+-    fprintf(stdout, buffer);
++    fprintf(stdout, &quot;%s&quot;, buffer);
+ #endif
+ }
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 302;
+-static const char* pszSubVer = &quot;.2&quot;;
++static const int VERSION = 303;
++static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.2
++!define VERSION 0.3.3
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.2-win32-setup.exe
++OutFile bitcoin-0.3.3-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.2.0
++VIProductVersion 0.3.3.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1614,6 +1614,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+     m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
++    //m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
+ 
+     // Change (c) into UTF-8 or ANSI copyright symbol
+     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+ 	
+ 	public:
+ 		wxStaticText* m_staticTextVersion;
+-		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,333 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CAboutDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;532,329&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;532,333&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -642,7 +642,7 @@ void ReadConfigFile(map&lt;string, string&gt;&amp; mapSettingsRet,
+ 
+     set&lt;string&gt; setOptions;
+     setOptions.insert(&quot;*&quot;);
+-
++    
+     for (pod::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
+     {
+         // Don&#x27;t overwrite existing settings so command line settings override bitcoin.conf
+@@ -732,7 +732,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+         sort(vTimeOffsets.begin(), vTimeOffsets.end());
+         int64 nMedian = vTimeOffsets[vTimeOffsets.size()/2];
+         nTimeOffset = nMedian;
+-        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 36 * 60 * 60)
++        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 70 * 60)
+         {
+             // Only let other nodes change our clock so far before we
+             // go to the NTP servers</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/793200e/">← bitcoind now compiles without wxWidgets or wxBase</a><a rel="next" href="../../commits/b6dc3b5/">bitcoind now compiles without wxWidgets or wxBase →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

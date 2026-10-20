@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>better wallet.dat flush… (r20) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability. 10 files…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e8474be/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="better wallet.dat flush… (r20) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability. 10 files…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e8474be/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="better wallet.dat flush… (r20) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability. 10 files…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability", "url": "https://satoshimail.pages.dev/commits/e8474be/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T20:10:46Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e8474beb6f2c5e2654f8ebc671b3dbf5fae78563"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "better wallet.dat flush, consolidated…", "item": "https://satoshimail.pages.dev/commits/e8474be/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce8474beb6f">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">better wallet.dat flush, consolidated…</span></div></nav>
+<main class="in">
+<h1>better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 29 October 2009 · SVN r20 · release v0.2.0 · 10 files, +121 −75</p>
+<p class="actions"><a class="btn" href="../../#t-ce8474beb6f">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e8474beb6f2c5e2654f8ebc671b3dbf5fae78563" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build.txt</code></summary><pre><code>@@ -10,7 +10,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ 
+ Compilers Supported
+ -------------------
+-MinGW GCC (currently v3.4.5)
++MinGW GCC
+ Microsoft Visual C++ 6.0 SP6
+ 
+ 
+@@ -20,6 +20,7 @@ Libraries you need to obtain separately to build:
+ 
+               default path   download
+ wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
++                                or prebuilt: http://wxpack.sourceforge.net
+ OpenSSL        \openssl       http://www.openssl.org/source/
+ Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+ Boost          \boost         http://www.boost.org/users/download/</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -4,8 +4,11 @@
+ 
+ #include &quot;headers.h&quot;
+ 
++void ThreadFlushWalletDB(void* parg);
+ 
+ 
++unsigned int nWalletDBUpdated;
++
+ 
+ 
+ 
+@@ -56,6 +59,8 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+     {
+         if (!fDbEnvInit)
+         {
++            if (fShutdown)
++                return;
+             string strAppDir = GetAppDir();
+             string strLogDir = strAppDir + &quot;\\database&quot;;
+             _mkdir(strLogDir.c_str());
+@@ -121,12 +126,10 @@ void CDB::Close()
+     pdb-&gt;close(0);
+     delete pdb;
+     pdb = NULL;
++    dbenv.txn_checkpoint(0, 0, 0);
+ 
+     CRITICAL_BLOCK(cs_db)
+-    {
+-        dbenv.txn_checkpoint(0, 0, 0);
+         --mapFileUseCount[strFile];
+-    }
+ 
+     RandAddSeed();
+ }
+@@ -499,25 +502,6 @@ bool CReviewDB::WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews)
+ // CWalletDB
+ //
+ 
+-CWalletDB::~CWalletDB()
+-{
+-    // Flush whenever all handles to wallet.dat are closed
+-    CRITICAL_BLOCK(cs_db)
+-    {
+-        Close(); // close includes a txn_checkpoint
+-        map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
+-        if (mi != mapFileUseCount.end())
+-        {
+-            int nRefCount = (*mi).second;
+-            if (nRefCount == 0)
+-            {
+-                dbenv.lsn_reset(strFile.c_str(), 0);
+-                mapFileUseCount.erase(mi++);
+-            }
+-        }
+-    }
+-}
+-
+ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ {
+     vchDefaultKeyRet.clear();
+@@ -610,7 +594,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ 
+     printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
+     printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
+-    printf(&quot;nTransactionFee = %I64d\n&quot;, nTransactionFee);
++    printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);
+     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());
+     printf(&quot;fMinimizeToTray = %d\n&quot;, fMinimizeToTray);
+     printf(&quot;fMinimizeOnClose = %d\n&quot;, fMinimizeOnClose);
+@@ -655,5 +639,51 @@ bool LoadWallet(bool&amp; fFirstRunRet)
+         CWalletDB().WriteDefaultKey(keyUser.GetPubKey());
+     }
+ 
++    _beginthread(ThreadFlushWalletDB, 0, NULL);
+     return true;
+ }
++
++void ThreadFlushWalletDB(void* parg)
++{
++    static bool fOneThread;
++    if (fOneThread)
++        return;
++    fOneThread = true;
++
++    unsigned int nLastSeen = nWalletDBUpdated;
++    unsigned int nLastFlushed = nWalletDBUpdated;
++    int64 nLastWalletUpdate = GetTime();
++    while (!fShutdown)
++    {
++        Sleep(500);
++
++        if (nLastSeen != nWalletDBUpdated)
++        {
++            nLastSeen = nWalletDBUpdated;
++            nLastWalletUpdate = GetTime();
++        }
++
++        if (nLastFlushed != nWalletDBUpdated &amp;&amp; nLastWalletUpdate &lt; GetTime() - 1)
++        {
++            TRY_CRITICAL_BLOCK(cs_db)
++            {
++                string strFile = &quot;wallet.dat&quot;;
++                map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
++                if (mi != mapFileUseCount.end())
++                {
++                    int nRefCount = (*mi).second;
++                    if (nRefCount == 0 &amp;&amp; !fShutdown)
++                    {
++                        // Flush wallet.dat so it&#x27;s self contained
++                        nLastFlushed == nWalletDBUpdated;
++                        int64 nStart = PerformanceCounter();
++                        dbenv.txn_checkpoint(0, 0, 0);
++                        dbenv.lsn_reset(strFile.c_str(), 0);
++                        printf(&quot;Flushed wallet.dat %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
++                        mapFileUseCount.erase(mi++);
++                    }
++                }
++            }
++        }
++    }
++}</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -17,7 +17,10 @@ extern map&lt;string, string&gt; mapAddressBook;
+ extern bool fClient;
+ 
+ 
++extern unsigned int nWalletDBUpdated;
+ extern DbEnv dbenv;
++
++
+ extern void DBFlush(bool fShutdown);
+ 
+ 
+@@ -334,11 +337,11 @@ bool LoadAddresses();
+ 
+ 
+ 
++
+ class CWalletDB : public CDB
+ {
+ public:
+     CWalletDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;wallet.dat&quot;, pszMode, fTxn) { }
+-    ~CWalletDB();
+ private:
+     CWalletDB(const CWalletDB&amp;);
+     void operator=(const CWalletDB&amp;);
+@@ -351,12 +354,14 @@ public:
+ 
+     bool WriteName(const string&amp; strAddress, const string&amp; strName)
+     {
++        nWalletDBUpdated++;
+         mapAddressBook[strAddress] = strName;
+         return Write(make_pair(string(&quot;name&quot;), strAddress), strName);
+     }
+ 
+     bool EraseName(const string&amp; strAddress)
+     {
++        nWalletDBUpdated++;
+         mapAddressBook.erase(strAddress);
+         return Erase(make_pair(string(&quot;name&quot;), strAddress));
+     }
+@@ -368,11 +373,13 @@ public:
+ 
+     bool WriteTx(uint256 hash, const CWalletTx&amp; wtx)
+     {
++        nWalletDBUpdated++;
+         return Write(make_pair(string(&quot;tx&quot;), hash), wtx);
+     }
+ 
+     bool EraseTx(uint256 hash)
+     {
++        nWalletDBUpdated++;
+         return Erase(make_pair(string(&quot;tx&quot;), hash));
+     }
+ 
+@@ -384,6 +391,7 @@ public:
+ 
+     bool WriteKey(const vector&lt;unsigned char&gt;&amp; vchPubKey, const CPrivKey&amp; vchPrivKey)
+     {
++        nWalletDBUpdated++;
+         return Write(make_pair(string(&quot;key&quot;), vchPubKey), vchPrivKey, false);
+     }
+ 
+@@ -395,6 +403,7 @@ public:
+ 
+     bool WriteDefaultKey(const vector&lt;unsigned char&gt;&amp; vchPubKey)
+     {
++        nWalletDBUpdated++;
+         return Write(string(&quot;defaultkey&quot;), vchPubKey);
+     }
+ 
+@@ -407,6 +416,7 @@ public:
+     template&lt;typename T&gt;
+     bool WriteSetting(const string&amp; strKey, const T&amp; value)
+     {
++        nWalletDBUpdated++;
+         return Write(make_pair(string(&quot;setting&quot;), strKey), value);
+     }
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2518,8 +2518,7 @@ bool BitcoinMiner()
+ 
+ int64 GetBalance()
+ {
+-    int64 nStart, nEnd;
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nStart);
++    int64 nStart = PerformanceCounter();
+ 
+     int64 nTotal = 0;
+     CRITICAL_BLOCK(cs_mapWallet)
+@@ -2533,8 +2532,7 @@ int64 GetBalance()
+         }
+     }
+ 
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nEnd);
+-    ///printf(&quot; GetBalance() time = %16I64d\n&quot;, nEnd - nStart);
++    ///printf(&quot; GetBalance() time = %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
+     return nTotal;
+ }
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -344,7 +344,7 @@ public:
+     {
+         if (scriptPubKey.size() &lt; 6)
+             return &quot;CTxOut(error)&quot;;
+-        return strprintf(&quot;CTxOut(nValue=%I64d.%08I64d, scriptPubKey=%s)&quot;, nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,24).c_str());
++        return strprintf(&quot;CTxOut(nValue=%&quot;PRI64d&quot;.%08&quot;PRI64d&quot;, scriptPubKey=%s)&quot;, nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,24).c_str());
+     }
+ 
+     void print() const</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -13,8 +13,8 @@ DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
+ 
+ 
+ 
+-INCLUDEPATHS=/I&quot;/boost&quot; /I&quot;/DB/build_windows&quot; /I&quot;/OpenSSL/include&quot; /I&quot;/wxWidgets/lib/vc_lib/mswd&quot; /I&quot;/wxWidgets/include&quot;
+-LIBPATHS=/LIBPATH:&quot;/DB/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/OpenSSL/out&quot; /LIBPATH:&quot;/wxWidgets/lib/vc_lib&quot;
++INCLUDEPATHS=/I&quot;/boost&quot; /I&quot;/db/build_windows&quot; /I&quot;/openssl/include&quot; /I&quot;/wxwidgets/lib/vc_lib/mswd&quot; /I&quot;/wxwidgets/include&quot;
++LIBPATHS=/LIBPATH:&quot;/db/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/openssl/out&quot; /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
+ LIBS= \
+     libdb47s$(D).lib \
+     libeay32.lib \</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -589,7 +589,7 @@ public:
+         // We&#x27;re using mapAskFor as a priority queue,
+         // the key is the earliest time the request can be sent
+         int64&amp; nRequestTime = mapAlreadyAskedFor[inv];
+-        printf(&quot;askfor %s  %I64d\n&quot;, inv.ToString().c_str(), nRequestTime);
++        printf(&quot;askfor %s  %&quot;PRI64d&quot;\n&quot;, inv.ToString().c_str(), nRequestTime);
+ 
+         // Make sure not to reuse time indexes to keep things in the same order
+         int64 nNow = (GetTime() - 1) * 1000000;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3414,28 +3414,25 @@ bool CMyApp::OnInit2()
+     //
+     bool fFirstRun;
+     string strErrors;
+-    int64 nStart, nEnd;
++    int64 nStart;
+ 
+     printf(&quot;Loading addresses...\n&quot;);
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nStart);
++    nStart = PerformanceCounter();
+     if (!LoadAddresses())
+         strErrors += &quot;Error loading addr.dat      \n&quot;;
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nEnd);
+-    printf(&quot; addresses   %20I64d\n&quot;, nEnd - nStart);
++    printf(&quot; addresses   %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
+ 
+     printf(&quot;Loading block index...\n&quot;);
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nStart);
++    nStart = PerformanceCounter();
+     if (!LoadBlockIndex())
+         strErrors += &quot;Error loading blkindex.dat      \n&quot;;
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nEnd);
+-    printf(&quot; block index %20I64d\n&quot;, nEnd - nStart);
++    printf(&quot; block index %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
+ 
+     printf(&quot;Loading wallet...\n&quot;);
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nStart);
++    nStart = PerformanceCounter();
+     if (!LoadWallet(fFirstRun))
+         strErrors += &quot;Error loading wallet.dat      \n&quot;;
+-    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nEnd);
+-    printf(&quot; wallet      %20I64d\n&quot;, nEnd - nStart);
++    printf(&quot; wallet      %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
+ 
+     printf(&quot;Done loading\n&quot;);
+ 
+@@ -3742,7 +3739,7 @@ void ThreadRandSendTest(void* parg)
+         return;
+     }
+ 
+-    loop
++    while (!fShutdown)
+     {
+         Sleep(GetRand(30) * 1000 + 100);
+ 
+@@ -3767,6 +3764,8 @@ void ThreadRandSendTest(void* parg)
+         CScript scriptPubKey;
+         scriptPubKey &lt;&lt; OP_DUP &lt;&lt; OP_HASH160 &lt;&lt; hash160 &lt;&lt; OP_EQUALVERIFY &lt;&lt; OP_CHECKSIG;
+ 
++        if (fShutdown)
++            return;
+         if (!SendMoney(scriptPubKey, nValue, wtx))
+             return;
+     }
+@@ -3776,8 +3775,6 @@ void ThreadRandSendTest(void* parg)
+ // randsendtest to any connected node
+ void RandSend()
+ {
+-    CWalletTx wtx;
+-
+     while (vNodes.empty())
+         Sleep(1000);
+     CAddress addr;
+@@ -3785,6 +3782,7 @@ void RandSend()
+         addr = vNodes[GetRand(vNodes.size())]-&gt;addr;
+ 
+     // Message
++    CWalletTx wtx;
+     wtx.mapValue[&quot;to&quot;] = addr.ToString();
+     wtx.mapValue[&quot;from&quot;] = addrLocalHost.ToString();
+     static int nRep;
+@@ -3799,6 +3797,8 @@ void RandSend()
+     }
+ 
+     // Send to IP address
++    if (fShutdown)
++        return;
+     CSendingDialog* pdialog = new CSendingDialog(pframeMain, addr, nValue, wtx);
+     if (!pdialog-&gt;Show())
+         wxMessageBox(&quot;ShowModal Failed  &quot;);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,8 +14,7 @@ bool fPrintToConsole = false;
+ 
+ // Init openssl library multithreading support
+ static wxMutex** ppmutexOpenSSL;
+-
+-void win32_locking_callback(int mode, int i, const char* file, int line)
++void locking_callback(int mode, int i, const char* file, int line)
+ {
+     if (mode &amp; CRYPTO_LOCK)
+         ppmutexOpenSSL[i]-&gt;Lock();
+@@ -33,7 +32,7 @@ public:
+         ppmutexOpenSSL = (wxMutex**)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(wxMutex*));
+         for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+             ppmutexOpenSSL[i] = new wxMutex();
+-        CRYPTO_set_locking_callback(win32_locking_callback);
++        CRYPTO_set_locking_callback(locking_callback);
+ 
+         // Seed random number generator with screen scrape and other hardware sources
+         RAND_screen();
+@@ -45,7 +44,7 @@ public:
+     {
+         // Shutdown openssl library multithreading support
+         CRYPTO_set_locking_callback(NULL);
+-        for (int i =0 ; i &lt; CRYPTO_num_locks(); i++)
++        for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+             delete ppmutexOpenSSL[i];
+         OPENSSL_free(ppmutexOpenSSL);
+     }
+@@ -62,10 +61,9 @@ instance_of_cinit;
+ void RandAddSeed()
+ {
+     // Seed with CPU performance counter
+-    LARGE_INTEGER PerformanceCount;
+-    QueryPerformanceCounter(&amp;PerformanceCount);
+-    RAND_add(&amp;PerformanceCount, sizeof(PerformanceCount), 1.5);
+-    memset(&amp;PerformanceCount, 0, sizeof(PerformanceCount));
++    int64 nCounter = PerformanceCounter();
++    RAND_add(&amp;nCounter, sizeof(nCounter), 1.5);
++    memset(&amp;nCounter, 0, sizeof(nCounter));
+ }
+ 
+ void RandAddSeedPerfmon()
+@@ -196,7 +194,7 @@ void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v)
+ string FormatMoney(int64 n, bool fPlus)
+ {
+     n /= CENT;
+-    string str = strprintf(&quot;%I64d.%02I64d&quot;, (n &gt; 0 ? n : -n)/100, (n &gt; 0 ? n : -n)%100);
++    string str = strprintf(&quot;%&quot;PRI64d&quot;.%02&quot;PRI64d, (n &gt; 0 ? n : -n)/100, (n &gt; 0 ? n : -n)%100);
+     for (int i = 6; i &lt; str.size(); i += 4)
+         if (isdigit(str[str.size() - i - 1]))
+             str.insert(str.size() - i, 1, &#x27;,&#x27;);
+@@ -435,7 +433,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+     if (vTimeOffsets.empty())
+         vTimeOffsets.push_back(0);
+     vTimeOffsets.push_back(nOffsetSample);
+-    printf(&quot;Added time data, samples %d, offset %+I64d (%+I64d minutes)\n&quot;, vTimeOffsets.size(), vTimeOffsets.back(), vTimeOffsets.back()/60);
++    printf(&quot;Added time data, samples %d, offset %+&quot;PRI64d&quot; (%+&quot;PRI64d&quot; minutes)\n&quot;, vTimeOffsets.size(), vTimeOffsets.back(), vTimeOffsets.back()/60);
+     if (vTimeOffsets.size() &gt;= 5 &amp;&amp; vTimeOffsets.size() % 2 == 1)
+     {
+         sort(vTimeOffsets.begin(), vTimeOffsets.end());
+@@ -449,7 +447,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+             ///    to make sure it doesn&#x27;t get changed again
+         }
+         foreach(int64 n, vTimeOffsets)
+-            printf(&quot;%+I64d  &quot;, n);
+-        printf(&quot;|  nTimeOffset = %+I64d  (%+I64d minutes)\n&quot;, nTimeOffset, nTimeOffset/60);
++            printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);
++        printf(&quot;|  nTimeOffset = %+&quot;PRI64d&quot;  (%+&quot;PRI64d&quot; minutes)\n&quot;, nTimeOffset, nTimeOffset/60);
+     }
+ }</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -13,7 +13,6 @@ typedef unsigned long long  uint64;
+ #if defined(_MSC_VER) &amp;&amp; _MSC_VER &lt; 1300
+ #define for  if (false) ; else for
+ #endif
+-
+ #ifndef _MSC_VER
+ #define __forceinline  inline
+ #endif
+@@ -25,25 +24,22 @@ typedef unsigned long long  uint64;
+ #define UBEGIN(a)           ((unsigned char*)&amp;(a))
+ #define UEND(a)             ((unsigned char*)&amp;((&amp;(a))[1]))
+ #define ARRAYLEN(array)     (sizeof(array)/sizeof((array)[0]))
+-
+-#ifdef _WINDOWS
+ #define printf              OutputDebugStringF
+-#endif
+ 
+ #ifdef snprintf
+ #undef snprintf
+ #endif
+ #define snprintf my_snprintf
+ 
+-#ifndef PRId64
++#ifndef PRI64d
+ #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MSVCRT__)
+-#define PRId64  &quot;I64d&quot;
+-#define PRIu64  &quot;I64u&quot;
+-#define PRIx64  &quot;I64x&quot;
++#define PRI64d  &quot;I64d&quot;
++#define PRI64u  &quot;I64u&quot;
++#define PRI64x  &quot;I64x&quot;
+ #else
+-#define PRId64  &quot;lld&quot;
+-#define PRIu64  &quot;llu&quot;
+-#define PRIx64  &quot;llx&quot;
++#define PRI64d  &quot;lld&quot;
++#define PRI64u  &quot;llu&quot;
++#define PRI64x  &quot;llx&quot;
+ #endif
+ #endif
+ 
+@@ -64,8 +60,6 @@ inline T&amp; REF(const T&amp; val)
+ 
+ 
+ 
+-
+-
+ extern bool fDebug;
+ extern bool fPrintToDebugger;
+ extern bool fPrintToConsole;
+@@ -101,9 +95,7 @@ void AddTimeData(unsigned int ip, int64 nTime);
+ 
+ 
+ 
+-
+-// Wrapper to automatically initialize critical section
+-// Could use wxCriticalSection for portability, but it doesn&#x27;t support TryEnterCriticalSection
++// Wrapper to automatically initialize critical sections
+ class CCriticalSection
+ {
+ #ifdef __WXMSW__
+@@ -191,6 +183,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+         }
+     }
+ 
++#ifdef __WXMSW__
+     if (fPrintToDebugger)
+     {
+         // accumulate a line at a time
+@@ -230,6 +223,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+             pend -= (p1 - pszBuffer);
+         }
+     }
++#endif
+ #endif
+ 
+     if (fPrintToConsole)
+@@ -254,7 +248,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+ 
+ inline string i64tostr(int64 n)
+ {
+-    return strprintf(&quot;%&quot;PRId64, n);
++    return strprintf(&quot;%&quot;PRI64d, n);
+ }
+ 
+ inline string itostr(int n)
+@@ -328,6 +322,20 @@ inline void PrintHex(vector&lt;unsigned char&gt; vch, const char* pszFormat=&quot;%s&quot;, bool
+     printf(pszFormat, HexStr(vch, fSpaces).c_str());
+ }
+ 
++inline int64 PerformanceCounter()
++{
++    int64 nCounter = 0;
++    QueryPerformanceCounter((LARGE_INTEGER*)&amp;nCounter);
++    return nCounter;
++}
++
++#ifndef __WXMSW__
++inline void Sleep(unsigned int nMilliseconds)
++{
++    wxMilliSleep(nMilliseconds);
++}
++#endif
++
+ 
+ 
+ 
+@@ -370,6 +378,7 @@ inline void heapchk()
+ 
+ 
+ 
++
+ template&lt;typename T1&gt;
+ inline uint256 Hash(const T1 pbegin, const T1 pend)
+ {</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/dc73b32/">← CCriticalSection using wxWidgets instead of Windows OS calls</a><a rel="next" href="../../commits/32d4903/">make CheckDiskSpace portable →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin: BIO_FLAGS_BASE64_NO_NL (r111) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin: BIO_FLAGS_BASE64_NO_NL. 1 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/6966768/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin: BIO_FLAGS_BASE64_NO_NL (r111) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin: BIO_FLAGS_BASE64_NO_NL. 1 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/6966768/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin: BIO_FLAGS_BASE64_NO_NL (r111) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin: BIO_FLAGS_BASE64_NO_NL. 1 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin: BIO_FLAGS_BASE64_NO_NL", "url": "https://satoshimail.pages.dev/commits/6966768/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-25T21:49:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6966768a554575ca329fbcd4aad0d4f21c702f9a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin: BIO_FLAGS_BASE64_NO_NL", "item": "https://satoshimail.pages.dev/commits/6966768/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c6966768a55">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin: BIO_FLAGS_BASE64_NO_NL</span></div></nav>
+<main class="in">
+<h1>Gavin: BIO_FLAGS_BASE64_NO_NL</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 25 July 2010 · SVN r111 · release v0.3.10 · 1 files, +2 −5</p>
+<p class="actions"><a class="btn" href="../../#t-c6966768a55">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/6966768a554575ca329fbcd4aad0d4f21c702f9a" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -765,19 +765,16 @@ string EncodeBase64(string s)
+     BUF_MEM *bptr;
+ 
+     b64 = BIO_new(BIO_f_base64());
++    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+     bmem = BIO_new(BIO_s_mem());
+     b64 = BIO_push(b64, bmem);
+     BIO_write(b64, s.c_str(), s.size());
+     BIO_flush(b64);
+     BIO_get_mem_ptr(b64, &amp;bptr);
+ 
+-    string result(bptr-&gt;data, bptr-&gt;length-1);
++    string result(bptr-&gt;data, bptr-&gt;length);
+     BIO_free_all(b64);
+ 
+-    // Remove newlines every 64 characters
+-    result.erase(std::remove(result.begin(), result.end(), &#x27;\n&#x27;), result.end());
+-    result.erase(std::remove(result.begin(), result.end(), &#x27;\r&#x27;), result.end());
+-
+     return result;
+ }
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/7d46f92/">← Lachesis: remove newlines every 64 characters in…</a><a rel="next" href="../../commits/793200e/">bitcoind now compiles without wxWidgets or wxBase →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

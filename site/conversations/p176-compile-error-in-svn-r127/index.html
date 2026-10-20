@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compile error in SVN r127 – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 11 August 2010: Updated SVN. Thanks. There&#x27;s little hope of not repeatedly stumbling over that in the future. It doesn&#x27;t break the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p176-compile-error-in-svn-r127/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Compile error in SVN r127 – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 11 August 2010: Updated SVN. Thanks. There&#x27;s little hope of not repeatedly stumbling over that in the future. It doesn&#x27;t break the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p176-compile-error-in-svn-r127/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Compile error in SVN r127 – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 11 August 2010: Updated SVN. Thanks. There&#x27;s little hope of not repeatedly stumbling over that in the future. It doesn&#x27;t break the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Compile error in SVN r127", "url": "https://satoshimail.pages.dev/conversations/p176-compile-error-in-svn-r127/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-11T01:20:42Z", "text": "Building r127 here, we see some missing casts, apparently: rpc.cpp: In function json_spirit::Value gethashespersec(const json_spirit::Array&, bool): rpc.cpp:340: error: conversion from int64 to json_spirit::Value is ambiguous json/json_spirit_value.h:283: note: candidates are: json_spirit::Value_impl<Config>::Value_impl(double) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:275: note: json_spirit::Value_impl<Config>::Value_impl(uint64_t) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:267: note: json_spirit::Value_impl<Config>::Value_impl(int64_t) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:259: note: json_spirit::Value_impl<Config>::Value_impl(int) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:251: note: json_spirit::Value_impl<Config>::Value_impl(bool) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:219: note: json_spirit::Value_impl<Config>::Value_impl(typename Config::String_type::const_pointer) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] rpc.cpp:341: error: conversion from int64 to json_spirit::Value is ambiguous json/json_spirit_value.h:283: note: candidates are: json_spirit::Value_impl<Config>::Value_impl(double) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >] json/json_spirit_value.h:275: note: json_spirit::Value_impl<Config>::Value_impl(uint64_t) [with Config = json_spirit::Config_vector<std::basic_string<char, std::char_traits<char>…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-11T01:42:30Z", "text": "Updated SVN. Thanks. There's little hope of not repeatedly stumbling over that in the future. It doesn't break the compile for me."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Compile error in SVN r127", "item": "https://satoshimail.pages.dev/conversations/p176-compile-error-in-svn-r127/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p176">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Compile error in SVN r127</span></div></nav>
+<main class="in">
+<h1>Compile error in SVN r127</h1>
+<p class="lead">BitcoinTalk forum · 2 messages · from 11 August 2010 · with Satoshi Nakamoto, jgarzik</p>
+<p class="actions"><a class="btn" href="../../#t-p176">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/176/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-11T01:20:42Z">11 August 2010, 01:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=784.msg8647#msg8647" rel="nofollow noopener">original</a></span></header>
+<div class="t">Building r127 here, we see some missing casts, apparently:</div><pre><code>rpc.cpp: In function json_spirit::Value gethashespersec(const json_spirit::Array&amp;, bool):
+rpc.cpp:340: error: conversion from int64 to json_spirit::Value is ambiguous
+json/json_spirit_value.h:283: note: candidates are: json_spirit::Value_impl&lt;Config&gt;::Value_impl(double) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:275: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(uint64_t) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:267: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(int64_t) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:259: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(int) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:251: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(bool) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:219: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(typename Config::String_type::const_pointer) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+rpc.cpp:341: error: conversion from int64 to json_spirit::Value is ambiguous
+json/json_spirit_value.h:283: note: candidates are: json_spirit::Value_impl&lt;Config&gt;::Value_impl(double) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:275: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(uint64_t) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:267: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(int64_t) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:259: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(int) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:251: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(bool) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;]
+json/json_spirit_value.h:219: note:                 json_spirit::Value_impl&lt;Config&gt;::Value_impl(typename Config::String_type::const_pointer) [with Config = json_spirit::Config_vector&lt;std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;] &lt;near match&gt;</code></pre><div class="t">The following patch seems to solve the problem:</div><pre><code>--- a/rpc.cpp
++++ b/rpc.cpp
+@@ -337,8 +337,8 @@ Value gethashespersec(const Array&amp; params, bool fHelp)
+             &quot;Returns a recent hashes per second performance measurement while g
+ 
+     if (GetTimeMillis() - nHPSTimerStart &gt; 8000)
+-        return (int64)0;
+-    return (int64)dHashesPerSec;
++        return (int64_t)0;
++    return (int64_t)dHashesPerSec;
+ }
+ </code></pre></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-11T01:42:30Z">11 August 2010, 01:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=784.msg8651#msg8651" rel="nofollow noopener">original</a></span></header>
+<div class="t">Updated SVN.  Thanks.
+
+There&#x27;s little hope of not repeatedly stumbling over that in the future.  It doesn&#x27;t break the compile for me.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p175-lost-large-number-of-bitcoins/">← Lost large number of bitcoins</a><a rel="next" href="../../conversations/p177-where-is-the-separate-discussion-devoted-to-possible-bitcoin/">Where is the separate discussion devoted to possible Bitcoin weaknesses. →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

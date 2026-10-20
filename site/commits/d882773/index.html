@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase dependencies…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/d882773/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase dependencies…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/d882773/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase dependencies…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Laszlo's fix to make generate threads idle priority on Linux, replaced some wxBase dependencies: wxMutex, wxFileExists, wxStandardPaths, wxGetLocalTimeMillis", "url": "https://satoshimail.pages.dev/commits/d882773/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-08T16:14:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d882773789ea3894de7163f7bb880c5b23072882"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Laszlo's fix to make generate threads…", "item": "https://satoshimail.pages.dev/commits/d882773/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cd882773789">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Laszlo&#x27;s fix to make generate threads…</span></div></nav>
+<main class="in">
+<h1>Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase dependencies: wxMutex, wxFileExists, wxStandardPaths, wxGetLocalTimeMillis</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 8 July 2010 · SVN r99 · release v0.3.10 · 17 files, +167 −101</p>
+<p class="actions"><a class="btn" href="../../#t-cd882773789">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/d882773789ea3894de7163f7bb880c5b23072882" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -59,6 +59,10 @@
+ #include &lt;boost/function.hpp&gt;
+ #include &lt;boost/filesystem.hpp&gt;
+ #include &lt;boost/algorithm/string.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_mutex.hpp&gt;
++#include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;
++#include &lt;boost/date_time/gregorian/gregorian_types.hpp&gt;
++#include &lt;boost/date_time/posix_time/posix_time_types.hpp&gt;
+ 
+ #ifdef __WXMSW__
+ #include &lt;windows.h&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
+ 
+ #include &quot;headers.h&quot;
+ 
++extern string GetDefaultDataDir(); /// todo: delete this later, just used by debug test
++
+ 
+ 
+ 
+@@ -59,40 +61,6 @@ void Shutdown(void* parg)
+ //
+ 
+ #ifdef __WXMSW__
+-typedef WINSHELLAPI BOOL (WINAPI *PSHGETSPECIALFOLDERPATHA)(HWND hwndOwner, LPSTR lpszPath, int nFolder, BOOL fCreate);
+-
+-string MyGetSpecialFolderPath(int nFolder, bool fCreate)
+-{
+-    char pszPath[MAX_PATH+100] = &quot;&quot;;
+-
+-    // SHGetSpecialFolderPath is not usually available on NT 4.0
+-    HMODULE hShell32 = LoadLibraryA(&quot;shell32.dll&quot;);
+-    if (hShell32)
+-    {
+-        PSHGETSPECIALFOLDERPATHA pSHGetSpecialFolderPath =
+-            (PSHGETSPECIALFOLDERPATHA)GetProcAddress(hShell32, &quot;SHGetSpecialFolderPathA&quot;);
+-        if (pSHGetSpecialFolderPath)
+-            (*pSHGetSpecialFolderPath)(NULL, pszPath, nFolder, fCreate);
+-        FreeModule(hShell32);
+-    }
+-
+-    // Backup option
+-    if (pszPath[0] == &#x27;\0&#x27;)
+-    {
+-        if (nFolder == CSIDL_STARTUP)
+-        {
+-            strcpy(pszPath, getenv(&quot;USERPROFILE&quot;));
+-            strcat(pszPath, &quot;\\Start Menu\\Programs\\Startup&quot;);
+-        }
+-        else if (nFolder == CSIDL_APPDATA)
+-        {
+-            strcpy(pszPath, getenv(&quot;APPDATA&quot;));
+-        }
+-    }
+-
+-    return pszPath;
+-}
+-
+ string StartupShortcutPath()
+ {
+     return MyGetSpecialFolderPath(CSIDL_STARTUP, true) + &quot;\\Bitcoin.lnk&quot;;
+@@ -100,7 +68,7 @@ string StartupShortcutPath()
+ 
+ bool GetStartOnSystemStartup()
+ {
+-    return wxFileExists(StartupShortcutPath());
++    return filesystem::exists(StartupShortcutPath().c_str());
+ }
+ 
+ void SetStartOnSystemStartup(bool fAutoStart)
+@@ -166,7 +134,7 @@ void SetStartOnSystemStartup(bool fAutoStart) { }
+ //
+ 
+ // Define a new application
+-class CMyApp: public wxApp
++class CMyApp : public wxApp
+ {
+ public:
+     wxLocale m_locale;
+@@ -216,7 +184,10 @@ bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
+             #ifdef __WXMSW__
+             if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
+                 str[0] = &#x27;-&#x27;;
+-            str = str.MakeLower();
++            char pszLower[MAX_PATH];
++            strlcpy(pszLower, str.c_str(), sizeof(pszLower));
++            strlwr(pszLower);
++            str = pszLower;
+             #endif
+             // haven&#x27;t decided which argument to use for this yet
+             if (str == &quot;-daemon&quot; || str == &quot;-d&quot; || str == &quot;start&quot;)
+@@ -356,18 +327,14 @@ bool CMyApp::OnInit2()
+             &quot;  -daemon         \t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
+             &quot;  -?              \t  &quot; + _(&quot;This help message\n&quot;);
+ 
+-
+-        if (fWindows &amp;&amp; fGUI)
+-        {
+-            // Tabs make the columns line up in the message box
+-            wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
+-        }
+-        else
+-        {
+-            // Remove tabs
+-            strUsage.Replace(&quot;\t&quot;, &quot;&quot;);
+-            fprintf(stderr, &quot;%s&quot;, ((string)strUsage).c_str());
+-        }
++#if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
++        // Tabs make the columns line up in the message box
++        wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
++#else
++        // Remove tabs
++        strUsage.Replace(&quot;\t&quot;, &quot;&quot;);
++        fprintf(stderr, &quot;%s&quot;, ((string)strUsage).c_str());
++#endif
+         return false;
+     }
+ 
+@@ -387,6 +354,15 @@ bool CMyApp::OnInit2()
+     printf(&quot;System default language is %d %s\n&quot;, m_locale.GetSystemLanguage(), ((string)m_locale.GetSysName()).c_str());
+     printf(&quot;Language file %s (%s)\n&quot;, (string(&quot;locale/&quot;) + (string)m_locale.GetCanonicalName() + &quot;/LC_MESSAGES/bitcoin.mo&quot;).c_str(), ((string)m_locale.GetLocale()).c_str());
+ 
++        /// debug - for now, just watching if these match
++        if (pszSetDataDir[0] == 0)
++        {
++            if (GetDefaultDataDir() != GetDataDir())
++                printf(&quot;**** GetDefaultDataDir() %s != %s\n&quot;, GetDefaultDataDir().c_str(), GetDataDir().c_str());
++            else
++                printf(&quot;OK GetDefaultDataDir() %s == %s\n&quot;, GetDefaultDataDir().c_str(), GetDataDir().c_str());
++        }
++
+     if (mapArgs.count(&quot;-loadblockindextest&quot;))
+     {
+         CTxDB txdb(&quot;r&quot;);</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -692,6 +692,8 @@ msgstr &quot;Version&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;This is experimental software.\n&quot;
++&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -701,6 +703,8 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;Dies ist experimentelle Software.\n&quot;
++&quot;\n&quot;
+ &quot;Lizensiert unter der MIT/X11 Software-Lizenz. Beachten Sie die beiliegende\n&quot;
+ &quot;Datei license.txt oder http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;</code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -690,6 +690,8 @@ msgstr &quot;versione&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;This is experimental software.\n&quot;
++&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -699,6 +701,8 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;Questo è un software sperimentale.\n&quot;
++&quot;\n&quot;
+ &quot;Distribuito sotto la licenza software MIT/X11, guarda il file license.txt\n&quot;
+ &quot;incluso oppure su http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;</code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -691,6 +691,8 @@ msgstr &quot;versie&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;This is experimental software.\n&quot;
++&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -700,6 +702,8 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
++&quot;Dit is experimentele software.\n&quot;
++&quot;\n&quot;
+ &quot;Gedistributeerd onder de MIT/X11 software licentie, see het bijbehorende bestand \n&quot;
+ &quot;license.txt of http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1477,7 +1477,10 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
+     if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
++        printf(&quot;***  %s***\n&quot;, _(&quot;Warning: Disk space is low  &quot;));
++#if wxUSE_GUI
+         ThreadSafeMessageBox(_(&quot;Warning: Disk space is low  &quot;), &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
++#endif
+         CreateThread(Shutdown, NULL);
+         return false;
+     }
+@@ -2713,25 +2716,32 @@ void BitcoinMiner()
+             if ((++tmp.block.nNonce &amp; nMask) == 0)
+             {
+                 // Meter hashes/sec
+-                static int64 nHashCounter;
+-                static int64 nLastTick;
+-                if (nLastTick == 0)
+-                    nLastTick = GetTimeMillis();
++                static int64 nTimerStart;
++                static int nHashCounter;
++                if (nTimerStart == 0)
++                    nTimerStart = GetTimeMillis();
+                 else
+-                    nHashCounter += nMask + 1;
+-                if (GetTimeMillis() - nLastTick &gt; 4000)
++                    nHashCounter++;
++                if (GetTimeMillis() - nTimerStart &gt; 4000)
+                 {
+-                    double dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nLastTick);
+-                    nLastTick = GetTimeMillis();
+-                    nHashCounter = 0;
+-                    string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+-                    UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
+-                    static int64 nLogTime;
+-                    if (GetTime() - nLogTime &gt; 30 * 60)
++                    static CCriticalSection cs;
++                    CRITICAL_BLOCK(cs)
+                     {
+-                        nLogTime = GetTime();
+-                        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                        printf(&quot;hashmeter %3d CPUs %6.0f khash/s\n&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
++                        if (GetTimeMillis() - nTimerStart &gt; 4000)
++                        {
++                            double dHashesPerSec = 1000.0 * (nMask+1) * nHashCounter / (GetTimeMillis() - nTimerStart);
++                            nTimerStart = GetTimeMillis();
++                            nHashCounter = 0;
++                            string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
++                            UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                            static int64 nLogTime;
++                            if (GetTime() - nLogTime &gt; 30 * 60)
++                            {
++                                nLogTime = GetTime();
++                                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                                printf(&quot;hashmeter %3d CPUs %6.0f khash/s\n&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
++                            }
++                        }
+                     }
+                 }
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -68,6 +68,6 @@ bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
+ 
+ 
+ clean:
+-	-rm obj/*.o
+-	-rm obj/nogui/*.o
+-	-rm headers.h.gch
++	-rm -f obj/*.o
++	-rm -f obj/nogui/*.o
++	-rm -f headers.h.gch</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -927,20 +927,22 @@ int CommandLineRPC(int argc, char *argv[])
+         string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));
+         if (result.type() != null_type)
+         {
+-            if (fWindows &amp;&amp; fGUI)
+-                // Windows GUI apps can&#x27;t print to command line,
+-                // so settle for a message box yuck
+-                MyMessageBox(strResult.c_str(), &quot;Bitcoin&quot;, wxOK);
+-            else
+-                fprintf(stdout, &quot;%s\n&quot;, strResult.c_str());
++#if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
++            // Windows GUI apps can&#x27;t print to command line,
++            // so settle for a message box yuck
++            MyMessageBox(strResult.c_str(), &quot;Bitcoin&quot;, wxOK);
++#else
++            fprintf(stdout, &quot;%s\n&quot;, strResult.c_str());
++#endif
+         }
+         return 0;
+     }
+     catch (std::exception&amp; e) {
+-        if (fWindows &amp;&amp; fGUI)
+-            MyMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
+-        else
+-            fprintf(stderr, &quot;error: %s\n&quot;, e.what());
++#if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
++        MyMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
++#else
++        fprintf(stderr, &quot;error: %s\n&quot;, e.what());
++#endif
+     } catch (...) {
+         PrintException(NULL, &quot;CommandLineRPC()&quot;);
+     }</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 300;
+-static const char* pszSubVer = &quot;&quot;;
++static const char* pszSubVer = &quot;.1&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -554,7 +554,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextMain-&gt;Wrap( -1 );
+ 	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+ 	
+ 	public:
+ 		wxStaticText* m_staticTextVersion;
+-		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,315 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CAboutDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;532,315&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;532,329&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;
+@@ -3130,7 +3130,7 @@
+                                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
++                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
+                                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -20,13 +20,13 @@ bool fCommandLine = false;
+ 
+ 
+ // Init openssl library multithreading support
+-static wxMutex** ppmutexOpenSSL;
++static boost::interprocess::interprocess_mutex** ppmutexOpenSSL;
+ void locking_callback(int mode, int i, const char* file, int line)
+ {
+     if (mode &amp; CRYPTO_LOCK)
+-        ppmutexOpenSSL[i]-&gt;Lock();
++        ppmutexOpenSSL[i]-&gt;lock();
+     else
+-        ppmutexOpenSSL[i]-&gt;Unlock();
++        ppmutexOpenSSL[i]-&gt;unlock();
+ }
+ 
+ // Init
+@@ -36,9 +36,9 @@ public:
+     CInit()
+     {
+         // Init openssl library multithreading support
+-        ppmutexOpenSSL = (wxMutex**)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(wxMutex*));
++        ppmutexOpenSSL = (boost::interprocess::interprocess_mutex**)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(boost::interprocess::interprocess_mutex*));
+         for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+-            ppmutexOpenSSL[i] = new wxMutex();
++            ppmutexOpenSSL[i] = new boost::interprocess::interprocess_mutex();
+         CRYPTO_set_locking_callback(locking_callback);
+ 
+ #ifdef __WXMSW__
+@@ -152,7 +152,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+         if (fileout)
+         {
+             //// Debug print useful for profiling
+-            //fprintf(fileout, &quot; %&quot;PRI64d&quot; &quot;, wxGetLocalTimeMillis().GetValue());
++            //fprintf(fileout, &quot; %&quot;PRI64d&quot; &quot;, GetTimeMillis());
+             va_list arg_ptr;
+             va_start(arg_ptr, pszFormat);
+             ret = vfprintf(fileout, pszFormat, arg_ptr);
+@@ -521,6 +521,69 @@ void PrintException(std::exception* pex, const char* pszThread)
+ 
+ 
+ 
++#ifdef __WXMSW__
++typedef WINSHELLAPI BOOL (WINAPI *PSHGETSPECIALFOLDERPATHA)(HWND hwndOwner, LPSTR lpszPath, int nFolder, BOOL fCreate);
++
++string MyGetSpecialFolderPath(int nFolder, bool fCreate)
++{
++    char pszPath[MAX_PATH+100] = &quot;&quot;;
++
++    // SHGetSpecialFolderPath isn&#x27;t always available on old Windows versions
++    HMODULE hShell32 = LoadLibraryA(&quot;shell32.dll&quot;);
++    if (hShell32)
++    {
++        PSHGETSPECIALFOLDERPATHA pSHGetSpecialFolderPath =
++            (PSHGETSPECIALFOLDERPATHA)GetProcAddress(hShell32, &quot;SHGetSpecialFolderPathA&quot;);
++        if (pSHGetSpecialFolderPath)
++            (*pSHGetSpecialFolderPath)(NULL, pszPath, nFolder, fCreate);
++        FreeModule(hShell32);
++    }
++
++    // Backup option
++    if (pszPath[0] == &#x27;\0&#x27;)
++    {
++        if (nFolder == CSIDL_STARTUP)
++        {
++            strcpy(pszPath, getenv(&quot;USERPROFILE&quot;));
++            strcat(pszPath, &quot;\\Start Menu\\Programs\\Startup&quot;);
++        }
++        else if (nFolder == CSIDL_APPDATA)
++        {
++            strcpy(pszPath, getenv(&quot;APPDATA&quot;));
++        }
++    }
++
++    return pszPath;
++}
++#endif
++
++string GetDefaultDataDir()
++{
++    // Windows: C:\Documents and Settings\username\Application Data\Appname
++    // Mac: ~/Library/Application Support/Appname
++    // Unix: ~/.appname
++#ifdef __WXMSW__
++    // Windows
++    return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + &quot;\\Bitcoin&quot;;
++#else
++    char* pszHome = getenv(&quot;HOME&quot;);
++    if (pszHome == NULL || strlen(pszHome) == 0)
++        pszHome = (char*)&quot;/&quot;;
++    string strHome = pszHome;
++    if (strHome[strHome.size()-1] != &#x27;/&#x27;)
++        strHome += &#x27;/&#x27;;
++#ifdef __WXOSX__
++    // Mac
++    strHome += &quot;Library/Application Support/&quot;;
++    _mkdir(strHome.c_str());
++    return strHome + &quot;Bitcoin&quot;;
++#else
++    // Unix
++    return strHome + &quot;.bitcoin&quot;;
++#endif
++#endif
++}
++
+ void GetDataDir(char* pszDir)
+ {
+     // pszDir must be at least MAX_PATH length.
+@@ -538,11 +601,6 @@ void GetDataDir(char* pszDir)
+     {
+         // This can be called during exceptions by printf, so we cache the
+         // value so we don&#x27;t have to do memory allocations after that.
+-        // wxStandardPaths::GetUserDataDir
+-        //  Return the directory for the user-dependent application data files:
+-        //  Unix: ~/.appname
+-        //  Windows: C:\Documents and Settings\username\Application Data\appname
+-        //  Mac: ~/Library/Application Support/appname
+         static char pszCachedDir[MAX_PATH];
+         if (pszCachedDir[0] == 0)
+         {</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,9 @@ void ParseParameters(int argc, char* argv[]);
+ const char* wxGetTranslation(const char* psz);
+ int GetFilesize(FILE* file);
+ void GetDataDir(char* pszDirRet);
++#ifdef __WXMSW__
++string MyGetSpecialFolderPath(int nFolder, bool fCreate);
++#endif
+ string GetDataDir();
+ void ShrinkDebugFile();
+ uint64 GetRand(uint64 nMax);
+@@ -174,13 +177,13 @@ public:
+     bool TryEnter() { return TryEnterCriticalSection(&amp;cs); }
+ #else
+ protected:
+-    wxMutex mutex;
++    boost::interprocess::interprocess_recursive_mutex mutex;
+ public:
+-    explicit CCriticalSection() : mutex(wxMUTEX_RECURSIVE) { }
++    explicit CCriticalSection() { }
+     ~CCriticalSection() { }
+-    void Enter() { mutex.Lock(); }
+-    void Leave() { mutex.Unlock(); }
+-    bool TryEnter() { return mutex.TryLock() == wxMUTEX_NO_ERROR; }
++    void Enter() { mutex.lock(); }
++    void Leave() { mutex.unlock(); }
++    bool TryEnter() { return mutex.try_lock(); }
+ #endif
+ public:
+     const char* pszFile;
+@@ -324,7 +327,8 @@ inline int64 PerformanceCounter()
+ 
+ inline int64 GetTimeMillis()
+ {
+-    return wxGetLocalTimeMillis().GetValue();
++    return (posix_time::ptime(posix_time::microsec_clock::universal_time()) -
++            posix_time::ptime(gregorian::date(1970,1,1))).total_milliseconds();
+ }
+ 
+ inline string DateTimeStrFormat(const char* pszFormat, int64 nTime)
+@@ -513,7 +517,7 @@ inline pthread_t CreateThread(void(*pfn)(void*), void* parg, bool fWantHandle=fa
+     return hthread;
+ }
+ 
+-#define THREAD_PRIORITY_LOWEST          PRIO_MIN
++#define THREAD_PRIORITY_LOWEST          PRIO_MAX
+ #define THREAD_PRIORITY_BELOW_NORMAL    2
+ #define THREAD_PRIORITY_NORMAL          0
+ #define THREAD_PRIORITY_ABOVE_NORMAL    0</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/d77eac2/">← version 0.3 release</a><a rel="next" href="../../commits/50d49d9/">Portuguese translation by Tiago Faria →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

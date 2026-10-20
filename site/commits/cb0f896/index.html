@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>simplify AddAddress… (r53) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/cb0f896/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="simplify AddAddress… (r53) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/cb0f896/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="simplify AddAddress… (r53) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change status \"# blocks\" to \"# confirmations\" and widen the column.", "url": "https://satoshimail.pages.dev/commits/cb0f896/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-01-28T00:31:00Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/cb0f89646f065800d38d7cfc10ba1e855563296a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "simplify AddAddress, readcompactsize…", "item": "https://satoshimail.pages.dev/commits/cb0f896/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ccb0f89646f">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">simplify AddAddress, readcompactsize…</span></div></nav>
+<main class="in">
+<h1>simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change status &quot;# blocks&quot; to &quot;# confirmations&quot; and widen the column.</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 28 January 2010 · SVN r53 · release v0.2.2 · 11 files, +129 −117</p>
+<p class="actions"><a class="btn" href="../../#t-ccb0f89646f">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/cb0f89646f065800d38d7cfc10ba1e855563296a" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -134,8 +134,6 @@ void CDB::Close()
+ 
+     CRITICAL_BLOCK(cs_db)
+         --mapFileUseCount[strFile];
+-
+-    RandAddSeed();
+ }
+ 
+ void CloseDb(const string&amp; strFile)
+@@ -456,7 +454,7 @@ bool CAddrDB::LoadAddresses()
+                     CAddress addr(psz, NODE_NETWORK);
+                     addr.nTime = 0; // so it won&#x27;t relay unless successfully connected
+                     if (addr.IsValid())
+-                        AddAddress(*this, addr);
++                        AddAddress(addr);
+                 }
+             }
+             catch (...) { }</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -265,8 +265,7 @@ void ThreadIRCSeed(void* parg)
+                 if (DecodeAddress(pszName, addr))
+                 {
+                     addr.nTime = GetAdjustedTime() - 51 * 60;
+-                    CAddrDB addrdb;
+-                    if (AddAddress(addrdb, addr))
++                    if (AddAddress(addr))
+                         printf(&quot;IRC got new address\n&quot;);
+                     nGotIRCAddresses++;
+                 }</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1734,6 +1734,11 @@ bool ProcessMessages(CNode* pfrom)
+                 // Allow exceptions from underlength message on vRecv
+                 printf(&quot;ProcessMessage(%s, %d bytes) : Exception &#x27;%s&#x27; caught, normally caused by a message being shorter than its stated length\n&quot;, strCommand.c_str(), nMessageSize, e.what());
+             }
++            else if (strstr(e.what(), &quot;: size too large&quot;))
++            {
++                // Allow exceptions from overlong size
++                printf(&quot;ProcessMessage(%s, %d bytes) : Exception &#x27;%s&#x27; caught\n&quot;, strCommand.c_str(), nMessageSize, e.what());
++            }
+             else
+             {
+                 PrintException(&amp;e, &quot;ProcessMessage()&quot;);
+@@ -1840,7 +1845,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             return error(&quot;message addr size() = %d&quot;, vAddr.size());
+ 
+         // Store the new addresses
+-        CAddrDB addrdb;
+         foreach(CAddress&amp; addr, vAddr)
+         {
+             if (fShutdown)
+@@ -1848,7 +1852,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             addr.nTime = GetAdjustedTime() - 2 * 60 * 60;
+             if (pfrom-&gt;fGetAddr)
+                 addr.nTime -= 5 * 24 * 60 * 60;
+-            AddAddress(addrdb, addr, false);
++            AddAddress(addr, false);
+             pfrom-&gt;AddAddressKnown(addr);
+             if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
+             {</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -223,7 +223,7 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ 
+ 
+ 
+-bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline)
++bool AddAddress(CAddress addr, bool fCurrentlyOnline)
+ {
+     if (!addr.IsRoutable())
+         return false;
+@@ -239,7 +239,7 @@ bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline)
+             // New address
+             printf(&quot;AddAddress(%s)\n&quot;, addr.ToStringLog().c_str());
+             mapAddresses.insert(make_pair(addr.GetKey(), addr));
+-            addrdb.WriteAddress(addr);
++            CAddrDB().WriteAddress(addr);
+             return true;
+         }
+         else
+@@ -260,7 +260,7 @@ bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline)
+                 fUpdated = true;
+             }
+             if (fUpdated)
+-                addrdb.WriteAddress(addrFound);
++                CAddrDB().WriteAddress(addrFound);
+         }
+     }
+     return false;
+@@ -881,11 +881,11 @@ void ThreadOpenConnections2(void* parg)
+         vnThreadsRunning[1]--;
+         Sleep(500);
+         const int nMaxConnections = 15;
+-        while (vNodes.size() &gt;= nMaxConnections || vNodes.size() &gt;= mapAddresses.size())
++        while (vNodes.size() &gt;= nMaxConnections)
+         {
++            Sleep(2000);
+             if (fShutdown)
+                 return;
+-            Sleep(2000);
+         }
+         vnThreadsRunning[1]++;
+         if (fShutdown)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -23,7 +23,7 @@ enum
+ 
+ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
+ bool GetMyExternalIP(unsigned int&amp; ipRet);
+-bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline=true);
++bool AddAddress(CAddress addr, bool fCurrentlyOnline=true);
+ void AddressCurrentlyConnected(const CAddress&amp; addr);
+ CNode* FindNode(unsigned int ip);
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+@@ -627,7 +627,7 @@ public:
+         // We&#x27;re using mapAskFor as a priority queue,
+         // the key is the earliest time the request can be sent
+         int64&amp; nRequestTime = mapAlreadyAskedFor[inv];
+-        printf(&quot;askfor %s  %&quot;PRI64d&quot;\n&quot;, inv.ToString().c_str(), nRequestTime);
++        printf(&quot;askfor %s   %&quot;PRI64d&quot;\n&quot;, inv.ToString().c_str(), nRequestTime);
+ 
+         // Make sure not to reuse time indexes to keep things in the same order
+         int64 nNow = (GetTime() - 1) * 1000000;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 200;
+-static const char* pszSubVer = &quot; rc2&quot;;
++static const char* pszSubVer = &quot; test1&quot;;
+ 
+ 
+ 
+@@ -194,28 +194,32 @@ uint64 ReadCompactSize(Stream&amp; is)
+ {
+     unsigned char chSize;
+     READDATA(is, chSize);
++    uint64 nSizeRet = 0;
+     if (chSize &lt; UCHAR_MAX-2)
+     {
+-        return chSize;
++        nSizeRet = chSize;
+     }
+     else if (chSize == UCHAR_MAX-2)
+     {
+         unsigned short nSize;
+         READDATA(is, nSize);
+-        return nSize;
++        nSizeRet = nSize;
+     }
+     else if (chSize == UCHAR_MAX-1)
+     {
+         unsigned int nSize;
+         READDATA(is, nSize);
+-        return nSize;
++        nSizeRet = nSize;
+     }
+     else
+     {
+         uint64 nSize;
+         READDATA(is, nSize);
+-        return nSize;
++        nSizeRet = nSize;
+     }
++    if (nSizeRet &gt; (uint64)INT_MAX)
++        throw std::ios_base::failure(&quot;ReadCompactSize() : size too large&quot;);
++    return nSizeRet;
+ }
+ 
+ 
+@@ -460,7 +464,7 @@ void Unserialize_impl(Stream&amp; is, std::vector&lt;T, A&gt;&amp; v, int nType, int nVersion,
+     unsigned int i = 0;
+     while (i &lt; nSize)
+     {
+-        unsigned int blk = min(nSize - i, 1 + 4999999 / sizeof(T));
++        unsigned int blk = min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
+         v.resize(i + blk);
+         is.read((char*)&amp;v[i], blk * sizeof(T));
+         i += blk;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -349,7 +349,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+         nDateWidth += 12;
+     m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
+     m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
+-    m_listCtrl-&gt;InsertColumn(2, &quot;Status&quot;,       wxLIST_FORMAT_LEFT,  dResize * 90);
++    m_listCtrl-&gt;InsertColumn(2, &quot;Status&quot;,       wxLIST_FORMAT_LEFT,  dResize * 110);
+     m_listCtrl-&gt;InsertColumn(3, &quot;Date&quot;,         wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
+     m_listCtrl-&gt;InsertColumn(4, &quot;Description&quot;,  wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
+     m_listCtrl-&gt;InsertColumn(5, &quot;Debit&quot;,        wxLIST_FORMAT_RIGHT, dResize * 79);
+@@ -579,7 +579,7 @@ string FormatTxStatus(const CWalletTx&amp; wtx)
+         else if (nDepth &lt; 6)
+             return strprintf(&quot;%d/unconfirmed&quot;, nDepth);
+         else
+-            return strprintf(&quot;%d blocks&quot;, nDepth);
++            return strprintf(&quot;%d confirmations&quot;, nDepth);
+     }
+ }
+ 
+@@ -3706,13 +3706,12 @@ bool CMyApp::OnInit2()
+ 
+     if (mapArgs.count(&quot;-addnode&quot;))
+     {
+-        CAddrDB addrdb;
+         foreach(string strAddr, mapMultiArgs[&quot;-addnode&quot;])
+         {
+             CAddress addr(strAddr, NODE_NETWORK);
+             addr.nTime = 0; // so it won&#x27;t relay unless successfully connected
+             if (addr.IsValid())
+-                AddAddress(addrdb, addr);
++                AddAddress(addr);
+         }
+     }
+ 
+@@ -3934,3 +3933,13 @@ void SetStartOnSystemStartup(bool fAutoStart)
+ bool GetStartOnSystemStartup() { return false; }
+ void SetStartOnSystemStartup(bool fAutoStart) { }
+ #endif
++
++
++
++
++
++
++
++
++
++</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -158,7 +158,7 @@ class CMainFrameBase : public wxFrame
+ 		wxListCtrl* m_listCtrlOrdersSent;
+ 		wxListCtrl* m_listCtrlProductsSent;
+ 		wxListCtrl* m_listCtrlOrdersReceived;
+-		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 705,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
++		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 725,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
+ 		~CMainFrameBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;705,484&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;725,484&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;Bitcoin&lt;/property&gt;
+@@ -1737,7 +1737,7 @@
+             &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
+                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;name&quot;&gt;bSizer55&lt;/property&gt;
+                 &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -8,8 +8,8 @@
+ map&lt;string, string&gt; mapArgs;
+ map&lt;string, vector&lt;string&gt; &gt; mapMultiArgs;
+ bool fDebug = false;
+-bool fPrintToDebugger = false;
+ bool fPrintToConsole = false;
++bool fPrintToDebugger = false;
+ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
+ bool fShutdown = false;
+ 
+@@ -75,6 +75,8 @@ void RandAddSeed()
+ 
+ void RandAddSeedPerfmon()
+ {
++    RandAddSeed();
++
+     // This can take up to 2 seconds, so only do it every 10 minutes
+     static int64 nLastPerfmon;
+     if (GetTime() &lt; nLastPerfmon + 10 * 60)
+@@ -129,6 +131,79 @@ uint64 GetRand(uint64 nMax)
+ 
+ 
+ 
++inline int OutputDebugStringF(const char* pszFormat, ...)
++{
++    int ret = 0;
++    if (fPrintToConsole || wxTheApp == NULL)
++    {
++        // print to console
++        va_list arg_ptr;
++        va_start(arg_ptr, pszFormat);
++        ret = vprintf(pszFormat, arg_ptr);
++        va_end(arg_ptr);
++    }
++    else
++    {
++        // print to debug.log
++        char pszFile[MAX_PATH+100];
++        GetDataDir(pszFile);
++        strlcat(pszFile, &quot;/debug.log&quot;, sizeof(pszFile));
++        FILE* fileout = fopen(pszFile, &quot;a&quot;);
++        if (fileout)
++        {
++            //// Debug print useful for profiling
++            //fprintf(fileout, &quot; %&quot;PRI64d&quot; &quot;, wxGetLocalTimeMillis().GetValue());
++            va_list arg_ptr;
++            va_start(arg_ptr, pszFormat);
++            ret = vfprintf(fileout, pszFormat, arg_ptr);
++            va_end(arg_ptr);
++            fclose(fileout);
++        }
++    }
++
++#ifdef __WXMSW__
++    if (fPrintToDebugger)
++    {
++        // accumulate a line at a time
++        static CCriticalSection cs_OutputDebugStringF;
++        CRITICAL_BLOCK(cs_OutputDebugStringF)
++        {
++            static char pszBuffer[50000];
++            static char* pend;
++            if (pend == NULL)
++                pend = pszBuffer;
++            va_list arg_ptr;
++            va_start(arg_ptr, pszFormat);
++            int limit = END(pszBuffer) - pend - 2;
++            int ret = _vsnprintf(pend, limit, pszFormat, arg_ptr);
++            va_end(arg_ptr);
++            if (ret &lt; 0 || ret &gt;= limit)
++            {
++                pend = END(pszBuffer) - 2;
++                *pend++ = &#x27;\n&#x27;;
++            }
++            else
++                pend += ret;
++            *pend = &#x27;\0&#x27;;
++            char* p1 = pszBuffer;
++            char* p2;
++            while (p2 = strchr(p1, &#x27;\n&#x27;))
++            {
++                p2++;
++                char c = *p2;
++                *p2 = &#x27;\0&#x27;;
++                OutputDebugString(p1);
++                *p2 = c;
++                p1 = p2;
++            }
++            if (p1 != pszBuffer)
++                memmove(pszBuffer, p1, pend - p1 + 1);
++            pend -= (p1 - pszBuffer);
++        }
++    }
++#endif
++    return ret;
++}
+ 
+ 
+ // Safer snprintf</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -112,13 +112,14 @@ inline int myclosesocket(SOCKET&amp; hSocket)
+ extern map&lt;string, string&gt; mapArgs;
+ extern map&lt;string, vector&lt;string&gt; &gt; mapMultiArgs;
+ extern bool fDebug;
+-extern bool fPrintToDebugger;
+ extern bool fPrintToConsole;
++extern bool fPrintToDebugger;
+ extern char pszSetDataDir[MAX_PATH];
+ extern bool fShutdown;
+ 
+ void RandAddSeed();
+ void RandAddSeedPerfmon();
++int OutputDebugStringF(const char* pszFormat, ...);
+ int my_snprintf(char* buffer, size_t limit, const char* format, ...);
+ string strprintf(const char* format, ...);
+ bool error(const char* format, ...);
+@@ -219,92 +220,6 @@ public:
+ 
+ 
+ 
+-inline int OutputDebugStringF(const char* pszFormat, ...)
+-{
+-    int ret = 0;
+-#ifdef __WXDEBUG__
+-    if (!fPrintToConsole)
+-    {
+-        // print to debug.log
+-        char pszFile[MAX_PATH+100];
+-        GetDataDir(pszFile);
+-        strlcat(pszFile, &quot;/debug.log&quot;, sizeof(pszFile));
+-        FILE* fileout = fopen(pszFile, &quot;a&quot;);
+-        if (fileout)
+-        {
+-            //// Debug print useful for profiling
+-            //fprintf(fileout, &quot; %&quot;PRI64d&quot; &quot;, wxGetLocalTimeMillis().GetValue());
+-            va_list arg_ptr;
+-            va_start(arg_ptr, pszFormat);
+-            ret = vfprintf(fileout, pszFormat, arg_ptr);
+-            va_end(arg_ptr);
+-            fclose(fileout);
+-        }
+-    }
+-
+-#ifdef __WXMSW__
+-    if (fPrintToDebugger)
+-    {
+-        // accumulate a line at a time
+-        static CCriticalSection cs_OutputDebugStringF;
+-        CRITICAL_BLOCK(cs_OutputDebugStringF)
+-        {
+-            static char pszBuffer[50000];
+-            static char* pend;
+-            if (pend == NULL)
+-                pend = pszBuffer;
+-            va_list arg_ptr;
+-            va_start(arg_ptr, pszFormat);
+-            int limit = END(pszBuffer) - pend - 2;
+-            int ret = _vsnprintf(pend, limit, pszFormat, arg_ptr);
+-            va_end(arg_ptr);
+-            if (ret &lt; 0 || ret &gt;= limit)
+-            {
+-                pend = END(pszBuffer) - 2;
+-                *pend++ = &#x27;\n&#x27;;
+-            }
+-            else
+-                pend += ret;
+-            *pend = &#x27;\0&#x27;;
+-            char* p1 = pszBuffer;
+-            char* p2;
+-            while (p2 = strchr(p1, &#x27;\n&#x27;))
+-            {
+-                p2++;
+-                char c = *p2;
+-                *p2 = &#x27;\0&#x27;;
+-                OutputDebugString(p1);
+-                *p2 = c;
+-                p1 = p2;
+-            }
+-            if (p1 != pszBuffer)
+-                memmove(pszBuffer, p1, pend - p1 + 1);
+-            pend -= (p1 - pszBuffer);
+-        }
+-    }
+-#endif
+-#endif
+-
+-    if (fPrintToConsole)
+-    {
+-        // print to console
+-        va_list arg_ptr;
+-        va_start(arg_ptr, pszFormat);
+-        ret = vprintf(pszFormat, arg_ptr);
+-        va_end(arg_ptr);
+-    }
+-    return ret;
+-}
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ inline string i64tostr(int64 n)
+ {
+     return strprintf(&quot;%&quot;PRI64d, n);
+@@ -415,11 +330,19 @@ inline string DateTimeStrFormat(const char* pszFormat, int64 nTime)
+ 
+ 
+ 
++
++
++
++
++
++
++
+ inline void heapchk()
+ {
+ #ifdef __WXMSW__
+-    if (_heapchk() != _HEAPOK)
+-        DebugBreak();
++    /// for debugging
++    //if (_heapchk() != _HEAPOK)
++    //    DebugBreak();
+ #endif
+ }
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/9a36562/">← command line switch -noui</a><a rel="next" href="../../commits/8be979d/">now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposed change to sendtoaddress API call – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 13 August 2010: It&#x27;s too soon to start junking up the API for backward compatibility at all costs. Just return &quot;&lt;txid&gt;&quot;.">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p181-proposed-change-to-sendtoaddress-api-call/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Proposed change to sendtoaddress API call – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 13 August 2010: It&#x27;s too soon to start junking up the API for backward compatibility at all costs. Just return &quot;&lt;txid&gt;&quot;.">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p181-proposed-change-to-sendtoaddress-api-call/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Proposed change to sendtoaddress API call – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 13 August 2010: It&#x27;s too soon to start junking up the API for backward compatibility at all costs. Just return &quot;&lt;txid&gt;&quot;.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Proposed change to sendtoaddress API call", "url": "https://satoshimail.pages.dev/conversations/p181-proposed-change-to-sendtoaddress-api-call/", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-13T19:28:23Z", "text": "I'm proposing one small change to Bitcoin's JSON-RPC api: return a transaction ID when Bitcoins are successfully sent. Why? Because I want to keep a complete audit trail for any coins going into or coming out of my application's wallet; I want to keep track of the particular transactions in the bitcoin network that correspond to actions my application takes. The alternative is to call sendtoaddress and then call listtransactions, but that won't work properly if two similar transactions (same amount to same address) occur at about the same time. So I propose doing the simplest thing possible: modify the JSON-RPC sendtoaddress call so it returns the string 'sent:' followed by the 256-bit-hexadecimal transactions id. This could break any applications that look for exactly the string 'sent' (which is what sendtoaddress does now). The fix would be to modify the apps to see if the string began with 'sent'. Alternatives I thought about but think I don't like: + make it a new api call so old apps do not break (sendtoaddress2 ? yuck) + return just the transaction id on successful send instead of 'sent:...' + return an array with more information (maybe [ \"tx_id\": \"...\", \"fee\" : 0.0 ] ) Comments/criticisms?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-13T19:40:20Z", "text": "100% agreed with your suggestion, about the need for txn_id association. However, it seems better to avoid API breakage, because this API is so heavily used. It is almost guaranteed that anyone automating bitcoins is using sendtoaddress. Either create a \"send2\" RPC call, or add an \"[extended-JSON=0]\" parameter to the existing sendtoaddress RPC call, or something similar that preserves existing application data flows."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-13T19:41:14Z", "text": "Just add a flag (like true/false) to the function with the default \"false\" so it works with older uses of the function call. Like sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to] [return transaction ID, default false] So sendtoaddress 1FtDzyajiHKa9QbXiNxqztB 1.00 \"Blah Comment\" \"Blah From\" true returns sent XYZ.... But sendtoaddress 1FtDzyajiHKa9QbXiNxqztB 1.00 \"Blah Comment\" \"Blah From\" returns sent Also without having to break compatibility. I think it would be a handy addition."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-13T20:01:17Z", "text": "RE: adding a flag: great idea! If you set the flag, I don't see any reason to prepend 'sent' to the transaction ID; better to just return the transaction ID on successful send. Patches: diff --git a/rpc.cpp b/rpc.cpp index 920fe90..8714b7e 100644 --- a/rpc.cpp +++ b/rpc.cpp @@ -342,10 +342,11 @@ Value getaddressesbylabel(const Array& params, bool fHelp) Value sendtoaddress(const Array& params, bool fHelp) { - if (fHelp || params.size() < 2 || params.size() > 4) + if (fHelp || params.size() < 2…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-13T20:13:30Z", "text": "What happens when we desire to return additional information, beyond tx-id? For the sake of future compatibility, it seems like the flag should present a choice between returning (a) just the current 'sent', or (b) a JSON map containing tx-id, and perhaps other things."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-13T20:26:06Z", "text": "A 'gettransaction tx_id' API call is on my short list. What do other folks think; should sendtoaddress .... true return just the tx_id, and you have to make another API call to get details if you need them? Or should it return an Array?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-13T23:01:14Z", "text": "Do you need 'gettransaction', given the existence of 'getblock'?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-13T23:39:14Z", "text": "It's too soon to start junking up the API for backward compatibility at all costs. Just return \"<txid>\"."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Proposed change to sendtoaddress API call", "item": "https://satoshimail.pages.dev/conversations/p181-proposed-change-to-sendtoaddress-api-call/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p181">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Proposed change to sendtoaddress API call</span></div></nav>
+<main class="in">
+<h1>Proposed change to sendtoaddress API call</h1>
+<p class="lead">BitcoinTalk forum · 8 messages · from 13 August 2010 · with Gavin Andresen, Satoshi Nakamoto, jgarzik, knightmb</p>
+<p class="actions"><a class="btn" href="../../#t-p181">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/181/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-13T19:28:23Z">13 August 2010, 19:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9073#msg9073" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m proposing one small change to Bitcoin&#x27;s JSON-RPC api:  return a transaction ID when Bitcoins are successfully sent.
+
+Why?  Because I want to keep a complete audit trail for any coins going into or coming out of my application&#x27;s wallet; I want to keep track of the particular transactions in the bitcoin network that correspond to actions my application takes.  The alternative is to call sendtoaddress and then call listtransactions, but that won&#x27;t work properly if two similar transactions (same amount to same address) occur at about the same time.
+
+So I propose doing the simplest thing possible: modify the JSON-RPC sendtoaddress call so it returns the string &#x27;sent:&#x27; followed by the 256-bit-hexadecimal transactions id.
+
+This could break any applications that look for exactly the string &#x27;sent&#x27; (which is what sendtoaddress does now).  The fix would be to modify the apps to see if the string began with &#x27;sent&#x27;.
+
+Alternatives I thought about but think I don&#x27;t like:
+ + make it a new api call so old apps do not break (sendtoaddress2 ? yuck)
+ + return just the transaction id on successful send instead of &#x27;sent:...&#x27;
+ + return an array with more information (maybe [ &quot;tx_id&quot;: &quot;...&quot;, &quot;fee&quot; : 0.0 ] )
+
+Comments/criticisms?</div></article><article class="msg" id="m1">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-13T19:40:20Z">13 August 2010, 19:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9075#msg9075" rel="nofollow noopener">original</a></span></header>
+<div class="t">100% agreed with your suggestion, about the need for txn_id association.
+
+However, it seems better to avoid API breakage, because this API is so heavily used.  It is almost guaranteed that anyone automating bitcoins is using sendtoaddress.
+
+Either create a &quot;send2&quot; RPC call, or add an &quot;[extended-JSON=0]&quot; parameter to the existing sendtoaddress RPC call, or something similar that preserves existing application data flows.</div></article><article class="msg" id="m2">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-13T19:41:14Z">13 August 2010, 19:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9076#msg9076" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just add a flag (like true/false) to the function with the default &quot;false&quot; so it works with older uses of the function call.
+
+Like
+
+sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to] [return transaction ID, default false]
+
+So
+sendtoaddress 1FtDzyajiHKa9QbXiNxqztB 1.00 &quot;Blah Comment&quot; &quot;Blah From&quot; true
+returns
+sent XYZ....
+
+But
+sendtoaddress 1FtDzyajiHKa9QbXiNxqztB 1.00 &quot;Blah Comment&quot; &quot;Blah From&quot;
+returns
+sent
+Also without having to break compatibility.
+
+I think it would be a handy addition.</div></article><article class="msg" id="m3">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-13T20:01:17Z">13 August 2010, 20:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9086#msg9086" rel="nofollow noopener">original</a></span></header>
+<div class="t">RE: adding a flag:  great idea!
+
+If you set the flag, I don&#x27;t see any reason to prepend &#x27;sent&#x27; to the transaction ID; better to just return the transaction ID on successful send.
+
+Patches:</div><pre><code>diff --git a/rpc.cpp b/rpc.cpp
+index 920fe90..8714b7e 100644
+--- a/rpc.cpp
++++ b/rpc.cpp
+@@ -342,10 +342,11 @@ Value getaddressesbylabel(const Array&amp; params, bool fHelp)
+ 
+ Value sendtoaddress(const Array&amp; params, bool fHelp)
+ {
+-    if (fHelp || params.size() &lt; 2 || params.size() &gt; 4)
++    if (fHelp || params.size() &lt; 2 || params.size() &gt; 5)
+         throw runtime_error(
+-            &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]&quot;
+-            &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;);
++            &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to] [return-tx-id-flag]&quot;
++            &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;
++            &quot;returns string &#x27;sent&#x27; if return-tx-id-flag is false (default), otherwise returns transaction id.&quot;);
+ 
+     string strAddress = params[0].get_str();
+ 
+@@ -361,9 +362,15 @@ Value sendtoaddress(const Array&amp; params, bool fHelp)
+     if (params.size() &gt; 3 &amp;&amp; params[3].type() != null_type &amp;&amp; !params[3].get_str().empty())
+         wtx.mapValue[&quot;to&quot;]      = params[3].get_str();
+ 
++    bool fReturnTxID = false;
++    if (params.size() &gt; 4)
++        fReturnTxID = params[4].get_bool();
++
+     string strError = SendMoneyToBitcoinAddress(strAddress, nAmount, wtx);
+     if (strError != &quot;&quot;)
+         throw runtime_error(strError);
++    if (fReturnTxID)
++        return wtx.GetHash().ToString();
+     return &quot;sent&quot;;
+ }
+ 
+@@ -1103,6 +1110,7 @@ int CommandLineRPC(int argc, char *argv[])
+         if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 0) ConvertTo&lt;bool&gt;(params[0]);
+         if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
+         if (strMethod == &quot;sendtoaddress&quot;          &amp;&amp; n &gt; 1) ConvertTo&lt;double&gt;(params[1]);
++        if (strMethod == &quot;sendtoaddress&quot;          &amp;&amp; n &gt; 4) ConvertTo&lt;bool&gt;(params[4]);
+         if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
+         if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+         if (strMethod == &quot;getamountreceived&quot;      &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]); // deprecated</code></pre></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-13T20:13:30Z">13 August 2010, 20:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9090#msg9090" rel="nofollow noopener">original</a></span></header>
+<div class="t">What happens when we desire to return additional information, beyond tx-id?
+
+For the sake of future compatibility, it seems like the flag should present a choice between returning (a) just the current &#x27;sent&#x27;, or (b) a JSON map containing tx-id, and perhaps other things.</div></article><article class="msg" id="m5">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-13T20:26:06Z">13 August 2010, 20:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9096#msg9096" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 13, 2010, 08:13:30 PM</div><div class="t">What happens when we desire to return additional information, beyond tx-id?
+
+For the sake of future compatibility, it seems like the flag should present a choice between returning (a) just the current &#x27;sent&#x27;, or (b) a JSON map containing tx-id, and perhaps other things.</div></blockquote><div class="t">A &#x27;gettransaction tx_id&#x27; API call is on my short list.
+
+What do other folks think; should sendtoaddress .... true   return just the tx_id, and you have to make another API call to get details if you need them?
+Or should it return an Array?</div></article><article class="msg" id="m6">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-13T23:01:14Z">13 August 2010, 23:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9126#msg9126" rel="nofollow noopener">original</a></span></header>
+<div class="t">Do you need &#x27;gettransaction&#x27;, given the existence of &#x27;getblock&#x27;?</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T23:39:14Z">13 August 2010, 23:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=807.msg9134#msg9134" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s too soon to start junking up the API for backward compatibility at all costs.
+
+Just return &quot;&lt;txid&gt;&quot;.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p180-version-0-3-9-rc1-please-test/">← Version 0.3.9 rc1, please test</a><a rel="next" href="../../conversations/p182-potential-disaster-scenario/">Potential disaster scenario →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

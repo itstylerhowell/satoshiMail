@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>more addr message error checking… (r83) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e5681bb/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="more addr message error checking… (r83) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e5681bb/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="more addr message error checking… (r83) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "more addr message error checking -- version 0.2.11", "url": "https://satoshimail.pages.dev/commits/e5681bb/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-15T18:26:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e5681bb12154bae75977d091190e924d8e6984cd"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "more addr message error checking --…", "item": "https://satoshimail.pages.dev/commits/e5681bb/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce5681bb121">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">more addr message error checking --…</span></div></nav>
+<main class="in">
+<h1>more addr message error checking -- version 0.2.11</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 June 2010 · SVN r83 · release v0.2.11 · 4 files, +23 −12</p>
+<p class="actions"><a class="btn" href="../../#t-ce5681bb121">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e5681bb12154bae75977d091190e924d8e6984cd" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1926,7 +1926,9 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     {
+         vector&lt;CAddress&gt; vAddr;
+         vRecv &gt;&gt; vAddr;
+-        if (vAddr.size() &gt; 50000) // lower this to 1000 later
++        if (pfrom-&gt;nVersion &lt; 200) // don&#x27;t want addresses from 0.1.5
++            return true;
++        if (vAddr.size() &gt; 1000)
+             return error(&quot;message addr size() = %d&quot;, vAddr.size());
+ 
+         // Store the new addresses
+@@ -2311,6 +2313,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
+                 if (pto-&gt;setAddrKnown.insert(addr).second)
+                 {
+                     vAddr.push_back(addr);
++                    // receiver rejects addr messages larger than 1000
+                     if (vAddr.size() &gt;= 1000)
+                     {
+                         pto-&gt;PushMessage(&quot;addr&quot;, vAddr);</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -968,9 +968,9 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
+     if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
+     {
+         // Advertise our address
+-        vector&lt;CAddress&gt; vAddrToSend;
+-        vAddrToSend.push_back(addrLocalHost);
+-        pnode-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
++        vector&lt;CAddress&gt; vAddr;
++        vAddr.push_back(addrLocalHost);
++        pnode-&gt;PushMessage(&quot;addr&quot;, vAddr);
+     }
+ 
+     // Get as many addresses as we can</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -289,16 +289,24 @@ public:
+ 
+     bool IsRoutable() const
+     {
+-        return !(GetByte(3) == 10 ||
+-                 (GetByte(3) == 192 &amp;&amp; GetByte(2) == 168) ||
+-                 GetByte(3) == 127 ||
+-                 GetByte(3) == 0 ||
+-                 ip == 0 ||
+-                 ip == INADDR_NONE);
++        return IsValid() &amp;&amp;
++            !(GetByte(3) == 10 ||
++              (GetByte(3) == 192 &amp;&amp; GetByte(2) == 168) ||
++              GetByte(3) == 127 ||
++              GetByte(3) == 0);
+     }
+ 
+     bool IsValid() const
+     {
++        // Clean up 3-byte shifted addresses caused by garbage in size field
++        // of addr messages from versions before 0.2.9 checksum.
++        // Two consecutive addr messages look like this:
++        // header20 vectorlen3 addr26 addr26 addr26 header20 vectorlen3 addr26 addr26 addr26...
++        // so if the first length field is garbled, it reads the second batch
++        // of addr misaligned by 3 bytes.
++        if (memcmp(pchReserved, pchIPv4+3, sizeof(pchIPv4)-3) == 0)
++            return false;
++
+         return (ip != 0 &amp;&amp; ip != INADDR_NONE &amp;&amp; port != htons(USHRT_MAX));
+     }
+ 
+@@ -619,7 +627,7 @@ public:
+         // Known checking here is only to save space from duplicates.
+         // SendMessages will filter it again for knowns that were added
+         // after addresses were pushed.
+-        if (!setAddrKnown.count(addr))
++        if (addr.IsValid() &amp;&amp; !setAddrKnown.count(addr))
+             vAddrToSend.push_back(addr);
+     }
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 210;
++static const int VERSION = 211;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/bed005b/">← revert makefile.unix from -02 back to -00 to fix compile…</a><a rel="next" href="../../commits/6a4a355/">German translation by DataWraith →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

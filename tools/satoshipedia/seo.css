@@ -1,0 +1,24 @@
+
+/* ═════════════ SEO / accessibility pass ═════════════ */
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* icon names live in data-i and are drawn by CSS, so they never show up as page text */
+.ms::before { content: attr(data-i); }
+/* bigger targets for the encyclopedia's link lists and the map's lists */
+.wk-nav a { min-height: 28px; box-sizing: border-box; }
+.wk-topics a, .wk-az a, .wk-see a { display: inline-block; padding: 3px 0; }
+.wk-nav h4, .vz-side h3 { font-size: 12px; }
+.dk { font-size: 12px; }
+@media (pointer: coarse) {
+  .wk-nav a, .vz-top10 button, .vz-threads a, .nav, .wk-sug a { min-height: 44px; }
+  .wk-topics a, .wk-az a, .wk-see a { padding: 9px 0; }
+}
+@media (max-width: 640px) {
+  .seg-t, .seg-q .qb { font-size: 16px; line-height: 1.55; }
+  .wk-art { font-size: 16.5px; }
+  .dk { font-size: 11px; }
+}
+@media (max-width: 440px) { .dk { font-size: 10.5px; } }
+.lchip { min-height: 24px; }
+.beta-pill { height: 24px; }
+input.cbx { width: 20px; height: 20px; }
+sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }

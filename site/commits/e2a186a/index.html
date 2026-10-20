@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SelectCoins first pass tries not… (r177) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 November 2010: SelectCoins first pass tries not to use coins with less than 6 confirmations. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e2a186a/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="SelectCoins first pass tries not… (r177) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 November 2010: SelectCoins first pass tries not to use coins with less than 6 confirmations. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e2a186a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="SelectCoins first pass tries not… (r177) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 November 2010: SelectCoins first pass tries not to use coins with less than 6 confirmations. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "SelectCoins first pass tries not to use coins with less than 6 confirmations", "url": "https://satoshimail.pages.dev/commits/e2a186a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-11-09T19:47:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e2a186af10d81a0e27b2e7c34783711d65caeae7"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "SelectCoins first pass tries not to…", "item": "https://satoshimail.pages.dev/commits/e2a186a/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce2a186af10">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">SelectCoins first pass tries not to…</span></div></nav>
+<main class="in">
+<h1>SelectCoins first pass tries not to use coins with less than 6 confirmations</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 9 November 2010 · SVN r177 · release v0.3.15 · 2 files, +34 −2</p>
+<p class="actions"><a class="btn" href="../../#t-ce2a186af10">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e2a186af10d81a0e27b2e7c34783711d65caeae7" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -3400,7 +3400,7 @@ int64 GetBalance()
+ }
+ 
+ 
+-bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
++bool SelectCoinsMinConf(int64 nTargetValue, int nConfMine, int nConfTheirs, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ {
+     setCoinsRet.clear();
+ 
+@@ -3422,6 +3422,11 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+        {
+             if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent || !pcoin-&gt;IsConfirmed())
+                 continue;
++
++            int nDepth = pcoin-&gt;GetDepthInMainChain();
++            if (nDepth &lt; (pcoin-&gt;IsFromMe() ? nConfMine : nConfTheirs))
++                continue;
++
+             int64 n = pcoin-&gt;GetCredit();
+             if (n &lt;= 0)
+                 continue;
+@@ -3506,6 +3511,13 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+     return true;
+ }
+ 
++bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
++{
++    return (SelectCoinsMinConf(nTargetValue, 1, 6, setCoinsRet) ||
++            SelectCoinsMinConf(nTargetValue, 1, 1, setCoinsRet) ||
++            SelectCoinsMinConf(nTargetValue, 0, 1, setCoinsRet));
++}
++
+ 
+ 
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -487,6 +487,11 @@ public:
+         return false;
+     }
+ 
++    bool IsFromMe() const
++    {
++        return (GetDebit() &gt; 0);
++    }
++
+     int64 GetDebit() const
+     {
+         int64 nDebit = 0;
+@@ -789,8 +794,23 @@ public:
+         return nCreditCached;
+     }
+ 
++    bool IsFromMe() const
++    {
++        return (GetDebit() &gt; 0);
++    }
++
+     bool IsConfirmed() const
+     {
++        // Quick answer in most cases
++        if (!IsFinal())
++            return false;
++        if (GetDepthInMainChain() &gt;= 1)
++            return true;
++        if (!IsFromMe()) // using wtx&#x27;s cached debit
++            return false;
++
++        // If no confirmations but it&#x27;s from us, we can still
++        // consider it confirmed if all dependencies are confirmed
+         map&lt;uint256, const CMerkleTx*&gt; mapPrev;
+         vector&lt;const CMerkleTx*&gt; vWorkQueue;
+         vWorkQueue.reserve(vtxPrev.size()+1);
+@@ -803,7 +823,7 @@ public:
+                 return false;
+             if (ptx-&gt;GetDepthInMainChain() &gt;= 1)
+                 return true;
+-            if (ptx-&gt;GetDebit() &lt;= 0)
++            if (!ptx-&gt;IsFromMe())
+                 return false;
+ 
+             if (mapPrev.empty())</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/461764c/">← -paytxfee is now per KB, BitcoinMiner prioritise…</a><a rel="next" href="../../commits/910bd45/">-- version 0.3.15 release →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

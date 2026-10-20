@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Setup, Autorun, v0.1.6 – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 16 October 2009: Thanks for that. I&#x27;m still merging in some changes I had that need to go in before any next release. Some things based…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x20-re-setup-autorun-v0-1-6/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Setup, Autorun, v0.1.6 – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 16 October 2009: Thanks for that. I&#x27;m still merging in some changes I had that need to go in before any next release. Some things based…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x20-re-setup-autorun-v0-1-6/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Setup, Autorun, v0.1.6 – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 16 October 2009: Thanks for that. I&#x27;m still merging in some changes I had that need to go in before any next release. Some things based…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Setup, Autorun, v0.1.6", "url": "https://satoshimail.pages.dev/conversations/x20-re-setup-autorun-v0-1-6/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-10-16T18:41:40Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-16T18:41:40Z", "text": "Thanks for that. I'm still merging in some changes I had that need to go in before any next release. Some things based on questions and feedback I've received that'll reduce confusion. I'll probably enable multi-proc generating support, and hopefully make it safe to just backup wallet.dat to backup your money. It's good to be coding again! I'm going to hide the transaction fee setting, which is completely not needed and only serves to confuse people. It was only there for testing and…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-18T17:59:42Z", "text": "I got it, I see you checked in the startup folder code before changing it to registry. I don't see any visible problems in the code. I guess it depends what exactly the problem was with it not always working by default. Was there a Vista/UAC security problem?"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-10-18T21:02:28Z", "text": "Well, the code worked and made a shortcut in the startup folder. For some reason it didn't automatically start when booting, but worked fine when you clicked on it in the menu. Now I tried making a shortcut manually, and this time it works on autostart, don't know why. I could try again with the older code."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-18T23:11:50Z", "text": "It's possible Bitcoin ran and bailed out because something was wrong. debug.log should tell something if that was the case. What OS are you using? I wonder if we need Admin privilege and don't realize it. Stuff that requires Admin can't start on startup on Vista. Program shortcuts have multiple tabs of settings with lots of little details. I'll try the startup folder code and see if I can reproduce the problem. Every other systray icon on my computer is in the startup folder, and it makes it…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-10-20T18:38:56Z", "text": "I'm using XP. I recompiled the older revision and this time the startup shortcut works. It also works when testing on Vista (non-admin). Maybe I just missed something the previous time. Here it's the other way around, I have all my startup programs in the registry. But maybe the shortcut method is nicer for the user, if it works just as well"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-21T17:58:49Z", "text": "Yeah, I put back your startup folder shortcut code and it started fine for me too on XP and Vista. For good measure, I changed it to make the shortcut settings look identical to one I manually created. I set the working directory to where the EXE is since that's where debug.log is created, otherwise windows puts it in some weird directory. I didn't change the setup script yet. I checked everything in to SVN (thanks for setting that up) - multi-proc generate - flush wallet.dat after every…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Re: Setup, Autorun, v0.1.6", "item": "https://satoshimail.pages.dev/conversations/x20-re-setup-autorun-v0-1-6/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x20">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Setup, Autorun, v0.1.6</span></div></nav>
+<main class="in">
+<h1>Re: Setup, Autorun, v0.1.6</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 6 messages · from 16 October 2009 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x20">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-10-16T18:41:40Z">16 October 2009, 18:41 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-35" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for that.  I&#x27;m still merging in some changes I had that need to
+go in before any next release.  Some things based on questions and
+feedback I&#x27;ve received that&#x27;ll reduce confusion.  I&#x27;ll probably enable
+multi-proc generating support, and hopefully make it safe to just backup
+wallet.dat to backup your money.  It&#x27;s good to be coding again!
+
+I&#x27;m going to hide the transaction fee setting, which is completely not
+needed and only serves to confuse people.  It was only there for testing
+and demonstration of a technical detail that can only be needed in the
+far away future, if ever, but was necessary to implement at the
+beginning to make it possible later.
+
+What was the problem with the shortcut in the startup folder?  If you
+could send me the code, I&#x27;d like to take another look and see if I can
+see what the problem was.  The first strcat in the registry code should
+be strcpy, otherwise it would fail intermittently.  If the same code was
+in the shortcut one, maybe that was the problem.
+
+It&#x27;s encouraging to see more people taking an interest such as that
+NewLibertyStandard site.  I like his approach to estimating the value
+based on electricity.  It&#x27;s educational to see what explanations people
+adopt.  They may help discover a simplified way of understanding it that
+makes it more accessible to the masses.  Many complex concepts in the
+world have a simplistic explanation that satisfies 80% of people, and a
+complete explanation that satisfies the other 20% who see the flaws in
+the simplistic explanation.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I made a Windows installer for the latest version of Bitcoin, which
+includes the autostart and minimize to tray features. The installer
+makes a start menu shortcut and a startup registry entry. I first
+implemented the autostart with a shortcut to the startup folder, but I
+found out that it doesn&#x27;t always work by default and ended up doing it
+with a registry entry. The registry entry is removed by the uninstaller
+and can be also disabled from the options menu, so I don&#x27;t think it&#x27;s
+such a big menace to the user after all.
+
+I made the installer with NSIS, and the nsi script can be found in the SVN.
+
+Could you add the installer to the SF download page? Here&#x27;s the file:
+<a href="http://bitcoin.sourceforge.net/uploads/Bitcoin_setup.exe" rel="nofollow noopener">http://bitcoin.sourceforge.net/uploads/Bitcoin_setup.exe</a>
+
+There are some new users registered to the bitcoin.sf.net site. One of
+them just announced that he&#x27;s trading Bitcoins for dollars. Here&#x27;s his
+site: <a href="http://newlibertystandard.wetpaint.com/." rel="nofollow noopener">http://newlibertystandard.wetpaint.com/.</a> Making an exchange
+service first seemed a bit premature for the time being, but on the
+other hand it&#x27;s good that people show interest towards the project, and
+this might attract even more interested people (and hopefully more
+developers). I just sent the guy an email.</div></blockquote></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2009-10-18T17:59:42Z">18 October 2009, 17:59 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-36" rel="nofollow noopener">original</a></span></header>
+<div class="t">I got it, I see you checked in the startup folder code before changing
+it to registry.  I don&#x27;t see any visible problems in the code.  I guess
+it depends what exactly the problem was with it not always working by
+default.  Was there a Vista/UAC security problem?</div><blockquote><div class=qh>Satoshi Nakamoto wrote:</div><div class="t">What was the problem with the shortcut in the startup folder?  If you
+could send me the code, I&#x27;d like to take another look and see if I can
+see what the problem was.  The first strcat in the registry code should
+be strcpy, otherwise it would fail intermittently.  If the same code was
+in the shortcut one, maybe that was the problem.
+
+mmalmi@cc.hut.fi wrote:
+&gt; I made a Windows installer for the latest version of Bitcoin, which
+&gt; includes the autostart and minimize to tray features. The installer
+&gt; makes a start menu shortcut and a startup registry entry. I first
+&gt; implemented the autostart with a shortcut to the startup folder, but I
+&gt; found out that it doesn&#x27;t always work by default and ended up doing it
+&gt; with a registry entry. The registry entry is removed by the
+&gt; uninstaller and can be also disabled from the options menu, so I don&#x27;t
+&gt; think it&#x27;s such a big menace to the user after all.</div></blockquote></article><article class="msg" id="m2">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-10-18T21:02:28Z">18 October 2009, 21:02 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-37" rel="nofollow noopener">original</a></span></header>
+<div class="t">Well, the code worked and made a shortcut in the startup folder. For
+some reason it didn&#x27;t automatically start when booting, but worked
+fine when you clicked on it in the menu. Now I tried making a shortcut
+manually, and this time it works on autostart, don&#x27;t know why. I could
+try again with the older code.</div><blockquote><div class="t">I got it, I see you checked in the startup folder code before changing
+it to registry.  I don&#x27;t see any visible problems in the code.  I guess
+it depends what exactly the problem was with it not always working by
+default.  Was there a Vista/UAC security problem?
+
+Satoshi Nakamoto wrote:
+&gt; What was the problem with the shortcut in the startup folder?  If
+&gt; you could send me the code, I&#x27;d like to take another look and see
+&gt; if I can see what the problem was.  The first strcat in the
+&gt; registry code should be strcpy, otherwise it would fail
+&gt; intermittently.  If the same code was in the shortcut one, maybe
+&gt; that was the problem.
+&gt;
+&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt; I made a Windows installer for the latest version of Bitcoin,
+&gt;&gt; which includes the autostart and minimize to tray features. The
+&gt;&gt; installer makes a start menu shortcut and a startup registry
+&gt;&gt; entry. I first implemented the autostart with a shortcut to the
+&gt;&gt; startup folder, but I found out that it doesn&#x27;t always work by
+&gt;&gt; default and ended up doing it with a registry entry. The registry
+&gt;&gt;  entry is removed by the uninstaller and can be also disabled from
+&gt;&gt;   the options menu, so I don&#x27;t think it&#x27;s such a big menace to the
+&gt;&gt;   user after all.</div></blockquote></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-10-18T23:11:50Z">18 October 2009, 23:11 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-38" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s possible Bitcoin ran and bailed out because something was wrong.
+debug.log should tell something if that was the case.  What OS are you
+using?  I wonder if we need Admin privilege and don&#x27;t realize it.  Stuff
+that requires Admin can&#x27;t start on startup on Vista.
+
+Program shortcuts have multiple tabs of settings with lots of little
+details.  I&#x27;ll try the startup folder code and see if I can reproduce
+the problem.  Every other systray icon on my computer is in the startup
+folder, and it makes it easy for users to manage all their autoruns in
+one place.  The things in the registry key tend to be devious hidden
+bloatware.
+
+I implemented the code to flush wallet.dat whenever it&#x27;s closed so we&#x27;ll
+be able to tell users they only need to backup wallet.dat.  You can
+restore just wallet.dat and it&#x27;ll re-download the rest.  I&#x27;ll have to do
+another stress test before release.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Well, the code worked and made a shortcut in the startup folder. For
+some reason it didn&#x27;t automatically start when booting, but worked fine
+when you clicked on it in the menu. Now I tried making a shortcut
+manually, and this time it works on autostart, don&#x27;t know why. I could
+try again with the older code.
+
+&gt; I got it, I see you checked in the startup folder code before changing
+&gt; it to registry.  I don&#x27;t see any visible problems in the code.  I guess
+&gt; it depends what exactly the problem was with it not always working by
+&gt; default.  Was there a Vista/UAC security problem?
+&gt;
+&gt; Satoshi Nakamoto wrote:
+&gt;&gt; What was the problem with the shortcut in the startup folder?  If
+&gt;&gt; you could send me the code, I&#x27;d like to take another look and see
+&gt;&gt; if I can see what the problem was.  The first strcat in the
+&gt;&gt; registry code should be strcpy, otherwise it would fail
+&gt;&gt; intermittently.  If the same code was in the shortcut one, maybe
+&gt;&gt; that was the problem.
+&gt;&gt;
+&gt;&gt; mmalmi@cc.hut.fi wrote:
+&gt;&gt;&gt; I made a Windows installer for the latest version of Bitcoin,
+&gt;&gt;&gt; which includes the autostart and minimize to tray features. The
+&gt;&gt;&gt; installer makes a start menu shortcut and a startup registry
+&gt;&gt;&gt; entry. I first implemented the autostart with a shortcut to the
+&gt;&gt;&gt; startup folder, but I found out that it doesn&#x27;t always work by
+&gt;&gt;&gt; default and ended up doing it with a registry entry. The registry
+&gt;&gt;&gt;  entry is removed by the uninstaller and can be also disabled from
+&gt;&gt;&gt; the options menu, so I don&#x27;t think it&#x27;s such a big menace to the
+&gt;&gt;&gt; user after all.</div></blockquote></article><article class="msg" id="m4">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-10-20T18:38:56Z">20 October 2009, 18:38 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-39" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">It&#x27;s possible Bitcoin ran and bailed out because something was wrong.
+debug.log should tell something if that was the case.  What OS are you
+using?  I wonder if we need Admin privilege and don&#x27;t realize it.
+Stuff that requires Admin can&#x27;t start on startup on Vista.</div></blockquote><div class="t">I&#x27;m using XP. I recompiled the older revision and this time the
+startup shortcut works. It also works when testing on Vista
+(non-admin). Maybe I just missed something the previous time.</div><blockquote><div class="t">Program shortcuts have multiple tabs of settings with lots of little
+details.  I&#x27;ll try the startup folder code and see if I can reproduce
+the problem.  Every other systray icon on my computer is in the startup
+folder, and it makes it easy for users to manage all their autoruns in
+one place.  The things in the registry key tend to be devious hidden
+bloatware.</div></blockquote><div class="t">Here it&#x27;s the other way around, I have all my startup programs in the
+registry. But maybe the shortcut method is nicer for the user, if it
+works just as well</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-10-21T17:58:49Z">21 October 2009, 17:58 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-40" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, I put back your startup folder shortcut code and it started fine
+for me too on XP and Vista.  For good measure, I changed it to make the
+shortcut settings look identical to one I manually created.  I set the
+working directory to where the EXE is since that&#x27;s where debug.log is
+created, otherwise windows puts it in some weird directory.  I didn&#x27;t
+change the setup script yet.
+
+I checked everything in to SVN (thanks for setting that up)
+- multi-proc generate
+- flush wallet.dat after every change so the DB doesn&#x27;t leave that stuff
+in the transaction logs
+- view menu checkbox to hide all generated coins so you can see just
+your payment transactions
+- disabled transaction fee option
+- made the minimize to tray options similar to Firefox&#x27;s MinimizeToTray
+- bunch of other misc changes since the 0.1.5 release
+
+I made it not show non-accepted generated coins.  It won&#x27;t show
+generated coins until they have at least one confirmation (one block
+linked after it), so usually they&#x27;ll just never be seen.  Occasionally a
+generated coin that was displayed might disappear because it became not
+accepted later.  I don&#x27;t think anyone would notice the occasional
+non-accepteds if we didn&#x27;t point them out in the UI.  People have told
+me they find it annoying to have to look at them, as they&#x27;re permanently
+displayed in the transaction record.
+
+I still have more testing to do.  I guess we gotta test Windows 7 now.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">&gt; It&#x27;s possible Bitcoin ran and bailed out because something was wrong.
+&gt; debug.log should tell something if that was the case.  What OS are you
+&gt; using?  I wonder if we need Admin privilege and don&#x27;t realize it.
+&gt; Stuff that requires Admin can&#x27;t start on startup on Vista.
+
+I&#x27;m using XP. I recompiled the older revision and this time the startup
+shortcut works. It also works when testing on Vista (non-admin). Maybe I
+just missed something the previous time.
+
+&gt; Program shortcuts have multiple tabs of settings with lots of little
+&gt; details.  I&#x27;ll try the startup folder code and see if I can reproduce
+&gt; the problem.  Every other systray icon on my computer is in the startup
+&gt; folder, and it makes it easy for users to manage all their autoruns in
+&gt; one place.  The things in the registry key tend to be devious hidden
+&gt; bloatware.
+
+Here it&#x27;s the other way around, I have all my startup programs in the
+registry. But maybe the shortcut method is nicer for the user, if it
+works just as well</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x19-re-bitcoin/">← Re: Bitcoin</a><a rel="next" href="../../conversations/x21-re-bitcoin-list-does-bitcoin-crash-in-windows/">Re: [bitcoin-list] Does Bitcoin Crash in Windows? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

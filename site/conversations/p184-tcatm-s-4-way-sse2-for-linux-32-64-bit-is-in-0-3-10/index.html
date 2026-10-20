@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in… – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 15 August 2010: 0.3.10 has tcatm&#x27;s 4-way SSE2 as an option switch. Use the switch &quot;-4way&quot; to turn it on. Without the switch you get…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p184-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0-3-10/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in… – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 15 August 2010: 0.3.10 has tcatm&#x27;s 4-way SSE2 as an option switch. Use the switch &quot;-4way&quot; to turn it on. Without the switch you get…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p184-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0-3-10/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in… – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 15 August 2010: 0.3.10 has tcatm&#x27;s 4-way SSE2 as an option switch. Use the switch &quot;-4way&quot; to turn it on. Without the switch you get…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "tcatm's 4-way SSE2 for Linux 32/64-bit is in 0.3.10", "url": "https://satoshimail.pages.dev/conversations/p184-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0-3-10/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T15:52:09Z", "text": "0.3.10 has tcatm's 4-way SSE2 as an option switch. Use the switch \"-4way\" to turn it on. Without the switch you get Crypto++ ASM SHA-256. I could only get this working with Linux. Download: Get 0.3.10 from http://bitcointalk.org/index.php?topic=827.0 Please report back your CPU and results! I think it's pretty clear that Core 2 and lower are slower, i5 faster. I don't think we've heard any i7 results yet. We need to know about the different models of AMD or other less common CPUs.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-15T17:02:16Z", "text": "I did a quick test, will report back when I try it on more machines. Pentium E5300 Dual-Core 2.6 GHz (2MB cache, FSB 800MHz) Processor info: http://en.wikipedia.org/wiki/Wolfdale_%28microprocessor%29 Stock = 2261 khash/s 4-way = 1103 khash/s (64 bit) Pentium 4 - 3.0GHz (hyper-threading off) 1MB Cache, FSB 800MHz Processor info: http://en.wikipedia.org/wiki/NetBurst_%28microarchitecture%29 Stock = 1024 khash/s (32 bit) 4-way = 658 khash/s (32 bit) Pentium 4 - 2.8GHz (hyper-threading off) 1MB…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T18:23:26Z", "text": "I hope someone can test an i5 or AMD to check that I built it right. I don't have either to test with. I'm also curious if it performs much worse on 32-bit linux vs 64-bit."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sgtstein"}, "datePublished": "2010-08-15T18:26:40Z", "text": "Where is the code for this? I'm on a CentOS 5.5 box and need to build it myself. Once I do that I will report back with linux 32-bit and 1MB cache Xeon."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T18:43:27Z", "text": "I just uploaded a quick build so testers can check if I built it right. (I don't have an i5 or AMD) If it checks out, I'll put together the full package and do all the release stuff."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sgtstein"}, "datePublished": "2010-08-15T18:46:25Z", "text": "Okay, makes sense. I have an i7 930 I'll try and test out with too."}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-15T21:50:41Z", "text": "That's unlikely. The loop accesses 432 bytes of data. That should fit in most caches."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-15T23:49:40Z", "text": "5,911 khash with -4way 11,260 without (Dual Xeon E5450, 64-bit, 8 threads)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-16T00:03:18Z", "text": "-4way: 12518 khash/s without: 6550 khash/s It's a little bit slower than my patch (~14000kash/s). edit: I ran the binary on an older AMD Athlon(tm) 64 X2 Dual Core Processor 4200+ with the same effect we see on older intel cpus: -4way: 1120khash/s without: 2012khash/s"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-16T00:08:38Z", "text": "Did anyone verify it to produce correct results on 32 bit hosts?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "gebler"}, "datePublished": "2010-08-16T00:32:57Z", "text": "Running 32-bit Linux on an AMD Athlon 64 X2, I get the following results: normal: 2850 khash/s with -4way: 1708 khash/s I haven't checked if the hashes are correct, just the speed."}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-16T00:37:54Z", "text": "I created a wiki page so we can keep track of the results: http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-16T00:43:39Z", "text": "I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it'll improve performance by ~9%."}, {"@type": "Comment", "author": {"@type": "Person", "name": "HostFat"}, "datePublished": "2010-08-16T00:47:23Z", "text": "Good Cheesy Will this also work on Windows OS?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-16T00:50:04Z", "text": "Didn't try it, but CFLAGS are not OS dependent at all so I guess it'll work."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-16T01:49:01Z", "text": "You might want to add columns for whether hyper-threading is enabled, number of physical cores and how many cores Bitcoin is using. Without 4way, I get very slightly better results when I have half of my virtual cores hashing. With 4way, I get significantly better performance when I have all my virtual cores enabled. I think I get about the same amount of hashes when hyper threading is turned off with or without 4way."}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-16T02:13:28Z", "text": "I've updated the page with your suggestions, I've also added footnotes to explain some of the fields."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-16T02:30:52Z", "text": "My -4way results: slower for two older boxes, faster for newer one. (\"model name\" comes from Linux's /proc/cpuinfo, which reports directly from CPU) 1) model name : Intel(R) Pentium(R) D CPU 3.00GHz total cores: 2 without -4way: 0.999 Mhash/sec with -4way: 0.850 Mhash/sec 2) model name : Dual Core AMD Opteron(tm) Processor 280 total cores: 4 without -4way: 4.6 Mhash/sec with -4way: 4.0 Mhash/sec 3) model name : Genuine Intel(R) CPU 000 @ 3.20GHz total cores: 4 without -4way: 5.7 Mhash/sec with…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-16T02:57:57Z", "text": "GCC 4.3.3 doesn't support -march=amdfamk10. I get: sha256.cpp:1: error: bad value (amdfamk10) for -march= switch Hey, you may be onto something! hyperthreading didn't help before because all the work was in the arithmetic and logic units, which the hyperthreads share. tcatm's SSE2 code must be a mix of normal x86 instructions and SSE2 instructions, so while one is doing x86 code, the other can do SSE2. How much of an improvement do you get with hyperthreading? Some numbers? What CPU is that?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-16T03:10:34Z", "text": "model name : AMD Phenom(tm) II X4 940 Processor at 3.0 ghz linux 64 with -4way \"hashespersec\" : 11132770 without \"hashespersec\" : 5877668"}, {"@type": "Comment", "author": {"@type": "Person", "name": "gridecon"}, "datePublished": "2010-08-16T03:15:44Z", "text": "I have two quadcore Phenom II 64-bit linux machines (ubuntu 9.10 both) and the -4way option increases my hashing speed so much I'm suspicious. I get about 5-6khash/sec on these boxes previously and without -4way option. With -4way I get over 11khash/sec! In other words, the -4way switch almost DOUBLES the reported hashing speed. This level of improvement seems more than expected and makes me wonder if my boxes are really doing the hashing that much faster or if there could possible be an issue…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-08-16T03:17:07Z", "text": "try -march=amdfam10"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-16T03:23:04Z", "text": "That works. That's strange... are we sure that's the same thing? tcatm, try amdfam10 and make sure you get the same speed measurement."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-08-16T03:27:35Z", "text": "http://www.google.com/search?q=amdfamk10 I think he misremembered it since AMD arches are K#."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-16T03:30:35Z", "text": "model name : Intel(R) Core(TM)2 Quad CPU Q9450 @ 2.66GHz, linux 64 no difference at about 4950 khash/s"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-16T03:35:28Z", "text": "Update for cpu family : 6 model : 26 model name : Genuine Intel(R) CPU 000 @ 3.20GHz stepping : 4 Machine has 4 cores, each with 2 hyperthreads. /proc/cpuinfo shows 8 virtual processors. without -4way, setgen 4: 5.7 Mhash/sec without -4way, setgen 8: 5.0 Mhash/sec with -4way, setgen 4: 7.0 Mhash/sec with -4way, setgen 8: 9.3 Mhash/sec So, the old wisdom of \"hyperthreading slows things down\" is now shattered, on this machine."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Ground Loop"}, "datePublished": "2010-08-16T04:34:20Z", "text": "No winners for 4way in my other three Intel machines either: Intel(R) Core(TM)2 Duo CPU E8500 @ 3.16GHz (64-bit Linux) 4way: 1565 std: 3002 Intel(R) Xeon(TM) CPU 3.00GHz (32-bit Linux) 4way: 1243 std: 2048 Intel(R) Core(TM)2 CPU 6300 @ 1.86GHz 4way: 932 std: 1733 (All running 0.3.10, -1 proclimit) Experiments with proclimit weren't any better."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-16T04:36:59Z", "text": "cpu family 6 model 26 stepping 4 is an Intel Core i7. That's a 23% speedup with -4way, 63% total speedup with -4way + hyperthreading. 33% faster with hyperthreading than without it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-08-16T05:02:31Z", "text": "o_O... good luck hashing, you're gonna need it! Here are the results from my very poor memory on an i7 860 2.8 GHz with Ubuntu 10.04 amd64. Some of the numbers may be a bit off. Without 4way, with HT, 4/8 virtual cores, 4.5-5 Mhash/sec Without 4way, with HT, 8/8 virtual cores, a bit less than above, but basically the same With 4way, with HT, 8/8 virtual cores, 6.5-8 Mhash/sec (It may be my imagination, but it seems noticeably more variable.) With 4way, with HT, 4/8 virtual cores, 5-6 Mhash/sec…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "gridecon"}, "datePublished": "2010-08-16T05:30:15Z", "text": "I guess that should read either mhash/sec or THOUSANDS of khash/sec...but hey, what's 3 orders of magnitude among friends? Perhaps that typographical error is why nobody has answered whether or not a nearly 100% speeded from the -4way option is at all realistic? I'm not convinced the crypto hashing is really taking place at the rate of 11000khash/sec on my desktop box."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-16T05:33:56Z", "text": "Does bitcoin perform any self-tests at startup, to verify that hashing is working?"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "tcatm's 4-way SSE2 for Linux 32/64-bit is in…", "item": "https://satoshimail.pages.dev/conversations/p184-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0-3-10/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p184">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in…</span></div></nav>
+<main class="in">
+<h1>tcatm&#x27;s 4-way SSE2 for Linux 32/64-bit is in 0.3.10</h1>
+<p class="lead">BitcoinTalk forum · 52 messages · from 15 August 2010 · with ArtForz, Ground Loop, HostFat, NewLibertyStandard, Satoshi Nakamoto, Vasiliev…</p>
+<p class="actions"><a class="btn" href="../../#t-p184">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/184/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T15:52:09Z">15 August 2010, 15:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9452#msg9452" rel="nofollow noopener">original</a></span></header>
+<div class="t">0.3.10 has tcatm&#x27;s 4-way SSE2 as an option switch.
+
+Use the switch &quot;-4way&quot; to turn it on.  Without the switch you get Crypto++ ASM SHA-256.
+
+I could only get this working with Linux.
+
+Download:
+Get 0.3.10 from <a href="http://bitcointalk.org/index.php?topic=827.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=827.0</a>
+
+Please report back your CPU and results!  I think it&#x27;s pretty clear that Core 2 and lower are slower, i5 faster.  I don&#x27;t think we&#x27;ve heard any i7 results yet.  We need to know about the different models of AMD or other less common CPUs.</div></article><article class="msg" id="m1">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T17:02:16Z">15 August 2010, 17:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9457#msg9457" rel="nofollow noopener">original</a></span></header>
+<div class="t">I did a quick test, will report back when I try it on more machines.
+
+Pentium E5300 Dual-Core 2.6 GHz (2MB cache, FSB 800MHz)
+Processor info: <a href="http://en.wikipedia.org/wiki/Wolfdale_%28microprocessor%29" rel="nofollow noopener">http://en.wikipedia.org/wiki/Wolfdale_%28microprocessor%29</a>
+Stock = 2261 khash/s
+4-way = 1103 khash/s (64 bit)
+
+Pentium 4 - 3.0GHz (hyper-threading off) 1MB Cache, FSB 800MHz
+Processor info: <a href="http://en.wikipedia.org/wiki/NetBurst_%28microarchitecture%29" rel="nofollow noopener">http://en.wikipedia.org/wiki/NetBurst_%28microarchitecture%29</a>
+Stock = 1024 khash/s (32 bit)
+4-way = 658 khash/s (32 bit)
+
+Pentium 4 - 2.8GHz (hyper-threading off) 1MB Cache, FSB 800MHz
+Processor info: <a href="http://en.wikipedia.org/wiki/NetBurst_%28microarchitecture%29" rel="nofollow noopener">http://en.wikipedia.org/wiki/NetBurst_%28microarchitecture%29</a>
+Stock = 917 khash/s (64 bit)
+4-way = 747 khash/s (64 bit)
+
+If I didn&#x27;t know better, I would say the key is the CPU cache size. Seems all the CPU that run slower have 2 MB or less onboard cache, where as the Core i5 starts with at least 3MB of onboard CPU cache.</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T18:23:26Z">15 August 2010, 18:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9478#msg9478" rel="nofollow noopener">original</a></span></header>
+<div class="t">I hope someone can test an i5 or AMD to check that I built it right.  I don&#x27;t have either to test with.
+
+I&#x27;m also curious if it performs much worse on 32-bit linux vs 64-bit.</div></article><article class="msg" id="m3">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-15T18:26:40Z">15 August 2010, 18:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9479#msg9479" rel="nofollow noopener">original</a></span></header>
+<div class="t">Where is the code for this? I&#x27;m on a CentOS 5.5 box and need to build it myself. Once I do that I will report back with linux 32-bit and 1MB cache Xeon. </div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T18:43:27Z">15 August 2010, 18:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9483#msg9483" rel="nofollow noopener">original</a></span></header>
+<div class="t">I just uploaded a quick build so testers can check if I built it right.  (I don&#x27;t have an i5 or AMD)  If it checks out, I&#x27;ll put together the full package and do all the release stuff.</div></article><article class="msg" id="m5">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-15T18:46:25Z">15 August 2010, 18:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9484#msg9484" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, makes sense. I have an i7 930 I&#x27;ll try and test out with too.</div></article><article class="msg" id="m6">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-15T21:50:41Z">15 August 2010, 21:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9552#msg9552" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 15, 2010, 05:02:16 PM</div><div class="t">If I didn&#x27;t know better, I would say the key is the CPU cache size. Seems all the CPU that run slower have 2 MB or less onboard cache, where as the Core i5 starts with at least 3MB of onboard CPU cache.</div></blockquote><div class="t">That&#x27;s unlikely. The loop accesses 432 bytes of data. That should fit in most caches.</div></article><article class="msg" id="m7">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-15T23:49:40Z">15 August 2010, 23:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9592#msg9592" rel="nofollow noopener">original</a></span></header>
+<div class="t">5,911 khash with -4way
+11,260 without
+(Dual Xeon E5450, 64-bit, 8 threads)</div></article><article class="msg" id="m8">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-16T00:03:18Z">16 August 2010, 00:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9597#msg9597" rel="nofollow noopener">original</a></span></header>
+<div class="t">-4way: 12518 khash/s
+without: 6550 khash/s
+
+It&#x27;s a little bit slower than my patch (~14000kash/s).
+
+edit: I ran the binary on an older AMD Athlon(tm) 64 X2 Dual Core Processor 4200+ with the same effect we see on older intel cpus:
+-4way: 1120khash/s
+without: 2012khash/s</div></article><article class="msg" id="m9">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-16T00:08:38Z">16 August 2010, 00:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9600#msg9600" rel="nofollow noopener">original</a></span></header>
+<div class="t">Did anyone verify it to produce correct results on 32 bit hosts?</div></article><article class="msg" id="m10">
+<header><b>gebler</b><span class="muted"> · <time datetime="2010-08-16T00:32:57Z">16 August 2010, 00:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9610#msg9610" rel="nofollow noopener">original</a></span></header>
+<div class="t">Running 32-bit Linux on an AMD Athlon 64 X2, I get the following results:
+
+  normal: 2850 khash/s
+  with -4way: 1708 khash/s
+
+I haven&#x27;t checked if the hashes are correct, just the speed.</div></article><article class="msg" id="m11">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-16T00:37:54Z">16 August 2010, 00:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9613#msg9613" rel="nofollow noopener">original</a></span></header>
+<div class="t">I created a wiki page so we can keep track of the results: <a href="http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2</a></div></article><article class="msg" id="m12">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-16T00:43:39Z">16 August 2010, 00:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9617#msg9617" rel="nofollow noopener">original</a></span></header>
+<div class="t">I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it&#x27;ll improve performance by ~9%.</div></article><article class="msg" id="m13">
+<header><b>HostFat</b><span class="muted"> · <time datetime="2010-08-16T00:47:23Z">16 August 2010, 00:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9620#msg9620" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 16, 2010, 12:43:39 AM</div><div class="t">I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it&#x27;ll improve performance by ~9%.</div></blockquote><div class="t">Good Cheesy
+Will this also work on Windows OS?</div></article><article class="msg" id="m14">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-16T00:50:04Z">16 August 2010, 00:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9621#msg9621" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Joozero on August 16, 2010, 12:47:23 AM</div><div class="t">&gt; Quote from: tcatm on August 16, 2010, 12:43:39 AM
+&gt; I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it&#x27;ll improve performance by ~9%.
+Good Cheesy
+Will this also work on Windows OS?</div></blockquote><div class="t">Didn&#x27;t try it, but CFLAGS are not OS dependent at all so I guess it&#x27;ll work.</div></article><article class="msg" id="m15">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T01:49:01Z">16 August 2010, 01:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9630#msg9630" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: aceat64 on August 16, 2010, 12:37:54 AM</div><div class="t">I created a wiki page so we can keep track of the results: <a href="http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2</a></div></blockquote><div class="t">You might want to add columns for whether hyper-threading is enabled, number of physical cores and how many cores Bitcoin is using. Without 4way, I get very slightly better results when I have half of my virtual cores hashing. With 4way, I get significantly better performance when I have all my virtual cores enabled. I think I get about the same amount of hashes when hyper threading is turned off with or without 4way.</div></article><article class="msg" id="m16">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-16T02:13:28Z">16 August 2010, 02:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9640#msg9640" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 01:49:01 AM</div><div class="t">&gt; Quote from: aceat64 on August 16, 2010, 12:37:54 AM
+&gt; I created a wiki page so we can keep track of the results: <a href="http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2" rel="nofollow noopener">http://www.bitcoin.org/wiki/doku.php?id=4-way_sse2</a>
+You might want to add columns for whether hyper-threading is enabled, number of physical cores and how many cores Bitcoin is using. Without 4way, I get very slightly better results when I have half of my virtual cores hashing. With 4way, I get significantly better performance when I have all my virtual cores enabled. I think I get about the same amount of hashes when hyper threading is turned off with or without 4way.</div></blockquote><div class="t">I&#x27;ve updated the page with your suggestions, I&#x27;ve also added footnotes to explain some of the fields.</div></article><article class="msg" id="m17">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-16T02:30:52Z">16 August 2010, 02:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9647#msg9647" rel="nofollow noopener">original</a></span></header>
+<div class="t">My -4way results:  slower for two older boxes, faster for newer one.
+
+(&quot;model name&quot; comes from Linux&#x27;s /proc/cpuinfo, which reports directly from CPU)
+
+1) model name   : Intel(R) Pentium(R) D CPU 3.00GHz
+
+total cores: 2
+without -4way:    0.999 Mhash/sec
+with -4way: 0.850 Mhash/sec
+
+2) model name   : Dual Core AMD Opteron(tm) Processor 280
+
+total cores: 4
+without -4way:   4.6 Mhash/sec
+with -4way:    4.0 Mhash/sec
+
+3) model name   : Genuine Intel(R) CPU             000  @ 3.20GHz
+
+total cores: 4
+without -4way:   5.7 Mhash/sec
+with -4way:    7.0 Mhash/sec</div></article><article class="msg sat" id="m18">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:57:57Z">16 August 2010, 02:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9655#msg9655" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 16, 2010, 12:43:39 AM</div><div class="t">I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it&#x27;ll improve performance by ~9%.</div></blockquote><div class="t">GCC 4.3.3 doesn&#x27;t support -march=amdfamk10.  I get:
+sha256.cpp:1: error: bad value (amdfamk10) for -march= switch</div><blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 01:49:01 AM</div><div class="t">With 4way, I get significantly better performance when I have all my virtual cores enabled. I think I get about the same amount of hashes when hyper threading is turned off with or without 4way.</div></blockquote><div class="t">Hey, you may be onto something!
+
+hyperthreading didn&#x27;t help before because all the work was in the arithmetic and logic units, which the hyperthreads share.
+
+tcatm&#x27;s SSE2 code must be a mix of normal x86 instructions and SSE2 instructions, so while one is doing x86 code, the other can do SSE2.
+
+How much of an improvement do you get with hyperthreading?
+
+Some numbers?  What CPU is that?</div></article><article class="msg" id="m19">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-16T03:10:34Z">16 August 2010, 03:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9658#msg9658" rel="nofollow noopener">original</a></span></header>
+<div class="t">model name      : AMD Phenom(tm) II X4 940 Processor  at 3.0 ghz  linux 64
+
+with -4way     &quot;hashespersec&quot; : 11132770
+
+without      &quot;hashespersec&quot; : 5877668</div></article><article class="msg" id="m20">
+<header><b>gridecon</b><span class="muted"> · <time datetime="2010-08-16T03:15:44Z">16 August 2010, 03:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9659#msg9659" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have two quadcore Phenom II 64-bit linux machines (ubuntu 9.10 both) and the -4way option increases my hashing speed so much I&#x27;m suspicious. I get about 5-6khash/sec on these boxes previously and without -4way option. With -4way I get over 11khash/sec! In other words, the -4way switch almost DOUBLES the reported hashing speed. This level of improvement seems more than expected and makes me wonder if my boxes are really doing the hashing that much faster or if there could possible be an issue where the math operations are actually being skipped over for some reason, causing illusory speed and an inability to actually generate blocks?</div></article><article class="msg" id="m21">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-08-16T03:17:07Z">16 August 2010, 03:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9660#msg9660" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 02:57:57 AM</div><div class="t">&gt; Quote from: tcatm on August 16, 2010, 12:43:39 AM
+&gt; I propose to compile sha256.cpp with -O3 -march=amdfamk10 (will work on 32bit and 64bit) as only CPUs supporting this instruction set (AMD Phenom, Intel i5 and newer) benefit from -4way and it&#x27;ll improve performance by ~9%.
+GCC 4.3.3 doesn&#x27;t support -march=amdfamk10.  I get:
+sha256.cpp:1: error: bad value (amdfamk10) for -march= switch</div></blockquote><div class="t">try -march=amdfam10</div></article><article class="msg sat" id="m22">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T03:23:04Z">16 August 2010, 03:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9661#msg9661" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Vasiliev on August 16, 2010, 03:17:07 AM</div><div class="t">try -march=amdfam10</div></blockquote><div class="t">That works.
+
+That&#x27;s strange...  are we sure that&#x27;s the same thing?  tcatm, try amdfam10 and make sure you get the same speed measurement.</div></article><article class="msg" id="m23">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-08-16T03:27:35Z">16 August 2010, 03:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9663#msg9663" rel="nofollow noopener">original</a></span></header>
+<div class="t"><a href="http://www.google.com/search?q=amdfamk10" rel="nofollow noopener">http://www.google.com/search?q=amdfamk10</a>
+
+I think he misremembered it since AMD arches are K#.</div></article><article class="msg" id="m24">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-16T03:30:35Z">16 August 2010, 03:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9664#msg9664" rel="nofollow noopener">original</a></span></header>
+<div class="t">model name      : Intel(R) Core(TM)2 Quad  CPU   Q9450  @ 2.66GHz,   linux 64
+
+no difference at about 4950 khash/s</div></article><article class="msg" id="m25">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-16T03:35:28Z">16 August 2010, 03:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9665#msg9665" rel="nofollow noopener">original</a></span></header>
+<div class="t">Update for</div><pre><code>cpu family : 6
+model  : 26
+model name : Genuine Intel(R) CPU             000  @ 3.20GHz
+stepping : 4</code></pre><div class="t">Machine has 4 cores, each with 2 hyperthreads.  /proc/cpuinfo shows 8 virtual processors.
+
+without -4way, setgen 4:    5.7 Mhash/sec
+without -4way, setgen 8:    5.0 Mhash/sec
+
+with -4way, setgen 4:   7.0 Mhash/sec
+with -4way, setgen 8:   9.3 Mhash/sec
+
+So, the old wisdom of &quot;hyperthreading slows things down&quot; is now shattered, on this machine.</div></article><article class="msg" id="m26">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-16T04:34:20Z">16 August 2010, 04:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9674#msg9674" rel="nofollow noopener">original</a></span></header>
+<div class="t">No winners for 4way in my other three Intel machines either:
+
+Intel(R) Core(TM)2 Duo CPU     E8500 @ 3.16GHz (64-bit Linux)
+4way: 1565  std: 3002
+
+Intel(R) Xeon(TM) CPU 3.00GHz (32-bit Linux)
+4way: 1243  std: 2048
+
+Intel(R) Core(TM)2 CPU          6300  @ 1.86GHz
+4way: 932   std: 1733
+
+(All running 0.3.10, -1 proclimit)
+Experiments with proclimit weren&#x27;t any better.</div></article><article class="msg sat" id="m27">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T04:36:59Z">16 August 2010, 04:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9676#msg9676" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 16, 2010, 03:35:28 AM</div><div class="t">cpu family : 6
+model  : 26
+model name : Genuine Intel(R) CPU             000  @ 3.20GHz
+stepping : 4</div></blockquote><div class="t">cpu family 6 model 26 stepping 4 is an Intel Core i7.
+That&#x27;s a 23% speedup with -4way, 63% total speedup with -4way + hyperthreading.
+33% faster with hyperthreading than without it.</div></article><article class="msg" id="m28">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T05:02:31Z">16 August 2010, 05:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9680#msg9680" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gridecon on August 16, 2010, 03:15:44 AM</div><div class="t">I have two quadcore Phenom II 64-bit linux machines (ubuntu 9.10 both) and the -4way option increases my hashing speed so much I&#x27;m suspicious. I get about 5-6khash/sec on these boxes previously and without -4way option. With -4way I get over 11khash/sec! In other words, the -4way switch almost DOUBLES the reported hashing speed. This level of improvement seems more than expected and makes me wonder if my boxes are really doing the hashing that much faster or if there could possible be an issue where the math operations are actually being skipped over for some reason, causing illusory speed and an inability to actually generate blocks?</div></blockquote><div class="t">o_O... good luck hashing, you&#x27;re gonna need it!</div><blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 02:57:57 AM</div><div class="t">&gt; Quote from: NewLibertyStandard on August 16, 2010, 01:49:01 AM
+&gt; With 4way, I get significantly better performance when I have all my virtual cores enabled. I think I get about the same amount of hashes when hyper threading is turned off with or without 4way.
+Hey, you may be onto something!
+
+hyperthreading didn&#x27;t help before because all the work was in the arithmetic and logic units, which the hyperthreads share.
+
+tcatm&#x27;s SSE2 code must be a mix of normal x86 instructions and SSE2 instructions, so while one is doing x86 code, the other can do SSE2.
+
+How much of an improvement do you get with hyperthreading?
+
+Some numbers?  What CPU is that?</div></blockquote><div class="t">Here are the results from my very poor memory on an i7 860 2.8 GHz with Ubuntu 10.04 amd64. Some of the numbers may be a bit off.
+
+Without 4way, with HT, 4/8 virtual cores, 4.5-5 Mhash/sec
+Without 4way, with HT, 8/8 virtual cores, a bit less than above, but basically the same
+
+With 4way, with HT, 8/8 virtual cores, 6.5-8 Mhash/sec (It may be my imagination, but it seems noticeably more variable.)
+With 4way, with HT, 4/8 virtual cores, 5-6 Mhash/sec
+
+Without 4way, without HT, 4/4 physical cores, 4.5-5 Mhas/sec (But a bit slower than the first result.)
+With 4way, without HT, 4/4 physical cores, 5-6 Mhash/sec</div></article><article class="msg" id="m29">
+<header><b>gridecon</b><span class="muted"> · <time datetime="2010-08-16T05:30:15Z">16 August 2010, 05:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9688#msg9688" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 05:02:31 AM</div><div class="t">&gt; Quote from: gridecon on August 16, 2010, 03:15:44 AM
+&gt; I have two quadcore Phenom II 64-bit linux machines (ubuntu 9.10 both) and the -4way option increases my hashing speed so much I&#x27;m suspicious. I get about 5-6khash/sec on these boxes previously and without -4way option. With -4way I get over 11khash/sec! In other words, the -4way switch almost DOUBLES the reported hashing speed. This level of improvement seems more than expected and makes me wonder if my boxes are really doing the hashing that much faster or if there could possible be an issue where the math operations are actually being skipped over for some reason, causing illusory speed and an inability to actually generate blocks?
+o_O... good luck hashing, you&#x27;re gonna need it!</div></blockquote><div class="t">I guess that should read either mhash/sec or THOUSANDS of khash/sec...but hey, what&#x27;s 3 orders of magnitude among friends?
+
+Perhaps that typographical error is why nobody has answered whether or not a nearly 100% speeded from the -4way option is at all realistic? I&#x27;m not convinced the crypto hashing is really taking place at the rate of 11000khash/sec on my desktop box.</div></article><article class="msg" id="m30">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-16T05:33:56Z">16 August 2010, 05:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9689#msg9689" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 04:36:59 AM</div><div class="t">&gt; Quote from: jgarzik on August 16, 2010, 03:35:28 AM
+&gt; cpu family : 6
+&gt; model  : 26
+&gt; model name : Genuine Intel(R) CPU             000  @ 3.20GHz
+&gt; stepping : 4
+cpu family 6 model 26 stepping 4 is an Intel Core i7.
+That&#x27;s a 23% speedup with -4way, 63% total speedup with -4way + hyperthreading.
+33% faster with hyperthreading than without it.</div></blockquote><div class="t">Does bitcoin perform any self-tests at startup, to verify that hashing is working?</div></article><article class="msg" id="m31">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T06:16:44Z">16 August 2010, 06:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9691#msg9691" rel="nofollow noopener">original</a></span></header>
+<div class="t">More importantly, about how long should it take 10 Mhash/sec to verify difficulty 1 blocks?
+
+After the 64-bit Linux hashing bug was fixed I generated a block or two in short order, but since that one or two blocks, I have not generated a single block. It&#x27;s starting to seem a little fishy.
+
+I&#x27;m currently testing Bitcoin on two Linux 64-bit computers. Is there anything in the code blocking early block verification?
+
+Edit: Never mind. I used the Bitcoin Generation Calculator &lt;<a href="http://www.alloscomp.com/bitcoin/calculator.php" rel="nofollow noopener">http://www.alloscomp.com/bitcoin/calculator.php</a>&gt; and divided out the difficulty. Everything is fine here, I&#x27;ve generated a couple blocks with 4way. About to start testing without 4way.
+
+Another Edit: My test only verifies that hashing works. It does not verify whether I&#x27;m really getting the displayed speed.</div></article><article class="msg" id="m32">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-16T11:15:04Z">16 August 2010, 11:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9721#msg9721" rel="nofollow noopener">original</a></span></header>
+<div class="t">@satoshi: Oops, I meant -march=amdfam10. Sorry.
+
+@everyone confused about improvement on Phenoms: I developed the code on a Phenom (940) and verified it (at least in 64bit mode) and the improvement you see is real.
+
+Concerning Hyperthreading: It seems to give a little performance gain, maybe from running load/store instructions in parallel with aritmethic instructions. There&#x27;s only a tiny bit of plain x86 instructions for glueing the function into the ABI. They take less than ~2% of the total CPU time (measured with gprof).</div></article><article class="msg" id="m33">
+<header><b>teknohog</b><span class="muted"> · <time datetime="2010-08-16T12:31:51Z">16 August 2010, 12:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9729#msg9729" rel="nofollow noopener">original</a></span></header>
+<div class="t">On a Core 2 Duo T7200, the default code gives about 1.8 Mhash/s, and 4way is slower at 1.0 Mhash/s. It has 4 MB of L2 cache, so it is probably not a question of cache size, as suggested at some point.
+
+Unfortunately, the code (from svn) no longer compiles on ARM, as it now has SSE intrinsics hardcoded. I have removed the -msse2 and -DFOURWAYSSE2 flags from the makefile, and it still produces errors like this</div><pre><code>sha256.cpp:8:23: error: xmmintrin.h: No such file or directory
+sha256.cpp:34: error: __m128i does not name a type</code></pre><div class="t">but hopefully this is easy to fix.</div></article><article class="msg sat" id="m34">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T13:38:01Z">16 August 2010, 13:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9736#msg9736" rel="nofollow noopener">original</a></span></header>
+<div class="t">I wrapped sha256.cpp in
+#ifdef FOURWAYSSE2
+#endif // FOURWAYSSE2
+
+try it now.</div></article><article class="msg" id="m35">
+<header><b>tommy</b><span class="muted"> · <time datetime="2010-08-16T15:42:55Z">16 August 2010, 15:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9755#msg9755" rel="nofollow noopener">original</a></span></header>
+<div class="t">model name      : AMD Athlon(tm) 64 X2 Dual Core Processor 5600+
+
+w/o -4way  &quot;hashespersec&quot; : 2539397
+
+with -4way  &quot;hashespersec&quot; : 2108791
+
+Linux, Debian, 32 bit.</div></article><article class="msg" id="m36">
+<header><b>teknohog</b><span class="muted"> · <time datetime="2010-08-16T16:41:31Z">16 August 2010, 16:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9769#msg9769" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 01:38:01 PM</div><div class="t">I wrapped sha256.cpp in
+#ifdef FOURWAYSSE2
+#endif // FOURWAYSSE2
+
+try it now.</div></blockquote><div class="t">Thanks, works fine now.</div></article><article class="msg" id="m37">
+<header><b>hugolp</b><span class="muted"> · <time datetime="2010-08-17T18:26:27Z">17 August 2010, 18:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg9935#msg9935" rel="nofollow noopener">original</a></span></header>
+<div class="t">Model: Intel Atom n330 (2 cores, 4 virtual).
+
+OS: Ubuntu 10.04 64bit
+
+Using the -4way option I get half the speed than using no option. </div></article><article class="msg" id="m38">
+<header><b>denaje</b><span class="muted"> · <time datetime="2010-08-18T19:06:04Z">18 August 2010, 19:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10090#msg10090" rel="nofollow noopener">original</a></span></header>
+<div class="t">64-bit Gentoo / Intel Core i7
+
+W/O 4way: 4324294
+With 4way: 7649415
+
+32-bit Ubuntu VM on XP host /  Intel Core 2 Duo
+
+W/O 4way: 1751518
+With 4way: 793100</div></article><article class="msg" id="m39">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-18T23:00:08Z">18 August 2010, 23:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10163#msg10163" rel="nofollow noopener">original</a></span></header>
+<div class="t">So is it accurate to say that, so far, only Intel Core i7 processors and certain (Phenom?) AMD processors enjoy a speed bump from -4way?</div></article><article class="msg" id="m40">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-18T23:02:25Z">18 August 2010, 23:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10164#msg10164" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Ground Loop on August 18, 2010, 11:00:08 PM</div><div class="t">So is it accurate to say that, so far, only Intel Core i7 processors and certain (Phenom?) AMD processors enjoy a speed bump from -4way?</div></blockquote><div class="t">And i5, at least on my macbookpro</div></article><article class="msg" id="m41">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-18T23:14:26Z">18 August 2010, 23:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10167#msg10167" rel="nofollow noopener">original</a></span></header>
+<div class="t">Any non-Mac i5 love?
+Windows i5 64-bit got slower here.
+[correction -- not true.  Windows doesn&#x27;t have -4way, and the Linux machines are Xeons.]</div></article><article class="msg" id="m42">
+<header><b>vess</b><span class="muted"> · <time datetime="2010-08-19T06:41:27Z">19 August 2010, 06:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10214#msg10214" rel="nofollow noopener">original</a></span></header>
+<div class="t">My Core i5 laptop (Ubuntu) doubled in speed. Actually, it didn&#x27;t double in speed. It stayed the same speed, but only uses half the CPU now. I can&#x27;t get it to go back to full CPU usage. That said, my laptop is a lot cooler when generating blocks now. I&#x27;ll post back if I see it successfully go up to 100% usage.</div></article><article class="msg sat" id="m43">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-19T19:07:43Z">19 August 2010, 19:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10281#msg10281" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Ground Loop on August 18, 2010, 11:14:26 PM</div><div class="t">Any non-Mac i5 love?
+Windows i5 64-bit got slower here.</div></blockquote><div class="t">That&#x27;s the first I&#x27;ve heard anyone say i5 was slower.  Everyone else has said 4way was faster on i5.  Moreso with hyperthreading enabled.</div><blockquote><div class=qh>Quote from: nelisky on August 18, 2010, 11:02:25 PM</div><div class="t">And i5, at least on my macbookpro</div></blockquote><div class="t">Good, so I take it that&#x27;s a confirmation that it&#x27;s working on Mac as well?
+
+Laszlo told me he did compile in the -4way stuff on Mac, so the -4way switch is also available to try on Mac.  I don&#x27;t think makefile.osx on SVN has it yet, just the built version.</div></article><article class="msg" id="m44">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-19T20:28:19Z">19 August 2010, 20:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10299#msg10299" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 19, 2010, 07:07:43 PM</div><div class="t">&gt; Quote from: nelisky on August 18, 2010, 11:02:25 PM
+&gt; And i5, at least on my macbookpro
+Good, so I take it that&#x27;s a confirmation that it&#x27;s working on Mac as well?
+
+Laszlo told me he did compile in the -4way stuff on Mac, so the -4way switch is also available to try on Mac.  I don&#x27;t think makefile.osx on SVN has it yet, just the built version.</div></blockquote><div class="t">Yep, it&#x27;s working all right. The number I had posted were from an old svn revision patched with tcatm&#x27;s changes, but today I compiled trunk and while I had to once again tweak the makefile, after I did it works great with the numbers matching what I experienced before.
+
+Changes I did for my system are below, and while some are cosmetic, like removing wx-config from making bitcoind, just to avoid the warnings if you don&#x27;t have it installed, others are system specific, like the DEPS dir, and the fact I don&#x27;t have 32bit libs which makes the link step fail if -arch i386 is there.
+The bsddb changes are, I believe, a typo. Includes and Libs point to db46, but then the object list for the linker states db48. Anyway, here&#x27;s the diff for what got me going:</div><pre><code>Index: makefile.osx
+===================================================================
+--- makefile.osx (revision 139)
++++ makefile.osx (working copy)
+@@ -6,29 +6,29 @@
+ # Laszlo Hanyecz (solar@heliacal.net)
+ 
+ CXX=llvm-g++
+-DEPSDIR=/Users/macosuser/bitcoin/deps
++DEPSDIR=/opt/local
+ 
+ INCLUDEPATHS= \
+- -I&quot;$(DEPSDIR)/include&quot;
++ -I&quot;$(DEPSDIR)/include&quot;  -I&quot;$(DEPSDIR)/include/db46&quot;
+ 
+ LIBPATHS= \
+- -L&quot;$(DEPSDIR)/lib&quot;
++ -L&quot;$(DEPSDIR)/lib&quot;  -L&quot;$(DEPSDIR)/lib/db46&quot;
+ 
+-WXLIBS=$(shell $(DEPSDIR)/bin/wx-config --libs --static)
++WXLIBS=
+ 
+ LIBS= -dead_strip \
+- $(DEPSDIR)/lib/libdb_cxx-4.8.a \
+- $(DEPSDIR)/lib/libboost_system.a \
+- $(DEPSDIR)/lib/libboost_filesystem.a \
+- $(DEPSDIR)/lib/libboost_program_options.a \
+- $(DEPSDIR)/lib/libboost_thread.a \
++ $(DEPSDIR)/lib/db46/libdb_cxx-4.6.a \
++ $(DEPSDIR)/lib/libboost_system-mt.a \
++ $(DEPSDIR)/lib/libboost_filesystem-mt.a \
++ $(DEPSDIR)/lib/libboost_program_options-mt.a \
++ $(DEPSDIR)/lib/libboost_thread-mt.a \
+  $(DEPSDIR)/lib/libcrypto.a
+ 
+-DEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -D__WXMAC_OSX__ -DNOPCH -DMSG_NOSIGNAL=0
++DEFS=-D__WXMAC_OSX__ -DNOPCH -DMSG_NOSIGNAL=0 -DFOURWAYSSE2
+ 
+ DEBUGFLAGS=-g -DwxDEBUG_LEVEL=0
+ # ppc doesn&#x27;t work because we don&#x27;t support big-endian
+-CFLAGS=-mmacosx-version-min=10.5 -arch i386 -arch x86_64 -O3 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
++CFLAGS=-mmacosx-version-min=10.5 -arch x86_64 -O3 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
+     script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h noui.h init.h
+ 
+@@ -42,6 +42,7 @@
+     obj/rpc.o \
+     obj/init.o \
+     cryptopp/obj/sha.o \
++    obj/sha256.o \
+     cryptopp/obj/cpu.o
+ 
+ 
+@@ -55,7 +56,7 @@
+  $(CXX) -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_ASM -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+- $(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++ $(CXX) $(shell $(DEPSDIR)/bin/wx-config --cxxflags) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(shell $(DEPSDIR)/bin/wx-config --libs --static) $(LIBS)
+ 
+ 
+ obj/nogui/%.o: %.cpp $(HEADERS)</code></pre></article><article class="msg" id="m45">
+<header><b>ArtForz</b><span class="muted"> · <time datetime="2010-08-21T16:56:31Z">21 August 2010, 16:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10609#msg10609" rel="nofollow noopener">original</a></span></header>
+<div class="t">The difference between new and older CPUs is pretty easy to explain.
+Older microarchitectures have 64-bit mmx/sse execution units and split 128bit sse ops into 2 64bit microops.
+Newer archs have 128bit sse units.
+
+• AMD K8: 2 64bit units
+
+• intel Core/Core2: 3 64bit units
+
+• AMD K10: 2 128bit units
+
+• intel nehalem: 3 128bit units
+
+K10 = Opterons with 4 or more cores, Phenom, Phenom II, Athlon II
+nehalem = xeon 34xx/35xx/36xx/55xx/56xx/65xx/75xx, i3/i5/i7</div></article><article class="msg sat" id="m46">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-22T23:21:50Z">22 August 2010, 23:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10720#msg10720" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for clearing that up.  I read the link someone posted about AMD making that change around 2007, but I didn&#x27;t know what the story was for Intel.
+
+There&#x27;s no hope for Core/Core2 then.  They only have half the SSE2 hardware.
+
+Strange that Intel has 3 128bit units, but AMD with 2 128bit units is the faster one.</div></article><article class="msg" id="m47">
+<header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-23T05:45:17Z">23 August 2010, 05:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg10754#msg10754" rel="nofollow noopener">original</a></span></header>
+<div class="t">Intel Atom 230 @ 1.60GHz.  Linux 32-bit.
+(Acer Aspire Revo)
+
+Stock: 438 khash/sec (1 proc gives 354)
+4way:  254 khash/sec
+
+So you can take this one off the powerhouse list. Smiley
+ Grin</div></article><article class="msg" id="m48">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-24T17:31:08Z">24 August 2010, 17:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg11032#msg11032" rel="nofollow noopener">original</a></span></header>
+<div class="t">Anybody catch the new AMD Bulldozer press release? If I understand correctly, it should be capable of processing 8 64bit hashes, per core, at the same time. Would be quite a speed boost using this same code design.
+
+Slashdot &lt;<a href="http://hardware.slashdot.org/story/10/08/24/1521203/AMD-Details-Upcoming-Bulldozer-Architecture" rel="nofollow noopener">http://hardware.slashdot.org/story/10/08/24/1521203/AMD-Details-Upcoming-Bulldozer-Architecture</a>&gt; has the article.
+PC Perspective &lt;<a href="http://www.pcper.com/article.php?aid=985" rel="nofollow noopener">http://www.pcper.com/article.php?aid=985</a>&amp;type=expert&gt; has the details.
+
+Was also covered by AnandTech &lt;<a href="http://www.anandtech.com/show/2872" rel="nofollow noopener">http://www.anandtech.com/show/2872</a>&gt; back in November, 2009.</div></article><article class="msg sat" id="m49">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-24T22:43:56Z">24 August 2010, 22:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg11068#msg11068" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: ArtForz on August 21, 2010, 04:56:31 PM</div><div class="t">• AMD K10: 2 128bit units
+
+• intel nehalem: 3 128bit units</div></blockquote><div class="t">This probably explains why hyperthreading increases performance with -4way.  If three SSE2 units is excessive, then hyperthreading would help keep them all busy.</div></article><article class="msg" id="m50">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-28T00:27:08Z">28 August 2010, 00:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg11467#msg11467" rel="nofollow noopener">original</a></span></header>
+<div class="t">I just reviewed the sourcecode as I had a few ideas to optimize it further and I noticed that 4way is partly broken:
+
+from main.cpp:</div><pre><code>                for (int j = 0; j &lt; NPAR; j++)
+                {   
+                    if (thash[7][j] == 0)
+                    {                       
+                        for (int i = 0; i &lt; sizeof(hash)/4; i++)
+                          ((unsigned int*)&amp;hash)[i] = thash[i][j];
+                        pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
+                    }   
+                }   </code></pre><div class="t">The code will only process one hash (the last with thash[7] == 0) out of 32 hashes even when there is more than one hash that might be a correct one.
+
+Somethine like this should fix it but it won&#x27;t be safe at higher difficulties. Also, I&#x27;m not sure whether the byte order should be reversed or not. Could someone review this?</div><pre><code>                unsigned int min_hash = ~1;
+       for (int j = 0; j &lt; NPAR; j++)
+                {   
+                    if (thash[7][j] == 0)
+                    {   
+                        if(thash[6][j] &lt; min_hash) {
+                          min_hash = thash[6][j];
+                          for (int i = 0; i &lt; sizeof(hash)/4; i++)
+                            ((unsigned int*)&amp;hash)[i] = thash[i][j];
+                          pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
+                        }   
+                    }   
+                } </code></pre></article><article class="msg sat" id="m51">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-28T14:27:15Z">28 August 2010, 14:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=820.msg11503#msg11503" rel="nofollow noopener">original</a></span></header>
+<div class="t">The simplification is intentional.  There will only be more than one thash[7]=0 in one out of 134,217,728 cases.  It only makes it 0.0000007% slower.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p183-big-endinan-code-problems/">← Big endinan code problems</a><a rel="next" href="../../conversations/p185-overflow-bug-serious/">overflow bug SERIOUS →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

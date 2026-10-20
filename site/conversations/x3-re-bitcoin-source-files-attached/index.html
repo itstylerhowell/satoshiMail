@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Bitcoin source files attached – Satoshi Nakamoto, Hal Finney</title>
+<meta name="description" content="Satoshi Nakamoto, 19 November 2008: 100,000 block generating nodes is a good ballpark large-scale size to think about. Propagating a transaction across…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x3-re-bitcoin-source-files-attached/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Bitcoin source files attached – Satoshi Nakamoto, Hal Finney">
+<meta property="og:description" content="Satoshi Nakamoto, 19 November 2008: 100,000 block generating nodes is a good ballpark large-scale size to think about. Propagating a transaction across…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x3-re-bitcoin-source-files-attached/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Bitcoin source files attached – Satoshi Nakamoto, Hal Finney">
+<meta name="twitter:description" content="Satoshi Nakamoto, 19 November 2008: 100,000 block generating nodes is a good ballpark large-scale size to think about. Propagating a transaction across…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Bitcoin source files attached", "url": "https://satoshimail.pages.dev/conversations/x3-re-bitcoin-source-files-attached/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2008-11-19T15:20:46Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Hal Finney"}, "dateSent": "2008-11-19T15:20:46Z", "text": "Ah, I see, thanks for the corrections. Some of the discussion and concern over performance may relate to the eventual size of the P2P node network. How large do you envision it becoming? Tens of nodes? Thousands? Millions? And for clients, do you think this could scale to be usable for close to 100% of world financial transactions? Or would you see it as mostly being used for some “core” subset of transactions that have special requirements, with other transactions using a different payment…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2008-11-19T15:20:46Z", "text": "100,000 block generating nodes is a good ballpark large-scale size to think about. Propagating a transaction across the whole network twice would consume a total of US$ 0.02 of bandwidth at today’s prices. In practice, many would be burning off excess allocated bandwidth or unlimited plans with one of the cheaper backbones. There could be millions of SPV clients. They only matter in how many transactions they generate. If they pay 1 or 2 cents transaction fees, they pay for themselves. I’ve…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Hal Finney", "item": "https://satoshimail.pages.dev/conversations/hal-finney/"}, {"@type": "ListItem", "position": 4, "name": "Re: Bitcoin source files attached", "item": "https://satoshimail.pages.dev/conversations/x3-re-bitcoin-source-files-attached/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x3">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/hal-finney/">Private email with Hal Finney</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Bitcoin source files attached</span></div></nav>
+<main class="in">
+<h1>Re: Bitcoin source files attached</h1>
+<p class="lead">Private email with Hal Finney · 2 messages · from 19 November 2008 · with Hal Finney, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x3">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/doc/hal-finney/1.md" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Hal Finney</b> <span class="muted">to hal@finney.org, satoshi@vistomail.com</span><span class="muted"> · <time datetime="2008-11-19T15:20:46Z">19 November 2008, 15:20 UTC</time> · <a href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/doc/hal-finney/1.md" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ah, I see, thanks for the corrections.
+
+Some of the discussion and concern over performance may relate to the eventual size of the P2P node network. How large do you envision it becoming? Tens of nodes? Thousands?  Millions?
+
+And for clients, do you think this could scale to be usable for close to 100% of world financial transactions? Or would you see it as mostly being used for some “core” subset of transactions that have special requirements, with other transactions using a different payment system that perhaps is based on Bitcoin?
+
+Hal</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2008-11-19T15:20:46Z">19 November 2008 (approximate)</time> · <a href="https://mmalmi.github.io/satoshi/#email-3" rel="nofollow noopener">original</a></span></header>
+<div class="t">100,000 block generating nodes is a good ballpark large-scale size to think about.  Propagating a transaction across the whole network twice would consume a total of US$ 0.02 of bandwidth at today’s prices.  In practice, many would be burning off excess allocated bandwidth or unlimited plans with one of the cheaper backbones.  There could be millions of SPV clients.  They only matter in how many transactions they generate.  If they pay 1 or 2 cents transaction fees, they pay for themselves.  I’ve coded it so you can pay any optional amount of transaction fees you want.  When the incentive subsidy eventually tapers off, it may be necessary to put a market-determined transaction fee on your transactions to make sure nodes process them promptly.
+
+To think about what a really huge transaction load would look like, I look at the existing credit card network.  I found some more estimates about how many transactions are online purchases.  It’s about 15 million tx per day for the entire e-commerce load of the Internet worldwide.  At 1KB per transaction, that would be 15GB of bandwidth for each block generating node per day, or about two DVD movies worth.  Seems do-able even with today’s technology.
+
+Important to remember, even if Bitcoin caught on at dot-com rates of growth, it would still take years to become any substantial fraction of all transactions.  I believe hardware has already recently become strong enough to handle large scale, but if there’s any doubt about that, bandwidth speeds, prices, disk space and computing power will be much greater by the time it’s needed.
+
+Satoshi</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/hal-finney/">Hal Finney</a> <span class="muted">Cypherpunk who ran Bitcoin from its first release and received its first transaction.</span></li><li><a href="../../satoshipedia/pre-release-source-code/">Pre-release source code</a> <span class="muted">The earliest known Bitcoin code, sent to three reviewers in November 2008.</span></li><li><a href="../../satoshipedia/ray-dillinger/">Ray Dillinger</a> <span class="muted">Reviewed Satoshi&#x27;s code in 2008 and later published it.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><span></span><a rel="next" href="../../conversations/x4-bitcoin-v0-1/">Bitcoin v0.1 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

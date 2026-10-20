@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>always make 8 outbound connections even… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.?…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c2fa70d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="always make 8 outbound connections even… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.?…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c2fa70d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="always make 8 outbound connections even… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.?…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.? range, switch -maxconnections=#", "url": "https://satoshimail.pages.dev/commits/c2fa70d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-10T16:03:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c2fa70ddfd7711d514a701b3a7c8adb561acc3ff"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "always make 8 outbound connections…", "item": "https://satoshimail.pages.dev/commits/c2fa70d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cc2fa70ddfd">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">always make 8 outbound connections…</span></div></nav>
+<main class="in">
+<h1>always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.? range, switch -maxconnections=#</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 10 August 2010 · release v0.3.11_notexact · 4 files, +25 −9</p>
+<p class="actions"><a class="btn" href="../../#t-cc2fa70ddfd">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/c2fa70ddfd7711d514a701b3a7c8adb561acc3ff" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -885,7 +885,7 @@ void Lockdown(CBlockIndex* pindexNew)
+     printf(&quot;Lockdown:  current best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
+     printf(&quot;Lockdown: IsLockdown()=%d\n&quot;, (IsLockdown() ? 1 : 0));
+     if (IsLockdown())
+-        printf(&quot;Lockdown: WARNING: Displayed transactions may not be correct!  You may need to upgrade.\n&quot;);
++        printf(&quot;Lockdown: WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.\n&quot;);
+ }
+ 
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
+ 
+ #include &quot;headers.h&quot;
+ 
++static const int MAX_OUTBOUND_CONNECTIONS = 8;
++
+ void ThreadMessageHandler2(void* parg);
+ void ThreadSocketHandler2(void* parg);
+ void ThreadOpenConnections2(void* parg);
+@@ -653,6 +655,10 @@ void ThreadSocketHandler2(void* parg)
+                 if (WSAGetLastError() != WSAEWOULDBLOCK)
+                     printf(&quot;socket error accept failed: %d\n&quot;, WSAGetLastError());
+             }
++            else if (mapArgs.count(&quot;-maxconnections&quot;) &amp;&amp; (int)vNodes.size() &gt;= atoi(mapArgs[&quot;-maxconnections&quot;]) - MAX_OUTBOUND_CONNECTIONS)
++            {
++                closesocket(hSocket);
++            }
+             else
+             {
+                 printf(&quot;accepted connection %s\n&quot;, addr.ToStringLog().c_str());
+@@ -879,12 +885,21 @@ void ThreadOpenConnections2(void* parg)
+     int64 nStart = GetTime();
+     loop
+     {
+-        // Wait
++        // Limit outbound connections
+         vnThreadsRunning[1]--;
+         Sleep(500);
+-        const int nMaxConnections = 8;
+-        while (vNodes.size() &gt;= nMaxConnections)
++        loop
+         {
++            int nOutbound = 0;
++            CRITICAL_BLOCK(cs_vNodes)
++                foreach(CNode* pnode, vNodes)
++                    if (!pnode-&gt;fInbound)
++                        nOutbound++;
++            int nMaxOutboundConnections = MAX_OUTBOUND_CONNECTIONS;
++            if (mapArgs.count(&quot;-maxconnections&quot;))
++                nMaxOutboundConnections = min(nMaxOutboundConnections, atoi(mapArgs[&quot;-maxconnections&quot;]));
++            if (nOutbound &lt; nMaxOutboundConnections)
++                break;
+             Sleep(2000);
+             if (fShutdown)
+                 return;
+@@ -948,18 +963,19 @@ void ThreadOpenConnections2(void* parg)
+         CAddress addrConnect;
+         int64 nBest = INT64_MIN;
+ 
+-        // Do this here so we don&#x27;t have to critsect vNodes inside mapAddresses critsect
++        // Only connect to one address per a.b.?.? range.
++        // Do this here so we don&#x27;t have to critsect vNodes inside mapAddresses critsect.
+         set&lt;unsigned int&gt; setConnected;
+         CRITICAL_BLOCK(cs_vNodes)
+             foreach(CNode* pnode, vNodes)
+-                setConnected.insert(pnode-&gt;addr.ip);
++                setConnected.insert(pnode-&gt;addr.ip &amp; 0x0000ffff);
+ 
+         CRITICAL_BLOCK(cs_mapAddresses)
+         {
+             foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+             {
+                 const CAddress&amp; addr = item.second;
+-                if (!addr.IsIPv4() || !addr.IsValid() || setConnected.count(addr.ip))
++                if (!addr.IsIPv4() || !addr.IsValid() || setConnected.count(addr.ip &amp; 0x0000ffff))
+                     continue;
+                 int64 nSinceLastSeen = GetAdjustedTime() - addr.nTime;
+                 int64 nSinceLastTry = GetAdjustedTime() - addr.nLastTry;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 308;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1015,7 +1015,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     // Update status bar
+     static bool fPrevLockdown;
+     if (IsLockdown())
+-        m_statusBar-&gt;SetStatusText(string(&quot;    &quot;) + _(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade.&quot;), 0);
++        m_statusBar-&gt;SetStatusText(string(&quot;    &quot;) + _(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.&quot;), 0);
+     else if (fPrevLockdown)
+         m_statusBar-&gt;SetStatusText(&quot;&quot;, 0);
+     fPrevLockdown = IsLockdown();</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8a38d56/">← enable SSE2 in all builds to fix crypto++ SHA-256 on 64-bit</a><a rel="next" href="../../commits/342e1b7/">json-spirit print reals with 8 decimal places, bitcoind… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

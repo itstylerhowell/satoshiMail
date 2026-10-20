@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>-paytxfee is now per KB… (r176) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 November 2010: -paytxfee is now per KB, BitcoinMiner prioritise transactions by how old their dependencies are. 6…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/461764c/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="-paytxfee is now per KB… (r176) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 November 2010: -paytxfee is now per KB, BitcoinMiner prioritise transactions by how old their dependencies are. 6…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/461764c/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="-paytxfee is now per KB… (r176) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 8 November 2010: -paytxfee is now per KB, BitcoinMiner prioritise transactions by how old their dependencies are. 6…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "-paytxfee is now per KB, BitcoinMiner prioritise transactions by how old their dependencies are", "url": "https://satoshimail.pages.dev/commits/461764c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-11-08T22:06:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/461764cbbea5965ebbd248f221876743d7a9ccd4"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "-paytxfee is now per KB, BitcoinMiner…", "item": "https://satoshimail.pages.dev/commits/461764c/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c461764cbbe">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">-paytxfee is now per KB, BitcoinMiner…</span></div></nav>
+<main class="in">
+<h1>-paytxfee is now per KB, BitcoinMiner prioritise transactions by how old their dependencies are</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 8 November 2010 · SVN r176 · release v0.3.15 · 6 files, +119 −27</p>
+<p class="actions"><a class="btn" href="../../#t-c461764cbbe">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/461764cbbea5965ebbd248f221876743d7a9ccd4" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -63,8 +63,7 @@ nmake -f makefile.vc
+ 
+ OpenSSL
+ -------
+-Bitcoin does not use any encryption.  If you want to do a no-everything
+-build of OpenSSL to exclude encryption routines, a few patches are required.
++If you want to exclude unused optional algorithms, a few patches are required.
+ (instructions for OpenSSL v0.9.8k)
+ 
+ Edit engines\e_gmp.c and engines\e_capi.c and add this #ifndef around
+@@ -88,7 +87,7 @@ Build
+   cd \openssl
+   ms\mingw32.bat
+ 
+-If you want to use it with MSVC, generate the .lib file
++If you&#x27;re using MSVC, generate the .lib file
+   lib /machine:i386 /def:ms\libeay32.def /out:out\libeay32.lib
+ 
+ </code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -173,6 +173,7 @@ bool AppInit2(int argc, char* argv[])
+             &quot;  -proxy=&lt;ip:port&gt; \t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +
+             &quot;  -addnode=&lt;ip&gt;    \t  &quot;   + _(&quot;Add a node to connect to\n&quot;) +
+             &quot;  -connect=&lt;ip&gt;    \t\t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
++            &quot;  -paytxfee=&lt;amt&gt;  \t  &quot;   + _(&quot;Fee per KB to add to transactions you send\n&quot;) +
+             &quot;  -server          \t\t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
+             &quot;  -daemon          \t\t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
+             &quot;  -testnet         \t\t  &quot; + _(&quot;Use the test network\n&quot;) +
+@@ -413,7 +414,7 @@ bool AppInit2(int argc, char* argv[])
+             wxMessageBox(_(&quot;Invalid amount for -paytxfee=&lt;amount&gt;&quot;), &quot;Bitcoin&quot;);
+             return false;
+         }
+-        if (nTransactionFee &gt; 1 * COIN)
++        if (nTransactionFee &gt; 0.25 * COIN)
+             wxMessageBox(_(&quot;Warning: -paytxfee is set very high.  This is the transaction fee you will pay if you send a transaction.&quot;), &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+     }
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -277,6 +277,34 @@ void EraseOrphanTx(uint256 hash)
+ // CTransaction
+ //
+ 
++bool CTransaction::ReadFromDisk(CTxDB&amp; txdb, COutPoint prevout, CTxIndex&amp; txindexRet)
++{
++    SetNull();
++    if (!txdb.ReadTxIndex(prevout.hash, txindexRet))
++        return false;
++    if (!ReadFromDisk(txindexRet.pos))
++        return false;
++    if (prevout.n &gt;= vout.size())
++    {
++        SetNull();
++        return false;
++    }
++    return true;
++}
++
++bool CTransaction::ReadFromDisk(CTxDB&amp; txdb, COutPoint prevout)
++{
++    CTxIndex txindex;
++    return ReadFromDisk(txdb, prevout, txindex);
++}
++
++bool CTransaction::ReadFromDisk(COutPoint prevout)
++{
++    CTxDB txdb(&quot;r&quot;);
++    CTxIndex txindex;
++    return ReadFromDisk(txdb, prevout, txindex);
++}
++
+ bool CTxIn::IsMine() const
+ {
+     CRITICAL_BLOCK(cs_mapWallet)
+@@ -2882,7 +2910,7 @@ void CallCPUID(int in, int&amp; aret, int&amp; cret)
+         &quot;mov %2, %%eax; &quot; // in into eax
+         &quot;cpuid;&quot;
+         &quot;mov %%eax, %0;&quot; // eax into a
+-        &quot;mov %%ecx, %1;&quot; // eax into c
++        &quot;mov %%ecx, %1;&quot; // ecx into c
+         :&quot;=r&quot;(a),&quot;=r&quot;(c) /* output */
+         :&quot;r&quot;(in) /* input */
+         :&quot;%eax&quot;,&quot;%ecx&quot; /* clobbered register */
+@@ -3068,42 +3096,97 @@ void BitcoinMiner()
+         CRITICAL_BLOCK(cs_mapTransactions)
+         {
+             CTxDB txdb(&quot;r&quot;);
++
++            // Priority order to process transactions
++            multimap&lt;double, CTransaction*&gt; mapPriority;
++            for (map&lt;uint256, CTransaction&gt;::iterator mi = mapTransactions.begin(); mi != mapTransactions.end(); ++mi)
++            {
++                CTransaction&amp; tx = (*mi).second;
++                if (tx.IsCoinBase() || !tx.IsFinal())
++                    continue;
++
++                double dPriority = 0;
++                foreach(const CTxIn&amp; txin, tx.vin)
++                {
++                    // Read prev transaction
++                    CTransaction txPrev;
++                    CTxIndex txindex;
++                    if (!txPrev.ReadFromDisk(txdb, txin.prevout, txindex))
++                        continue;
++                    int64 nValueIn = txPrev.vout[txin.prevout.n].nValue;
++
++                    // Read block header
++                    int nConf = 0;
++                    CBlock block;
++                    if (block.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, false))
++                    {
++                        map&lt;uint256, CBlockIndex*&gt;::iterator it = mapBlockIndex.find(block.GetHash());
++                        if (it != mapBlockIndex.end())
++                        {
++                            CBlockIndex* pindex = (*it).second;
++                            if (pindex-&gt;IsInMainChain())
++                                nConf = 1 + nBestHeight - pindex-&gt;nHeight;
++                        }
++                    }
++
++                    dPriority += (double)nValueIn * nConf;
++
++                    if (fDebug &amp;&amp; mapArgs.count(&quot;-printpriority&quot;))
++                        printf(&quot;priority     nValueIn=%-12I64d nConf=%-5d dPriority=%-20.1f\n&quot;, nValueIn, nConf, dPriority);
++                }
++
++                // Priority is sum(valuein * age) / txsize
++                dPriority /= ::GetSerializeSize(tx, SER_NETWORK);
++
++                mapPriority.insert(make_pair(-dPriority, &amp;(*mi).second));
++
++                if (fDebug &amp;&amp; mapArgs.count(&quot;-printpriority&quot;))
++                    printf(&quot;priority %-20.1f %s\n%s\n&quot;, dPriority, tx.GetHash().ToString().substr(0,10).c_str(), tx.ToString().c_str());
++            }
++
++            // Collect transactions into block
+             map&lt;uint256, CTxIndex&gt; mapTestPool;
+-            vector&lt;char&gt; vfAlreadyAdded(mapTransactions.size());
+             uint64 nBlockSize = 1000;
+             int nBlockSigOps = 100;
+             bool fFoundSomething = true;
+             while (fFoundSomething)
+             {
+                 fFoundSomething = false;
+-                unsigned int n = 0;
+-                for (map&lt;uint256, CTransaction&gt;::iterator mi = mapTransactions.begin(); mi != mapTransactions.end(); ++mi, ++n)
++                for (multimap&lt;double, CTransaction*&gt;::iterator mi = mapPriority.begin(); mi != mapPriority.end();)
+                 {
+-                    if (vfAlreadyAdded[n])
+-                        continue;
+-                    CTransaction&amp; tx = (*mi).second;
+-                    if (tx.IsCoinBase() || !tx.IsFinal())
+-                        continue;
++                    CTransaction&amp; tx = *(*mi).second;
+                     unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
+                     if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE_GEN)
++                    {
++                        mapPriority.erase(mi++);
+                         continue;
++                    }
+                     int nTxSigOps = tx.GetSigOpCount();
+                     if (nBlockSigOps + nTxSigOps &gt;= MAX_BLOCK_SIGOPS)
++                    {
++                        mapPriority.erase(mi++);
+                         continue;
++                    }
+ 
+                     // Transaction fee based on block size
+                     int64 nMinFee = tx.GetMinFee(nBlockSize);
+ 
++                    // Connecting can fail due to dependency on other memory pool transactions
++                    // that aren&#x27;t in the block yet, so keep trying in later passes
+                     map&lt;uint256, CTxIndex&gt; mapTestPoolTmp(mapTestPool);
+                     if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), pindexPrev, nFees, false, true, nMinFee))
++                    {
++                        mi++;
+                         continue;
++                    }
+                     swap(mapTestPool, mapTestPoolTmp);
+ 
++                    // Added
+                     pblock-&gt;vtx.push_back(tx);
+                     nBlockSize += nTxSize;
+                     nBlockSigOps += nTxSigOps;
+-                    vfAlreadyAdded[n] = true;
+                     fFoundSomething = true;
++                    mapPriority.erase(mi++);
+                 }
+             }
+         }
+@@ -3426,16 +3509,15 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ 
+ 
+ 
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRequiredRet)
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRet)
+ {
+-    nFeeRequiredRet = 0;
+     CRITICAL_BLOCK(cs_main)
+     {
+         // txdb must be opened before the mapWallet lock
+         CTxDB txdb(&quot;r&quot;);
+         CRITICAL_BLOCK(cs_mapWallet)
+         {
+-            int64 nFee = nTransactionFee;
++            nFeeRet = nTransactionFee;
+             loop
+             {
+                 wtxNew.vin.clear();
+@@ -3444,7 +3526,7 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CR
+                 if (nValue &lt; 0)
+                     return false;
+                 int64 nValueOut = nValue;
+-                int64 nTotalValue = nValue + nFee;
++                int64 nTotalValue = nValue + nFeeRet;
+ 
+                 // Choose coins to use
+                 set&lt;CWalletTx*&gt; setCoins;
+@@ -3504,13 +3586,16 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CR
+                                 return false;
+ 
+                 // Limit size
+-                if (::GetSerializeSize(*(CTransaction*)&amp;wtxNew, SER_NETWORK) &gt;= MAX_BLOCK_SIZE_GEN/5)
++                unsigned int nBytes = ::GetSerializeSize(*(CTransaction*)&amp;wtxNew, SER_NETWORK);
++                if (nBytes &gt;= MAX_BLOCK_SIZE_GEN/5)
+                     return false;
+ 
+                 // Check that enough fee is included
+-                if (nFee &lt; wtxNew.GetMinFee())
++                int64 nPayFee = nTransactionFee * (1 + (int64)nBytes / 1000);
++                int64 nMinFee = wtxNew.GetMinFee();
++                if (nFeeRet &lt; max(nPayFee, nMinFee))
+                 {
+-                    nFee = nFeeRequiredRet = wtxNew.GetMinFee();
++                    nFeeRet = max(nPayFee, nMinFee);
+                     continue;
+                 }
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -76,7 +76,7 @@ bool ProcessMessages(CNode* pfrom);
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+ bool SendMessages(CNode* pto, bool fSendTrickle);
+ int64 GetBalance();
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRequiredRet);
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRet);
+ bool CommitTransaction(CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey);
+ bool BroadcastTransaction(CWalletTx&amp; wtxNew);
+ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
+@@ -580,7 +580,6 @@ public:
+         return true;
+     }
+ 
+-
+     friend bool operator==(const CTransaction&amp; a, const CTransaction&amp; b)
+     {
+         return (a.nVersion  == b.nVersion &amp;&amp;
+@@ -617,6 +616,9 @@ public:
+     }
+ 
+ 
++    bool ReadFromDisk(CTxDB&amp; txdb, COutPoint prevout, CTxIndex&amp; txindexRet);
++    bool ReadFromDisk(CTxDB&amp; txdb, COutPoint prevout);
++    bool ReadFromDisk(COutPoint prevout);
+     bool DisconnectInputs(CTxDB&amp; txdb);
+     bool ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx,
+                        CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
+@@ -1654,7 +1656,7 @@ public:
+     bool Cancels(const CAlert&amp; alert) const
+     {
+         if (!IsInEffect())
+-            false;
++            return false; // this was a no-op before 31403
+         return (alert.nID &lt;= nCancel || setCancel.count(alert.nID));
+     }
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,7 +22,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31402;
++static const int VERSION = 31403;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,7 +196,7 @@ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style
+ 
+ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent)
+ {
+-    if (nFeeRequired &lt; CENT || fDaemon)
++    if (nFeeRequired &lt; CENT || nFeeRequired &lt;= nTransactionFee || fDaemon)
+         return true;
+     string strMessage = strprintf(
+         _(&quot;This transaction is over the size limit.  You can still send it for a fee of %s, &quot;
+@@ -1966,8 +1966,13 @@ void CSendDialog::OnButtonSend(wxCommandEvent&amp; event)
+             string strError = SendMoney(scriptPubKey, nValue, wtx, true);
+             if (strError == &quot;&quot;)
+                 wxMessageBox(_(&quot;Payment sent  &quot;), _(&quot;Sending...&quot;));
+-            else if (strError != &quot;ABORTED&quot;)
++            else if (strError == &quot;ABORTED&quot;)
++                return; // leave send dialog open
++            else
++            {
+                 wxMessageBox(strError + &quot;  &quot;, _(&quot;Sending...&quot;));
++                EndModal(false);
++            }
+         }
+         else
+         {</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c891967/">← bugfixes from Dean Gores, addr system changes, make sure…</a><a rel="next" href="../../commits/e2a186a/">SelectCoins first pass tries not to use coins with less… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

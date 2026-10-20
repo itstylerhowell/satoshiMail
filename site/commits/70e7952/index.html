@@ -1,0 +1,1531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/70e7952/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/70e7952/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to CreateThread wrapper, disconnect inactive connections, ping, break up long messages to speed up initial download, better priorities for initiating connections, track how many nodes have requested our blocks and transactions, status #/offline and warning message on unsent blocks, minimize on close as separate option -- linux-test5", "url": "https://satoshimail.pages.dev/commits/70e7952/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-13T01:23:08Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/70e79525c97c33a5fca8674d47d86cc2b7ae197a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "monitor ThreadSocketHandler and…", "item": "https://satoshimail.pages.dev/commits/70e7952/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c70e79525c9">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">monitor ThreadSocketHandler and…</span></div></nav>
+<main class="in">
+<h1>monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to CreateThread wrapper, disconnect inactive connections, ping, break up long messages to speed up initial download, better priorities for initiating connections, track how many nodes have requested our blocks and transactions, status #/offline and warning message on unsent blocks, minimize on close as separate option -- linux-test5</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 13 November 2009 · SVN r38 · release v0.2.0 · 16 files, +684 −391</p>
+<p class="actions"><a class="btn" href="../../#t-c70e79525c9">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/70e79525c97c33a5fca8674d47d86cc2b7ae197a" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -8,7 +8,7 @@ the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
+ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ 
+ 
+- WINDOWS BUILD NOTES
++WINDOWS BUILD NOTES
+ 
+ 
+ Compilers Supported</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -13,6 +13,7 @@ UNIX BUILD NOTES
+ 
+ Dependencies
+ ------------
++Install the dev files for the shared libraries:
+ apt-get install build-essential
+ apt-get install libgtk2.0-dev
+ apt-get install libssl-dev</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -505,6 +505,13 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ {
+     vchDefaultKeyRet.clear();
+ 
++    // Modify defaults
++#ifndef __WXMSW__
++    // Reports that tray icon can disappear on gnome, leaving no way to access the program
++    fMinimizeToTray = false;
++    fMinimizeOnClose = false;
++#endif
++
+     //// todo: shouldn&#x27;t we catch exceptions and try to recover and continue?
+     CRITICAL_BLOCK(cs_mapKeys)
+     CRITICAL_BLOCK(cs_mapWallet)
+@@ -638,7 +645,7 @@ bool LoadWallet(bool&amp; fFirstRunRet)
+         CWalletDB().WriteDefaultKey(keyUser.GetPubKey());
+     }
+ 
+-    _beginthread(ThreadFlushWalletDB, 0, NULL);
++    CreateThread(ThreadFlushWalletDB, NULL);
+     return true;
+ }
+ </code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -75,7 +75,6 @@
+ #include &lt;net/if.h&gt;
+ #include &lt;ifaddrs.h&gt;
+ #include &lt;boost/filesystem.hpp&gt;
+-#include &lt;boost/thread/thread.hpp&gt;
+ #include &lt;boost/algorithm/string.hpp&gt;
+ #endif
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -54,7 +54,7 @@ static bool Send(SOCKET hSocket, const char* pszSend)
+     const char* pszEnd = psz + strlen(psz);
+     while (psz &lt; pszEnd)
+     {
+-        int ret = send(hSocket, psz, pszEnd - psz, 0);
++        int ret = send(hSocket, psz, pszEnd - psz, MSG_NOSIGNAL);
+         if (ret &lt; 0)
+             return false;
+         psz += ret;
+@@ -156,7 +156,7 @@ bool Wait(int nSeconds)
+ 
+ void ThreadIRCSeed(void* parg)
+ {
+-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
++    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+     int nErrorWait = 10;
+     int nRetryWait = 10;
+ 
+@@ -256,6 +256,7 @@ void ThreadIRCSeed(void* parg)
+                 CAddress addr;
+                 if (DecodeAddress(pszName, addr))
+                 {
++                    addr.nTime = GetAdjustedTime() - 51 * 60;
+                     CAddrDB addrdb;
+                     if (AddAddress(addrdb, addr))
+                         printf(&quot;IRC got new address\n&quot;);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,6 +42,9 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
+ CCriticalSection cs_mapKeys;
+ CKey keyUser;
+ 
++map&lt;uint256, int&gt; mapRequestCount;
++CCriticalSection cs_mapRequestCount;
++
+ // Settings
+ int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+@@ -274,7 +277,44 @@ int64 CWalletTx::GetTxTime() const
+     return nTimeReceived;
+ }
+ 
++int CWalletTx::GetRequestCount() const
++{
++    // Returns -1 if it wasn&#x27;t being tracked
++    int nRequests = -1;
++    CRITICAL_BLOCK(cs_mapRequestCount)
++    {
++        if (IsCoinBase())
++        {
++            // Generated block
++            if (hashBlock != 0)
++            {
++                map&lt;uint256, int&gt;::iterator mi = mapRequestCount.find(hashBlock);
++                if (mi != mapRequestCount.end())
++                    nRequests = (*mi).second;
++            }
++        }
++        else
++        {
++            // Did anyone request this transaction?
++            map&lt;uint256, int&gt;::iterator mi = mapRequestCount.find(GetHash());
++            if (mi != mapRequestCount.end())
++            {
++                nRequests = (*mi).second;
+ 
++                // How about the block it&#x27;s in?
++                if (nRequests == 0 &amp;&amp; hashBlock != 0)
++                {
++                    map&lt;uint256, int&gt;::iterator mi = mapRequestCount.find(hashBlock);
++                    if (mi != mapRequestCount.end())
++                        nRequests = (*mi).second;
++                    else
++                        nRequests = 1; // If it&#x27;s in someone else&#x27;s block it must have got out
++                }
++            }
++        }
++    }
++    return nRequests;
++}
+ 
+ 
+ 
+@@ -295,7 +335,7 @@ int CMerkleTx::SetMerkleBranch(const CBlock* pblock)
+             CTxIndex txindex;
+             if (!CTxDB(&quot;r&quot;).ReadTxIndex(GetHash(), txindex))
+                 return 0;
+-            if (!blockTmp.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, true))
++            if (!blockTmp.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos))
+                 return 0;
+             pblock = &amp;blockTmp;
+         }
+@@ -1003,7 +1043,7 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     foreach(CBlockIndex* pindex, vDisconnect)
+     {
+         CBlock block;
+-        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos, true))
++        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos))
+             return error(&quot;Reorganize() : ReadFromDisk for disconnect failed&quot;);
+         if (!block.DisconnectBlock(txdb, pindex))
+             return error(&quot;Reorganize() : DisconnectBlock failed&quot;);
+@@ -1020,7 +1060,7 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     {
+         CBlockIndex* pindex = vConnect[i];
+         CBlock block;
+-        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos, true))
++        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos))
+             return error(&quot;Reorganize() : ReadFromDisk for connect failed&quot;);
+         if (!block.ConnectBlock(txdb, pindex))
+         {
+@@ -1380,7 +1420,7 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
+     {
+         fShutdown = true;
+         ThreadSafeMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+-        _beginthread(Shutdown, 0, NULL);
++        CreateThread(Shutdown, NULL);
+         return false;
+     }
+     return true;
+@@ -1547,7 +1587,7 @@ void PrintBlockTree()
+ 
+         // print item
+         CBlock block;
+-        block.ReadFromDisk(pindex, true);
++        block.ReadFromDisk(pindex);
+         printf(&quot;%d (%u,%u) %s  %s  tx %d&quot;,
+             pindex-&gt;nHeight,
+             pindex-&gt;nFile,
+@@ -1623,7 +1663,8 @@ bool ProcessMessages(CNode* pfrom)
+     CDataStream&amp; vRecv = pfrom-&gt;vRecv;
+     if (vRecv.empty())
+         return true;
+-    //printf(&quot;ProcessMessages(%d bytes)\n&quot;, vRecv.size());
++    //if (fDebug)
++    //    printf(&quot;ProcessMessages(%d bytes)\n&quot;, vRecv.size());
+ 
+     //
+     // Message format
+@@ -1666,7 +1707,8 @@ bool ProcessMessages(CNode* pfrom)
+         {
+             // Rewind and wait for rest of message
+             ///// need a mechanism to give up waiting for overlong message size error
+-            //printf(&quot;message-break\n&quot;);
++            //if (fDebug)
++            //    printf(&quot;message-break\n&quot;);
+             vRecv.insert(vRecv.begin(), BEGIN(hdr), END(hdr));
+             Sleep(100);
+             break;
+@@ -1718,6 +1760,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ {
+     static map&lt;unsigned int, vector&lt;unsigned char&gt; &gt; mapReuseKey;
+     RandAddSeedPerfmon();
++    if (fDebug)
++        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+     printf(&quot;received: %s (%d bytes)\n&quot;, strCommand.c_str(), vRecv.size());
+     if (mapArgs.count(&quot;-dropmessagestest&quot;) &amp;&amp; GetRand(atoi(mapArgs[&quot;-dropmessagestest&quot;])) == 0)
+     {
+@@ -1739,18 +1783,19 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         CAddress addrMe;
+         CAddress addrFrom;
+         uint64 nNonce = 1;
++        string strSubVer;
+         vRecv &gt;&gt; pfrom-&gt;nVersion &gt;&gt; pfrom-&gt;nServices &gt;&gt; nTime &gt;&gt; addrMe;
+         if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())
+             vRecv &gt;&gt; addrFrom &gt;&gt; nNonce;
++        if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())
++            vRecv &gt;&gt; strSubVer;
+         if (pfrom-&gt;nVersion == 0)
+             return false;
+ 
+         // Disconnect if we connected to ourself
+-        if (nNonce == nLocalHostNonce)
++        if (nNonce == nLocalHostNonce &amp;&amp; nNonce &gt; 1)
+         {
+             pfrom-&gt;fDisconnect = true;
+-            pfrom-&gt;vRecv.clear();
+-            pfrom-&gt;vSend.clear();
+             return true;
+         }
+ 
+@@ -1776,10 +1821,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+         pfrom-&gt;fSuccessfullyConnected = true;
+ 
+-        // Update the last seen time
+-        if (pfrom-&gt;fNetworkNode)
+-            AddressCurrentlyConnected(pfrom-&gt;addr);
+-
+         printf(&quot;version message: version %d\n&quot;, pfrom-&gt;nVersion);
+     }
+ 
+@@ -1824,10 +1865,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vector&lt;CInv&gt; vInv;
+         vRecv &gt;&gt; vInv;
+ 
+-        // Update the last seen time for this node&#x27;s address
+-        if (pfrom-&gt;fNetworkNode)
+-            AddressCurrentlyConnected(pfrom-&gt;addr);
+-
+         CTxDB txdb(&quot;r&quot;);
+         foreach(const CInv&amp; inv, vInv)
+         {
+@@ -1842,6 +1879,14 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                 pfrom-&gt;AskFor(inv);
+             else if (inv.type == MSG_BLOCK &amp;&amp; mapOrphanBlocks.count(inv.hash))
+                 pfrom-&gt;PushMessage(&quot;getblocks&quot;, CBlockLocator(pindexBest), GetOrphanRoot(mapOrphanBlocks[inv.hash]));
++
++            // Track requests for our stuff
++            CRITICAL_BLOCK(cs_mapRequestCount)
++            {
++                map&lt;uint256, int&gt;::iterator mi = mapRequestCount.find(inv.hash);
++                if (mi != mapRequestCount.end())
++                    (*mi).second++;
++            }
+         }
+     }
+ 
+@@ -1879,6 +1924,14 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                         pfrom-&gt;PushMessage(inv.GetCommand(), (*mi).second);
+                 }
+             }
++
++            // Track requests for our stuff
++            CRITICAL_BLOCK(cs_mapRequestCount)
++            {
++                map&lt;uint256, int&gt;::iterator mi = mapRequestCount.find(inv.hash);
++                if (mi != mapRequestCount.end())
++                    (*mi).second++;
++            }
+         }
+     }
+ 
+@@ -2086,11 +2139,23 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     }
+ 
+ 
++    else if (strCommand == &quot;ping&quot;)
++    {
++    }
++
++
+     else
+     {
+         // Ignore unknown commands for extensibility
+     }
+ 
++
++    // Update the last seen time for this node&#x27;s address
++    if (pfrom-&gt;fNetworkNode)
++        if (strCommand == &quot;version&quot; || strCommand == &quot;addr&quot; || strCommand == &quot;inv&quot; || strCommand == &quot;getdata&quot; || strCommand == &quot;ping&quot;)
++            AddressCurrentlyConnected(pfrom-&gt;addr);
++
++
+     return true;
+ }
+ 
+@@ -2129,6 +2194,10 @@ bool SendMessages(CNode* pto)
+             }
+         }
+ 
++        // Keep-alive ping
++        if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 12 * 60 &amp;&amp; pto-&gt;vSend.empty())
++            pto-&gt;PushMessage(&quot;ping&quot;);
++
+ 
+         //
+         // Message: addr
+@@ -2139,7 +2208,14 @@ bool SendMessages(CNode* pto)
+         {
+             // returns true if wasn&#x27;t already contained in the set
+             if (pto-&gt;setAddrKnown.insert(addr).second)
++            {
+                 vAddrToSend.push_back(addr);
++                if (vAddrToSend.size() &gt;= 1000)
++                {
++                    pto-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
++                    vAddrToSend.clear();
++                }
++            }
+         }
+         pto-&gt;vAddrToSend.clear();
+         if (!vAddrToSend.empty())
+@@ -2157,7 +2233,14 @@ bool SendMessages(CNode* pto)
+             {
+                 // returns true if wasn&#x27;t already contained in the set
+                 if (pto-&gt;setInventoryKnown.insert(inv).second)
++                {
+                     vInventoryToSend.push_back(inv);
++                    if (vInventoryToSend.size() &gt;= 1000)
++                    {
++                        pto-&gt;PushMessage(&quot;inv&quot;, vInventoryToSend);
++                        vInventoryToSend.clear();
++                    }
++                }
+             }
+             pto-&gt;vInventoryToSend.clear();
+             pto-&gt;setInventoryKnown2.clear();
+@@ -2179,6 +2262,11 @@ bool SendMessages(CNode* pto)
+             {
+                 printf(&quot;sending getdata: %s\n&quot;, inv.ToString().c_str());
+                 vAskFor.push_back(inv);
++                if (vAskFor.size() &gt;= 1000)
++                {
++                    pto-&gt;PushMessage(&quot;getdata&quot;, vAskFor);
++                    vAskFor.clear();
++                }
+             }
+             pto-&gt;mapAskFor.erase(pto-&gt;mapAskFor.begin());
+         }
+@@ -2226,8 +2314,8 @@ void GenerateBitcoins(bool fGenerate)
+         int nAddThreads = nProcessors - vnThreadsRunning[3];
+         printf(&quot;Starting %d BitcoinMiner threads\n&quot;, nAddThreads);
+         for (int i = 0; i &lt; nAddThreads; i++)
+-            if (_beginthread(ThreadBitcoinMiner, 0, NULL) == -1)
+-                printf(&quot;Error: _beginthread(ThreadBitcoinMiner) failed\n&quot;);
++            if (!CreateThread(ThreadBitcoinMiner, NULL))
++                printf(&quot;Error: CreateThread(ThreadBitcoinMiner) failed\n&quot;);
+     }
+ }
+ 
+@@ -2304,7 +2392,7 @@ void BitcoinMiner()
+     CBigNum bnExtraNonce = 0;
+     while (fGenerateBitcoins)
+     {
+-        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
++        SetThreadPriority(THREAD_PRIORITY_LOWEST);
+         Sleep(50);
+         if (fShutdown)</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,6 +34,8 @@ extern int nBestHeight;
+ extern uint256 hashBestChain;
+ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
++extern map&lt;uint256, int&gt; mapRequestCount;
++extern CCriticalSection cs_mapRequestCount;
+ 
+ // Settings
+ extern int fGenerateBitcoins;
+@@ -647,6 +649,15 @@ public:
+         nGetCreditCached = 0;
+     }
+ 
++    IMPLEMENT_SERIALIZE
++    (
++        nSerSize += SerReadWrite(s, *(CTransaction*)this, nType, nVersion, ser_action);
++        nVersion = this-&gt;nVersion;
++        READWRITE(hashBlock);
++        READWRITE(vMerkleBranch);
++        READWRITE(nIndex);
++    )
++
+     int64 GetCredit(bool fUseCache=false) const
+     {
+         // Must wait until coinbase is safely deep enough in the chain before valuing it
+@@ -661,15 +672,6 @@ public:
+         return nGetCreditCached;
+     }
+ 
+-    IMPLEMENT_SERIALIZE
+-    (
+-        nSerSize += SerReadWrite(s, *(CTransaction*)this, nType, nVersion, ser_action);
+-        nVersion = this-&gt;nVersion;
+-        READWRITE(hashBlock);
+-        READWRITE(vMerkleBranch);
+-        READWRITE(nIndex);
+-    )
+-
+ 
+     int SetMerkleBranch(const CBlock* pblock=NULL);
+     int GetDepthInMainChain() const;
+@@ -749,6 +751,7 @@ public:
+ 
+ 
+     int64 GetTxTime() const;
++    int GetRequestCount() const;
+ 
+     void AddSupportingTransactions(CTxDB&amp; txdb);
+ 
+@@ -978,7 +981,7 @@ public:
+         return true;
+     }
+ 
+-    bool ReadFromDisk(unsigned int nFile, unsigned int nBlockPos, bool fReadTransactions)
++    bool ReadFromDisk(unsigned int nFile, unsigned int nBlockPos, bool fReadTransactions=true)
+     {
+         SetNull();
+ 
+@@ -1027,7 +1030,7 @@ public:
+     int64 GetBlockValue(int64 nFees) const;
+     bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+-    bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions);
++    bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
+     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos);
+     bool CheckBlock() const;
+     bool AcceptBlock();</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -13,7 +13,6 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect);
+ 
+ 
+ 
+-
+ //
+ // Global state variables
+ //
+@@ -25,6 +24,7 @@ uint64 nLocalHostNonce = 0;
+ bool fShutdown = false;
+ array&lt;int, 10&gt; vnThreadsRunning;
+ SOCKET hListenSocket = INVALID_SOCKET;
++int64 nThreadSocketHandlerHeartbeat = INT64_MAX;
+ 
+ vector&lt;CNode*&gt; vNodes;
+ CCriticalSection cs_vNodes;
+@@ -65,7 +65,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+ 
+     if (fProxy)
+     {
+-        printf(&quot;Proxy connecting %s\n&quot;, addrConnect.ToStringLog().c_str());
++        printf(&quot;proxy connecting %s\n&quot;, addrConnect.ToStringLog().c_str());
+         char pszSocks4IP[] = &quot;\4\1\0\0\0\0\0\0user&quot;;
+         memcpy(pszSocks4IP + 2, &amp;addrConnect.port, 2);
+         memcpy(pszSocks4IP + 4, &amp;addrConnect.ip, 4);
+@@ -87,9 +87,11 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+         if (pchRet[1] != 0x5a)
+         {
+             closesocket(hSocket);
+-            return error(&quot;Proxy returned error %d&quot;, pchRet[1]);
++            if (pchRet[1] != 0x5b)
++                printf(&quot;ERROR: Proxy returned error %d\n&quot;, pchRet[1]);
++            return false;
+         }
+-        printf(&quot;Proxy connection established %s\n&quot;, addrConnect.ToStringLog().c_str());
++        printf(&quot;proxy connected %s\n&quot;, addrConnect.ToStringLog().c_str());
+     }
+ 
+     hSocketRet = hSocket;
+@@ -219,6 +221,7 @@ bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline)
+         if (it == mapAddresses.end())
+         {
+             // New address
++            printf(&quot;AddAddress(%s)\n&quot;, addr.ToStringLog().c_str());
+             mapAddresses.insert(make_pair(addr.GetKey(), addr));
+             addrdb.WriteAddress(addr);
+             return true;
+@@ -256,7 +259,7 @@ void AddressCurrentlyConnected(const CAddress&amp; addr)
+         if (it != mapAddresses.end())
+         {
+             CAddress&amp; addrFound = (*it).second;
+-            int64 nUpdateInterval = 60 * 60;
++            int64 nUpdateInterval = 20 * 60;
+             if (addrFound.nTime &lt; GetAdjustedTime() - nUpdateInterval)
+             {
+                 // Periodically update most recently seen time
+@@ -417,7 +420,13 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+     }
+ 
+     /// debug print
+-    printf(&quot;trying connection %s\n&quot;, addrConnect.ToStringLog().c_str());
++    printf(&quot;trying connection %s lastseen=%.1fhrs lasttry=%.1fhrs\n&quot;,
++        addrConnect.ToStringLog().c_str(),
++        (double)(addrConnect.nTime - GetAdjustedTime())/3600.0,
++        (double)(addrConnect.nLastTry - GetAdjustedTime())/3600.0);
++
++    CRITICAL_BLOCK(cs_mapAddresses)
++        mapAddresses[addrConnect.GetKey()].nLastTry = GetAdjustedTime();
+ 
+     // Connect
+     SOCKET hSocket;
+@@ -428,7 +437,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+ 
+         // Set to nonblocking
+ #ifdef __WXMSW__
+-		u_long nOne = 1;
++        u_long nOne = 1;
+         if (ioctlsocket(hSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)
+             printf(&quot;ConnectSocket() : ioctlsocket nonblocking setting failed, error %d\n&quot;, WSAGetLastError());
+ #else
+@@ -445,29 +454,23 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+         CRITICAL_BLOCK(cs_vNodes)
+             vNodes.push_back(pnode);
+ 
+-        CRITICAL_BLOCK(cs_mapAddresses)
+-            mapAddresses[addrConnect.GetKey()].nLastFailed = 0;
++        pnode-&gt;nTimeConnected = GetTime();
+         return pnode;
+     }
+     else
+     {
+-        CRITICAL_BLOCK(cs_mapAddresses)
+-            mapAddresses[addrConnect.GetKey()].nLastFailed = GetAdjustedTime();
+         return NULL;
+     }
+ }
+ 
+ void CNode::DoDisconnect()
+ {
++    if (fDebug)
++        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+     printf(&quot;disconnecting node %s\n&quot;, addr.ToStringLog().c_str());
+ 
+     closesocket(hSocket);
+ 
+-    // If outbound and never got version message, mark address as failed
+-    if (!fInbound &amp;&amp; !fSuccessfullyConnected)
+-        CRITICAL_BLOCK(cs_mapAddresses)
+-            mapAddresses[addr.GetKey()].nLastFailed = GetAdjustedTime();
+-
+     // All of a nodes broadcasts and subscriptions are automatically torn down
+     // when it goes down, so a node has to stay up to keep its broadcast going.
+ 
+@@ -508,7 +511,7 @@ void ThreadSocketHandler(void* parg)
+         PrintException(&amp;e, &quot;ThreadSocketHandler()&quot;);
+     } catch (...) {
+         vnThreadsRunning[0]--;
+-        PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
++        throw; // support pthread_cancel()
+     }
+ 
+     printf(&quot;ThreadSocketHandler exiting\n&quot;);
+@@ -531,15 +534,18 @@ void ThreadSocketHandler2(void* parg)
+             vector&lt;CNode*&gt; vNodesCopy = vNodes;
+             foreach(CNode* pnode, vNodesCopy)
+             {
+-                if (pnode-&gt;ReadyToDisconnect() &amp;&amp; pnode-&gt;vRecv.empty() &amp;&amp; pnode-&gt;vSend.empty())
++                if (pnode-&gt;fDisconnect ||
++                    (pnode-&gt;GetRefCount() &lt;= 0 &amp;&amp; pnode-&gt;vRecv.empty() &amp;&amp; pnode-&gt;vSend.empty()))
+                 {
+                     // remove from vNodes
+                     vNodes.erase(remove(vNodes.begin(), vNodes.end(), pnode), vNodes.end());
++
++                    // close socket
+                     pnode-&gt;DoDisconnect();
+ 
+                     // hold in disconnected pool until all refs are released
+                     pnode-&gt;nReleaseTime = max(pnode-&gt;nReleaseTime, GetTime() + 5 * 60);
+-                    if (pnode-&gt;fNetworkNode)
++                    if (pnode-&gt;fNetworkNode || pnode-&gt;fInbound)
+                         pnode-&gt;Release();
+                     vNodesDisconnected.push_back(pnode);
+                 }
+@@ -582,8 +588,10 @@ void ThreadSocketHandler2(void* parg)
+ 
+         fd_set fdsetRecv;
+         fd_set fdsetSend;
++        fd_set fdsetError;
+         FD_ZERO(&amp;fdsetRecv);
+         FD_ZERO(&amp;fdsetSend);
++        FD_ZERO(&amp;fdsetError);
+         SOCKET hSocketMax = 0;
+         FD_SET(hListenSocket, &amp;fdsetRecv);
+         hSocketMax = max(hSocketMax, hListenSocket);
+@@ -592,6 +600,7 @@ void ThreadSocketHandler2(void* parg)
+             foreach(CNode* pnode, vNodes)
+             {
+                 FD_SET(pnode-&gt;hSocket, &amp;fdsetRecv);
++                FD_SET(pnode-&gt;hSocket, &amp;fdsetError);
+                 hSocketMax = max(hSocketMax, pnode-&gt;hSocket);
+                 TRY_CRITICAL_BLOCK(pnode-&gt;cs_vSend)
+                     if (!pnode-&gt;vSend.empty())
+@@ -600,30 +609,21 @@ void ThreadSocketHandler2(void* parg)
+         }
+ 
+         vnThreadsRunning[0]--;
+-        int nSelect = select(hSocketMax + 1, &amp;fdsetRecv, &amp;fdsetSend, NULL, &amp;timeout);
++        int nSelect = select(hSocketMax + 1, &amp;fdsetRecv, &amp;fdsetSend, &amp;fdsetError, &amp;timeout);
+         vnThreadsRunning[0]++;
+         if (fShutdown)
+             return;
+         if (nSelect == SOCKET_ERROR)
+         {
+             int nErr = WSAGetLastError();
+-            printf(&quot;select failed: %d\n&quot;, nErr);
++            printf(&quot;socket select error %d\n&quot;, nErr);
+             for (int i = 0; i &lt;= hSocketMax; i++)
+-            {
+                 FD_SET(i, &amp;fdsetRecv);
+-                FD_SET(i, &amp;fdsetSend);
+-            }
++            FD_ZERO(&amp;fdsetSend);
++            FD_ZERO(&amp;fdsetError);
+             Sleep(timeout.tv_usec/1000);
+         }
+ 
+-        //// debug print
+-        //foreach(CNode* pnode, vNodes)
+-        //{
+-        //    printf(&quot;vRecv = %-5d &quot;, pnode-&gt;vRecv.size());
+-        //    printf(&quot;vSend = %-5d    &quot;, pnode-&gt;vSend.size());
+-        //}
+-        //printf(&quot;\n&quot;);
+-
+ 
+         //
+         // Accept new connections
+@@ -641,7 +641,7 @@ void ThreadSocketHandler2(void* parg)
+             if (hSocket == INVALID_SOCKET)
+             {
+                 if (WSAGetLastError() != WSAEWOULDBLOCK)
+-                    printf(&quot;ERROR ThreadSocketHandler accept failed: %d\n&quot;, WSAGetLastError());
++                    printf(&quot;socket error accept failed: %d\n&quot;, WSAGetLastError());
+             }
+             else
+             {
+@@ -669,7 +669,7 @@ void ThreadSocketHandler2(void* parg)
+             //
+             // Receive
+             //
+-            if (FD_ISSET(hSocket, &amp;fdsetRecv))
++            if (FD_ISSET(hSocket, &amp;fdsetRecv) || FD_ISSET(hSocket, &amp;fdsetError))
+             {
+                 TRY_CRITICAL_BLOCK(pnode-&gt;cs_vRecv)
+                 {
+@@ -677,25 +677,29 @@ void ThreadSocketHandler2(void* parg)
+                     unsigned int nPos = vRecv.size();
+ 
+                     // typical socket buffer is 8K-64K
+-                    const unsigned int nBufSize = 0x10000;
+-                    vRecv.resize(nPos + nBufSize);
+-                    int nBytes = recv(hSocket, &amp;vRecv[nPos], nBufSize, 0);
+-                    vRecv.resize(nPos + max(nBytes, 0));
+-                    if (nBytes == 0)
++                    char pchBuf[0x10000];
++                    int nBytes = recv(hSocket, pchBuf, sizeof(pchBuf), MSG_DONTWAIT);
++                    if (nBytes &gt; 0)
++                    {
++                        vRecv.resize(nPos + nBytes);
++                        memcpy(&amp;vRecv[nPos], pchBuf, nBytes);
++                        pnode-&gt;nLastRecv = GetTime();
++                    }
++                    else if (nBytes == 0)
+                     {
+                         // socket closed gracefully
+                         if (!pnode-&gt;fDisconnect)
+-                            printf(&quot;recv: socket closed\n&quot;);
++                            printf(&quot;socket closed\n&quot;);
+                         pnode-&gt;fDisconnect = true;
+                     }
+                     else if (nBytes &lt; 0)
+                     {
+-                        // socket error
++                        // error
+                         int nErr = WSAGetLastError();
+                         if (nErr != WSAEWOULDBLOCK &amp;&amp; nErr != WSAEMSGSIZE &amp;&amp; nErr != WSAEINTR &amp;&amp; nErr != WSAEINPROGRESS)
+                         {
+                             if (!pnode-&gt;fDisconnect)
+-                                printf(&quot;recv failed: %d\n&quot;, nErr);
++                                printf(&quot;socket recv error %d\n&quot;, nErr);
+                             pnode-&gt;fDisconnect = true;
+                         }
+                     }
+@@ -712,28 +716,63 @@ void ThreadSocketHandler2(void* parg)
+                     CDataStream&amp; vSend = pnode-&gt;vSend;
+                     if (!vSend.empty())
+                     {
+-                        int nBytes = send(hSocket, &amp;vSend[0], vSend.size(), MSG_NOSIGNAL);
++                        int nBytes = send(hSocket, &amp;vSend[0], vSend.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+                         if (nBytes &gt; 0)
+                         {
+                             vSend.erase(vSend.begin(), vSend.begin() + nBytes);
++                            pnode-&gt;nLastSend = GetTime();
+                         }
+-                        else if (nBytes == 0)
+-                        {
+-                            if (pnode-&gt;ReadyToDisconnect())
+-                                pnode-&gt;vSend.clear();
+-                        }
+-                        else
++                        else if (nBytes &lt; 0)
+                         {
+-                            printf(&quot;send error %d\n&quot;, nBytes);
+-                            if (pnode-&gt;ReadyToDisconnect())
+-                                pnode-&gt;vSend.clear();
++                            // error
++                            int nErr = WSAGetLastError();
++                            if (nErr != WSAEWOULDBLOCK &amp;&amp; nErr != WSAEMSGSIZE &amp;&amp; nErr != WSAEINTR &amp;&amp; nErr != WSAEINPROGRESS)
++                            {
++                                printf(&quot;socket send error %d\n&quot;, nErr);
++                                pnode-&gt;fDisconnect = true;
++                            }
+                         }
+                     }
+                 }
+             }
++
++            //
++            // Inactivity checking
++            //
++            if (pnode-&gt;vSend.empty())
++                pnode-&gt;nLastSendEmpty = GetTime();
++            if (GetTime() - pnode-&gt;nTimeConnected &gt; 60)
++            {
++                if (pnode-&gt;nLastRecv == 0 || pnode-&gt;nLastSend == 0)
++                {
++                    printf(&quot;socket no message in first 60 seconds, %d %d\n&quot;, pnode-&gt;nLastRecv != 0, pnode-&gt;nLastSend != 0);
++                    pnode-&gt;fDisconnect = true;
++                }
++                else if (GetTime() - pnode-&gt;nLastSend &gt; 10 * 60 &amp;&amp; GetTime() - pnode-&gt;nLastSendEmpty &gt; 10 * 60)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -29,7 +29,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
+ bool AnySubscribed(unsigned int nChannel);
+ bool BindListenPort(string&amp; strError=REF(string()));
+-bool StartNode(string&amp; strError=REF(string()));
++void StartNode(void* parg);
+ bool StopNode();
+ 
+ 
+@@ -39,7 +39,6 @@ bool StopNode();
+ 
+ 
+ 
+-
+ //
+ // Message header
+ //  (4) message start
+@@ -139,7 +138,7 @@ public:
+     unsigned int nTime;
+ 
+     // memory only
+-    unsigned int nLastFailed;
++    unsigned int nLastTry;
+ 
+     CAddress()
+     {
+@@ -183,7 +182,7 @@ public:
+         ip = INADDR_NONE;
+         port = DEFAULT_PORT;
+         nTime = GetAdjustedTime();
+-        nLastFailed = 0;
++        nLastTry = 0;
+     }
+ 
+     bool SetAddress(const char* pszIn)
+@@ -458,6 +457,7 @@ extern uint64 nLocalHostNonce;
+ extern bool fShutdown;
+ extern array&lt;int, 10&gt; vnThreadsRunning;
+ extern SOCKET hListenSocket;
++extern int64 nThreadSocketHandlerHeartbeat;
+ 
+ extern vector&lt;CNode*&gt; vNodes;
+ extern CCriticalSection cs_vNodes;
+@@ -486,6 +486,10 @@ public:
+     CDataStream vRecv;
+     CCriticalSection cs_vSend;
+     CCriticalSection cs_vRecv;
++    int64 nLastSend;
++    int64 nLastRecv;
++    int64 nLastSendEmpty;
++    int64 nTimeConnected;
+     unsigned int nPushPos;
+     CAddress addr;
+     int nVersion;
+@@ -523,6 +527,10 @@ public:
+         hSocket = hSocketIn;
+         vSend.SetType(SER_NETWORK);
+         vRecv.SetType(SER_NETWORK);
++        nLastSend = 0;
++        nLastRecv = 0;
++        nLastSendEmpty = GetTime();
++        nTimeConnected = GetTime();
+         nPushPos = -1;
+         addr = addrIn;
+         nVersion = 0;
+@@ -542,7 +550,7 @@ public:
+         CAddress addrYou = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addr);
+         CAddress addrMe = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addrLocalHost);
+         RAND_bytes((unsigned char*)&amp;nLocalHostNonce, sizeof(nLocalHostNonce));
+-        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addrYou, addrMe, nLocalHostNonce);
++        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addrYou, addrMe, nLocalHostNonce, &quot;linux-test5&quot;);
+     }
+ 
+     ~CNode()
+@@ -557,11 +565,6 @@ private:
+ public:
+ 
+ 
+-    bool ReadyToDisconnect()
+-    {
+-        return fDisconnect || GetRefCount() &lt;= 0;
+-    }
+-
+     int GetRefCount()
+     {
+         return max(nRefCount, 0) + (GetTime() &lt; nReleaseTime ? 1 : 0);
+@@ -635,6 +638,8 @@ public:
+             AbortMessage();
+         nPushPos = vSend.size();
+         vSend &lt;&lt; CMessageHeader(pszCommand, 0);
++        if (fDebug)
++            printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+         printf(&quot;sending: %s &quot;, pszCommand);
+     }
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ map&lt;string, string&gt; mapAddressBook;
+ bool fRandSendTest = false;
+ void RandSend();
+ extern int g_isPainting;
++bool fClosedToTray = false;
+ 
+ // Settings
+ int fShowGenerated = true;
+@@ -413,16 +414,17 @@ void Shutdown(void* parg)
+ 
+ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+ {
+-    if (fMinimizeToTray &amp;&amp; fMinimizeOnClose &amp;&amp; event.CanVeto() &amp;&amp; !IsIconized())
++    if (fMinimizeOnClose &amp;&amp; event.CanVeto() &amp;&amp; !IsIconized())
+     {
+         // Divert close to minimize
+         event.Veto();
++        fClosedToTray = true;
+         Iconize(true);
+     }
+     else
+     {
+         Destroy();
+-        _beginthread(Shutdown, 0, NULL);
++        CreateThread(Shutdown, NULL);
+     }
+ }
+ 
+@@ -430,7 +432,16 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ {
+     // Hide the task bar button when minimized.
+     // Event is sent when the frame is minimized or restored.
+-    Show(!fMinimizeToTray || !event.Iconized());
++    if (!event.Iconized())
++        fClosedToTray = false;
++#ifndef __WXMSW__
++    // Tray is not reliable on Linux gnome
++    fClosedToTray = false;
++#endif
++    if (fMinimizeToTray &amp;&amp; event.Iconized())
++        fClosedToTray = true;
++    Show(!fClosedToTray);
++    ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+ }
+ 
+ void CMainFrame::OnMouseEvents(wxMouseEvent&amp; event)
+@@ -527,7 +538,6 @@ bool CMainFrame::DeleteLine(uint256 hashKey)
+ string FormatTxStatus(const CWalletTx&amp; wtx)
+ {
+     // Status
+-    int nDepth = wtx.GetDepthInMainChain();
+     if (!wtx.IsFinal())
+     {
+         if (wtx.nLockTime &lt; 500000000)
+@@ -535,10 +545,16 @@ string FormatTxStatus(const CWalletTx&amp; wtx)
+         else
+             return strprintf(&quot;Open until %s&quot;, DateTimeStr(wtx.nLockTime).c_str());
+     }
+-    else if (nDepth &lt; 6)
+-        return strprintf(&quot;%d/unconfirmed&quot;, nDepth);
+     else
+-        return strprintf(&quot;%d blocks&quot;, nDepth);
++    {
++        int nDepth = wtx.GetDepthInMainChain();
++        if (GetAdjustedTime() - wtx.nTimeReceived &gt; 2 * 60 &amp;&amp; wtx.GetRequestCount() == 0)
++            return strprintf(&quot;%d/offline?&quot;, nDepth);
++        else if (nDepth &lt; 6)
++            return strprintf(&quot;%d/unconfirmed&quot;, nDepth);
++        else
++            return strprintf(&quot;%d blocks&quot;, nDepth);
++    }
+ }
+ 
+ string SingleLine(const string&amp; strIn)
+@@ -629,9 +645,17 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                 foreach(const CTxOut&amp; txout, wtx.vout)
+                     nUnmatured += txout.GetCredit();
+                 if (wtx.IsInMainChain())
+-                    strDescription += strprintf(&quot; (%s matures in %d more blocks)&quot;, FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
++                {
++                    strDescription = strprintf(&quot;Generated (%s matures in %d more blocks)&quot;, FormatMoney(nUnmatured).c_str(), wtx.GetBlocksToMaturity());
++
++                    // Check if the block was requested by anyone
++                    if (GetAdjustedTime() - wtx.nTimeReceived &gt; 2 * 60 &amp;&amp; wtx.GetRequestCount() == 0)
++                        strDescription = &quot;Generated - Warning: This block was not received by any other nodes and will probably not be accepted!&quot;;
++                }
+                 else
+-                    strDescription += &quot; (not accepted)&quot;;
++                {
++                    strDescription = &quot;Generated (not accepted)&quot;;
++                }
+             }
+         }
+         else if (!mapValue[&quot;from&quot;].empty() || !mapValue[&quot;message&quot;].empty())
+@@ -701,8 +725,11 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                        strStatus,
+                        nTime ? DateTimeStr(nTime) : &quot;&quot;,
+                        &quot;Payment to yourself&quot;,
+-                       FormatMoney(nNet - nValue, true),
+-                       FormatMoney(nValue, true));
++                       &quot;&quot;,
++                       &quot;&quot;);
++            /// issue: can&#x27;t tell which is the payment and which is the change anymore
++            //           FormatMoney(nNet - nValue, true),
++            //           FormatMoney(nValue, true));
+         }
+         else if (fAllFromMe)
+         {
+@@ -1028,6 +1055,9 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
++    if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)
++        m_statusBar-&gt;SetStatusText(&quot;     ERROR: ThreadSocketHandler has stopped&quot;, 0);
++
+     // Pass through to listctrl to actually do the paint, we&#x27;re just hooking the message
+     m_listCtrl-&gt;Disconnect(wxEVT_PAINT, (wxObjectEventFunction)NULL, NULL, this);
+     m_listCtrl-&gt;GetEventHandler()-&gt;ProcessEvent(event);
+@@ -1237,7 +1267,19 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+ 
+ 
+ 
+-    strHTML += &quot;&lt;b&gt;Status:&lt;/b&gt; &quot; + FormatTxStatus(wtx) + &quot;&lt;br&gt;&quot;;
++    strHTML += &quot;&lt;b&gt;Status:&lt;/b&gt; &quot; + FormatTxStatus(wtx);
++    int nRequests = wtx.GetRequestCount();
++    if (nRequests != -1)
++    {
++        if (nRequests == 0)
++            strHTML += &quot;, has not been successfully broadcast yet&quot;;
++        else if (nRequests == 1)
++            strHTML += strprintf(&quot;, broadcast through %d node&quot;, nRequests);
++        else
++            strHTML += strprintf(&quot;, broadcast through %d nodes&quot;, nRequests);
++    }
++    strHTML += &quot;&lt;br&gt;&quot;;
++
+     strHTML += &quot;&lt;b&gt;Date:&lt;/b&gt; &quot; + (nTime ? DateTimeStr(nTime) : &quot;&quot;) + &quot;&lt;br&gt;&quot;;
+ 
+ 
+@@ -1366,9 +1408,10 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+             if (fAllToMe)
+             {
+                 // Payment to self
+-                int64 nValue = wtx.vout[0].nValue;
+-                strHTML += &quot;&lt;b&gt;Debit:&lt;/b&gt; &quot; + FormatMoney(-nValue) + &quot;&lt;br&gt;&quot;;
+-                strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(nValue) + &quot;&lt;br&gt;&quot;;
++                /// issue: can&#x27;t tell which is the payment and which is the change anymore
++                //int64 nValue = wtx.vout[0].nValue;
++                //strHTML += &quot;&lt;b&gt;Debit:&lt;/b&gt; &quot; + FormatMoney(-nValue) + &quot;&lt;br&gt;&quot;;
++                //strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(nValue) + &quot;&lt;br&gt;&quot;;
+             }
+ 
+             int64 nTxFee = nDebit - wtx.GetValueOut();
+@@ -1469,6 +1512,9 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     //m_listBox-&gt;Append(&quot;Test 2&quot;);
+     m_listBox-&gt;SetSelection(0);
+     SelectPage(0);
++#ifndef __WXMSW__
++    m_checkBoxMinimizeOnClose-&gt;SetLabel(&quot;&amp;Minimize on close&quot;);
++#endif
+ 
+     // Init values
+     m_textCtrlTransactionFee-&gt;SetValue(FormatMoney(nTransactionFee));
+@@ -1481,9 +1527,7 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     m_spinCtrlLimitProcessors-&gt;SetRange(1, nProcessors);
+     m_checkBoxStartOnSystemStartup-&gt;SetValue(fTmpStartOnSystemStartup = GetStartOnSystemStartup());
+     m_checkBoxMinimizeToTray-&gt;SetValue(fMinimizeToTray);
+-    m_checkBoxMinimizeOnClose-&gt;Enable(fMinimizeToTray);
+-    m_checkBoxMinimizeOnClose-&gt;SetValue(fMinimizeToTray &amp;&amp; fMinimizeOnClose);
+-    fTmpMinimizeOnClose = fMinimizeOnClose;
++    m_checkBoxMinimizeOnClose-&gt;SetValue(fMinimizeOnClose);
+     m_checkBoxUseProxy-&gt;SetValue(fUseProxy);
+     m_textCtrlProxyIP-&gt;Enable(fUseProxy);
+     m_textCtrlProxyPort-&gt;Enable(fUseProxy);
+@@ -1521,22 +1565,6 @@ void COptionsDialog::OnCheckBoxLimitProcessors(wxCommandEvent&amp; event)
+     m_spinCtrlLimitProcessors-&gt;Enable(event.IsChecked());
+ }
+ 
+-void COptionsDialog::OnCheckBoxMinimizeToTray(wxCommandEvent&amp; event)
+-{
+-    m_checkBoxMinimizeOnClose-&gt;Enable(event.IsChecked());
+-
+-    // Save the value in fTmpMinimizeOnClose so we can
+-    // show the checkbox unchecked when its parent is unchecked
+-    if (event.IsChecked())
+-        m_checkBoxMinimizeOnClose-&gt;SetValue(fTmpMinimizeOnClose);
+-    else
+-    {
+-        fTmpMinimizeOnClose = m_checkBoxMinimizeOnClose-&gt;GetValue();
+-        m_checkBoxMinimizeOnClose-&gt;SetValue(false);
+-    }
+-
+-}
+-
+ void COptionsDialog::OnCheckBoxUseProxy(wxCommandEvent&amp; event)
+ {
+     m_textCtrlProxyIP-&gt;Enable(event.IsChecked());
+@@ -1608,12 +1636,12 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+     {
+         fMinimizeToTray = m_checkBoxMinimizeToTray-&gt;GetValue();
+         walletdb.WriteSetting(&quot;fMinimizeToTray&quot;, fMinimizeToTray);
+-        ptaskbaricon-&gt;Show(fMinimizeToTray);
++        ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+     }
+ 
+-    if (fMinimizeOnClose != (fMinimizeToTray ? m_checkBoxMinimizeOnClose-&gt;GetValue() : fTmpMinimizeOnClose))
++    if (fMinimizeOnClose != m_checkBoxMinimizeOnClose-&gt;GetValue())
+     {
+-        fMinimizeOnClose = (fMinimizeToTray ? m_checkBoxMinimizeOnClose-&gt;GetValue() : fTmpMinimizeOnClose);
++        fMinimizeOnClose = m_checkBoxMinimizeOnClose-&gt;GetValue();
+         walletdb.WriteSetting(&quot;fMinimizeOnClose&quot;, fMinimizeOnClose);
+     }
+ 
+@@ -1643,6 +1671,9 @@ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+     if (str.Find(&#x27;Â&#x27;) != wxNOT_FOUND)
+         str.Remove(str.Find(&#x27;Â&#x27;), 1);
+     m_staticTextMain-&gt;SetLabel(str);
++#ifndef __WXMSW__
++    SetSize(510, 380);
++#endif
+ }
+ 
+ void CAboutDialog::OnButtonOK(wxCommandEvent&amp; event)
+@@ -1849,7 +1880,7 @@ CSendingDialog::CSendingDialog(wxWindow* parent, const CAddress&amp; addrIn, int64 n
+     SetTitle(strprintf(&quot;Sending %s to %s&quot;, FormatMoney(nPrice).c_str(), wtx.mapValue[&quot;to&quot;].c_str()));
+     m_textCtrlStatus-&gt;SetValue(&quot;&quot;);
+ 
+-    _beginthread(SendingDialogStartTransfer, 0, this);
++    CreateThread(SendingDialogStartTransfer, this);
+ }
+ 
+ CSendingDialog::~CSendingDialog()
+@@ -2856,7 +2887,7 @@ CViewProductDialog::CViewProductDialog(wxWindow* parent, const CProduct&amp; product
+     this-&gt;Layout();
+ 
+     // Request details from seller
+-    _beginthread(ThreadRequestProductDetails, 0, new pair&lt;CProduct, wxEvtHandler*&gt;(product, GetEventHandler()));
++    CreateThread(ThreadRequestProductDetails, new pair&lt;CProduct, wxEvtHandler*&gt;(product, GetEventHandler()));
+ }
+ 
+ CViewProductDialog::~CViewProductDialog()
+@@ -3256,6 +3287,7 @@ void CEditReviewDialog::GetReview(CReview&amp; review)
+ enum
+ {
+     ID_TASKBAR_RESTORE = 10001,
++    ID_TASKBAR_OPTIONS,
+     ID_TASKBAR_GENERATE,
+     ID_TASKBAR_EXIT,
+ };
+@@ -3263,6 +3295,7 @@ enum
+ BEGIN_EVENT_TABLE(CMyTaskBarIcon, wxTaskBarIcon)
+     EVT_TASKBAR_LEFT_DCLICK(CMyTaskBarIcon::OnLeftButtonDClick)
+     EVT_MENU(ID_TASKBAR_RESTORE, CMyTaskBarIcon::OnMenuRestore)
++    EVT_MENU(ID_TASKBAR_OPTIONS, CMyTaskBarIcon::OnMenuOptions)
+     EVT_MENU(ID_TASKBAR_GENERATE, CMyTaskBarIcon::OnMenuGenerate)
+     EVT_UPDATE_UI(ID_TASKBAR_GENERATE, CMyTaskBarIcon::OnUpdateUIGenerate)
+     EVT_MENU(ID_TASKBAR_EXIT, CMyTaskBarIcon::OnMenuExit)
+@@ -3312,9 +3345,18 @@ void CMyTaskBarIcon::OnMenuRestore(wxCommandEvent&amp; event)
+     Restore();
+ }
+ 
++void CMyTaskBarIcon::OnMenuOptions(wxCommandEvent&amp; event)
++{
++    // Since it&#x27;s modal, get the main window to do it
++    wxCommandEvent event2(wxEVT_COMMAND_MENU_SELECTED, wxID_MENUOPTIONSOPTIONS);
++    pframeMain-&gt;AddPendingEvent(event2);
++}
++
+ void CMyTaskBarIcon::Restore()
+ {
+     pframeMain-&gt;Show();
++    wxIconizeEvent event(0, false);
++    pframeMain-&gt;AddPendingEvent(event);
+     pframeMain-&gt;Iconize(false);
+     pframeMain-&gt;Raise();
+ }
+@@ -3344,6 +3386,7 @@ wxMenu* CMyTaskBarIcon::CreatePopupMenu()
+ {
+     wxMenu* pmenu = new wxMenu;
+     pmenu-&gt;Append(ID_TASKBAR_RESTORE, &quot;&amp;Open Bitcoin&quot;);
++    pmenu-&gt;Append(ID_TASKBAR_OPTIONS, &quot;O&amp;ptions...&quot;);
+     pmenu-&gt;AppendCheckItem(ID_TASKBAR_GENERATE, &quot;&amp;Generate Coins&quot;)-&gt;Check(fGenerateBitcoins);
+ #ifndef __WXMAC_OSX__ // Mac has built-in quit menu
+     pmenu-&gt;AppendSeparator();
+@@ -3582,7 +3625,7 @@ bool CMyApp::OnInit2()
+             {
+                 CBlockIndex* pindex = (*mi).second;
+                 CBlock block;
+-                block.ReadFromDisk(pindex, true);
++                block.ReadFromDisk(pindex);
+                 block.BuildMerkleTree();
+                 block.print();
+                 printf(&quot;\n&quot;);
+@@ -3632,20 +3675,20 @@ bool CMyApp::OnInit2()
+     if (mapArgs.count(&quot;-min&quot;))
+         pframeMain-&gt;Iconize(true);
+     pframeMain-&gt;Show(true);  // have to show first to get taskbar button to hide
+-    pframeMain-&gt;Show(!fMinimizeToTray || !pframeMain-&gt;IsIconized());
+-    ptaskbaricon-&gt;Show(fMinimizeToTray);
++    if (fMinimizeToTray &amp;&amp; pframeMain-&gt;IsIconized())</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -112,7 +112,6 @@ protected:
+     void OnListBox(wxCommandEvent&amp; event);
+     void OnKillFocusTransactionFee(wxFocusEvent&amp; event);
+     void OnCheckBoxLimitProcessors(wxCommandEvent&amp; event);
+-    void OnCheckBoxMinimizeToTray(wxCommandEvent&amp; event);
+     void OnCheckBoxUseProxy(wxCommandEvent&amp; event);
+     void OnKillFocusProxy(wxFocusEvent&amp; event);
+ 
+@@ -447,6 +446,7 @@ protected:
+     // Event handlers
+     void OnLeftButtonDClick(wxTaskBarIconEvent&amp; event);
+     void OnMenuRestore(wxCommandEvent&amp; event);
++    void OnMenuOptions(wxCommandEvent&amp; event);
+     void OnUpdateUIGenerate(wxUpdateUIEvent&amp; event);
+     void OnMenuGenerate(wxCommandEvent&amp; event);
+     void OnMenuExit(wxCommandEvent&amp; event);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -45,7 +45,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_menuOptions-&gt;Append( m_menuOptionsChangeYourAddress );
+ 	
+ 	wxMenuItem* m_menuOptionsOptions;
+-	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_ANY, wxString( wxT(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_MENUOPTIONSOPTIONS, wxString( wxT(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsOptions );
+ 	
+ 	m_menubar-&gt;Append( m_menuOptions, wxT(&quot;&amp;Options&quot;) );
+@@ -428,21 +428,13 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer69-&gt;Add( m_checkBoxStartOnSystemStartup, 0, wxALL, 5 );
+ 	
+-	m_checkBoxMinimizeToTray = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Minimize to the system tray instead of the taskbar&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxMinimizeToTray = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Minimize to the tray instead of the taskbar&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+ 	bSizer69-&gt;Add( m_checkBoxMinimizeToTray, 0, wxALL, 5 );
+ 	
+-	wxBoxSizer* bSizer101;
+-	bSizer101 = new wxBoxSizer( wxHORIZONTAL );
++	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;M&amp;inimize to the tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+-	
+-	bSizer101-&gt;Add( 16, 0, 0, 0, 5 );
+-	
+-	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;Mi&amp;nimize to system tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	
+-	bSizer101-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+-	
+-	bSizer69-&gt;Add( bSizer101, 1, wxEXPAND, 5 );
++	bSizer69-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	wxBoxSizer* bSizer102;
+ 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -43,51 +43,52 @@
+ #define wxID_MAINFRAME 1000
+ #define wxID_VIEWSHOWGENERATED 1001
+ #define wxID_OPTIONSGENERATEBITCOINS 1002
+-#define wxID_BUTTONSEND 1003
+-#define wxID_BUTTONRECEIVE 1004
+-#define wxID_TEXTCTRLADDRESS 1005
+-#define wxID_BUTTONCOPY 1006
+-#define wxID_BUTTONCHANGE 1007
+-#define wxID_TRANSACTIONFEE 1008
+-#define wxID_PROXYIP 1009
+-#define wxID_PROXYPORT 1010
+-#define wxID_TEXTCTRLPAYTO 1011
+-#define wxID_BUTTONPASTE 1012
+-#define wxID_BUTTONADDRESSBOOK 1013
+-#define wxID_TEXTCTRLAMOUNT 1014
+-#define wxID_CHOICETRANSFERTYPE 1015
+-#define wxID_LISTCTRL 1016
+-#define wxID_BUTTONRENAME 1017
+-#define wxID_BUTTONNEW 1018
+-#define wxID_BUTTONEDIT 1019
+-#define wxID_BUTTONDELETE 1020
+-#define wxID_DEL0 1021
+-#define wxID_DEL1 1022
+-#define wxID_DEL2 1023
+-#define wxID_DEL3 1024
+-#define wxID_DEL4 1025
+-#define wxID_DEL5 1026
+-#define wxID_DEL6 1027
+-#define wxID_DEL7 1028
+-#define wxID_DEL8 1029
+-#define wxID_DEL9 1030
+-#define wxID_DEL10 1031
+-#define wxID_DEL11 1032
+-#define wxID_DEL12 1033
+-#define wxID_DEL13 1034
+-#define wxID_DEL14 1035
+-#define wxID_DEL15 1036
+-#define wxID_DEL16 1037
+-#define wxID_DEL17 1038
+-#define wxID_DEL18 1039
+-#define wxID_DEL19 1040
+-#define wxID_BUTTONPREVIEW 1041
+-#define wxID_BUTTONSAMPLE 1042
+-#define wxID_CANCEL2 1043
+-#define wxID_BUTTONBACK 1044
+-#define wxID_BUTTONNEXT 1045
+-#define wxID_SUBMIT 1046
+-#define wxID_TEXTCTRL 1047
++#define wxID_MENUOPTIONSOPTIONS 1003
++#define wxID_BUTTONSEND 1004
++#define wxID_BUTTONRECEIVE 1005
++#define wxID_TEXTCTRLADDRESS 1006
++#define wxID_BUTTONCOPY 1007
++#define wxID_BUTTONCHANGE 1008
++#define wxID_TRANSACTIONFEE 1009
++#define wxID_PROXYIP 1010
++#define wxID_PROXYPORT 1011
++#define wxID_TEXTCTRLPAYTO 1012
++#define wxID_BUTTONPASTE 1013
++#define wxID_BUTTONADDRESSBOOK 1014
++#define wxID_TEXTCTRLAMOUNT 1015
++#define wxID_CHOICETRANSFERTYPE 1016
++#define wxID_LISTCTRL 1017
++#define wxID_BUTTONRENAME 1018
++#define wxID_BUTTONNEW 1019
++#define wxID_BUTTONEDIT 1020
++#define wxID_BUTTONDELETE 1021
++#define wxID_DEL0 1022
++#define wxID_DEL1 1023
++#define wxID_DEL2 1024
++#define wxID_DEL3 1025
++#define wxID_DEL4 1026
++#define wxID_DEL5 1027
++#define wxID_DEL6 1028
++#define wxID_DEL7 1029
++#define wxID_DEL8 1030
++#define wxID_DEL9 1031
++#define wxID_DEL10 1032
++#define wxID_DEL11 1033
++#define wxID_DEL12 1034
++#define wxID_DEL13 1035
++#define wxID_DEL14 1036
++#define wxID_DEL15 1037
++#define wxID_DEL16 1038
++#define wxID_DEL17 1039
++#define wxID_DEL18 1040
++#define wxID_DEL19 1041
++#define wxID_BUTTONPREVIEW 1042
++#define wxID_BUTTONSAMPLE 1043
++#define wxID_CANCEL2 1044
++#define wxID_BUTTONBACK 1045
++#define wxID_BUTTONNEXT 1046
++#define wxID_SUBMIT 1047
++#define wxID_TEXTCTRL 1048
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CMainFrameBase
+@@ -203,7 +204,6 @@ class COptionsDialogBase : public wxDialog
+ 		wxStaticText* m_staticText35;
+ 		wxCheckBox* m_checkBoxStartOnSystemStartup;
+ 		wxCheckBox* m_checkBoxMinimizeToTray;
+-		
+ 		wxCheckBox* m_checkBoxMinimizeOnClose;
+ 		wxCheckBox* m_checkBoxUseProxy;
+ 		</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
+             &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-            &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;0&quot;&gt;
++            &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;1&quot;&gt;
+                 &lt;property name=&quot;bg&quot;&gt;240,240,240&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+@@ -193,7 +193,7 @@
+                         &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                        &lt;property name=&quot;id&quot;&gt;wxID_MENUOPTIONSOPTIONS&lt;/property&gt;
+                         &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                         &lt;property name=&quot;label&quot;&gt;&amp;amp;Options...&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;m_menuOptionsOptions&lt;/property&gt;
+@@ -2319,7 +2319,7 @@
+                                                         &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Minimize to the system tray instead of the taskbar&lt;/property&gt;
++                                                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Minimize to the tray instead of the taskbar&lt;/property&gt;
+                                                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;name&quot;&gt;m_checkBoxMinimizeToTray&lt;/property&gt;
+@@ -2360,75 +2360,54 @@
+                                                 &lt;/object&gt;
+                                                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                                                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+-                                                    &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                                                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                                                    &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL&lt;/property&gt;
++                                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                                    &lt;object class=&quot;wxCheckBox&quot; expanded=&quot;1&quot;&gt;
++                                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
++                                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                                        &lt;property name=&quot;label&quot;&gt;M&amp;amp;inimize to the tray on close&lt;/property&gt;
++                                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                                        &lt;property name=&quot;name&quot;&gt;bSizer101&lt;/property&gt;
+-                                                        &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+-                                                        &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                                                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                                            &lt;property name=&quot;flag&quot;&gt;&lt;/property&gt;
+-                                                            &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                                            &lt;object class=&quot;spacer&quot; expanded=&quot;1&quot;&gt;
+-                                                                &lt;property name=&quot;height&quot;&gt;0&lt;/property&gt;
+-                                                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                                                &lt;property name=&quot;width&quot;&gt;16&lt;/property&gt;
+-                                                            &lt;/object&gt;
+-                                                        &lt;/object&gt;
+-                                                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL&lt;/property&gt;
+-                                                            &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                                            &lt;object class=&quot;wxCheckBox&quot; expanded=&quot;1&quot;&gt;
+-                                                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+-                                                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                                                &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                                &lt;property name=&quot;label&quot;&gt;Mi&amp;amp;nimize to system tray on close&lt;/property&gt;
+-                                                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;name&quot;&gt;m_checkBoxMinimizeOnClose&lt;/property&gt;
+-                                                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnCheckBox&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                                            &lt;/object&gt;
+-                                                        &lt;/object&gt;
++                                                        &lt;property name=&quot;name&quot;&gt;m_checkBoxMinimizeOnClose&lt;/property&gt;
++                                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnCheckBox&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                                                     &lt;/object&gt;
+                                                 &lt;/object&gt;
+                                                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -85,14 +85,14 @@ void RandAddSeed()
+ 
+ void RandAddSeedPerfmon()
+ {
+-#ifdef __WXMSW__
+-    // Don&#x27;t need this on Linux, OpenSSL automatically uses /dev/urandom
+     // This can take up to 2 seconds, so only do it every 10 minutes
+     static int64 nLastPerfmon;
+     if (GetTime() &lt; nLastPerfmon + 10 * 60)
+         return;
+     nLastPerfmon = GetTime();
+ 
++#ifdef __WXMSW__
++    // Don&#x27;t need this on Linux, OpenSSL automatically uses /dev/urandom
+     // Seed with the entire set of perfmon data
+     unsigned char pdata[250000];
+     memset(pdata, 0, sizeof(pdata));
+@@ -109,9 +109,30 @@ void RandAddSeedPerfmon()
+ 
+         printf(&quot;%s RandAddSeed() %d bytes\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str(), nSize);
+     }
++#else
++    printf(&quot;%s RandAddSeed()\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+ #endif
+ }
+ 
++uint64 GetRand(uint64 nMax)
++{
++    if (nMax == 0)
++        return 0;
++
++    // The range of the random source must be a multiple of the modulus
++    // to give every possible output value an equal possibility
++    uint64 nRange = (UINT64_MAX / nMax) * nMax;
++    uint64 nRand = 0;
++    do
++        RAND_bytes((unsigned char*)&amp;nRand, sizeof(nRand));
++    while (nRand &gt;= nRange);
++    return (nRand % nMax);
++}
++
++
++
++
++
+ 
+ 
+ 
+@@ -449,28 +470,6 @@ string GetDataDir()
+ 
+ 
+ 
+-uint64 GetRand(uint64 nMax)
+-{
+-    if (nMax == 0)
+-        return 0;
+-
+-    // The range of the random source must be a multiple of the modulus</code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/956468c/">← Get local host IP on Linux, Shutdown() a little cleaner --…</a><a rel="next" href="../../commits/b349e3d/">misc compile error →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

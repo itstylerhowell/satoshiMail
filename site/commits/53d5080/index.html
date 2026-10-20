@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>update fSpent flag on wallet… (r55) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 3 February 2010: update fSpent flag on wallet transactions if they&#x27;re seen spent in case copy of wallet.dat was…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/53d5080/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="update fSpent flag on wallet… (r55) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 3 February 2010: update fSpent flag on wallet transactions if they&#x27;re seen spent in case copy of wallet.dat was…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/53d5080/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="update fSpent flag on wallet… (r55) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 3 February 2010: update fSpent flag on wallet transactions if they&#x27;re seen spent in case copy of wallet.dat was…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "update fSpent flag on wallet transactions if they're seen spent in case copy of wallet.dat was used elsewhere or restored from backup, better error dialog box if try to spend already spent coins, got rid of unused notebook with only one tab on main dialog, nicer looking About dialog, resize About dialog better on linux", "url": "https://satoshimail.pages.dev/commits/53d5080/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-03T22:58:40Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/53d508072b02d522371bde148dcc3e925f472be7"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "update fSpent flag on wallet…", "item": "https://satoshimail.pages.dev/commits/53d5080/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c53d508072b">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">update fSpent flag on wallet…</span></div></nav>
+<main class="in">
+<h1>update fSpent flag on wallet transactions if they&#x27;re seen spent in case copy of wallet.dat was used elsewhere or restored from backup, better error dialog box if try to spend already spent coins, got rid of unused notebook with only one tab on main dialog, nicer looking About dialog, resize About dialog better on linux</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 3 February 2010 · SVN r55 · release v0.2.2 · 12 files, +1,275 −1,163</p>
+<p class="actions"><a class="btn" href="../../#t-c53d508072b">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/53d508072b02d522371bde148dcc3e925f472be7" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -593,14 +593,17 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+                 //    wtx.hashBlock.ToString().substr(0,16).c_str(),
+                 //    wtx.mapValue[&quot;message&quot;].c_str());
+             }
+-            else if (strType == &quot;key&quot;)
++            else if (strType == &quot;key&quot; || strType == &quot;wkey&quot;)
+             {
+                 vector&lt;unsigned char&gt; vchPubKey;
+                 ssKey &gt;&gt; vchPubKey;
+-                CPrivKey vchPrivKey;
+-                ssValue &gt;&gt; vchPrivKey;
++                CWalletKey wkey;
++                if (strType == &quot;key&quot;)
++                    ssValue &gt;&gt; wkey.vchPrivKey;
++                else
++                    ssValue &gt;&gt; wkey;
+ 
+-                mapKeys[vchPubKey] = vchPrivKey;
++                mapKeys[vchPubKey] = wkey.vchPrivKey;
+                 mapPubKeys[Hash160(vchPubKey)] = vchPubKey;
+             }
+             else if (strType == &quot;defaultkey&quot;)</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -113,3 +113,4 @@ using namespace boost;
+ #include &quot;xpm/send16.xpm&quot;
+ #include &quot;xpm/send16noshadow.xpm&quot;
+ #include &quot;xpm/send20.xpm&quot;
++#include &quot;xpm/about.xpm&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -168,6 +168,27 @@ bool EraseFromWallet(uint256 hash)
+     return true;
+ }
+ 
++void WalletUpdateSpent(const COutPoint&amp; prevout)
++{
++    // Anytime a signature is successfully verified, it&#x27;s proof the outpoint is spent.
++    // Update the wallet spent flag if it doesn&#x27;t know due to wallet.dat being
++    // restored from backup or the user making copies of wallet.dat.
++    CRITICAL_BLOCK(cs_mapWallet)
++    {
++        map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(prevout.hash);
++        if (mi != mapWallet.end())
++        {
++            CWalletTx&amp; wtx = (*mi).second;
++            if (!wtx.fSpent &amp;&amp; wtx.vout[prevout.n].IsMine())
++            {
++                printf(&quot;WalletUpdateSpent found spent coin %sbc %s\n&quot;, FormatMoney(wtx.GetCredit()).c_str(), wtx.GetHash().ToString().c_str());
++                wtx.fSpent = true;
++                wtx.WriteToDisk();
++                vWalletUpdated.push_back(prevout.hash);
++            }
++        }
++    }
++}
+ 
+ 
+ 
+@@ -622,15 +643,44 @@ bool CWalletTx::AcceptWalletTransaction(CTxDB&amp; txdb, bool fCheckInputs)
+ 
+ void ReacceptWalletTransactions()
+ {
+-    // Reaccept any txes of ours that aren&#x27;t already in a block
+     CTxDB txdb(&quot;r&quot;);
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+         foreach(PAIRTYPE(const uint256, CWalletTx)&amp; item, mapWallet)
+         {
+             CWalletTx&amp; wtx = item.second;
+-            if (!wtx.IsCoinBase() &amp;&amp; !txdb.ContainsTx(wtx.GetHash()))
+-                wtx.AcceptWalletTransaction(txdb, false);
++            if (wtx.fSpent &amp;&amp; wtx.IsCoinBase())
++                continue;
++
++            CTxIndex txindex;
++            if (txdb.ReadTxIndex(wtx.GetHash(), txindex))
++            {
++                // Update fSpent if a tx got spent somewhere else by a copy of wallet.dat
++                if (!wtx.fSpent)
++                {
++                    if (txindex.vSpent.size() != wtx.vout.size())
++                    {
++                        printf(&quot;ERROR: ReacceptWalletTransactions() : txindex.vSpent.size() %d != wtx.vout.size() %d\n&quot;, txindex.vSpent.size(), wtx.vout.size());
++                        continue;
++                    }
++                    for (int i = 0; i &lt; txindex.vSpent.size(); i++)
++                    {
++                        if (!txindex.vSpent[i].IsNull() &amp;&amp; wtx.vout[i].IsMine())
++                        {
++                            printf(&quot;ReacceptWalletTransactions found spent coin %sbc %s\n&quot;, FormatMoney(wtx.GetCredit()).c_str(), wtx.GetHash().ToString().c_str());
++                            wtx.fSpent = true;
++                            wtx.WriteToDisk();
++                            break;
++                        }
++                    }
++                }
++            }
++            else
++            {
++                // Reaccept any txes of ours that aren&#x27;t already in a block
++                if (!wtx.IsCoinBase())
++                    wtx.AcceptWalletTransaction(txdb, false);
++            }
+         }
+     }
+ }
+@@ -2843,9 +2893,13 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+     CRITICAL_BLOCK(cs_main)
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+-        //// todo: eventually should make this transactional, never want to add a
++        //// old: eventually should make this transactional, never want to add a
+         ////  transaction without marking spent transactions, although the risk of
+         ////  interruption during this step is remote.
++        //// update: This matters even less now that fSpent can get corrected
++        ////  when transactions are seen in VerifySignature.  The remote chance of
++        ////  unmarked fSpent will be handled by that.  Don&#x27;t need to make this
++        ////  transactional.
+ 
+         // This is only to keep the database open to defeat the auto-flush for the
+         // duration of this scope.  This is the only place where this optimization
+@@ -2910,8 +2964,7 @@ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+         if (!wtxNew.AcceptTransaction())
+         {
+             // This must not fail. The transaction has already been signed and recorded.
+-            throw runtime_error(&quot;SendMoney() : wtxNew.AcceptTransaction() failed\n&quot;);
+-            wxMessageBox(&quot;Error: Transaction not valid  &quot;, &quot;Sending...&quot;);
++            wxMessageBox(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;, &quot;Sending...&quot;);
+             return error(&quot;SendMoney() : Error: Transaction not valid&quot;);
+         }
+         wtxNew.RelayWalletTransaction();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -56,6 +56,7 @@ FILE* AppendBlockFile(unsigned int&amp; nFileRet);
+ bool AddKey(const CKey&amp; key);
+ vector&lt;unsigned char&gt; GenerateNewKey();
+ bool AddToWallet(const CWalletTx&amp; wtxIn);
++void WalletUpdateSpent(const COutPoint&amp; prevout);
+ void ReacceptWalletTransactions();
+ void RelayWalletTransactions();
+ bool LoadBlockIndex(bool fAllowNew=true);
+@@ -1370,6 +1371,31 @@ public:
+ 
+ 
+ 
++//
++// Private key that includes an expiration date in case it never gets used.
++//
++class CWalletKey
++{
++public:
++    CPrivKey vchPrivKey;
++    int64 nTimeCreated;
++    int64 nTimeExpires;
++
++    CWalletKey(int64 nTimeExpiresIn=0)
++    {
++        nTimeCreated = (nTimeExpiresIn ? GetTime() : 0);
++        nTimeExpires = nTimeExpiresIn;
++    }
++
++    IMPLEMENT_SERIALIZE
++    (
++        if (!(nType &amp; SER_GETHASH))
++            READWRITE(nVersion);
++        READWRITE(vchPrivKey);
++        READWRITE(nTimeCreated);
++        READWRITE(nTimeExpires);
++    )
++};
+ 
+ 
+ </code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -1123,5 +1123,13 @@ bool VerifySignature(const CTransaction&amp; txFrom, const CTransaction&amp; txTo, unsig
+     if (txin.prevout.hash != txFrom.GetHash())
+         return false;
+ 
+-    return EvalScript(txin.scriptSig + CScript(OP_CODESEPARATOR) + txout.scriptPubKey, txTo, nIn, nHashType);
++    if (!EvalScript(txin.scriptSig + CScript(OP_CODESEPARATOR) + txout.scriptPubKey, txTo, nIn, nHashType))
++        return false;
++
++    // Anytime a signature is successfully verified, it&#x27;s proof the outpoint is spent,
++    // so lets update the wallet spent flag if it doesn&#x27;t know due to wallet.dat being
++    // restored from backup or the user making copies of wallet.dat.
++    WalletUpdateSpent(txin.prevout);
++
++    return true;
+ }</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 200;
+-static const char* pszSubVer = &quot; test1&quot;;
++static const char* pszSubVer = &quot; test2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -134,7 +134,6 @@ int GetSelection(wxListCtrl* listCtrl)
+     return -1;
+ }
+ 
+-
+ string HtmlEscape(const char* psz, bool fMultiLine=false)
+ {
+     int len = 0;
+@@ -170,18 +169,6 @@ string HtmlEscape(const string&amp; str, bool fMultiLine=false)
+     return HtmlEscape(str.c_str(), fMultiLine);
+ }
+ 
+-void AddToMyProducts(CProduct product)
+-{
+-    CProduct&amp; productInsert = mapMyProducts[product.GetHash()];
+-    productInsert = product;
+-    InsertLine(pframeMain-&gt;m_listCtrlProductsSent, &amp;productInsert,
+-                product.mapValue[&quot;category&quot;],
+-                product.mapValue[&quot;title&quot;].substr(0, 100),
+-                product.mapValue[&quot;description&quot;].substr(0, 100),
+-                product.mapValue[&quot;price&quot;],
+-                &quot;&quot;);
+-}
+-
+ void CalledMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y, int* pnRet, bool* pfDone)
+ {
+     *pnRet = wxMessageBox(message, caption, style, parent, x, y);
+@@ -253,9 +240,7 @@ template&lt;typename T&gt;
+ void AddPendingCustomEvent(wxEvtHandler* pevthandler, int nEventID, const T pbeginIn, const T pendIn)
+ {
+     // Need to rewrite with something like UIThreadCall
+-    // I&#x27;m tired of maintaining this hack that&#x27;s only called by unfinished unused code,
+-    // but I&#x27;m not willing to delete it because it serves as documentation of what the
+-    // unfinished code was trying to do.
++    // I&#x27;m tired of maintaining this hack that&#x27;s only called by unfinished unused code.
+     assert((&quot;Unimplemented&quot;, 0));
+     //if (!pevthandler)
+     //    return;
+@@ -1233,7 +1218,7 @@ void CMainFrame::OnButtonChange(wxCommandEvent&amp; event)
+     }
+ }
+ 
+-void CMainFrame::OnListItemActivatedAllTransactions(wxListEvent&amp; event)
++void CMainFrame::OnListItemActivated(wxListEvent&amp; event)
+ {
+     uint256 hash((string)GetItemText(m_listCtrl, event.GetIndex(), 1));
+     CWalletTx wtx;
+@@ -1242,7 +1227,7 @@ void CMainFrame::OnListItemActivatedAllTransactions(wxListEvent&amp; event)
+         map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(hash);
+         if (mi == mapWallet.end())
+         {
+-            printf(&quot;CMainFrame::OnListItemActivatedAllTransactions() : tx not found in mapWallet\n&quot;);
++            printf(&quot;CMainFrame::OnListItemActivated() : tx not found in mapWallet\n&quot;);
+             return;
+         }
+         wtx = (*mi).second;
+@@ -1699,16 +1684,23 @@ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+     m_staticTextVersion-&gt;SetLabel(strprintf(&quot;version 0.%d.%d beta&quot;, VERSION/100, VERSION%100));
+ 
++#if !wxUSE_UNICODE
+     // Workaround until upgrade to wxWidgets supporting UTF-8
+     wxString str = m_staticTextMain-&gt;GetLabel();
+-#if !wxUSE_UNICODE
+     if (str.Find(&#x27;Â&#x27;) != wxNOT_FOUND)
+         str.Remove(str.Find(&#x27;Â&#x27;), 1);
++    m_staticTextMain-&gt;SetLabel(str);
+ #endif
+ #ifndef __WXMSW__
+-    SetSize(510, 380);
++    // Resize on Linux to make the window fit the text.
++    // The text was wrapped manually rather than using the Wrap setting because
++    // the wrap would be too small on Linux and it can&#x27;t be changed at this point.
++    wxFont fontTmp = m_staticTextMain-&gt;GetFont();
++    if (fontTmp.GetPointSize() &gt; 8);
++        fontTmp.SetPointSize(8);
++    m_staticTextMain-&gt;SetFont(fontTmp);
++    SetSize(GetSize().GetWidth() + 44, GetSize().GetHeight() - 4);
+ #endif
+-    m_staticTextMain-&gt;SetLabel(str);
+ }
+ 
+ void CAboutDialog::OnButtonOK(wxCommandEvent&amp; event)
+@@ -2789,6 +2781,18 @@ void CEditProductDialog::OnButtonAddField(wxCommandEvent&amp; event)
+     }
+ }
+ 
++void AddToMyProducts(CProduct product)
++{
++    CProduct&amp; productInsert = mapMyProducts[product.GetHash()];
++    productInsert = product;
++    //InsertLine(pframeMain-&gt;m_listCtrlProductsSent, &amp;productInsert,
++    //            product.mapValue[&quot;category&quot;],
++    //            product.mapValue[&quot;title&quot;].substr(0, 100),
++    //            product.mapValue[&quot;description&quot;].substr(0, 100),
++    //            product.mapValue[&quot;price&quot;],
++    //            &quot;&quot;);
++}
++
+ void CEditProductDialog::OnButtonSend(wxCommandEvent&amp; event)
+ {
+     CProduct product;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -60,7 +60,7 @@ protected:
+     void OnButtonCopy(wxCommandEvent&amp; event);
+     void OnButtonChange(wxCommandEvent&amp; event);
+     void OnListColBeginDrag(wxListEvent&amp; event);
+-    void OnListItemActivatedAllTransactions(wxListEvent&amp; event);
++    void OnListItemActivated(wxListEvent&amp; event);
+     void OnListItemActivatedProductsSent(wxListEvent&amp; event);
+     void OnListItemActivatedOrdersSent(wxListEvent&amp; event);
+     void OnListItemActivatedOrdersReceived(wxListEvent&amp; event);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,7 +1,6 @@
+ // Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -11,6 +10,7 @@
+ 
+ #include &quot;uibase.h&quot;
+ 
++#include &quot;xpm/about.xpm&quot;
+ #include &quot;xpm/addressbook20.xpm&quot;
+ #include &quot;xpm/check.xpm&quot;
+ #include &quot;xpm/send20.xpm&quot;
+@@ -142,81 +142,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	bSizer2-&gt;Add( bSizer3, 0, wxEXPAND, 5 );
+ 	
+-	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+-	m_panel7 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+-	wxBoxSizer* bSizer157;
+-	bSizer157 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrl = new wxListCtrl( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
+-	bSizer157-&gt;Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
+-	
+-	m_panel7-&gt;SetSizer( bSizer157 );
+-	m_panel7-&gt;Layout();
+-	bSizer157-&gt;Fit( m_panel7 );
+-	m_notebook-&gt;AddPage( m_panel7, wxT(&quot;All Transactions&quot;), false );
+-	
+-	bSizer2-&gt;Add( m_notebook, 1, wxEXPAND, 5 );
+-	
+-	wxBoxSizer* bSizer_TabsForFutureUse;
+-	bSizer_TabsForFutureUse = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_panel9 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+-	m_panel9-&gt;Hide();
+-	
+-	wxBoxSizer* bSizer159;
+-	bSizer159 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrlEscrows = new wxListCtrl( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT );
+-	bSizer159-&gt;Add( m_listCtrlEscrows, 1, wxALL|wxEXPAND, 5 );
+-	
+-	m_panel9-&gt;SetSizer( bSizer159 );
+-	m_panel9-&gt;Layout();
+-	bSizer159-&gt;Fit( m_panel9 );
+-	bSizer_TabsForFutureUse-&gt;Add( m_panel9, 1, wxEXPAND | wxALL, 5 );
+-	
+-	m_panel8 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+-	m_panel8-&gt;Hide();
+-	
+-	wxBoxSizer* bSizer158;
+-	bSizer158 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrlOrdersSent = new wxListCtrl( m_panel8, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT );
+-	bSizer158-&gt;Add( m_listCtrlOrdersSent, 1, wxALL|wxEXPAND, 5 );
+-	
+-	m_panel8-&gt;SetSizer( bSizer158 );
+-	m_panel8-&gt;Layout();
+-	bSizer158-&gt;Fit( m_panel8 );
+-	bSizer_TabsForFutureUse-&gt;Add( m_panel8, 1, wxEXPAND | wxALL, 5 );
+-	
+-	m_panel10 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+-	m_panel10-&gt;Hide();
+-	
+-	wxBoxSizer* bSizer160;
+-	bSizer160 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrlProductsSent = new wxListCtrl( m_panel10, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT );
+-	bSizer160-&gt;Add( m_listCtrlProductsSent, 1, wxALL|wxEXPAND, 5 );
+-	
+-	m_panel10-&gt;SetSizer( bSizer160 );
+-	m_panel10-&gt;Layout();
+-	bSizer160-&gt;Fit( m_panel10 );
+-	bSizer_TabsForFutureUse-&gt;Add( m_panel10, 1, wxEXPAND | wxALL, 5 );
+-	
+-	m_panel11 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+-	m_panel11-&gt;Hide();
+-	
+-	wxBoxSizer* bSizer161;
+-	bSizer161 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrlOrdersReceived = new wxListCtrl( m_panel11, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT );
+-	bSizer161-&gt;Add( m_listCtrlOrdersReceived, 1, wxALL|wxEXPAND, 5 );
+-	
+-	m_panel11-&gt;SetSizer( bSizer161 );
+-	m_panel11-&gt;Layout();
+-	bSizer161-&gt;Fit( m_panel11 );
+-	bSizer_TabsForFutureUse-&gt;Add( m_panel11, 1, wxEXPAND | wxALL, 5 );
+-	
+-	bSizer2-&gt;Add( bSizer_TabsForFutureUse, 1, wxEXPAND, 5 );
++	m_listCtrl = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	bSizer2-&gt;Add( m_listCtrl, 1, wxEXPAND, 5 );
+ 	
+ 	this-&gt;SetSizer( bSizer2 );
+ 	this-&gt;Layout();
+@@ -267,11 +194,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_buttonCopy-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+ 	m_button91-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedAllTransactions ), NULL, this );
++	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+-	m_listCtrlOrdersSent-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedOrdersSent ), NULL, this );
+-	m_listCtrlProductsSent-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedProductsSent ), NULL, this );
+-	m_listCtrlOrdersReceived-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedOrdersReceived ), NULL, this );
+ }
+ 
+ CMainFrameBase::~CMainFrameBase()
+@@ -322,11 +246,8 @@ CMainFrameBase::~CMainFrameBase()
+ 	m_buttonCopy-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+ 	m_button91-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedAllTransactions ), NULL, this );
++	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+-	m_listCtrlOrdersSent-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedOrdersSent ), NULL, this );
+-	m_listCtrlProductsSent-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedProductsSent ), NULL, this );
+-	m_listCtrlOrdersReceived-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivatedOrdersReceived ), NULL, this );
+ }
+ 
+ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )
+@@ -562,20 +483,23 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ {
+ 	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );
+ 	
++	wxBoxSizer* bSizer63;
++	bSizer63 = new wxBoxSizer( wxHORIZONTAL );
++	
++	m_bitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( about_xpm ), wxDefaultPosition, wxDefaultSize, 0 );
++	bSizer63-&gt;Add( m_bitmap, 0, 0, 5 );
++	
+ 	wxBoxSizer* bSizer60;
+ 	bSizer60 = new wxBoxSizer( wxVERTICAL );
+ 	
+ 	wxBoxSizer* bSizer62;
+ 	bSizer62 = new wxBoxSizer( wxHORIZONTAL );
+ 	
++	wxBoxSizer* bSizer631;
++	bSizer631 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	bSizer62-&gt;Add( 60, 0, 0, wxEXPAND, 5 );
+ 	
+-	wxBoxSizer* bSizer63;
+-	bSizer63 = new wxBoxSizer( wxVERTICAL );
+-	
+-	
+-	bSizer63-&gt;Add( 0, 50, 0, wxEXPAND, 5 );
++	bSizer631-&gt;Add( 0, 65, 0, wxEXPAND, 5 );
+ 	
+ 	wxBoxSizer* bSizer64;
+ 	bSizer64 = new wxBoxSizer( wxHORIZONTAL );
+@@ -592,19 +516,19 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer64-&gt;Add( m_staticTextVersion, 0, wxALIGN_BOTTOM|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+ 	
+-	bSizer63-&gt;Add( bSizer64, 0, wxEXPAND, 5 );
++	bSizer631-&gt;Add( bSizer64, 0, wxEXPAND, 5 );
+ 	
+ 	
+-	bSizer63-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
++	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextMain = new wxStaticText( this, wxID_ANY, wxT(&quot;Copyright Â© 2009 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file license.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by Eric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_staticTextMain-&gt;Wrap( 400 );
+-	bSizer63-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
++	m_staticTextMain = new wxStaticText( this, wxID_ANY, wxT(&quot;Copyright Â© 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextMain-&gt;Wrap( -1 );
++	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
+ 	
+ 	
+-	bSizer63-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
++	bSizer631-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+-	bSizer62-&gt;Add( bSizer63, 1, wxEXPAND, 5 );
++	bSizer62-&gt;Add( bSizer631, 1, wxEXPAND, 5 );
+ 	
+ 	bSizer60-&gt;Add( bSizer62, 1, wxEXPAND, 5 );
+ 	
+@@ -617,9 +541,11 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer61-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
++	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
++	
++	bSizer63-&gt;Add( bSizer60, 1, wxEXPAND|wxLEFT, 5 );
+ 	
+-	this-&gt;SetSizer( bSizer60 );
++	this-&gt;SetSizer( bSizer63 );
+ 	this-&gt;Layout();
+ 	
+ 	// Connect Events</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,7 +1,6 @@
+ // Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -30,7 +29,6 @@
+ #include &lt;wx/panel.h&gt;
+ #include &lt;wx/choice.h&gt;
+ #include &lt;wx/listctrl.h&gt;
+-#include &lt;wx/notebook.h&gt;
+ #include &lt;wx/frame.h&gt;
+ #include &lt;wx/html/htmlwin.h&gt;
+ #include &lt;wx/dialog.h&gt;
+@@ -119,12 +117,6 @@ class CMainFrameBase : public wxFrame
+ 		wxStaticText* m_staticTextBalance;
+ 		
+ 		wxChoice* m_choiceFilter;
+-		wxNotebook* m_notebook;
+-		wxPanel* m_panel7;
+-		wxPanel* m_panel9;
+-		wxPanel* m_panel8;
+-		wxPanel* m_panel10;
+-		wxPanel* m_panel11;
+ 		
+ 		// Virtual event handlers, overide them in your derived class
+ 		virtual void OnClose( wxCloseEvent&amp; event ){ event.Skip(); }
+@@ -148,21 +140,14 @@ class CMainFrameBase : public wxFrame
+ 		virtual void OnButtonCopy( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonChange( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListColBeginDrag( wxListEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemActivatedAllTransactions( wxListEvent&amp; event ){ event.Skip(); }
++		virtual void OnListItemActivated( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnPaintListCtrl( wxPaintEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemActivatedOrdersSent( wxListEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemActivatedProductsSent( wxListEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemActivatedOrdersReceived( wxListEvent&amp; event ){ event.Skip(); }
+ 		
+ 	
+ 	public:
+ 		wxMenu* m_menuOptions;
+ 		wxListCtrl* m_listCtrl;
+-		wxListCtrl* m_listCtrlEscrows;
+-		wxListCtrl* m_listCtrlOrdersSent;
+-		wxListCtrl* m_listCtrlProductsSent;
+-		wxListCtrl* m_listCtrlOrdersReceived;
+-		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 727,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
++		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 712,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
+ 		~CMainFrameBase();
+ 	
+ };
+@@ -251,7 +236,7 @@ class CAboutDialogBase : public wxDialog
+ 	private:
+ 	
+ 	protected:
+-		
++		wxStaticBitmap* m_bitmap;
+ 		
+ 		wxStaticText* m_staticText40;
+ 		
+@@ -266,7 +251,7 @@ class CAboutDialogBase : public wxDialog
+ 	
+ 	public:
+ 		wxStaticText* m_staticTextVersion;
+-		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxT(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 507,298 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxT(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CAboutDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
+         &lt;property name=&quot;relative_path&quot;&gt;1&lt;/property&gt;
+         &lt;property name=&quot;use_enum&quot;&gt;0&lt;/property&gt;
+         &lt;property name=&quot;use_microsoft_bom&quot;&gt;0&lt;/property&gt;
+-        &lt;object class=&quot;Frame&quot; expanded=&quot;0&quot;&gt;
++        &lt;object class=&quot;Frame&quot; expanded=&quot;1&quot;&gt;
+             &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_BTNFACE&lt;/property&gt;
+             &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -32,7 +32,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;727,484&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;712,484&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;Bitcoin&lt;/property&gt;
+@@ -824,9 +824,8 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                    &lt;object class=&quot;wxNotebook&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;bitmapsize&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+@@ -835,16 +834,16 @@
+                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_notebook&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                        &lt;property name=&quot;name&quot;&gt;m_listCtrl&lt;/property&gt;
++                        &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
+                         &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
++                        &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING&lt;/property&gt;
+                         &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                        &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
+                         &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -855,26 +854,114 @@
+                         &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListColBeginDrag&quot;&gt;OnListColBeginDrag&lt;/event&gt;
++                        &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivated&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListItemSelected&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnNotebookPageChanged&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnNotebookPageChanging&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnPaint&quot;&gt;OnPaintListCtrl&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                        &lt;object class=&quot;notebookpage&quot; expanded=&quot;1&quot;&gt;
+-                            &lt;property name=&quot;bitmap&quot;&gt;&lt;/property&gt;
+-                            &lt;property name=&quot;label&quot;&gt;All Transactions&lt;/property&gt;
+-                            &lt;property name=&quot;select&quot;&gt;0&lt;/property&gt;
+-                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
++                    &lt;/object&gt;
++                &lt;/object&gt;
++            &lt;/object&gt;
++        &lt;/object&gt;
++        &lt;object class=&quot;Dialog&quot; expanded=&quot;0&quot;&gt;
++            &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++            &lt;property name=&quot;extra_style&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;name&quot;&gt;CTxDetailsDialogBase&lt;/property&gt;
++            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;620,450&lt;/property&gt;
++            &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER&lt;/property&gt;
++            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;title&quot;&gt;Transaction Details&lt;/property&gt;
++            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++            &lt;event name=&quot;OnActivate&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnActivateApp&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnClose&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnHibernate&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnIconize&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnIdle&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnInitDialog&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                &lt;property name=&quot;name&quot;&gt;bSizer64&lt;/property&gt;
++                &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
++                    &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
++                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                        &lt;property name=&quot;name&quot;&gt;bSizer66&lt;/property&gt;
++                        &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                        &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxEXPAND&lt;/property&gt;
++                            &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
++                            &lt;object class=&quot;wxHtmlWindow&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+@@ -884,18 +971,22 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;name&quot;&gt;m_panel7&lt;/property&gt;
++                                &lt;property name=&quot;name&quot;&gt;m_htmlWin&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;style&quot;&gt;wxHW_SCROLLBAR_AUTO&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
++                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                                 &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnHtmlCellClicked&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnHtmlCellHover&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnHtmlLinkClicked&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+@@ -916,117 +1007,46 @@
+                                 &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+-                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                    &lt;property name=&quot;name&quot;&gt;bSizer157&lt;/property&gt;
+-                                    &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
+-                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                        &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxALL&lt;/property&gt;
+-                                        &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                                        &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
+-                                            &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;name&quot;&gt;m_listCtrl&lt;/property&gt;
+-                                            &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
+-                                            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING&lt;/property&gt;
+-                                            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
+-                                            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListColBeginDrag&quot;&gt;OnListColBeginDrag&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivatedAllTransactions&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListItemSelected&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnPaint&quot;&gt;OnPaintListCtrl&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                        &lt;/object&gt;
+-                                    &lt;/object&gt;
+-                                &lt;/object&gt;
+                             &lt;/object&gt;
+                         &lt;/object&gt;
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+-                    &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
++                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_RIGHT&lt;/property&gt;
++                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                     &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;bSizer_TabsForFutureUse&lt;/property&gt;
+-                        &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                        &lt;property name=&quot;name&quot;&gt;bSizer65&lt;/property&gt;
++                        &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxEXPAND | wxALL&lt;/property&gt;
+-                            &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;</code></pre></details><details><summary><code>xpm/about.xpm</code></summary><pre><code>@@ -0,0 +1,665 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++/* XPM */
++static const char * about_xpm[] = {
++/* columns rows colors chars-per-pixel */
++&quot;96 564 92 1&quot;,
++&quot;  c #001269&quot;,
++&quot;. c #000C72&quot;,
++&quot;X c #00057F&quot;,
++&quot;o c #001175&quot;,
++&quot;O c #000B6A&quot;,
++&quot;+ c #000E84&quot;,
++&quot;@ c #000489&quot;,
++&quot;# c #001583&quot;,
++&quot;$ c #001B89&quot;,
++&quot;% c #001B99&quot;,
++&quot;&amp; c #000B92&quot;,
++&quot;* c #00208B&quot;,
++&quot;= c #002B97&quot;,
++&quot;- c #0004A6&quot;,
++&quot;; c #001DA7&quot;,
++&quot;: c #0014BC&quot;,
++&quot;&gt; c #0019BB&quot;,
++&quot;, c #0017B4&quot;,
++&quot;&lt; c #0023A3&quot;,
++&quot;1 c #002CAA&quot;,
++&quot;2 c #0030A4&quot;,
++&quot;3 c #003BA3&quot;,
++&quot;4 c #0033AB&quot;,
++&quot;5 c #003FA8&quot;,
++&quot;6 c #0027B8&quot;,
++&quot;7 c #0035BB&quot;,
++&quot;8 c #003CBA&quot;,
++&quot;9 c #004ABD&quot;,
++&quot;0 c #001DC4&quot;,
++&quot;q c #0017CC&quot;,
++&quot;w c #000CD0&quot;,
++&quot;e c #0026C7&quot;,
++&quot;r c #0035C4&quot;,
++&quot;t c #003DC5&quot;,
++&quot;y c #0032CB&quot;,
++&quot;u c #003BCC&quot;,
++&quot;i c #002BD3&quot;,
++&quot;p c #0021DC&quot;,
++&quot;a c #0025D5&quot;,
++&quot;s c #0034D5&quot;,
++&quot;d c #003ADB&quot;,
++&quot;f c #0016F6&quot;,
++&quot;g c #0008F9&quot;,
++&quot;h c #0027E3&quot;,
++&quot;j c #003CE9&quot;,
++&quot;k c #002BF5&quot;,
++&quot;l c #0024F9&quot;,
++&quot;z c #0033F4&quot;,
++&quot;x c #0035F8&quot;,
++&quot;c c #0048CA&quot;,
++&quot;v c #0055C5&quot;,
++&quot;b c #0059C3&quot;,
++&quot;n c #0053CB&quot;,
++&quot;m c #005ACC&quot;,
++&quot;M c #004FD4&quot;,
++&quot;N c #004CDC&quot;,
++&quot;B c #0047D0&quot;,
++&quot;V c #005BD6&quot;,
++&quot;C c #0049E5&quot;,
++&quot;Z c #0042EA&quot;,
++&quot;A c #0052E4&quot;,
++&quot;S c #005CE4&quot;,
++&quot;D c #0054EC&quot;,
++&quot;F c #005EEB&quot;,
++&quot;G c #004AF5&quot;,
++&quot;H c #0051F2&quot;,
++&quot;J c #005CFA&quot;,
++&quot;K c #0058F9&quot;,
++&quot;L c #0066E4&quot;,
++&quot;P c #006BE3&quot;,
++&quot;I c #0064EC&quot;,
++&quot;U c #006DEF&quot;,
++&quot;Y c #0074EB&quot;,
++&quot;T c #0078EC&quot;,
++&quot;R c #0073E7&quot;,
++&quot;E c #0065F4&quot;,
++&quot;W c #006BF5&quot;,
++&quot;Q c #006BFB&quot;,
++&quot;! c #0066FD&quot;,
++&quot;~ c #0073F5&quot;,
++&quot;^ c #007CF3&quot;,
++&quot;/ c #0075FB&quot;,
++&quot;( c #007DFC&quot;,
++&quot;) c #0084FF&quot;,
++&quot;_ c #008AFF&quot;,
++&quot;` c #0092FF&quot;,
++&quot;&#x27; c #339CFF&quot;,
++&quot;] c #33A3FF&quot;,
++&quot;[ c #33AAFF&quot;,
++&quot;{ c #66B5FF&quot;,
++&quot;} c #66BBFF&quot;,
++&quot;| c #66C0FF&quot;,
++/* pixels */
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;kkkkkkkkkkkk&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;DDDDDDDDDDDDvvvvvvvvvvvv////////////))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;XXXXXXXXXXXXrrrrrrrrrrrr777777777777MMMMMMMMMMMM(((((((((((())))))))))))[[[[[[[[[[[[}}}}}}}}}}}}&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;llllllllllll;;;;;;;;;;;;NNNNNNNNNNNNSSSSSSSSSSSS~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;############666666666666uuuuuuuuuuuuJJJJJJJJJJJJ^^^^^^^^^^^^____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;............yyyyyyyyyyyy333333333333AAAAAAAAAAAAWWWWWWWWWWWW____________[[[[[[[[[[[[{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;ffffffffffff============yyyyyyyyyyyyJJJJJJJJJJJJRRRRRRRRRRRR))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;gggggggggggg$$$$$$$$$$$$uuuuuuuuuuuuNNNNNNNNNNNN~~~~~~~~~~~~))))))))))))]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::hhhhhhhhhhhhddddddddddddAAAAAAAAAAAAUUUUUUUUUUUU))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;zzzzzzzzzzzzGGGGGGGGGGGGBBBBBBBBBBBBDDDDDDDDDDDDPPPPPPPPPPPP))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;ffffffffffffssssssssssssjjjjjjjjjjjjnnnnnnnnnnnnLLLLLLLLLLLL))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;wwwwwwwwwwww&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;888888888888VVVVVVVVVVVV~~~~~~~~~~~~((((((((((((]]]]]]]]]]]]}}}}}}}}}}}}&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;hhhhhhhhhhhh&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;rrrrrrrrrrrrVVVVVVVVVVVVLLLLLLLLLLLL))))))))))))]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;::::::::::::;;;;;;;;;;;;HHHHHHHHHHHHccccccccccccQQQQQQQQQQQQ))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;}}}}}}}}}}}}&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;qqqqqqqqqqqqkkkkkkkkkkkk333333333333AAAAAAAAAAAARRRRRRRRRRRR))))))))))))&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;############ppppppppppppssssssssssssIIIIIIIIIIII^^^^^^^^^^^^____________&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;++++++++++++rrrrrrrrrrrr777777777777MMMMMMMMMMMMIIIIIIIIIIII````````````&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,
++&quot;------------$$$$$$$$$$$$999999999999JJJJJJJJJJJJTTTTTTTTTTTT____________]]]]]]]]]]]]{{{{{{{{{{{{&quot;,</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8be979d/">← now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0…</a><a rel="next" href="../../commits/c41226d/">revert revision 56, going in different direction with… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoind x86 binary for CentOS – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 3 August 2010: I urge you not to use BDB 4.8. The database/log0000* files will be incompatible if anyone uses your build and then goes…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p160-bitcoind-x86-binary-for-centos/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoind x86 binary for CentOS – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 3 August 2010: I urge you not to use BDB 4.8. The database/log0000* files will be incompatible if anyone uses your build and then goes…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p160-bitcoind-x86-binary-for-centos/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoind x86 binary for CentOS – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 3 August 2010: I urge you not to use BDB 4.8. The database/log0000* files will be incompatible if anyone uses your build and then goes…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Bitcoind x86 binary for CentOS", "url": "https://satoshimail.pages.dev/conversations/p160-bitcoind-x86-binary-for-centos/", "author": {"@type": "Person", "name": "nimnul"}, "datePublished": "2010-08-03T10:33:13Z", "text": "Does anyone have the binary?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T13:45:19Z", "text": "Which version? I haven't tried to build any yet, but after building on a few different distro so far, kind of got the process down pat. Wink I've got a CentOS 5.5 machine I could experiment with."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nimnul"}, "datePublished": "2010-08-03T13:53:56Z", "text": "[foo@bar ~]# cat /etc/issue CentOS release 5.5 (Final) [foo@bar ~]# uname -a Linux foo.bar 2.6.18-194.3.1.el5.028stab069.6 #1 SMP Wed May 26 18:31:05 MSD 2010 i686 i686 i386 GNU/Linux"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T14:09:33Z", "text": "Cool, we could both use a build then Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T15:58:05Z", "text": "My first obstacle is the missing ecdsa.h (Elliptic Curve Digital Signature Algorithm) file. It's listed in the man pages for CentOS, but missing from the package, WTF? Anyway, I guess I can copy it from somewhere else, hopefully I'll have some binaries for us all soon."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T16:20:59Z", "text": "Apparently, even after copying over the header file; those libraries are disabled, grrrr. Guess I'll have to hack one together Cry"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T16:32:57Z", "text": "Ok, got around the encryption issue (guess it's never going to be part of the Cent OS library since they don't use that part of openssl), legal issues aside, just left with the DB issues during compile, so I'll need to compile a db4.7 version and hopefully we'll have a test build here soon."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nimnul"}, "datePublished": "2010-08-03T17:21:58Z", "text": "Yes, it's not that simple - otherwise I could have compiled it myself. 1) In CentOS OpenSSL rpm elliptic curves cryptography is disabled, so you have to build OpenSSL yourself. 2) CentOS Boost-devel RPM is outdated and missing a lot of things, so you have to build Boost yourself too. 3) CentOS WxWidgets RPM is outdated so you have to build it yourself too. And its build requires more than 256 mb ram. Satoshi improved bitcoind so doesn't require wxWidgets any more, but I'm not sure whether that…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T17:29:28Z", "text": "I've been able to get around all of those, I'm actually stuck at the DB4.7 stuff. I build it directly from the source and during the compile I get an error: db_cxx.h:1083: error: expected class-name before { token I checked the header file, I think there is a syntax error, but not sure. Any suggestions? This is the block of code it stalls at, the class is defined at the top of the file, so I'm not sure why it hangs at that error without digging through all the Berkeley DB code. I don't want…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "sgtstein"}, "datePublished": "2010-08-03T17:30:37Z", "text": "I have successfully built it with 4.8, 4.7 never would but with 4.8 bitcoind locks up whenever it dumps the initial block download to disk. Undecided"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T17:32:06Z", "text": "Yeah, the bitcoind build gets around any errors for those, but I still get stuck at the DB error. Sad"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T17:59:12Z", "text": "Just for kicks, tried to compile with DB4.8 got the same error, LOL (the line number was slightly different, but at the same class) Didn't get this on other Distros, might be a CentOS related error, but not sure why."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-03T18:10:24Z", "text": "Yes, ecdsa.h is considered patent-encumbered, so Red Hat and other distros turn off ec-dsa. Yes, Virginia, this means that bitcoin potentially has patent problems."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T18:53:37Z", "text": "I'm probably going to load up a virtual machine of CentOS 5.5 and work with that. I've really barfed up the server I was experimenting on trying make it build the binary, LOL."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-03T21:05:08Z", "text": "I urge you not to use BDB 4.8. The database/log0000* files will be incompatible if anyone uses your build and then goes back to the official build."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T22:11:05Z", "text": "Ok, conquered the DB issue after pestering an Oracle developer all day Tongue When you compile DB 4.7.25, you have to use an extra config command or else the compile will be missing those vital header files (why???) Anyway, here is what it was ../dist/configure --enable-cxx make When you compile the source, this fixes the DB compiling related errors."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sgtstein"}, "datePublished": "2010-08-03T22:51:13Z", "text": "Ah, crap. I totally forgot about that extra flag. I knew about that before from Lazslo's Linux Build Document. Sorry about that. Get a working build up and running and you'll definitely be getting some BTC from me. Grin"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T23:17:01Z", "text": "Oh, but there's more! Shocked Even after I did that, I couldn't get it to compile due to linking errors. I was able to get a solid compile of bitcoind though, this is the extra steps it took. After compiling and installing the BerkeleyDB4.7, you need to add it's include path to the makefile.unix Add -I\"/usr/local/BerkeleyDB.4.7/include\" Then you need to copy all the libraries from \"/usr/local/BerkeleyDB.4.7/lib\" to \"/usr/lib\" BUT WAIT, there's MORE! Huh Yes, and if that was not annoying…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-03T23:46:46Z", "text": "I've posted the binary up here (32 bit only - bitcoind): Click Here <http://knightmb.dyndns.org/files/bitcoin/custom%20builds/x86/CentOS%205.5/> There are two versions, one built from stock code, the other modified to accept up to 1,000 nodes (hence the super node name) Will probably tackle the GUI client build another day, this one wore me out. Donate some BTC to my sig if you are feeling generous Wink"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-04T00:09:32Z", "text": "I'd rather you didn't make a build of the 1000 node connecting version available. It won't take very many people running that before we have to make another release just to limit the incoming connections."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoind x86 binary for CentOS", "item": "https://satoshimail.pages.dev/conversations/p160-bitcoind-x86-binary-for-centos/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p160">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoind x86 binary for CentOS</span></div></nav>
+<main class="in">
+<h1>Bitcoind x86 binary for CentOS</h1>
+<p class="lead">BitcoinTalk forum · 20 messages · from 3 August 2010 · with Satoshi Nakamoto, jgarzik, knightmb, nimnul, sgtstein</p>
+<p class="actions"><a class="btn" href="../../#t-p160">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/160/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-03T10:33:13Z">3 August 2010, 10:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7207#msg7207" rel="nofollow noopener">original</a></span></header>
+<div class="t">Does anyone have the binary?</div></article><article class="msg" id="m1">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T13:45:19Z">3 August 2010, 13:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7231#msg7231" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nimnul on August 03, 2010, 10:33:13 AM</div><div class="t">Does anyone have the binary?</div></blockquote><div class="t">Which version? I haven&#x27;t tried to build any yet, but after building on a few different distro so far, kind of got the process down pat.  Wink
+
+I&#x27;ve got a CentOS 5.5 machine I could experiment with.</div></article><article class="msg" id="m2">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-03T13:53:56Z">3 August 2010, 13:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7234#msg7234" rel="nofollow noopener">original</a></span></header>
+<div class="t">[foo@bar ~]# cat /etc/issue
+CentOS release 5.5 (Final)
+
+[foo@bar ~]# uname -a
+Linux foo.bar 2.6.18-194.3.1.el5.028stab069.6 #1 SMP Wed May 26 18:31:05 MSD 2010 i686 i686 i386 GNU/Linux</div></article><article class="msg" id="m3">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T14:09:33Z">3 August 2010, 14:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7241#msg7241" rel="nofollow noopener">original</a></span></header>
+<div class="t">Cool, we could both use a build then  Wink</div></article><article class="msg" id="m4">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T15:58:05Z">3 August 2010, 15:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7255#msg7255" rel="nofollow noopener">original</a></span></header>
+<div class="t">My first obstacle is the missing ecdsa.h (Elliptic Curve Digital Signature Algorithm) file. It&#x27;s listed in the man pages for CentOS, but missing from the package, WTF?
+
+Anyway, I guess I can copy it from somewhere else, hopefully I&#x27;ll have some binaries for us all soon.</div></article><article class="msg" id="m5">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T16:20:59Z">3 August 2010, 16:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7261#msg7261" rel="nofollow noopener">original</a></span></header>
+<div class="t">Apparently, even after copying over the header file; those libraries are disabled, grrrr.
+
+Guess I&#x27;ll have to hack one together  Cry</div></article><article class="msg" id="m6">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T16:32:57Z">3 August 2010, 16:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7265#msg7265" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok, got around the encryption issue (guess it&#x27;s never going to be part of the Cent OS library since they don&#x27;t use that part of openssl), legal issues aside, just left with the DB issues during compile, so I&#x27;ll need to compile a db4.7 version and hopefully we&#x27;ll have a test build here soon.</div></article><article class="msg" id="m7">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-03T17:21:58Z">3 August 2010, 17:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7272#msg7272" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yes, it&#x27;s not that simple - otherwise I could have compiled it myself.
+
+1) In CentOS OpenSSL rpm elliptic curves cryptography is disabled, so you have to build OpenSSL yourself.
+2)  CentOS Boost-devel RPM is outdated and missing a lot of things, so you have to build Boost yourself too.
+3) CentOS WxWidgets RPM is outdated so you have to build it yourself too. And its build requires more than 256 mb ram. Satoshi improved bitcoind so doesn&#x27;t require wxWidgets any more, but I&#x27;m not sure whether that patch is in 0.3.7 or whatever sources you are building.</div></article><article class="msg" id="m8">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T17:29:28Z">3 August 2010, 17:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7274#msg7274" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve been able to get around all of those, I&#x27;m actually stuck at the DB4.7 stuff.
+
+I build it directly from the source and during the compile I get an error:</div><pre><code>db_cxx.h:1083: error: expected class-name before { token</code></pre><div class="t">I checked the header file, I think there is a syntax error, but not sure.
+
+Any suggestions?
+
+This is the block of code it stalls at, the class is defined at the top of the file, so I&#x27;m not sure why it hangs at that error without digging through all the Berkeley DB code. I don&#x27;t want to go to a newer version of the DB if it&#x27;s going to mess with everyone&#x27;s BitCoin database that uses this build.</div><pre><code>// Almost any error in the DB library throws a DbException.
+// Every exception should be considered an abnormality
+// (e.g. bug, misuse of DB, file system error).
+//
+class _exported DbException : public __DB_STD(exception)
+{
+public:
+ virtual ~DbException() throw();
+ DbException(int err);
+ DbException(const char *description);
+ DbException(const char *description, int err);
+ DbException(const char *prefix, const char *description, int err);
+ int get_errno() const;
+ virtual const char *what() const throw();
+ DbEnv *get_env() const;
+ void set_env(DbEnv *dbenv);
+
+ DbException(const DbException &amp;);
+ DbException &amp;operator = (const DbException &amp;);
+
+private:
+ void describe(const char *prefix, const char *description);
+
+ char *what_;
+ int err_;                   // errno
+ DbEnv *dbenv_;
+};</code></pre></article><article class="msg" id="m9">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-03T17:30:37Z">3 August 2010, 17:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7275#msg7275" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have successfully built it with 4.8, 4.7 never would but with 4.8 bitcoind locks up whenever it dumps the initial block download to disk. Undecided</div></article><article class="msg" id="m10">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T17:32:06Z">3 August 2010, 17:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7277#msg7277" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nimnul on August 03, 2010, 05:21:58 PM</div><div class="t">{snip} And its build requires more than 256 mb ram. Satoshi improved bitcoind so doesn&#x27;t require wxWidgets any more, but I&#x27;m not sure whether that patch is in 0.3.7 or whatever sources you are building.</div></blockquote><div class="t">Yeah, the bitcoind build gets around any errors for those, but I still get stuck at the DB error.  Sad</div></article><article class="msg" id="m11">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T17:59:12Z">3 August 2010, 17:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7285#msg7285" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just for kicks, tried to compile with DB4.8 got the same error, LOL (the line number was slightly different, but at the same class)
+
+Didn&#x27;t get this on other Distros, might be a CentOS related error, but not sure why.</div></article><article class="msg" id="m12">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-03T18:10:24Z">3 August 2010, 18:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7289#msg7289" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 03, 2010, 03:58:05 PM</div><div class="t">My first obstacle is the missing ecdsa.h (Elliptic Curve Digital Signature Algorithm) file. It&#x27;s listed in the man pages for CentOS, but missing from the package, WTF?
+
+Anyway, I guess I can copy it from somewhere else, hopefully I&#x27;ll have some binaries for us all soon.</div></blockquote><div class="t">Yes, ecdsa.h is considered patent-encumbered, so Red Hat and other distros turn off ec-dsa.
+
+Yes, Virginia, this means that bitcoin potentially has patent problems.</div></article><article class="msg" id="m13">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T18:53:37Z">3 August 2010, 18:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7297#msg7297" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sgtstein on August 03, 2010, 05:30:37 PM</div><div class="t">I have successfully built it with 4.8, 4.7 never would but with 4.8 bitcoind locks up whenever it dumps the initial block download to disk. Undecided</div></blockquote><div class="t">I&#x27;m probably going to load up a virtual machine of CentOS 5.5 and work with that. I&#x27;ve really barfed up the server I was experimenting on trying make it build the binary, LOL.</div></article><article class="msg sat" id="m14">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-03T21:05:08Z">3 August 2010, 21:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7331#msg7331" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sgtstein on August 03, 2010, 05:30:37 PM</div><div class="t">I have successfully built it with 4.8, 4.7 never would but with 4.8 bitcoind locks up whenever it dumps the initial block download to disk. Undecided</div></blockquote><div class="t">I urge you not to use BDB 4.8.  The database/log0000* files will be incompatible if anyone uses your build and then goes back to the official build.</div></article><article class="msg" id="m15">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T22:11:05Z">3 August 2010, 22:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7349#msg7349" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok, conquered the DB issue after pestering an Oracle developer all day  Tongue
+
+When you compile DB 4.7.25, you have to use an extra config command or else the compile will be missing those vital header files (why???)
+
+Anyway, here is what it was</div><pre><code>../dist/configure --enable-cxx
+make</code></pre><div class="t">When you compile the source, this fixes the DB compiling related errors.</div></article><article class="msg" id="m16">
+<header><b>sgtstein</b><span class="muted"> · <time datetime="2010-08-03T22:51:13Z">3 August 2010, 22:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7357#msg7357" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ah, crap. I totally forgot about that extra flag. I knew about that before from Lazslo&#x27;s Linux Build Document. Sorry about that. Get a working build up and running and you&#x27;ll definitely be getting some BTC from me.  Grin</div></article><article class="msg" id="m17">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T23:17:01Z">3 August 2010, 23:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7361#msg7361" rel="nofollow noopener">original</a></span></header>
+<div class="t">Oh, but there&#x27;s more!  Shocked
+
+Even after I did that, I couldn&#x27;t get it to compile due to linking errors. I was able to get a solid compile of bitcoind though, this is the extra steps it took.
+
+After compiling and installing the BerkeleyDB4.7, you need to add it&#x27;s include path to the makefile.unix
+
+Add -I&quot;/usr/local/BerkeleyDB.4.7/include&quot;
+
+Then you need to copy all the libraries from &quot;/usr/local/BerkeleyDB.4.7/lib&quot; to &quot;/usr/lib&quot;
+BUT WAIT, there&#x27;s MORE!  Huh
+
+Yes, and if that was not annoying enough, now it will fail to compile because of an OpenSSL error, Grrrrr..
+
+Now you must copy libcrypto.a and libssl.a from &quot;/usr/local/ssl/lib&quot; to &quot;/usr/lib&quot;
+
+Yes, those can be linked, but I got tired of chasing down compiler errors, was easier to just copy them.  Roll Eyes
+
+After all of that, then you should be able to compile a bitcoind binary.
+
+I&#x27;m testing it now, seems to be working just fine. Downloading blocks and such. When it finishes, I&#x27;ll experiment with some coin generation and coin transfer.
+
+I&#x27;m still caught on the GUI client compile, currently hangs at</div><pre><code>/usr/bin/ld: cannot find -lSM</code></pre><div class="t">If anyone is good with Google, let me know.  Wink</div></article><article class="msg" id="m18">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-03T23:46:46Z">3 August 2010, 23:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7365#msg7365" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve posted the binary up here (32 bit only - bitcoind):
+Click Here &lt;<a href="http://knightmb.dyndns.org/files/bitcoin/custom%20builds/x86/CentOS%205.5/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/custom%20builds/x86/CentOS%205.5/</a>&gt;
+
+There are two versions, one built from stock code, the other modified to accept up to 1,000 nodes (hence the super node name)
+
+Will probably tackle the GUI client build another day, this one wore me out. Donate some BTC to my sig if you are feeling generous  Wink</div></article><article class="msg sat" id="m19">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-04T00:09:32Z">4 August 2010, 00:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=685.msg7372#msg7372" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 03, 2010, 11:46:46 PM</div><div class="t">There are two versions, one built from stock code, the other modified to accept up to 1,000 nodes (hence the super node name)</div></blockquote><div class="t">I&#x27;d rather you didn&#x27;t make a build of the 1000 node connecting version available.  It won&#x27;t take very many people running that before we have to make another release just to limit the incoming connections.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p159-porn/">← Porn</a><a rel="next" href="../../conversations/p161-authentication-json-rpc-and-python/">Authentication, JSON RPC and Python →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

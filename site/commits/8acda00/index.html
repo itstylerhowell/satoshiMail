@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8acda00/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8acda00/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UIThreadCall, ThreadSafeMessageBox", "url": "https://satoshimail.pages.dev/commits/8acda00/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-06T18:53:26Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8acda009d921a65dab87bd0a40f63981a1586561"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "UIThreadCall, ThreadSafeMessageBox", "item": "https://satoshimail.pages.dev/commits/8acda00/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c8acda009d9">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">UIThreadCall, ThreadSafeMessageBox</span></div></nav>
+<main class="in">
+<h1>UIThreadCall, ThreadSafeMessageBox</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 6 November 2009 · SVN r34 · release v0.2.0 · 7 files, +44 −1,284</p>
+<p class="actions"><a class="btn" href="../../#t-c8acda009d9">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/8acda009d921a65dab87bd0a40f63981a1586561" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -53,6 +53,8 @@
+ #include &lt;boost/tuple/tuple_comparison.hpp&gt;
+ #include &lt;boost/tuple/tuple_io.hpp&gt;
+ #include &lt;boost/array.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++#include &lt;boost/function.hpp&gt;
+ 
+ #ifdef __WXMSW__
+ #include &lt;windows.h&gt;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1381,7 +1381,7 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
+     if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
+-        wxMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxICON_EXCLAMATION);
++        ThreadSafeMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+         _beginthread(Shutdown, 0, NULL);
+         return false;
+     }</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -14,13 +14,10 @@ void SetStartOnSystemStartup(bool fAutoStart);
+ 
+ 
+ 
+-DEFINE_EVENT_TYPE(wxEVT_CROSSTHREADCALL)
++DEFINE_EVENT_TYPE(wxEVT_UITHREADCALL)
+ DEFINE_EVENT_TYPE(wxEVT_REPLY1)
+ DEFINE_EVENT_TYPE(wxEVT_REPLY2)
+ DEFINE_EVENT_TYPE(wxEVT_REPLY3)
+-DEFINE_EVENT_TYPE(wxEVT_TABLEADDED)
+-DEFINE_EVENT_TYPE(wxEVT_TABLEUPDATED)
+-DEFINE_EVENT_TYPE(wxEVT_TABLEDELETED)
+ 
+ CMainFrame* pframeMain = NULL;
+ CMyTaskBarIcon* ptaskbaricon = NULL;
+@@ -184,6 +181,24 @@ void AddToMyProducts(CProduct product)
+                 &quot;&quot;);
+ }
+ 
++void StringMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
++{
++    wxMessageBox(message, caption, style, parent, x, y);
++}
++
++int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
++{
++#ifdef __WXMSW__
++    wxMessageBox(message, caption, style, parent, x, y);
++#else
++    UIThreadCall(bind(StringMessageBox, message, caption, style, parent, x, y));
++#endif
++}
++
++
++
++
++
+ 
+ 
+ 
+@@ -193,6 +208,7 @@ void AddToMyProducts(CProduct product)
+ //
+ // Custom events
+ //
++// If this code gets used again, it should be replaced with something like UIThreadCall
+ 
+ set&lt;void*&gt; setCallbackAvailable;
+ CCriticalSection cs_setCallbackAvailable;
+@@ -279,7 +295,7 @@ CDataStream GetStreamFromEvent(const wxCommandEvent&amp; event)
+ 
+ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ {
+-    Connect(wxEVT_CROSSTHREADCALL, wxCommandEventHandler(CMainFrame::OnCrossThreadCall), NULL, this);
++    Connect(wxEVT_UITHREADCALL, wxCommandEventHandler(CMainFrame::OnUIThreadCall), NULL, this);
+ 
+     // Init
+     fRefreshListCtrl = false;
+@@ -982,36 +998,27 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ }
+ 
+ 
+-void CrossThreadCall(wxCommandEvent&amp; event)
++void UIThreadCall(boost::function&lt;void ()&gt; fn)
+ {
++    // Call this with a function object created with bind.
++    // bind needs all parameters to match the function&#x27;s expected types
++    // and all default parameters specified.  Some examples:
++    //  UIThreadCall(bind(wxBell));
++    //  UIThreadCall(bind(wxMessageBox, wxT(&quot;Message&quot;), wxT(&quot;Title&quot;), wxOK, (wxWindow*)NULL, -1, -1));
++    //  UIThreadCall(bind(&amp;CMainFrame::OnMenuHelpAbout, pframeMain, event));
+     if (pframeMain)
++    {
++        wxCommandEvent event(wxEVT_UITHREADCALL);
++        event.SetClientData((void*)new boost::function&lt;void ()&gt;(fn));
+         pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
++    }
+ }
+ 
+-void CrossThreadCall(int nID, void* pdata)
+-{
+-    wxCommandEvent event;
+-    event.SetInt(nID);
+-    event.SetClientData(pdata);
+-    if (pframeMain)
+-        pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
+-}
+-
+-void CMainFrame::OnCrossThreadCall(wxCommandEvent&amp; event)
++void CMainFrame::OnUIThreadCall(wxCommandEvent&amp; event)
+ {
+-    void* pdata = event.GetClientData();
+-    switch (event.GetInt())
+-    {
+-        case UICALL_ADDORDER:
+-        {
+-            break;
+-        }
+-
+-        case UICALL_UPDATEORDER:
+-        {
+-            break;
+-        }
+-    }
++    boost::function&lt;void ()&gt;* pfn = (boost::function&lt;void ()&gt;*)event.GetClientData();
++    (*pfn)();
++    delete pfn;
+ }
+ 
+ void CMainFrame::OnMenuFileExit(wxCommandEvent&amp; event)
+@@ -3305,9 +3312,6 @@ wxMenu* CMyTaskBarIcon::CreatePopupMenu()
+ 
+ 
+ 
+-
+-
+-
+ //////////////////////////////////////////////////////////////////////////////
+ //
+ // CMyApp</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -5,19 +5,10 @@
+ 
+ 
+ 
+-DECLARE_EVENT_TYPE(wxEVT_CROSSTHREADCALL, -1)
++DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+ DECLARE_EVENT_TYPE(wxEVT_REPLY1, -1)
+ DECLARE_EVENT_TYPE(wxEVT_REPLY2, -1)
+ DECLARE_EVENT_TYPE(wxEVT_REPLY3, -1)
+-DECLARE_EVENT_TYPE(wxEVT_TABLEADDED, -1)
+-DECLARE_EVENT_TYPE(wxEVT_TABLEUPDATED, -1)
+-DECLARE_EVENT_TYPE(wxEVT_TABLEDELETED, -1)
+-
+-enum
+-{
+-    UICALL_ADDORDER = 1,
+-    UICALL_UPDATEORDER,
+-};
+ 
+ 
+ 
+@@ -33,9 +24,10 @@ extern int fMinimizeOnClose;
+ 
+ extern void HandleCtrlA(wxKeyEvent&amp; event);
+ extern string FormatTxStatus(const CWalletTx&amp; wtx);
+-extern void CrossThreadCall(int nID, void* pdata);
++extern void UIThreadCall(boost::function&lt;void ()&gt;);
+ extern void MainFrameRepaint();
+ extern void Shutdown(void* parg);
++extern int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
+ 
+ 
+ 
+@@ -85,7 +77,7 @@ public:
+     unsigned int nListViewUpdated;
+     bool fRefresh;
+ 
+-    void OnCrossThreadCall(wxCommandEvent&amp; event);
++    void OnUIThreadCall(wxCommandEvent&amp; event);
+     int GetSortIndex(const string&amp; strSort);
+     void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
+     bool DeleteLine(uint256 hashKey);
+@@ -473,9 +465,3 @@ public:
+ 
+ DECLARE_EVENT_TABLE()
+ };
+-
+-
+-
+-
+-
+-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1702,166 +1702,6 @@ CEditReviewDialogBase::~CEditReviewDialogBase()
+ 	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CEditReviewDialogBase::OnButtonCancel ), NULL, this );
+ }
+ 
+-CPokerLobbyDialogBase::CPokerLobbyDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxFrame( parent, id, title, pos, size, style )
+-{
+-	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );
+-	this-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+-	
+-	wxBoxSizer* bSizer156;
+-	bSizer156 = new wxBoxSizer( wxHORIZONTAL );
+-	
+-	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HAS_BUTTONS|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT );
+-	m_treeCtrl-&gt;SetMinSize( wxSize( 130,-1 ) );
+-	
+-	bSizer156-&gt;Add( m_treeCtrl, 0, wxEXPAND|wxTOP|wxBOTTOM|wxLEFT, 5 );
+-	
+-	wxBoxSizer* bSizer172;
+-	bSizer172 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_listCtrl = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT );
+-	bSizer172-&gt;Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
+-	
+-	m_buttonNewTable = new wxButton( this, wxID_OPENNEWTABLE, wxT(&quot;&amp;Open New Table&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer172-&gt;Add( m_buttonNewTable, 0, wxALL, 5 );
+-	
+-	bSizer156-&gt;Add( bSizer172, 1, wxEXPAND, 5 );
+-	
+-	this-&gt;SetSizer( bSizer156 );
+-	this-&gt;Layout();
+-	
+-	// Connect Events
+-	m_treeCtrl-&gt;Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( CPokerLobbyDialogBase::OnTreeSelChanged ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CPokerLobbyDialogBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CPokerLobbyDialogBase::OnListItemSelected ), NULL, this );
+-	m_buttonNewTable-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerLobbyDialogBase::OnButtonNewTable ), NULL, this );
+-}
+-
+-CPokerLobbyDialogBase::~CPokerLobbyDialogBase()
+-{
+-	// Disconnect Events
+-	m_treeCtrl-&gt;Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( CPokerLobbyDialogBase::OnTreeSelChanged ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CPokerLobbyDialogBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CPokerLobbyDialogBase::OnListItemSelected ), NULL, this );
+-	m_buttonNewTable-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerLobbyDialogBase::OnButtonNewTable ), NULL, this );
+-}
+-
+-CPokerDialogBase::CPokerDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxFrame( parent, id, title, pos, size, style )
+-{
+-	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );
+-	
+-	wxBoxSizer* bSizer174;
+-	bSizer174 = new wxBoxSizer( wxVERTICAL );
+-	
+-	m_checkSitOut = new wxCheckBox( this, wxID_ANY, wxT(&quot;Deal Me Out&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	
+-	bSizer174-&gt;Add( m_checkSitOut, 0, wxALL, 5 );
+-	
+-	m_buttonDealHand = new wxButton( this, wxID_DEALHAND, wxT(&quot;&amp;Deal Hand&quot;), wxDefaultPosition, wxSize( 150,25 ), 0 );
+-	bSizer174-&gt;Add( m_buttonDealHand, 0, wxALL, 5 );
+-	
+-	m_buttonFold = new wxButton( this, wxID_FOLD, wxT(&quot;&amp;Fold&quot;), wxDefaultPosition, wxSize( 80,25 ), 0 );
+-	bSizer174-&gt;Add( m_buttonFold, 0, wxALL, 5 );
+-	
+-	m_buttonCall = new wxButton( this, wxID_CALL, wxT(&quot;&amp;Call&quot;), wxDefaultPosition, wxSize( 80,25 ), 0 );
+-	bSizer174-&gt;Add( m_buttonCall, 0, wxALL, 5 );
+-	
+-	m_buttonRaise = new wxButton( this, wxID_RAISE, wxT(&quot;&amp;Raise&quot;), wxDefaultPosition, wxSize( 80,25 ), 0 );
+-	bSizer174-&gt;Add( m_buttonRaise, 0, wxALL, 5 );
+-	
+-	m_buttonLeaveTable = new wxButton( this, wxID_LEAVETABLE, wxT(&quot;&amp;Leave Table&quot;), wxDefaultPosition, wxSize( 90,25 ), 0 );
+-	bSizer174-&gt;Add( m_buttonLeaveTable, 0, wxALL, 5 );
+-	
+-	m_textDitchPlayer = new wxTextCtrl( this, wxID_DITCHPLAYER, wxEmptyString, wxDefaultPosition, wxSize( 45,-1 ), wxTE_PROCESS_ENTER );
+-	bSizer174-&gt;Add( m_textDitchPlayer, 0, wxALL, 5 );
+-	
+-	m_checkPreFold = new wxCheckBox( this, wxID_ANY, wxT(&quot;FOLD&quot;), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+-	
+-	bSizer174-&gt;Add( m_checkPreFold, 0, wxALL, 5 );
+-	
+-	m_checkPreCall = new wxCheckBox( this, wxID_ANY, wxT(&quot;CALL&quot;), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+-	
+-	bSizer174-&gt;Add( m_checkPreCall, 0, wxALL, 5 );
+-	
+-	m_checkPreCallAny = new wxCheckBox( this, wxID_ANY, wxT(&quot;CALL ANY&quot;), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+-	
+-	bSizer174-&gt;Add( m_checkPreCallAny, 0, wxALL, 5 );
+-	
+-	m_checkPreRaise = new wxCheckBox( this, wxID_ANY, wxT(&quot;RAISE&quot;), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+-	
+-	bSizer174-&gt;Add( m_checkPreRaise, 0, wxALL, 5 );
+-	
+-	m_checkPreRaiseAny = new wxCheckBox( this, wxID_ANY, wxT(&quot;RAISE ANY&quot;), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+-	
+-	bSizer174-&gt;Add( m_checkPreRaiseAny, 0, wxALL, 5 );
+-	
+-	this-&gt;SetSizer( bSizer174 );
+-	this-&gt;Layout();
+-	m_statusBar = this-&gt;CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
+-	
+-	// Connect Events
+-	this-&gt;Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( CPokerDialogBase::OnClose ) );
+-	this-&gt;Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_LEFT_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_MOTION, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CPokerDialogBase::OnPaint ) );
+-	this-&gt;Connect( wxEVT_SIZE, wxSizeEventHandler( CPokerDialogBase::OnSize ) );
+-	m_checkSitOut-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckSitOut ), NULL, this );
+-	m_buttonDealHand-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonDealHand ), NULL, this );
+-	m_buttonFold-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonFold ), NULL, this );
+-	m_buttonCall-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonCall ), NULL, this );
+-	m_buttonRaise-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonRaise ), NULL, this );
+-	m_buttonLeaveTable-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonLeaveTable ), NULL, this );
+-	m_textDitchPlayer-&gt;Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( CPokerDialogBase::OnDitchPlayer ), NULL, this );
+-	m_checkPreFold-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreFold ), NULL, this );
+-	m_checkPreCall-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreCall ), NULL, this );
+-	m_checkPreCallAny-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreCallAny ), NULL, this );
+-	m_checkPreRaise-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreRaise ), NULL, this );
+-	m_checkPreRaiseAny-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreRaiseAny ), NULL, this );
+-}
+-
+-CPokerDialogBase::~CPokerDialogBase()
+-{
+-	// Disconnect Events
+-	this-&gt;Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( CPokerDialogBase::OnClose ) );
+-	this-&gt;Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_MIDDLE_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_MOTION, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CPokerDialogBase::OnMouseEvents ) );
+-	this-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CPokerDialogBase::OnPaint ) );
+-	this-&gt;Disconnect( wxEVT_SIZE, wxSizeEventHandler( CPokerDialogBase::OnSize ) );
+-	m_checkSitOut-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckSitOut ), NULL, this );
+-	m_buttonDealHand-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonDealHand ), NULL, this );
+-	m_buttonFold-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonFold ), NULL, this );
+-	m_buttonCall-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonCall ), NULL, this );
+-	m_buttonRaise-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonRaise ), NULL, this );
+-	m_buttonLeaveTable-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnButtonLeaveTable ), NULL, this );
+-	m_textDitchPlayer-&gt;Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( CPokerDialogBase::OnDitchPlayer ), NULL, this );
+-	m_checkPreFold-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreFold ), NULL, this );
+-	m_checkPreCall-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreCall ), NULL, this );
+-	m_checkPreCallAny-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreCallAny ), NULL, this );
+-	m_checkPreRaise-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreRaise ), NULL, this );
+-	m_checkPreRaiseAny-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CPokerDialogBase::OnCheckPreRaiseAny ), NULL, this );
+-}
+-
+ CGetTextFromUserDialogBase::CGetTextFromUserDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )
+ {
+ 	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -37,7 +37,6 @@
+ #include &lt;wx/statbmp.h&gt;
+ #include &lt;wx/combobox.h&gt;
+ #include &lt;wx/richtext/richtextctrl.h&gt;
+-#include &lt;wx/treectrl.h&gt;
+ 
+ ///////////////////////////////////////////////////////////////////////////
+ 
+@@ -88,14 +87,7 @@
+ #define wxID_BUTTONBACK 1044
+ #define wxID_BUTTONNEXT 1045
+ #define wxID_SUBMIT 1046
+-#define wxID_OPENNEWTABLE 1047
+-#define wxID_DEALHAND 1048
+-#define wxID_FOLD 1049
+-#define wxID_CALL 1050
+-#define wxID_RAISE 1051
+-#define wxID_LEAVETABLE 1052
+-#define wxID_DITCHPLAYER 1053
+-#define wxID_TEXTCTRL 1054
++#define wxID_TEXTCTRL 1047
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CMainFrameBase
+@@ -652,78 +644,6 @@ class CEditReviewDialogBase : public wxFrame
+ 	
+ };
+ 
+-///////////////////////////////////////////////////////////////////////////////
+-/// Class CPokerLobbyDialogBase
+-///////////////////////////////////////////////////////////////////////////////
+-class CPokerLobbyDialogBase : public wxFrame 
+-{
+-	private:
+-	
+-	protected:
+-		wxTreeCtrl* m_treeCtrl;
+-		wxListCtrl* m_listCtrl;
+-		wxButton* m_buttonNewTable;
+-		
+-		// Virtual event handlers, overide them in your derived class
+-		virtual void OnTreeSelChanged( wxTreeEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemActivated( wxListEvent&amp; event ){ event.Skip(); }
+-		virtual void OnListItemSelected( wxListEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonNewTable( wxCommandEvent&amp; event ){ event.Skip(); }
+-		
+-	
+-	public:
+-		CPokerLobbyDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxT(&quot;Poker Lobby&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 586,457 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+-		~CPokerLobbyDialogBase();
+-	
+-};
+-
+-///////////////////////////////////////////////////////////////////////////////
+-/// Class CPokerDialogBase
+-///////////////////////////////////////////////////////////////////////////////
+-class CPokerDialogBase : public wxFrame 
+-{
+-	private:
+-	
+-	protected:
+-		wxButton* m_buttonDealHand;
+-		wxButton* m_buttonFold;
+-		wxButton* m_buttonCall;
+-		wxButton* m_buttonRaise;
+-		wxButton* m_buttonLeaveTable;
+-		wxTextCtrl* m_textDitchPlayer;
+-		
+-		// Virtual event handlers, overide them in your derived class
+-		virtual void OnClose( wxCloseEvent&amp; event ){ event.Skip(); }
+-		virtual void OnMouseEvents( wxMouseEvent&amp; event ){ event.Skip(); }
+-		virtual void OnPaint( wxPaintEvent&amp; event ){ event.Skip(); }
+-		virtual void OnSize( wxSizeEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckSitOut( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonDealHand( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonFold( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonCall( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonRaise( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonLeaveTable( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnDitchPlayer( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckPreFold( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckPreCall( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckPreCallAny( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckPreRaise( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnCheckPreRaiseAny( wxCommandEvent&amp; event ){ event.Skip(); }
+-		
+-	
+-	public:
+-		wxCheckBox* m_checkSitOut;
+-		wxCheckBox* m_checkPreFold;
+-		wxCheckBox* m_checkPreCall;
+-		wxCheckBox* m_checkPreCallAny;
+-		wxCheckBox* m_checkPreRaise;
+-		wxCheckBox* m_checkPreRaiseAny;
+-		wxStatusBar* m_statusBar;
+-		CPokerDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxT(&quot;Poker&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 806,550 ), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxFULL_REPAINT_ON_RESIZE|wxTAB_TRAVERSAL );
+-		~CPokerDialogBase();
+-	
+-};
+-
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CGetTextFromUserDialogBase
+ ///////////////////////////////////////////////////////////////////////////////</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -11581,998 +11581,6 @@
+                 &lt;/object&gt;
+             &lt;/object&gt;
+         &lt;/object&gt;
+-        &lt;object class=&quot;Frame&quot; expanded=&quot;0&quot;&gt;
+-            &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_BTNFACE&lt;/property&gt;
+-            &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-            &lt;property name=&quot;extra_style&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;name&quot;&gt;CPokerLobbyDialogBase&lt;/property&gt;
+-            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;586,457&lt;/property&gt;
+-            &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE&lt;/property&gt;
+-            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;title&quot;&gt;Poker Lobby&lt;/property&gt;
+-            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
+-            &lt;property name=&quot;xrc_skip_sizer&quot;&gt;1&lt;/property&gt;
+-            &lt;event name=&quot;OnActivate&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnActivateApp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnClose&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnHibernate&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnIconize&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnIdle&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+-                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                &lt;property name=&quot;name&quot;&gt;bSizer156&lt;/property&gt;
+-                &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+-                &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxTOP|wxBOTTOM|wxLEFT&lt;/property&gt;
+-                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxTreeCtrl&quot; expanded=&quot;1&quot;&gt;
+-                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;minimum_size&quot;&gt;130,-1&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_treeCtrl&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;style&quot;&gt;wxTR_HAS_BUTTONS|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT&lt;/property&gt;
+-                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeBeginDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeBeginLabelEdit&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeBeginRDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeDeleteItem&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeEndDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeEndLabelEdit&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeGetInfo&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemActivated&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemCollapsed&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemCollapsing&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemExpanded&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemExpanding&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemGetTooltip&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemMenu&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemMiddleClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeItemRightClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeKeyDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeSelChanged&quot;&gt;OnTreeSelChanged&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeSelChanging&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeSetInfo&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnTreeStateImageClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                    &lt;/object&gt;
+-                &lt;/object&gt;
+-                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+-                    &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+-                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;bSizer172&lt;/property&gt;
+-                        &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxALL&lt;/property&gt;
+-                            &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                            &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
+-                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;name&quot;&gt;m_listCtrl&lt;/property&gt;
+-                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT&lt;/property&gt;
+-                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListColBeginDrag&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivated&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnListItemSelected&quot;&gt;OnListItemSelected&lt;/event&gt;
+-                                &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                            &lt;/object&gt;
+-                        &lt;/object&gt;
+-                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
+-                            &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                            &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+-                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;default&quot;&gt;0&lt;/property&gt;
+-                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                &lt;property name=&quot;id&quot;&gt;wxID_OPENNEWTABLE&lt;/property&gt;
+-                                &lt;property name=&quot;label&quot;&gt;&amp;amp;Open New Table&lt;/property&gt;
+-                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;name&quot;&gt;m_buttonNewTable&lt;/property&gt;
+-                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonNewTable&lt;/event&gt;
+-                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                            &lt;/object&gt;
+-                        &lt;/object&gt;
+-                    &lt;/object&gt;
+-                &lt;/object&gt;
+-            &lt;/object&gt;
+-        &lt;/object&gt;
+-        &lt;object class=&quot;Frame&quot; expanded=&quot;0&quot;&gt;
+-            &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-            &lt;property name=&quot;extra_style&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;name&quot;&gt;CPokerDialogBase&lt;/property&gt;
+-            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;806,550&lt;/property&gt;
+-            &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR&lt;/property&gt;
+-            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;title&quot;&gt;Poker&lt;/property&gt;
+-            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;window_style&quot;&gt;wxFULL_REPAINT_ON_RESIZE|wxTAB_TRAVERSAL&lt;/property&gt;
+-            &lt;property name=&quot;xrc_skip_sizer&quot;&gt;1&lt;/property&gt;
+-            &lt;event name=&quot;OnActivate&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnActivateApp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnClose&quot;&gt;OnClose&lt;/event&gt;
+-            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnHibernate&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnIconize&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnIdle&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/300d460/">← got rid of CheckForShutdown, replaced some thread-unsafe…</a><a rel="next" href="../../commits/8b4cefd/">UI tweaks, use BindListenPort to detect instance already… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,1525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>command line and JSON-RPC first… (r60) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 February 2010: command line and JSON-RPC first draft, requires Boost 1.35 or higher for boost::asio, added…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/98500d7/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="command line and JSON-RPC first… (r60) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 February 2010: command line and JSON-RPC first draft, requires Boost 1.35 or higher for boost::asio, added…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/98500d7/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="command line and JSON-RPC first… (r60) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 February 2010: command line and JSON-RPC first draft, requires Boost 1.35 or higher for boost::asio, added…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "command line and JSON-RPC first draft, requires Boost 1.35 or higher for boost::asio, added SetBitcoinAddress and GetBitcoinAddress methods on CScript, critsect interlocks around mapAddressBook, added some random delays in tx broadcast to improve privacy, now compiles with MSVC 8.0", "url": "https://satoshimail.pages.dev/commits/98500d7/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-12T20:38:44Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/98500d70a8cf25af4bab80526fd128ccdc36ceeb"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "command line and JSON-RPC first draft…", "item": "https://satoshimail.pages.dev/commits/98500d7/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c98500d70a8">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">command line and JSON-RPC first draft…</span></div></nav>
+<main class="in">
+<h1>command line and JSON-RPC first draft, requires Boost 1.35 or higher for boost::asio, added SetBitcoinAddress and GetBitcoinAddress methods on CScript, critsect interlocks around mapAddressBook, added some random delays in tx broadcast to improve privacy, now compiles with MSVC 8.0</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 12 February 2010 · SVN r60 · release v0.2.2 · 23 files, +1,186 −332</p>
+<p class="actions"><a class="btn" href="../../#t-c98500d70a8">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/98500d70a8cf25af4bab80526fd128ccdc36ceeb" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>bignum.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -309,6 +309,37 @@ public:
+             *this = 0 - *this;
+     }
+ 
++    std::string ToString(int nBase=10) const
++    {
++        CAutoBN_CTX pctx;
++        CBigNum bnBase = nBase;
++        CBigNum bn0 = 0;
++        string str;
++        CBigNum bn = *this;
++        BN_set_negative(&amp;bn, false);
++        CBigNum dv;
++        CBigNum rem;
++        if (BN_cmp(&amp;bn, &amp;bn0) == 0)
++            return &quot;0&quot;;
++        while (BN_cmp(&amp;bn, &amp;bn0) &gt; 0)
++        {
++            if (!BN_div(&amp;dv, &amp;rem, &amp;bn, &amp;bnBase, pctx))
++                throw bignum_error(&quot;CBigNum::ToString() : BN_div failed&quot;);
++            bn = dv;
++            unsigned int c = rem.getulong();
++            str += &quot;0123456789abcdef&quot;[c];
++        }
++        if (BN_is_negative(this))
++            str += &quot;-&quot;;
++        reverse(str.begin(), str.end());
++        return str;
++    }
++
++    std::string GetHex() const
++    {
++        return ToString(16);
++    }
++
+     unsigned int GetSerializeSize(int nType=0, int nVersion=VERSION) const
+     {
+         return ::GetSerializeSize(getvch(), nType, nVersion);</code></pre></details><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -1,6 +1,6 @@
+ Bitcoin v0.2.0 BETA
+ 
+-Copyright (c) 2009 Satoshi Nakamoto
++Copyright (c) 2009-2010 Satoshi Nakamoto
+ Distributed under the MIT/X11 software license, see the accompanying
+ file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ This product includes software developed by the OpenSSL Project for use in
+@@ -13,8 +13,16 @@ WINDOWS BUILD NOTES
+ 
+ Compilers Supported
+ -------------------
+-MinGW GCC
+-Microsoft Visual C++ 6.0 SP6
++MinGW GCC (recommended)
++
++MSVC 6.0 SP6: You&#x27;ll need Boost version 1.34 because they dropped support
++for MSVC 6.0 after that.  However, they didn&#x27;t add Asio until 1.35.
++You should still be able to build with MSVC 6.0 by adding Asio to 1.34 by
++unpacking boost_asio_*.zip into the boost directory:
++http://sourceforge.net/projects/asio/files/asio
++
++MSVC 8.0 (2005) SP1 has been tested.  Note: MSVC 7.0 and up have a habit of
++linking to runtime DLLs that are not installed on XP by default.
+ 
+ 
+ Dependencies
+@@ -22,8 +30,7 @@ Dependencies
+ Libraries you need to download separately and build:
+ 
+               default path   download
+-wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
+-                                or prebuilt: http://wxpack.sourceforge.net
++wxWidgets      \wxwidgets     prebuilt: http://wxpack.sourceforge.net
+ OpenSSL        \openssl       http://www.openssl.org/source/
+ Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+ Boost          \boost         http://www.boost.org/users/download/
+@@ -89,3 +96,13 @@ Using MinGW and MSYS:
+ cd \db\build_unix
+ sh ../dist/configure --enable-mingw --enable-cxx
+ make
++
++
++Boost
++-----
++download bjam.exe from
++http://sourceforge.net/project/showfiles.php?group_id=7586&amp;package_id=72941
++cd \boost
++bjam toolset=gcc --build-type=complete stage
++or
++bjam toolset=msvc --build-type=complete stage</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -1,8 +1,7 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+-#include &lt;db_cxx.h&gt;
+ class CTransaction;
+ class CTxIndex;
+ class CDiskBlockIndex;
+@@ -14,6 +13,7 @@ class CAddress;
+ class CWalletTx;
+ 
+ extern map&lt;string, string&gt; mapAddressBook;
++extern CCriticalSection cs_mapAddressBook;
+ extern bool fClient;
+ 
+ 
+@@ -359,15 +359,17 @@ public:
+ 
+     bool WriteName(const string&amp; strAddress, const string&amp; strName)
+     {
++        CRITICAL_BLOCK(cs_mapAddressBook)
++            mapAddressBook[strAddress] = strName;
+         nWalletDBUpdated++;
+-        mapAddressBook[strAddress] = strName;
+         return Write(make_pair(string(&quot;name&quot;), strAddress), strName);
+     }
+ 
+     bool EraseName(const string&amp; strAddress)
+     {
++        CRITICAL_BLOCK(cs_mapAddressBook)
++            mapAddressBook.erase(strAddress);
+         nWalletDBUpdated++;
+-        mapAddressBook.erase(strAddress);
+         return Erase(make_pair(string(&quot;name&quot;), strAddress));
+     }
+ </code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -29,6 +29,7 @@
+ #include &lt;openssl/rand.h&gt;
+ #include &lt;openssl/sha.h&gt;
+ #include &lt;openssl/ripemd.h&gt;
++#include &lt;db_cxx.h&gt;
+ #include &lt;stdio.h&gt;
+ #include &lt;stdlib.h&gt;
+ #include &lt;math.h&gt;
+@@ -36,6 +37,7 @@
+ #include &lt;float.h&gt;
+ #include &lt;assert.h&gt;
+ #include &lt;memory&gt;
++#include &lt;iostream&gt;
+ #include &lt;sstream&gt;
+ #include &lt;string&gt;
+ #include &lt;vector&gt;
+@@ -53,6 +55,8 @@
+ #include &lt;boost/array.hpp&gt;
+ #include &lt;boost/bind.hpp&gt;
+ #include &lt;boost/function.hpp&gt;
++#include &lt;boost/filesystem.hpp&gt;
++#include &lt;boost/algorithm/string.hpp&gt;
+ 
+ #ifdef __WXMSW__
+ #include &lt;windows.h&gt;
+@@ -73,8 +77,6 @@
+ #include &lt;errno.h&gt;
+ #include &lt;net/if.h&gt;
+ #include &lt;ifaddrs.h&gt;
+-#include &lt;boost/filesystem.hpp&gt;
+-#include &lt;boost/algorithm/string.hpp&gt;
+ #endif
+ #ifdef __BSD__
+ #include &lt;netinet/in.h&gt;
+@@ -85,8 +87,6 @@
+ using namespace std;
+ using namespace boost;
+ 
+-
+-
+ #include &quot;strlcpy.h&quot;
+ #include &quot;serialize.h&quot;
+ #include &quot;uint256.h&quot;
+@@ -100,6 +100,7 @@ using namespace boost;
+ #include &quot;irc.h&quot;
+ #include &quot;main.h&quot;
+ #include &quot;market.h&quot;
++#include &quot;rpc.h&quot;
+ #include &quot;uibase.h&quot;
+ #include &quot;ui.h&quot;
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ </code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -1,8 +1,8 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+-extern bool RecvLine(SOCKET hSocket, string&amp; strLine);
+-extern void ThreadIRCSeed(void* parg);
++bool RecvLine(SOCKET hSocket, string&amp; strLine);
++void ThreadIRCSeed(void* parg);
+ 
+ extern int nGotIRCAddresses;</code></pre></details><details><summary><code>license.txt</code></summary><pre><code>@@ -1,4 +1,4 @@
+-Copyright (c) 2009 Satoshi Nakamoto
++Copyright (c) 2009-2010 Satoshi Nakamoto
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the &quot;Software&quot;), to deal</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -26,6 +26,7 @@ CBlockIndex* pindexGenesisBlock = NULL;
+ int nBestHeight = -1;
+ uint256 hashBestChain = 0;
+ CBlockIndex* pindexBest = NULL;
++int64 nTimeBestReceived = 0;
+ 
+ map&lt;uint256, CBlock*&gt; mapOrphanBlocks;
+ multimap&lt;uint256, CBlock*&gt; mapOrphanBlocksByPrev;
+@@ -45,6 +46,9 @@ CKey keyUser;
+ map&lt;uint256, int&gt; mapRequestCount;
+ CCriticalSection cs_mapRequestCount;
+ 
++map&lt;string, string&gt; mapAddressBook;
++CCriticalSection cs_mapAddressBook;
++
+ // Settings
+ int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+@@ -573,7 +577,7 @@ bool CTransaction::RemoveFromMemoryPool()
+ 
+ 
+ 
+-int CMerkleTx::GetDepthInMainChain() const
++int CMerkleTx::GetDepthInMainChain(int&amp; nHeightRet) const
+ {
+     if (hashBlock == 0 || nIndex == -1)
+         return 0;
+@@ -594,6 +598,7 @@ int CMerkleTx::GetDepthInMainChain() const
+         fMerkleVerified = true;
+     }
+ 
++    nHeightRet = pindex-&gt;nHeight;
+     return pindexBest-&gt;nHeight - pindex-&gt;nHeight + 1;
+ }
+ 
+@@ -708,15 +713,20 @@ void CWalletTx::RelayWalletTransaction(CTxDB&amp; txdb)
+     }
+ }
+ 
+-void RelayWalletTransactions()
++void ResendWalletTransactions()
+ {
+-    static int64 nLastTime;
+-    if (GetTime() - nLastTime &lt; 10 * 60)
++    // Do this infrequently and randomly to avoid giving away
++    // that these are our transactions.
++    static int64 nNextTime;
++    if (GetTime() &lt; nNextTime)
++        return;
++    bool fFirst = (nNextTime == 0);
++    nNextTime = GetTime() + GetRand(120 * 60);
++    if (fFirst)
+         return;
+-    nLastTime = GetTime();
+ 
+     // Rebroadcast any of our txes that aren&#x27;t in a block yet
+-    printf(&quot;RelayWalletTransactions()\n&quot;);
++    printf(&quot;ResendWalletTransactions()\n&quot;);
+     CTxDB txdb(&quot;r&quot;);
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+@@ -725,7 +735,10 @@ void RelayWalletTransactions()
+         foreach(PAIRTYPE(const uint256, CWalletTx)&amp; item, mapWallet)
+         {
+             CWalletTx&amp; wtx = item.second;
+-            mapSorted.insert(make_pair(wtx.nTimeReceived, &amp;wtx));
++            // Don&#x27;t rebroadcast until it&#x27;s had plenty of time that
++            // it should have gotten in already by now.
++            if (nTimeBestReceived - wtx.nTimeReceived &gt; 60 * 60)
++                mapSorted.insert(make_pair(wtx.nTimeReceived, &amp;wtx));
+         }
+         foreach(PAIRTYPE(const unsigned int, CWalletTx*)&amp; item, mapSorted)
+         {
+@@ -1219,10 +1232,11 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+             }
+         }
+ 
+-        // New best link
++        // New best block
+         hashBestChain = hash;
+         pindexBest = pindexNew;
+         nBestHeight = pindexBest-&gt;nHeight;
++        nTimeBestReceived = GetTime();
+         nTransactionsUpdated++;
+         printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+     }
+@@ -1232,9 +1246,6 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+ 
+     if (pindexNew == pindexBest)
+     {
+-        // Relay wallet transactions that haven&#x27;t gotten in yet
+-        RelayWalletTransactions();
+-
+         // Notify UI to display prev block&#x27;s coinbase if it was ours
+         static uint256 hashPrevBestCoinBase;
+         CRITICAL_BLOCK(cs_mapWallet)
+@@ -2248,7 +2259,7 @@ bool SendMessages(CNode* pto)
+             return true;
+ 
+         // Keep-alive ping
+-        if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 12 * 60 &amp;&amp; pto-&gt;vSend.empty())
++        if (pto-&gt;nLastSend &amp;&amp; GetTime() - pto-&gt;nLastSend &gt; 30 * 60 &amp;&amp; pto-&gt;vSend.empty())
+             pto-&gt;PushMessage(&quot;ping&quot;);
+ 
+         // Address refresh broadcast
+@@ -2270,60 +2281,81 @@ bool SendMessages(CNode* pto)
+             }
+         }
+ 
++        // Delay tx inv messages to protect privacy,
++        // trickle them out to a few nodes at a time.
++        bool fSendTxInv = false;
++        if (GetTimeMillis() - pto-&gt;nLastSentTxInv &gt; 1800 + GetRand(200))
++        {
++            pto-&gt;nLastSentTxInv = GetTimeMillis();
++            fSendTxInv = true;
++        }
++
++        // Resend wallet transactions that haven&#x27;t gotten in a block yet
++        ResendWalletTransactions();
++
+ 
+         //
+         // Message: addr
+         //
+-        vector&lt;CAddress&gt; vAddrToSend;
+-        vAddrToSend.reserve(pto-&gt;vAddrToSend.size());
++        vector&lt;CAddress&gt; vAddr;
++        vAddr.reserve(pto-&gt;vAddrToSend.size());
+         foreach(const CAddress&amp; addr, pto-&gt;vAddrToSend)
+         {
+             // returns true if wasn&#x27;t already contained in the set
+             if (pto-&gt;setAddrKnown.insert(addr).second)
+             {
+-                vAddrToSend.push_back(addr);
+-                if (vAddrToSend.size() &gt;= 1000)
++                vAddr.push_back(addr);
++                if (vAddr.size() &gt;= 1000)
+                 {
+-                    pto-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
+-                    vAddrToSend.clear();
++                    pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
++                    vAddr.clear();
+                 }
+             }
+         }
+         pto-&gt;vAddrToSend.clear();
+-        if (!vAddrToSend.empty())
+-            pto-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
++        if (!vAddr.empty())
++            pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
+ 
+ 
+         //
+         // Message: inventory
+         //
+-        vector&lt;CInv&gt; vInventoryToSend;
++        vector&lt;CInv&gt; vInv;
++        vector&lt;CInv&gt; vInvWait;
+         CRITICAL_BLOCK(pto-&gt;cs_inventory)
+         {
+-            vInventoryToSend.reserve(pto-&gt;vInventoryToSend.size());
++            vInv.reserve(pto-&gt;vInventoryToSend.size());
++            vInvWait.reserve(pto-&gt;vInventoryToSend.size());
+             foreach(const CInv&amp; inv, pto-&gt;vInventoryToSend)
+             {
++                // delay txes
++                if (!fSendTxInv &amp;&amp; inv.type == MSG_TX)
++                {
++                    vInvWait.push_back(inv);
++                    continue;
++                }
++
+                 // returns true if wasn&#x27;t already contained in the set
+                 if (pto-&gt;setInventoryKnown.insert(inv).second)
+                 {
+-                    vInventoryToSend.push_back(inv);
+-                    if (vInventoryToSend.size() &gt;= 1000)
++                    vInv.push_back(inv);
++                    if (vInv.size() &gt;= 1000)
+                     {
+-                        pto-&gt;PushMessage(&quot;inv&quot;, vInventoryToSend);
+-                        vInventoryToSend.clear();
++                        pto-&gt;PushMessage(&quot;inv&quot;, vInv);
++                        vInv.clear();
+                     }
+                 }
+             }
+-            pto-&gt;vInventoryToSend.clear();
++            pto-&gt;vInventoryToSend = vInvWait;
+         }
+-        if (!vInventoryToSend.empty())
+-            pto-&gt;PushMessage(&quot;inv&quot;, vInventoryToSend);
++        if (!vInv.empty())
++            pto-&gt;PushMessage(&quot;inv&quot;, vInv);
+ 
+ 
+         //
+         // Message: getdata
+         //
+-        vector&lt;CInv&gt; vAskFor;
++        vector&lt;CInv&gt; vGetData;
+         int64 nNow = GetTime() * 1000000;
+         CTxDB txdb(&quot;r&quot;);
+         while (!pto-&gt;mapAskFor.empty() &amp;&amp; (*pto-&gt;mapAskFor.begin()).first &lt;= nNow)
+@@ -2332,17 +2364,17 @@ bool SendMessages(CNode* pto)
+             if (!AlreadyHave(txdb, inv))
+             {
+                 printf(&quot;sending getdata: %s\n&quot;, inv.ToString().c_str());
+-                vAskFor.push_back(inv);
+-                if (vAskFor.size() &gt;= 1000)
++                vGetData.push_back(inv);
++                if (vGetData.size() &gt;= 1000)
+                 {
+-                    pto-&gt;PushMessage(&quot;getdata&quot;, vAskFor);
+-                    vAskFor.clear();
++                    pto-&gt;PushMessage(&quot;getdata&quot;, vGetData);
++                    vGetData.clear();
+                 }
+             }
+             pto-&gt;mapAskFor.erase(pto-&gt;mapAskFor.begin());
+         }
+-        if (!vAskFor.empty())
+-            pto-&gt;PushMessage(&quot;getdata&quot;, vAskFor);
++        if (!vGetData.empty())
++            pto-&gt;PushMessage(&quot;getdata&quot;, vGetData);
+ 
+     }
+     return true;
+@@ -2405,7 +2437,6 @@ void ThreadBitcoinMiner(void* parg)
+         vnThreadsRunning[3]--;
+         PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
+     }
+-
+     printf(&quot;ThreadBitcoinMiner exiting, %d threads remaining\n&quot;, vnThreadsRunning[3]);
+ }
+ 
+@@ -2842,6 +2873,13 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                 // Fill a vout back to self with any change
+                 if (nValueIn &gt; nTotalValue)
+                 {
++                    // Note: We use a new key here to keep it from being obvious which side is the change.
++                    //  The drawback is that by not reusing a previous key, the change may be lost if a
++                    //  backup is restored, if the backup doesn&#x27;t have the new private key for the change.
++                    //  If we reused the old key, it would be possible to add code to look for and
++                    //  rediscover unknown transactions that were written with keys of ours to recover
++                    //  post-backup change.
++
+                     // New private key
+                     if (keyRet.IsNull())
+                         keyRet.MakeNewKey();
+@@ -2899,7 +2937,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+         //// update: This matters even less now that fSpent can get corrected
+         ////  when transactions are seen in VerifySignature.  The remote chance of
+         ////  unmarked fSpent will be handled by that.  Don&#x27;t need to make this
+-        ////  transactional.
++        ////  transactional.  Pls delete this comment block later.
+ 
+         // This is only to keep the database open to defeat the auto-flush for the
+         // duration of this scope.  This is the only place where this optimization
+@@ -2932,7 +2970,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+ 
+ 
+ 
+-bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
++string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+ {
+     CRITICAL_BLOCK(cs_main)
+     {
+@@ -2945,13 +2983,13 @@ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+                 strError = strprintf(&quot;Error: This is an oversized transaction that requires a transaction fee of %s  &quot;, FormatMoney(nFeeRequired).c_str());
+             else
+                 strError = &quot;Error: Transaction creation failed  &quot;;
+-            wxMessageBox(strError, &quot;Sending...&quot;);
+-            return error(&quot;SendMoney() : %s&quot;, strError.c_str());
++            printf(&quot;SendMoney() : %s&quot;, strError.c_str());
++            return strError;
+         }
+         if (!CommitTransactionSpent(wtxNew, key))
+         {
+-            wxMessageBox(&quot;Error finalizing transaction  &quot;, &quot;Sending...&quot;);
+-            return error(&quot;SendMoney() : Error finalizing transaction&quot;);
++            printf(&quot;SendMoney() : Error finalizing transaction&quot;);
++            return &quot;Error finalizing transaction&quot;;
+         }
+ 
+         // Track how many getdata requests our transaction gets
+@@ -2964,11 +3002,32 @@ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+         if (!wtxNew.AcceptTransaction())
+         {
+             // This must not fail. The transaction has already been signed and recorded.
+-            wxMessageBox(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;, &quot;Sending...&quot;);
+-            return error(&quot;SendMoney() : Error: Transaction not valid&quot;);
++            printf(&quot;SendMoney() : Error: Transaction not valid&quot;);
++            return &quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;;
+         }
+         wtxNew.RelayWalletTransaction();
+     }
+     MainFrameRepaint();
+-    return true;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -36,6 +36,8 @@ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
+ extern map&lt;uint256, int&gt; mapRequestCount;
+ extern CCriticalSection cs_mapRequestCount;
++extern map&lt;string, string&gt; mapAddressBook;
++extern CCriticalSection cs_mapAddressBook;
+ 
+ // Settings
+ extern int fGenerateBitcoins;
+@@ -58,7 +60,6 @@ vector&lt;unsigned char&gt; GenerateNewKey();
+ bool AddToWallet(const CWalletTx&amp; wtxIn);
+ void WalletUpdateSpent(const COutPoint&amp; prevout);
+ void ReacceptWalletTransactions();
+-void RelayWalletTransactions();
+ bool LoadBlockIndex(bool fAllowNew=true);
+ void PrintBlockTree();
+ bool ProcessMessages(CNode* pfrom);
+@@ -67,7 +68,8 @@ bool SendMessages(CNode* pto);
+ int64 GetBalance();
+ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
+ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
+-bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
++string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
++string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew);
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();
+@@ -680,7 +682,8 @@ public:
+ 
+ 
+     int SetMerkleBranch(const CBlock* pblock=NULL);
+-    int GetDepthInMainChain() const;
++    int GetDepthInMainChain(int&amp; nHeightRet) const;
++    int GetDepthInMainChain() const { int nHeight; return GetDepthInMainChain(nHeight); }
+     bool IsInMainChain() const { return GetDepthInMainChain() &gt; 0; }
+     int GetBlocksToMaturity() const;
+     bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true);</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -1,4 +1,4 @@
+-# Copyright (c) 2009 Satoshi Nakamoto
++# Copyright (c) 2009-2010 Satoshi Nakamoto
+ # Distributed under the MIT/X11 software license, see the accompanying
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -16,22 +16,23 @@ endif
+ 
+ 
+ INCLUDEPATHS=-I&quot;/boost&quot; -I&quot;/db/build_unix&quot; -I&quot;/openssl/include&quot; -I&quot;/wxwidgets/lib/vc_lib/mswd&quot; -I&quot;/wxwidgets/include&quot;
+-LIBPATHS=-L&quot;/db/build_unix&quot; -L&quot;/openssl/out&quot; -L&quot;/wxwidgets/lib/gcc_lib&quot;
++LIBPATHS=-L&quot;/boost/stage/lib&quot; -L&quot;/db/build_unix&quot; -L&quot;/openssl/out&quot; -L&quot;/wxwidgets/lib/gcc_lib&quot;
+ LIBS= \
++ -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d \
+  -l db_cxx \
+  -l eay32 \
+  -l wxmsw28$(D)_richtext -l wxmsw28$(D)_html -l wxmsw28$(D)_core -l wxmsw28$(D)_adv -l wxbase28$(D) -l wxtiff$(D) -l wxjpeg$(D) -l wxpng$(D) -l wxzlib$(D) -l wxregex$(D) -l wxexpat$(D) \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
+ WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
+ CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+ all: bitcoin.exe
+ 
+ 
+-headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
++headers.h.gch: headers.h            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/util.o: util.cpp                $(HEADERS)
+@@ -40,19 +41,19 @@ obj/util.o: util.cpp                $(HEADERS)
+ obj/script.o: script.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/db.o: db.cpp                    $(HEADERS) market.h
++obj/db.o: db.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/net.o: net.cpp                  $(HEADERS) net.h
++obj/net.o: net.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
++obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS) market.h
++obj/market.o: market.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
++obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/uibase.o: uibase.cpp            uibase.h
+@@ -64,13 +65,17 @@ obj/sha.o: sha.cpp                  sha.h
+ obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
++obj/rpc.o: rpc.cpp                  $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
+ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+ 	windres $(WXDEFS) $(INCLUDEPATHS) -o $@ -i $&lt;
+ 
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o \
++        obj/ui_res.o
+ 
+ bitcoin.exe: headers.h.gch $(OBJS)
+ 	-kill /f bitcoin.exe</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -1,4 +1,4 @@
+-# Copyright (c) 2009 Satoshi Nakamoto
++# Copyright (c) 2009-2010 Satoshi Nakamoto
+ # Distributed under the MIT/X11 software license, see the accompanying
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -35,14 +35,14 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+ all: bitcoin
+ 
+ 
+-headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
++headers.h.gch: headers.h            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/util.o: util.cpp                $(HEADERS)
+@@ -51,19 +51,19 @@ obj/util.o: util.cpp                $(HEADERS)
+ obj/script.o: script.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/db.o: db.cpp                    $(HEADERS) market.h
++obj/db.o: db.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/net.o: net.cpp                  $(HEADERS) net.h
++obj/net.o: net.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
++obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS) market.h
++obj/market.o: market.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
++obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/uibase.o: uibase.cpp            uibase.h
+@@ -75,11 +75,13 @@ obj/sha.o: sha.cpp                  sha.h
+ obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
++obj/rpc.o: rpc.cpp                  $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -1,4 +1,4 @@
+-# Copyright (c) 2009 Satoshi Nakamoto
++# Copyright (c) 2009-2010 Satoshi Nakamoto
+ # Distributed under the MIT/X11 software license, see the accompanying
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -35,14 +35,14 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+ all: bitcoin
+ 
+ 
+-headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
++headers.h.gch: headers.h            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/util.o: util.cpp                $(HEADERS)
+@@ -51,19 +51,19 @@ obj/util.o: util.cpp                $(HEADERS)
+ obj/script.o: script.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/db.o: db.cpp                    $(HEADERS) market.h
++obj/db.o: db.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/net.o: net.cpp                  $(HEADERS) net.h
++obj/net.o: net.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
++obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS) market.h
++obj/market.o: market.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
++obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/uibase.o: uibase.cpp            uibase.h
+@@ -75,11 +75,13 @@ obj/sha.o: sha.cpp                  sha.h
+ obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
++obj/rpc.o: rpc.cpp                  $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -1,4 +1,4 @@
+-# Copyright (c) 2009 Satoshi Nakamoto
++# Copyright (c) 2009-2010 Satoshi Nakamoto
+ # Distributed under the MIT/X11 software license, see the accompanying
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -14,15 +14,16 @@ DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
+ 
+ 
+ INCLUDEPATHS=/I&quot;/boost&quot; /I&quot;/db/build_windows&quot; /I&quot;/openssl/include&quot; /I&quot;/wxwidgets/lib/vc_lib/mswd&quot; /I&quot;/wxwidgets/include&quot;
+-LIBPATHS=/LIBPATH:&quot;/db/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/openssl/out&quot; /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
++LIBPATHS=/LIBPATH:&quot;/boost/stage/lib&quot; /LIBPATH:&quot;/db/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/openssl/out&quot; /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
+ LIBS= \
++    libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib \
+     libdb47s$(D).lib \
+     libeay32.lib \
+     wxmsw28$(D)_richtext.lib wxmsw28$(D)_html.lib wxmsw28$(D)_core.lib wxmsw28$(D)_adv.lib wxbase28$(D).lib wxtiff$(D).lib wxjpeg$(D).lib wxpng$(D).lib wxzlib$(D).lib wxregex$(D).lib wxexpat$(D).lib \
+     kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
+ WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
+ CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 /YX /Fpobj/headers.pch $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -35,37 +36,41 @@ obj\util.obj: util.cpp        $(HEADERS)
+ obj\script.obj: script.cpp    $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\db.obj: db.cpp            $(HEADERS) market.h
++obj\db.obj: db.cpp            $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\net.obj: net.cpp          $(HEADERS) net.h
++obj\net.obj: net.cpp          $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\main.obj: main.cpp        $(HEADERS) net.h market.h
++obj\main.obj: main.cpp        $(HEADERS) sha.h
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\market.obj: market.cpp    $(HEADERS) market.h
++obj\market.obj: market.cpp    $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\ui.obj: ui.cpp            $(HEADERS) net.h uibase.h ui.h market.h
++obj\ui.obj: ui.cpp            $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
+ obj\uibase.obj: uibase.cpp    uibase.h
+     cl $(CFLAGS) /Fo$@ %s
+ 
+-obj\sha.obj: sha.cpp sha.h
++obj\sha.obj: sha.cpp          sha.h
+     cl $(CFLAGS) /O2 /Fo$@ %s
+ 
+ obj\irc.obj:  irc.cpp         $(HEADERS)
+     cl $(CFLAGS) /Fo$@ %s
+ 
++obj\rpc.obj:  rpc.cpp         $(HEADERS)
++    cl $(CFLAGS) /Fo$@ %s
++
+ obj\ui.res: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+     rc $(INCLUDEPATHS) $(WXDEFS) /Fo$@ %s
+ 
+ 
+ 
+ OBJS=obj\util.obj obj\script.obj obj\db.obj obj\net.obj obj\main.obj obj\market.obj \
+-  obj\ui.obj obj\uibase.obj obj\sha.obj obj\irc.obj obj\ui.res
++    obj\ui.obj obj\uibase.obj obj\sha.obj obj\irc.obj obj\rpc.obj \
++    obj\ui.res
+ 
+ bitcoin.exe: $(OBJS)
+     -kill /f bitcoin.exe &amp; sleep 1</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -522,7 +522,6 @@ void CNode::Cleanup()
+ void ThreadSocketHandler(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadSocketHandler(parg));
+-
+     try
+     {
+         vnThreadsRunning[0]++;
+@@ -536,7 +535,6 @@ void ThreadSocketHandler(void* parg)
+         vnThreadsRunning[0]--;
+         throw; // support pthread_cancel()
+     }
+-
+     printf(&quot;ThreadSocketHandler exiting\n&quot;);
+ }
+ 
+@@ -816,7 +814,6 @@ void ThreadSocketHandler2(void* parg)
+ void ThreadOpenConnections(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadOpenConnections(parg));
+-
+     try
+     {
+         vnThreadsRunning[1]++;
+@@ -830,7 +827,6 @@ void ThreadOpenConnections(void* parg)
+         vnThreadsRunning[1]--;
+         PrintException(NULL, &quot;ThreadOpenConnections()&quot;);
+     }
+-
+     printf(&quot;ThreadOpenConnections exiting\n&quot;);
+ }
+ 
+@@ -928,7 +924,7 @@ void ThreadOpenConnections2(void* parg)
+                 //   30 days   27 hours
+                 //   90 days   46 hours
+                 //  365 days   93 hours
+-                int64 nDelay = (int64)(3600.0 * sqrt(fabs(nSinceLastSeen) / 3600.0) + nRandomizer);
++                int64 nDelay = (int64)(3600.0 * sqrt(fabs((double)nSinceLastSeen) / 3600.0) + nRandomizer);
+ 
+                 // Fast reconnect for one hour after last seen
+                 if (nSinceLastSeen &lt; 60 * 60)
+@@ -1016,7 +1012,6 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
+ void ThreadMessageHandler(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadMessageHandler(parg));
+-
+     try
+     {
+         vnThreadsRunning[2]++;
+@@ -1030,7 +1025,6 @@ void ThreadMessageHandler(void* parg)
+         vnThreadsRunning[2]--;
+         PrintException(NULL, &quot;ThreadMessageHandler()&quot;);
+     }
+-
+     printf(&quot;ThreadMessageHandler exiting\n&quot;);
+ }
+ 
+@@ -1329,7 +1323,7 @@ bool StopNode()
+     fShutdown = true;
+     nTransactionsUpdated++;
+     int64 nStart = GetTime();
+-    while (vnThreadsRunning[0] &gt; 0 || vnThreadsRunning[2] &gt; 0 || vnThreadsRunning[3] &gt; 0)
++    while (vnThreadsRunning[0] &gt; 0 || vnThreadsRunning[2] &gt; 0 || vnThreadsRunning[3] &gt; 0 || vnThreadsRunning[4] &gt; 0)
+     {
+         if (GetTime() - nStart &gt; 20)
+             break;
+@@ -1339,7 +1333,8 @@ bool StopNode()
+     if (vnThreadsRunning[1] &gt; 0) printf(&quot;ThreadOpenConnections still running\n&quot;);
+     if (vnThreadsRunning[2] &gt; 0) printf(&quot;ThreadMessageHandler still running\n&quot;);
+     if (vnThreadsRunning[3] &gt; 0) printf(&quot;ThreadBitcoinMiner still running\n&quot;);
+-    while (vnThreadsRunning[2] &gt; 0)
++    if (vnThreadsRunning[4] &gt; 0) printf(&quot;ThreadRPCServer still running\n&quot;);
++    while (vnThreadsRunning[2] &gt; 0 || vnThreadsRunning[4] &gt; 0)
+         Sleep(20);
+     Sleep(50);
+ </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -518,6 +518,7 @@ public:
+     vector&lt;CInv&gt; vInventoryToSend;
+     CCriticalSection cs_inventory;
+     multimap&lt;int64, CInv&gt; mapAskFor;
++    int64 nLastSentTxInv;
+ 
+     // publish and subscription
+     vector&lt;char&gt; vfSubscribe;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -0,0 +1,641 @@
++// Copyright (c) 2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++#include &quot;headers.h&quot;
++#undef printf
++#include &lt;boost/asio.hpp&gt;
++#include &quot;json/json_spirit_reader_template.h&quot;
++#include &quot;json/json_spirit_writer_template.h&quot;
++#include &quot;json/json_spirit_utils.h&quot;
++#define printf OutputDebugStringF
++// MinGW 3.4.5 gets &quot;fatal error: had to relocate PCH&quot; if the json headers are
++// precompiled in headers.h.  The problem might be when the pch file goes over
++// a certain size around 145MB.  If we need access to json_spirit outside this
++// file, we could use the compiled json_spirit option.
++
++using boost::asio::ip::tcp;
++using namespace json_spirit;
++
++void ThreadRPCServer2(void* parg);
++
++
++
++
++
++
++
++///
++/// Note: I&#x27;m not finished designing this interface, it&#x27;s still subject to change.
++///
++
++
++
++Value stop(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;stop (no parameters)\n&quot;
++            &quot;Stop bitcoin server.&quot;);
++
++    // Shutdown will take long enough that the response should get back
++    CreateThread(Shutdown, NULL);
++    return &quot;bitcoin server stopping&quot;;
++}
++
++
++Value getblockcount(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getblockcount (no parameters)\n&quot;
++            &quot;Returns the number of blocks in the longest block chain.&quot;);
++
++    return nBestHeight + 1;
++}
++
++
++Value getblocknumber(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getblocknumber (no parameters)\n&quot;
++            &quot;Returns the block number of the latest block in the longest block chain.&quot;);
++
++    return nBestHeight;
++}
++
++
++Value getdifficulty(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getdifficulty (no parameters)\n&quot;
++            &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
++
++    if (pindexBest == NULL)
++        throw runtime_error(&quot;block chain not loaded&quot;);
++
++    // Floating point number that is a multiple of the minimum difficulty,
++    // minimum difficulty = 1.0.
++    int nShift = 256 - 32 - 31; // to fit in a uint
++    double dMinimum = (CBigNum().SetCompact(bnProofOfWorkLimit.GetCompact()) &gt;&gt; nShift).getuint();
++    double dCurrently = (CBigNum().SetCompact(pindexBest-&gt;nBits) &gt;&gt; nShift).getuint();
++    return dMinimum / dCurrently;
++}
++
++
++Value getnewaddress(const Array&amp; params)
++{
++    if (params.size() &gt; 1)
++        throw runtime_error(
++            &quot;getnewaddress [label]\n&quot;
++            &quot;Returns a new bitcoin address for receiving payments.  &quot;
++            &quot;If [label] is specified (recommended), it is added to the address book &quot;
++            &quot;so payments received with the address will be labeled.&quot;);
++
++    // Parse the label first so we don&#x27;t generate a key if there&#x27;s an error
++    string strLabel;
++    if (params.size() &gt; 0)
++        strLabel = params[0].get_str();
++
++    // Generate a new key that is added to wallet
++    string strAddress = PubKeyToAddress(GenerateNewKey());
++
++    if (params.size() &gt; 0)
++        SetAddressBookName(strAddress, strLabel);
++    return strAddress;
++}
++
++
++Value sendtoaddress(const Array&amp; params)
++{
++    if (params.size() &lt; 2 || params.size() &gt; 4)
++        throw runtime_error(
++            &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
++            &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;);
++
++    string strAddress = params[0].get_str();
++
++    // Amount
++    if (params[1].get_real() &lt;= 0.0 || params[1].get_real() &gt; 21000000.0)
++        throw runtime_error(&quot;Invalid amount&quot;);
++    int64 nAmount = roundint64(params[1].get_real() * 100.00) * CENT;
++
++    // Wallet comments
++    CWalletTx wtx;
++    if (params.size() &gt; 2 &amp;&amp; params[2].type() != null_type &amp;&amp; !params[2].get_str().empty())
++        wtx.mapValue[&quot;message&quot;] = params[2].get_str();
++    if (params.size() &gt; 3 &amp;&amp; params[3].type() != null_type &amp;&amp; !params[3].get_str().empty())
++        wtx.mapValue[&quot;to&quot;]      = params[3].get_str();
++
++    string strError = SendMoneyToBitcoinAddress(strAddress, nAmount, wtx);
++    if (strError != &quot;&quot;)
++        throw runtime_error(strError);
++    return &quot;sent&quot;;
++}
++
++
++Value listtransactions(const Array&amp; params)
++{
++    if (params.size() &gt; 2)
++        throw runtime_error(
++            &quot;listtransactions [count=10] [includegenerated=false]\n&quot;
++            &quot;Returns up to [count] most recent transactions.&quot;);
++
++    int64 nCount = 10;
++    if (params.size() &gt; 0)
++        nCount = params[0].get_int64();
++    bool fGenerated = false;
++    if (params.size() &gt; 1)
++        fGenerated = params[1].get_bool();
++
++    Array ret;
++    //// not finished
++    ret.push_back(&quot;not implemented yet&quot;);
++    return ret;
++}
++
++
++Value getamountpaid(const Array&amp; params)
++{
++    if (params.size() &lt; 1 || params.size() &gt; 2)
++        throw runtime_error(
++            &quot;getamountpaid &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
++            &quot;Returns the total amount paid to &lt;bitcoinaddress&gt; in transactions with at least [minconf] confirmations.&quot;);
++
++    // Bitcoin address
++    string strAddress = params[0].get_str();
++    CScript scriptPubKey;
++    if (!scriptPubKey.SetBitcoinAddress(strAddress))
++        throw runtime_error(&quot;Invalid bitcoin address&quot;);
++
++    // Minimum confirmations
++    int nMinDepth = 1;
++    if (params.size() &gt; 1)
++        nMinDepth = params[1].get_int();
++
++    // Tally
++    int64 nAmount = 0;
++    CRITICAL_BLOCK(cs_mapWallet)
++    {
++        for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
++        {
++            const CWalletTx&amp; wtx = (*it).second;
++            if (wtx.IsCoinBase() || !wtx.IsFinal())
++                continue;
++
++            foreach(const CTxOut&amp; txout, wtx.vout)
++                if (txout.scriptPubKey == scriptPubKey)
++                    if (wtx.GetDepthInMainChain() &gt;= nMinDepth)
++                        nAmount += txout.nValue;
++        }
++    }
++
++    return (double)nAmount / (double)COIN;
++}
++
++
++struct tallyitem
++{
++    int64 nAmount;
++    int nConf;
++    tallyitem()
++    {
++        nAmount = 0;
++        nConf = INT_MAX;
++    }
++};
++
++Value getallpayments(const Array&amp; params)
++{
++    if (params.size() &gt; 1)
++        throw runtime_error(
++            &quot;getallpayments [minconf=1]\n&quot;
++            &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
++            &quot;Returns an array of objects containing:\n&quot;
++            &quot;  \&quot;address\&quot; : bitcoin address\n&quot;
++            &quot;  \&quot;amount\&quot; : total amount paid to the address\n&quot;
++            &quot;  \&quot;conf\&quot; : number of confirmations\n&quot;
++            &quot;  \&quot;label\&quot; : the label set for this address when it was created by getnewaddress&quot;);
++
++    // Minimum confirmations
++    int nMinDepth = 1;
++    if (params.size() &gt; 0)
++        nMinDepth = params[0].get_int();
++
++    // Tally
++    map&lt;uint160, tallyitem&gt; mapTally;
++    CRITICAL_BLOCK(cs_mapWallet)
++    {
++        for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
++        {
++            const CWalletTx&amp; wtx = (*it).second;
++            if (wtx.IsCoinBase() || !wtx.IsFinal())
++                continue;
++
++            int nDepth = wtx.GetDepthInMainChain();
++            if (nDepth &gt;= nMinDepth)
++            {
++                foreach(const CTxOut&amp; txout, wtx.vout)
++                {
++                    uint160 hash160 = txout.scriptPubKey.GetBitcoinAddressHash160();
++                    if (hash160 == 0 || !mapPubKeys.count(hash160))
++                        continue;
++
++                    tallyitem&amp; item = mapTally[hash160];
++                    item.nAmount += txout.nValue;
++                    item.nConf = min(item.nConf, nDepth);
++                }
++            }
++        }
++    }
++
++    // Reply
++    Array ret;
++    CRITICAL_BLOCK(cs_mapAddressBook)
++    {
++        for (map&lt;uint160, tallyitem&gt;::iterator it = mapTally.begin(); it != mapTally.end(); ++it)
++        {
++            string strAddress = Hash160ToAddress((*it).first);
++            string strLabel;
++            map&lt;string, string&gt;::iterator mi = mapAddressBook.find(strAddress);
++            if (mi != mapAddressBook.end())
++                strLabel = (*mi).second;
++
++            Object obj;
++            obj.push_back(Pair(&quot;address&quot;, strAddress));
++            obj.push_back(Pair(&quot;amount&quot;,  (double)(*it).second.nAmount / (double)COIN));
++            obj.push_back(Pair(&quot;conf&quot;,    (*it).second.nConf));
++            obj.push_back(Pair(&quot;label&quot;,   strLabel));
++            ret.push_back(obj);
++        }
++    }
++    return ret;
++}
++
++
++
++
++
++
++
++//
++// Call Table
++//
++
++typedef Value(*rpcfn_type)(const Array&amp; params);
++pair&lt;string, rpcfn_type&gt; pCallTable[] =
++{
++    make_pair(&quot;stop&quot;,               &amp;stop),
++    make_pair(&quot;getblockcount&quot;,      &amp;getblockcount),
++    make_pair(&quot;getblocknumber&quot;,     &amp;getblocknumber),
++    make_pair(&quot;getdifficulty&quot;,      &amp;getdifficulty),
++    make_pair(&quot;getnewaddress&quot;,      &amp;getnewaddress),
++    make_pair(&quot;sendtoaddress&quot;,      &amp;sendtoaddress),
++    make_pair(&quot;listtransactions&quot;,   &amp;listtransactions),
++    make_pair(&quot;getamountpaid&quot;,      &amp;getamountpaid),
++    make_pair(&quot;getallpayments&quot;,     &amp;getallpayments),
++};</code></pre></details><details><summary><code>rpc.h</code></summary><pre><code>@@ -0,0 +1,6 @@
++// Copyright (c) 2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++void ThreadRPCServer(void* parg);
++int CommandLineRPC(int argc, char *argv[]);</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -660,7 +660,7 @@ bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nI
+                 if (stack.size() &lt; 1)
+                     return false;
+                 valtype&amp; vch = stacktop(-1);
+-                valtype vchHash(opcode == OP_RIPEMD160 || opcode == OP_SHA1 || opcode == OP_HASH160 ? 20 : 32);
++                valtype vchHash((opcode == OP_RIPEMD160 || opcode == OP_SHA1 || opcode == OP_HASH160) ? 20 : 32);
+                 if (opcode == OP_RIPEMD160)
+                     RIPEMD160(&amp;vch[0], vch.size(), &amp;vchHash[0]);
+                 else if (opcode == OP_SHA1)
+@@ -753,9 +753,9 @@ bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nI
+                 CScript scriptCode(pbegincodehash, pend);
+ 
+                 // Drop the signatures, since there&#x27;s no way for a signature to sign itself
+-                for (int i = 0; i &lt; nSigsCount; i++)
++                for (int k = 0; k &lt; nSigsCount; k++)
+                 {
+-                    valtype&amp; vchSig = stacktop(-isig-i);
++                    valtype&amp; vchSig = stacktop(-isig-k);
+                     scriptCode.FindAndDelete(CScript(vchSig));
+                 }
+ 
+@@ -909,7 +909,6 @@ bool CheckSig(vector&lt;unsigned char&gt; vchSig, vector&lt;unsigned char&gt; vchPubKey, CSc
+ 
+ 
+ 
+-
+ bool Solver(const CScript&amp; scriptPubKey, vector&lt;pair&lt;opcodetype, valtype&gt; &gt;&amp; vSolutionRet)
+ {
+     // Templates
+@@ -919,7 +918,7 @@ bool Solver(const CScript&amp; scriptPubKey, vector&lt;pair&lt;opcodetype, valtype&gt; &gt;&amp; vSo
+         // Standard tx, sender provides pubkey, receiver adds signature
+         vTemplates.push_back(CScript() &lt;&lt; OP_PUBKEY &lt;&lt; OP_CHECKSIG);
+ 
+-        // Short account number tx, sender provides hash of pubkey, receiver provides signature and pubkey
++        // Bitcoin address tx, sender provides hash of pubkey, receiver provides signature and pubkey
+         vTemplates.push_back(CScript() &lt;&lt; OP_DUP &lt;&lt; OP_HASH160 &lt;&lt; OP_PUBKEYHASH &lt;&lt; OP_EQUALVERIFY &lt;&lt; OP_CHECKSIG);
+     }
+ </code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -472,7 +472,7 @@ public:
+ 
+     bool GetOp(iterator&amp; pc, opcodetype&amp; opcodeRet, vector&lt;unsigned char&gt;&amp; vchRet)
+     {
+-         // This is why people hate C++
++         // Wrapper so it can be called with either iterator or const_iterator
+          const_iterator pc2 = pc;
+          bool fRet = GetOp(pc2, opcodeRet, vchRet);
+          pc = begin() + (pc2 - begin());
+@@ -551,6 +551,46 @@ public:
+     }
+ 
+ 
++    uint160 GetBitcoinAddressHash160() const
++    {
++        opcodetype opcode;
++        vector&lt;unsigned char&gt; vch;
++        CScript::const_iterator pc = begin();
++        if (!GetOp(pc, opcode, vch) || opcode != OP_DUP) return 0;
++        if (!GetOp(pc, opcode, vch) || opcode != OP_HASH160) return 0;
++        if (!GetOp(pc, opcode, vch) || vch.size() != sizeof(uint160)) return 0;
++        uint160 hash160 = uint160(vch);
++        if (!GetOp(pc, opcode, vch) || opcode != OP_EQUALVERIFY) return 0;
++        if (!GetOp(pc, opcode, vch) || opcode != OP_CHECKSIG) return 0;
++        if (pc != end()) return 0;
++        return hash160;
++    }
++
++    string GetBitcoinAddress() const
++    {
++        uint160 hash160 = GetBitcoinAddressHash160();
++        if (hash160 == 0)
++            return &quot;&quot;;
++        return Hash160ToAddress(hash160);
++    }
++
++    void SetBitcoinAddress(const uint160&amp; hash160)
++    {
++        this-&gt;clear();
++        *this &lt;&lt; OP_DUP &lt;&lt; OP_HASH160 &lt;&lt; hash160 &lt;&lt; OP_EQUALVERIFY &lt;&lt; OP_CHECKSIG;
++    }
++
++    bool SetBitcoinAddress(const string&amp; strAddress)
++    {
++        this-&gt;clear();
++        uint160 hash160;
++        if (!AddressToHash160(strAddress, hash160))
++            return false;
++        SetBitcoinAddress(hash160);
++        return true;
++    }
++
++
+     void PrintHex() const
+     {
+         printf(&quot;CScript(%s)\n&quot;, HexStr(begin(), end()).c_str());</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 200;
+-static const char* pszSubVer = &quot; test2&quot;;
++static const int VERSION = 201;
++static const char* pszSubVer = &quot;.0&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ DEFINE_EVENT_TYPE(wxEVT_REPLY3)
+ 
+ CMainFrame* pframeMain = NULL;
+ CMyTaskBarIcon* ptaskbaricon = NULL;
+-map&lt;string, string&gt; mapAddressBook;
+ bool fRandSendTest = false;
+ void RandSend();
+ extern int g_isPainting;
+@@ -177,8 +176,11 @@ void CalledMessageBox(const string&amp; message, const string&amp; caption, int style, w
+ 
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
+ {
+-    if (mapArgs.count(&quot;-noui&quot;))
++    if (fDaemon)
++    {
++        printf(&quot;wxMessageBox %s: %s\n&quot;, caption.c_str(), message.c_str());
+         return wxOK;
++    }
+ 
+ #ifdef __WXMSW__
+     return wxMessageBox(message, caption, style, parent, x, y);
+@@ -413,7 +415,7 @@ void Shutdown(void* parg)
+         StopNode();
+         DBFlush(true);
+         CreateThread(ExitTimeout, NULL);
+-        Sleep(10);
++        Sleep(50);
+         printf(&quot;Bitcoin exiting\n\n&quot;);
+         fExit = true;
+         exit(0);
+@@ -697,19 +699,22 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                     vector&lt;unsigned char&gt; vchPubKey;
+                     if (ExtractPubKey(txout.scriptPubKey, true, vchPubKey))
+                     {
+-                        string strAddress = PubKeyToAddress(vchPubKey);
+-                        if (mapAddressBook.count(strAddress))
++                        CRITICAL_BLOCK(cs_mapAddressBook)
+                         {
+-                            //strDescription += &quot;Received payment to &quot;;
+-                            //strDescription += &quot;Received with address &quot;;
+-                            strDescription += &quot;From: unknown, To: &quot;;
+-                            strDescription += strAddress;
+-                            /// The labeling feature is just too confusing, so I hid it
+-                            /// by putting it at the end where it runs off the screen.
+-                            /// It can still be seen by widening the column, or in the
+-                            /// details dialog.
+-                            if (!mapAddressBook[strAddress].empty())
+-                                strDescription += &quot; (&quot; + mapAddressBook[strAddress] + &quot;)&quot;;
++                            string strAddress = PubKeyToAddress(vchPubKey);
++                            if (mapAddressBook.count(strAddress))
++                            {
++                                //strDescription += &quot;Received payment to &quot;;
++                                //strDescription += &quot;Received with address &quot;;
++                                strDescription += &quot;From: unknown, To: &quot;;
++                                strDescription += strAddress;
++                                /// The labeling feature is just too confusing, so I hid it
++                                /// by putting it at the end where it runs off the screen.
++                                /// It can still be seen by widening the column, or in the
++                                /// details dialog.
++                                if (!mapAddressBook[strAddress].empty())
++                                    strDescription += &quot; (&quot; + mapAddressBook[strAddress] + &quot;)&quot;;
++                            }
+                         }
+                     }
+                     break;
+@@ -776,8 +781,9 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                 }
+ 
+                 string strDescription = &quot;To: &quot;;
+-                if (mapAddressBook.count(strAddress) &amp;&amp; !mapAddressBook[strAddress].empty())
+-                    strDescription += mapAddressBook[strAddress] + &quot; &quot;;
++                CRITICAL_BLOCK(cs_mapAddressBook)
++                    if (mapAddressBook.count(strAddress) &amp;&amp; !mapAddressBook[strAddress].empty())
++                        strDescription += mapAddressBook[strAddress] + &quot; &quot;;
+                 strDescription += strAddress;
+                 if (!mapValue[&quot;message&quot;].empty())
+                 {
+@@ -1273,238 +1279,241 @@ void CMainFrame::OnListItemActivatedOrdersReceived(wxListEvent&amp; event)
+ 
+ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetailsDialogBase(parent)
+ {
+-    string strHTML;
+-    strHTML.reserve(4000);
+-    strHTML += &quot;&lt;html&gt;&lt;font face=&#x27;verdana, arial, helvetica, sans-serif&#x27;&gt;&quot;;
++    CRITICAL_BLOCK(cs_mapAddressBook)
++    {
++        string strHTML;
++        strHTML.reserve(4000);
++        strHTML += &quot;&lt;html&gt;&lt;font face=&#x27;verdana, arial, helvetica, sans-serif&#x27;&gt;&quot;;
+ 
+-    int64 nTime = wtx.GetTxTime();
+-    int64 nCredit = wtx.GetCredit();
+-    int64 nDebit = wtx.GetDebit();
+-    int64 nNet = nCredit - nDebit;
++        int64 nTime = wtx.GetTxTime();
++        int64 nCredit = wtx.GetCredit();
++        int64 nDebit = wtx.GetDebit();
++        int64 nNet = nCredit - nDebit;
+ 
+ 
+ 
+-    strHTML += &quot;&lt;b&gt;Status:&lt;/b&gt; &quot; + FormatTxStatus(wtx);
+-    int nRequests = wtx.GetRequestCount();
+-    if (nRequests != -1)
+-    {
+-        if (nRequests == 0)
+-            strHTML += &quot;, has not been successfully broadcast yet&quot;;
+-        else if (nRequests == 1)
+-            strHTML += strprintf(&quot;, broadcast through %d node&quot;, nRequests);
+-        else
+-            strHTML += strprintf(&quot;, broadcast through %d nodes&quot;, nRequests);
+-    }
+-    strHTML += &quot;&lt;br&gt;&quot;;
++        strHTML += &quot;&lt;b&gt;Status:&lt;/b&gt; &quot; + FormatTxStatus(wtx);
++        int nRequests = wtx.GetRequestCount();
++        if (nRequests != -1)
++        {
++            if (nRequests == 0)
++                strHTML += &quot;, has not been successfully broadcast yet&quot;;
++            else if (nRequests == 1)
++                strHTML += strprintf(&quot;, broadcast through %d node&quot;, nRequests);
++            else
++                strHTML += strprintf(&quot;, broadcast through %d nodes&quot;, nRequests);
++        }
++        strHTML += &quot;&lt;br&gt;&quot;;
+ 
+-    strHTML += &quot;&lt;b&gt;Date:&lt;/b&gt; &quot; + (nTime ? DateTimeStr(nTime) : &quot;&quot;) + &quot;&lt;br&gt;&quot;;
++        strHTML += &quot;&lt;b&gt;Date:&lt;/b&gt; &quot; + (nTime ? DateTimeStr(nTime) : &quot;&quot;) + &quot;&lt;br&gt;&quot;;
+ 
+ 
+-    //
+-    // From
+-    //
+-    if (wtx.IsCoinBase())
+-    {
+-        strHTML += &quot;&lt;b&gt;Source:&lt;/b&gt; Generated&lt;br&gt;&quot;;
+-    }
+-    else if (!wtx.mapValue[&quot;from&quot;].empty())
+-    {
+-        // Online transaction
+-        if (!wtx.mapValue[&quot;from&quot;].empty())
+-            strHTML += &quot;&lt;b&gt;From:&lt;/b&gt; &quot; + HtmlEscape(wtx.mapValue[&quot;from&quot;]) + &quot;&lt;br&gt;&quot;;
+-    }
+-    else
+-    {
+-        // Offline transaction
+-        if (nNet &gt; 0)
++        //
++        // From
++        //
++        if (wtx.IsCoinBase())
+         {
+-            // Credit
+-            foreach(const CTxOut&amp; txout, wtx.vout)
++            strHTML += &quot;&lt;b&gt;Source:&lt;/b&gt; Generated&lt;br&gt;&quot;;
++        }
++        else if (!wtx.mapValue[&quot;from&quot;].empty())
++        {
++            // Online transaction
++            if (!wtx.mapValue[&quot;from&quot;].empty())
++                strHTML += &quot;&lt;b&gt;From:&lt;/b&gt; &quot; + HtmlEscape(wtx.mapValue[&quot;from&quot;]) + &quot;&lt;br&gt;&quot;;
++        }
++        else
++        {</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/fa9dbd6/">← better error message in check_type(), tell the types by…</a><a rel="next" href="../../commits/c85dfb1/">updated build-unix.txt →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

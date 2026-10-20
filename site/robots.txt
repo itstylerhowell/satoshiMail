@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://satoshimail.pages.dev/sitemap.xml

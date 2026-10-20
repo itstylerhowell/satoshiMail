@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JSON Spirit library from… (r58) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license. 13…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/75990a4/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="JSON Spirit library from… (r58) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license. 13…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/75990a4/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="JSON Spirit library from… (r58) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license. 13…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license", "url": "https://satoshimail.pages.dev/commits/75990a4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-10T19:41:22Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/75990a46a7e4999729ff67c4268c2241c98e486f"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "JSON Spirit library from…", "item": "https://satoshimail.pages.dev/commits/75990a4/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c75990a46a7">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">JSON Spirit library from…</span></div></nav>
+<main class="in">
+<h1>JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 10 February 2010 · SVN r58 · release v0.2.2 · 13 files, +1,968 −0</p>
+<p class="actions"><a class="btn" href="../../#t-c75990a46a7">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/75990a46a7e4999729ff67c4268c2241c98e486f" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>json/LICENSE.txt</code></summary><pre><code>@@ -0,0 +1,24 @@
++The MIT License
++
++Copyright (c) 2007 - 2009 John W. Wilkinson
++
++Permission is hereby granted, free of charge, to any person
++obtaining a copy of this software and associated documentation
++files (the &quot;Software&quot;), to deal in the Software without
++restriction, including without limitation the rights to use,
++copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the
++Software is furnished to do so, subject to the following
++conditions:
++
++The above copyright notice and this permission notice shall be
++included in all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
++EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++OTHER DEALINGS IN THE SOFTWARE.</code></pre></details><details><summary><code>json/json_spirit.h</code></summary><pre><code>@@ -0,0 +1,18 @@
++#ifndef JSON_SPIRIT
++#define JSON_SPIRIT
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &quot;json_spirit_value.h&quot;
++#include &quot;json_spirit_reader.h&quot;
++#include &quot;json_spirit_writer.h&quot;
++#include &quot;json_spirit_utils.h&quot;
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_error_position.h</code></summary><pre><code>@@ -0,0 +1,54 @@
++#ifndef JSON_SPIRIT_ERROR_POSITION
++#define JSON_SPIRIT_ERROR_POSITION
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &lt;string&gt;
++
++namespace json_spirit
++{
++    // An Error_position exception is thrown by the &quot;read_or_throw&quot; functions below on finding an error.
++    // Note the &quot;read_or_throw&quot; functions are around 3 times slower than the standard functions &quot;read&quot; 
++    // functions that return a bool.
++    //
++    struct Error_position
++    {
++        Error_position();
++        Error_position( unsigned int line, unsigned int column, const std::string&amp; reason );
++        bool operator==( const Error_position&amp; lhs ) const;
++        unsigned int line_;
++        unsigned int column_;
++        std::string reason_;
++    };
++
++    inline Error_position::Error_position()
++    :   line_( 0 )
++    ,   column_( 0 )
++    {
++    }
++
++    inline Error_position::Error_position( unsigned int line, unsigned int column, const std::string&amp; reason )
++    :   line_( line )
++    ,   column_( column )
++    ,   reason_( reason )
++    {
++    }
++
++    inline bool Error_position::operator==( const Error_position&amp; lhs ) const
++    {
++        if( this == &amp;lhs ) return true;
++
++        return ( reason_ == lhs.reason_ ) &amp;&amp;
++               ( line_   == lhs.line_ ) &amp;&amp;
++               ( column_ == lhs.column_ ); 
++}
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_reader.cpp</code></summary><pre><code>@@ -0,0 +1,137 @@
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#include &quot;json_spirit_reader.h&quot;
++#include &quot;json_spirit_reader_template.h&quot;
++
++using namespace json_spirit;
++
++bool json_spirit::read( const std::string&amp; s, Value&amp; value )
++{
++    return read_string( s, value );
++}
++
++void json_spirit::read_or_throw( const std::string&amp; s, Value&amp; value )
++{
++    read_string_or_throw( s, value );
++}
++
++bool json_spirit::read( std::istream&amp; is, Value&amp; value )
++{
++    return read_stream( is, value );
++}
++
++void json_spirit::read_or_throw( std::istream&amp; is, Value&amp; value )
++{
++    read_stream_or_throw( is, value );
++}
++
++bool json_spirit::read( std::string::const_iterator&amp; begin, std::string::const_iterator end, Value&amp; value )
++{
++    return read_range( begin, end, value );
++}
++
++void json_spirit::read_or_throw( std::string::const_iterator&amp; begin, std::string::const_iterator end, Value&amp; value )
++{
++    begin = read_range_or_throw( begin, end, value );
++}
++
++#ifndef BOOST_NO_STD_WSTRING
++
++bool json_spirit::read( const std::wstring&amp; s, wValue&amp; value )
++{
++    return read_string( s, value );
++}
++
++void json_spirit::read_or_throw( const std::wstring&amp; s, wValue&amp; value )
++{
++    read_string_or_throw( s, value );
++}
++
++bool json_spirit::read( std::wistream&amp; is, wValue&amp; value )
++{
++    return read_stream( is, value );
++}
++
++void json_spirit::read_or_throw( std::wistream&amp; is, wValue&amp; value )
++{
++    read_stream_or_throw( is, value );
++}
++
++bool json_spirit::read( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wValue&amp; value )
++{
++    return read_range( begin, end, value );
++}
++
++void json_spirit::read_or_throw( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wValue&amp; value )
++{
++    begin = read_range_or_throw( begin, end, value );
++}
++
++#endif
++
++bool json_spirit::read( const std::string&amp; s, mValue&amp; value )
++{
++    return read_string( s, value );
++}
++
++void json_spirit::read_or_throw( const std::string&amp; s, mValue&amp; value )
++{
++    read_string_or_throw( s, value );
++}
++
++bool json_spirit::read( std::istream&amp; is, mValue&amp; value )
++{
++    return read_stream( is, value );
++}
++
++void json_spirit::read_or_throw( std::istream&amp; is, mValue&amp; value )
++{
++    read_stream_or_throw( is, value );
++}
++
++bool json_spirit::read( std::string::const_iterator&amp; begin, std::string::const_iterator end, mValue&amp; value )
++{
++    return read_range( begin, end, value );
++}
++
++void json_spirit::read_or_throw( std::string::const_iterator&amp; begin, std::string::const_iterator end, mValue&amp; value )
++{
++    begin = read_range_or_throw( begin, end, value );
++}
++
++#ifndef BOOST_NO_STD_WSTRING
++
++bool json_spirit::read( const std::wstring&amp; s, wmValue&amp; value )
++{
++    return read_string( s, value );
++}
++
++void json_spirit::read_or_throw( const std::wstring&amp; s, wmValue&amp; value )
++{
++    read_string_or_throw( s, value );
++}
++
++bool json_spirit::read( std::wistream&amp; is, wmValue&amp; value )
++{
++    return read_stream( is, value );
++}
++
++void json_spirit::read_or_throw( std::wistream&amp; is, wmValue&amp; value )
++{
++    read_stream_or_throw( is, value );
++}
++
++bool json_spirit::read( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wmValue&amp; value )
++{
++    return read_range( begin, end, value );
++}
++
++void json_spirit::read_or_throw( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wmValue&amp; value )
++{
++    begin = read_range_or_throw( begin, end, value );
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_reader.h</code></summary><pre><code>@@ -0,0 +1,62 @@
++#ifndef JSON_SPIRIT_READER
++#define JSON_SPIRIT_READER
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &quot;json_spirit_value.h&quot;
++#include &quot;json_spirit_error_position.h&quot;
++#include &lt;iostream&gt;
++
++namespace json_spirit
++{
++    // functions to reads a JSON values
++
++    bool read( const std::string&amp; s, Value&amp; value );
++    bool read( std::istream&amp; is,     Value&amp; value );
++    bool read( std::string::const_iterator&amp; begin, std::string::const_iterator end, Value&amp; value );
++
++    void read_or_throw( const std::string&amp; s, Value&amp; value );  
++    void read_or_throw( std::istream&amp; is,     Value&amp; value );
++    void read_or_throw( std::string::const_iterator&amp; begin, std::string::const_iterator end, Value&amp; value );
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    bool read( const std::wstring&amp; s, wValue&amp; value );
++    bool read( std::wistream&amp;  is,    wValue&amp; value );
++    bool read( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wValue&amp; value );    
++
++    void read_or_throw( const std::wstring&amp; s, wValue&amp; value );
++    void read_or_throw( std::wistream&amp; is,     wValue&amp; value );
++    void read_or_throw( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wValue&amp; value );
++
++#endif
++
++    bool read( const std::string&amp; s, mValue&amp; value );
++    bool read( std::istream&amp; is,     mValue&amp; value );
++    bool read( std::string::const_iterator&amp; begin, std::string::const_iterator end, mValue&amp; value );
++
++    void read_or_throw( const std::string&amp; s, mValue&amp; value );  
++    void read_or_throw( std::istream&amp; is,     mValue&amp; value );
++    void read_or_throw( std::string::const_iterator&amp; begin, std::string::const_iterator end, mValue&amp; value );
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    bool read( const std::wstring&amp; s, wmValue&amp; value );
++    bool read( std::wistream&amp; is,     wmValue&amp; value );
++    bool read( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wmValue&amp; value );    
++
++    void read_or_throw( const std::wstring&amp; s, wmValue&amp; value );
++    void read_or_throw( std::wistream&amp; is,     wmValue&amp; value );
++    void read_or_throw( std::wstring::const_iterator&amp; begin, std::wstring::const_iterator end, wmValue&amp; value );
++
++#endif
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_reader_template.h</code></summary><pre><code>@@ -0,0 +1,612 @@
++#ifndef JSON_SPIRIT_READER_TEMPLATE
++#define JSON_SPIRIT_READER_TEMPLATE
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#include &quot;json_spirit_value.h&quot;
++#include &quot;json_spirit_error_position.h&quot;
++
++//#define BOOST_SPIRIT_THREADSAFE  // uncomment for multithreaded use, requires linking to boost.thread
++
++#include &lt;boost/bind.hpp&gt;
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/version.hpp&gt;
++
++#if BOOST_VERSION &gt;= 103800
++    #include &lt;boost/spirit/include/classic_core.hpp&gt;
++    #include &lt;boost/spirit/include/classic_confix.hpp&gt;
++    #include &lt;boost/spirit/include/classic_escape_char.hpp&gt;
++    #include &lt;boost/spirit/include/classic_multi_pass.hpp&gt;
++    #include &lt;boost/spirit/include/classic_position_iterator.hpp&gt;
++    #define spirit_namespace boost::spirit::classic
++#else
++    #include &lt;boost/spirit/core.hpp&gt;
++    #include &lt;boost/spirit/utility/confix.hpp&gt;
++    #include &lt;boost/spirit/utility/escape_char.hpp&gt;
++    #include &lt;boost/spirit/iterator/multi_pass.hpp&gt;
++    #include &lt;boost/spirit/iterator/position_iterator.hpp&gt;
++    #define spirit_namespace boost::spirit
++#endif
++
++namespace json_spirit
++{
++    const spirit_namespace::int_parser &lt; boost::int64_t &gt;  int64_p  = spirit_namespace::int_parser &lt; boost::int64_t  &gt;();
++    const spirit_namespace::uint_parser&lt; boost::uint64_t &gt; uint64_p = spirit_namespace::uint_parser&lt; boost::uint64_t &gt;();
++
++    template&lt; class Iter_type &gt;
++    bool is_eq( Iter_type first, Iter_type last, const char* c_str )
++    {
++        for( Iter_type i = first; i != last; ++i, ++c_str )
++        {
++            if( *c_str == 0 ) return false;
++
++            if( *i != *c_str ) return false;
++        }
++
++        return true;
++    }
++
++    template&lt; class Char_type &gt;
++    Char_type hex_to_num( const Char_type c )
++    {
++        if( ( c &gt;= &#x27;0&#x27; ) &amp;&amp; ( c &lt;= &#x27;9&#x27; ) ) return c - &#x27;0&#x27;;
++        if( ( c &gt;= &#x27;a&#x27; ) &amp;&amp; ( c &lt;= &#x27;f&#x27; ) ) return c - &#x27;a&#x27; + 10;
++        if( ( c &gt;= &#x27;A&#x27; ) &amp;&amp; ( c &lt;= &#x27;F&#x27; ) ) return c - &#x27;A&#x27; + 10;
++        return 0;
++    }
++
++    template&lt; class Char_type, class Iter_type &gt;
++    Char_type hex_str_to_char( Iter_type&amp; begin )
++    {
++        const Char_type c1( *( ++begin ) );
++        const Char_type c2( *( ++begin ) );
++
++        return ( hex_to_num( c1 ) &lt;&lt; 4 ) + hex_to_num( c2 );
++    }       
++
++    template&lt; class Char_type, class Iter_type &gt;
++    Char_type unicode_str_to_char( Iter_type&amp; begin )
++    {
++        const Char_type c1( *( ++begin ) );
++        const Char_type c2( *( ++begin ) );
++        const Char_type c3( *( ++begin ) );
++        const Char_type c4( *( ++begin ) );
++
++        return ( hex_to_num( c1 ) &lt;&lt; 12 ) + 
++               ( hex_to_num( c2 ) &lt;&lt;  8 ) + 
++               ( hex_to_num( c3 ) &lt;&lt;  4 ) + 
++               hex_to_num( c4 );
++    }
++
++    template&lt; class String_type &gt;
++    void append_esc_char_and_incr_iter( String_type&amp; s, 
++                                        typename String_type::const_iterator&amp; begin, 
++                                        typename String_type::const_iterator end )
++    {
++        typedef typename String_type::value_type Char_type;
++             
++        const Char_type c2( *begin );
++
++        switch( c2 )
++        {
++            case &#x27;t&#x27;:  s += &#x27;\t&#x27;; break;
++            case &#x27;b&#x27;:  s += &#x27;\b&#x27;; break;
++            case &#x27;f&#x27;:  s += &#x27;\f&#x27;; break;
++            case &#x27;n&#x27;:  s += &#x27;\n&#x27;; break;
++            case &#x27;r&#x27;:  s += &#x27;\r&#x27;; break;
++            case &#x27;\\&#x27;: s += &#x27;\\&#x27;; break;
++            case &#x27;/&#x27;:  s += &#x27;/&#x27;;  break;
++            case &#x27;&quot;&#x27;:  s += &#x27;&quot;&#x27;;  break;
++            case &#x27;x&#x27;:  
++            {
++                if( end - begin &gt;= 3 )  //  expecting &quot;xHH...&quot;
++                {
++                    s += hex_str_to_char&lt; Char_type &gt;( begin );  
++                }
++                break;
++            }
++            case &#x27;u&#x27;:  
++            {
++                if( end - begin &gt;= 5 )  //  expecting &quot;uHHHH...&quot;
++                {
++                    s += unicode_str_to_char&lt; Char_type &gt;( begin );  
++                }
++                break;
++            }
++        }
++    }
++
++    template&lt; class String_type &gt;
++    String_type substitute_esc_chars( typename String_type::const_iterator begin, 
++                                   typename String_type::const_iterator end )
++    {
++        typedef typename String_type::const_iterator Iter_type;
++
++        if( end - begin &lt; 2 ) return String_type( begin, end );
++
++        String_type result;
++        
++        result.reserve( end - begin );
++
++        const Iter_type end_minus_1( end - 1 );
++
++        Iter_type substr_start = begin;
++        Iter_type i = begin;
++
++        for( ; i &lt; end_minus_1; ++i )
++        {
++            if( *i == &#x27;\\&#x27; )
++            {
++                result.append( substr_start, i );
++
++                ++i;  // skip the &#x27;\&#x27;
++             
++                append_esc_char_and_incr_iter( result, i, end );
++
++                substr_start = i + 1;
++            }
++        }
++
++        result.append( substr_start, end );
++
++        return result;
++    }
++
++    template&lt; class String_type &gt;
++    String_type get_str_( typename String_type::const_iterator begin, 
++                       typename String_type::const_iterator end )
++    {
++        assert( end - begin &gt;= 2 );
++
++        typedef typename String_type::const_iterator Iter_type;
++
++        Iter_type str_without_quotes( ++begin );
++        Iter_type end_without_quotes( --end );
++
++        return substitute_esc_chars&lt; String_type &gt;( str_without_quotes, end_without_quotes );
++    }
++
++    inline std::string get_str( std::string::const_iterator begin, std::string::const_iterator end )
++    {
++        return get_str_&lt; std::string &gt;( begin, end );
++    }
++
++    inline std::wstring get_str( std::wstring::const_iterator begin, std::wstring::const_iterator end )
++    {
++        return get_str_&lt; std::wstring &gt;( begin, end );
++    }
++    
++    template&lt; class String_type, class Iter_type &gt;
++    String_type get_str( Iter_type begin, Iter_type end )
++    {
++        const String_type tmp( begin, end );  // convert multipass iterators to string iterators
++
++        return get_str( tmp.begin(), tmp.end() );
++    }
++
++    // this class&#x27;s methods get called by the spirit parse resulting
++    // in the creation of a JSON object or array
++    //
++    // NB Iter_type could be a std::string iterator, wstring iterator, a position iterator or a multipass iterator
++    //
++    template&lt; class Value_type, class Iter_type &gt;
++    class Semantic_actions 
++    {
++    public:
++
++        typedef typename Value_type::Config_type Config_type;
++        typedef typename Config_type::String_type String_type;
++        typedef typename Config_type::Object_type Object_type;
++        typedef typename Config_type::Array_type Array_type;
++        typedef typename String_type::value_type Char_type;
++
++        Semantic_actions( Value_type&amp; value )
++        :   value_( value )
++        ,   current_p_( 0 )
++        {
++        }
++
++        void begin_obj( Char_type c )
++        {
++            assert( c == &#x27;{&#x27; );
++
++            begin_compound&lt; Object_type &gt;();
++        }
++
++        void end_obj( Char_type c )
++        {
++            assert( c == &#x27;}&#x27; );
++
++            end_compound();
++        }
++
++        void begin_array( Char_type c )
++        {
++            assert( c == &#x27;[&#x27; );
++     
++            begin_compound&lt; Array_type &gt;();
++        }
++
++        void end_array( Char_type c )
++        {
++            assert( c == &#x27;]&#x27; );
++
++            end_compound();
++        }
++
++        void new_name( Iter_type begin, Iter_type end )
++        {
++            assert( current_p_-&gt;type() == obj_type );
++
++            name_ = get_str&lt; String_type &gt;( begin, end );
++        }
++
++        void new_str( Iter_type begin, Iter_type end )
++        {
++            add_to_current( get_str&lt; String_type &gt;( begin, end ) );
++        }
++
++        void new_true( Iter_type begin, Iter_type end )
++        {
++            assert( is_eq( begin, end, &quot;true&quot; ) );
++
++            add_to_current( true );
++        }
++
++        void new_false( Iter_type begin, Iter_type end )
++        {
++            assert( is_eq( begin, end, &quot;false&quot; ) );
++
++            add_to_current( false );
++        }
++
++        void new_null( Iter_type begin, Iter_type end )
++        {
++            assert( is_eq( begin, end, &quot;null&quot; ) );
++
++            add_to_current( Value_type() );
++        }
++
++        void new_int( boost::int64_t i )
++        {
++            add_to_current( i );
++        }
++
++        void new_uint64( boost::uint64_t ui )
++        {
++            add_to_current( ui );
++        }
++
++        void new_real( double d )
++        {
++            add_to_current( d );
++        }
++
++    private:
++
++        Semantic_actions&amp; operator=( const Semantic_actions&amp; ); 
++                                    // to prevent &quot;assignment operator could not be generated&quot; warning
++
++        Value_type* add_first( const Value_type&amp; value )
++        {
++            assert( current_p_ == 0 );
++
++            value_ = value;
++            current_p_ = &amp;value_;
++            return current_p_;</code></pre></details><details><summary><code>json/json_spirit_stream_reader.h</code></summary><pre><code>@@ -0,0 +1,70 @@
++#ifndef JSON_SPIRIT_READ_STREAM
++#define JSON_SPIRIT_READ_STREAM
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &quot;json_spirit_reader_template.h&quot;
++
++namespace json_spirit
++{
++    // these classes allows you to read multiple top level contiguous values from a stream,
++    // the normal stream read functions have a bug that prevent multiple top level values 
++    // from being read unless they are separated by spaces
++
++    template&lt; class Istream_type, class Value_type &gt;
++    class Stream_reader
++    {
++    public:
++
++        Stream_reader( Istream_type&amp; is )
++        :   iters_( is )
++        {
++        }
++
++        bool read_next( Value_type&amp; value )
++        {
++            return read_range( iters_.begin_, iters_.end_, value );
++        }
++
++    private:
++
++        typedef Multi_pass_iters&lt; Istream_type &gt; Mp_iters;
++
++        Mp_iters iters_;
++    };
++
++    template&lt; class Istream_type, class Value_type &gt;
++    class Stream_reader_thrower
++    {
++    public:
++
++        Stream_reader_thrower( Istream_type&amp; is )
++        :   iters_( is )
++        ,    posn_begin_( iters_.begin_, iters_.end_ )
++        ,    posn_end_( iters_.end_, iters_.end_ )
++        {
++        }
++
++        void read_next( Value_type&amp; value )
++        {
++            posn_begin_ = read_range_or_throw( posn_begin_, posn_end_, value );
++        }
++
++    private:
++
++        typedef Multi_pass_iters&lt; Istream_type &gt; Mp_iters;
++        typedef spirit_namespace::position_iterator&lt; typename Mp_iters::Mp_iter &gt; Posn_iter_t;
++
++        Mp_iters iters_;
++        Posn_iter_t posn_begin_, posn_end_;
++    };
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_utils.h</code></summary><pre><code>@@ -0,0 +1,61 @@
++#ifndef JSON_SPIRIT_UTILS
++#define JSON_SPIRIT_UTILS
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &quot;json_spirit_value.h&quot;
++#include &lt;map&gt;
++
++namespace json_spirit
++{ 
++    template&lt; class Obj_t, class Map_t &gt;
++    void obj_to_map( const Obj_t&amp; obj, Map_t&amp; mp_obj )
++    {
++        mp_obj.clear();
++
++        for( typename Obj_t::const_iterator i = obj.begin(); i != obj.end(); ++i )
++        {
++            mp_obj[ i-&gt;name_ ] = i-&gt;value_;
++        }
++    }
++
++    template&lt; class Obj_t, class Map_t &gt;
++    void map_to_obj( const Map_t&amp; mp_obj, Obj_t&amp; obj )
++    {
++        obj.clear();
++
++        for( typename Map_t::const_iterator i = mp_obj.begin(); i != mp_obj.end(); ++i )
++        {
++            obj.push_back( typename Obj_t::value_type( i-&gt;first, i-&gt;second ) );
++        }
++    }
++
++    typedef std::map&lt; std::string, Value &gt; Mapped_obj;
++
++#ifndef BOOST_NO_STD_WSTRING
++    typedef std::map&lt; std::wstring, wValue &gt; wMapped_obj;
++#endif
++
++    template&lt; class Object_type, class String_type &gt;
++    const typename Object_type::value_type::Value_type&amp; find_value( const Object_type&amp; obj, const String_type&amp; name )
++    {
++        for( typename Object_type::const_iterator i = obj.begin(); i != obj.end(); ++i )
++        {
++            if( i-&gt;name_ == name )
++            {
++                return i-&gt;value_;
++            }
++        }
++
++        return Object_type::value_type::Value_type::null;
++    }
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_value.cpp</code></summary><pre><code>@@ -0,0 +1,8 @@
++/* Copyright (c) 2007 John W Wilkinson
++
++   This source code can be used for any purpose as long as
++   this comment is retained. */
++
++// json spirit version 2.00
++
++#include &quot;json_spirit_value.h&quot;</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -0,0 +1,532 @@
++#ifndef JSON_SPIRIT_VALUE
++#define JSON_SPIRIT_VALUE
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &lt;vector&gt;
++#include &lt;map&gt;
++#include &lt;string&gt;
++#include &lt;cassert&gt;
++#include &lt;sstream&gt;
++#include &lt;stdexcept&gt;
++#include &lt;boost/config.hpp&gt; 
++#include &lt;boost/cstdint.hpp&gt; 
++#include &lt;boost/shared_ptr.hpp&gt; 
++#include &lt;boost/variant.hpp&gt; 
++
++namespace json_spirit
++{
++    enum Value_type{ obj_type, array_type, str_type, bool_type, int_type, real_type, null_type };
++
++    template&lt; class Config &gt;    // Config determines whether the value uses std::string or std::wstring and
++                                // whether JSON Objects are represented as vectors or maps
++    class Value_impl
++    {
++    public:
++
++        typedef Config Config_type;
++        typedef typename Config::String_type String_type;
++        typedef typename Config::Object_type Object;
++        typedef typename Config::Array_type Array;
++        typedef typename String_type::const_pointer Const_str_ptr;  // eg const char*
++
++        Value_impl();  // creates null value
++        Value_impl( Const_str_ptr      value ); 
++        Value_impl( const String_type&amp; value );
++        Value_impl( const Object&amp;      value );
++        Value_impl( const Array&amp;       value );
++        Value_impl( bool               value );
++        Value_impl( int                value );
++        Value_impl( boost::int64_t     value );
++        Value_impl( boost::uint64_t    value );
++        Value_impl( double             value );
++
++        Value_impl( const Value_impl&amp; other );
++
++        bool operator==( const Value_impl&amp; lhs ) const;
++
++        Value_impl&amp; operator=( const Value_impl&amp; lhs );
++
++        Value_type type() const;
++
++        bool is_uint64() const;
++        bool is_null() const;
++
++        const String_type&amp; get_str()    const;
++        const Object&amp;      get_obj()    const;
++        const Array&amp;       get_array()  const;
++        bool               get_bool()   const;
++        int                get_int()    const;
++        boost::int64_t     get_int64()  const;
++        boost::uint64_t    get_uint64() const;
++        double             get_real()   const;
++
++        Object&amp; get_obj();
++        Array&amp;  get_array();
++
++        template&lt; typename T &gt; T get_value() const;  // example usage: int    i = value.get_value&lt; int &gt;();
++                                                     // or             double d = value.get_value&lt; double &gt;();
++
++        static const Value_impl null;
++
++    private:
++
++        void check_type( const Value_type vtype ) const;
++
++        typedef boost::variant&lt; String_type, 
++                                boost::recursive_wrapper&lt; Object &gt;, boost::recursive_wrapper&lt; Array &gt;, 
++                                bool, boost::int64_t, double &gt; Variant;
++
++        Value_type type_;
++        Variant v_;
++        bool is_uint64_;
++    };
++
++    // vector objects
++
++    template&lt; class Config &gt;
++    struct Pair_impl
++    {
++        typedef typename Config::String_type String_type;
++        typedef typename Config::Value_type Value_type;
++
++        Pair_impl( const String_type&amp; name, const Value_type&amp; value );
++
++        bool operator==( const Pair_impl&amp; lhs ) const;
++
++        String_type name_;
++        Value_type value_;
++    };
++
++    template&lt; class String &gt;
++    struct Config_vector
++    {
++        typedef String String_type;
++        typedef Value_impl&lt; Config_vector &gt; Value_type;
++        typedef Pair_impl &lt; Config_vector &gt; Pair_type;
++        typedef std::vector&lt; Value_type &gt; Array_type;
++        typedef std::vector&lt; Pair_type &gt; Object_type;
++
++        static Value_type&amp; add( Object_type&amp; obj, const String_type&amp; name, const Value_type&amp; value )
++        {
++            obj.push_back( Pair_type( name , value ) );
++
++            return obj.back().value_;
++        }
++                
++        static String_type get_name( const Pair_type&amp; pair )
++        {
++            return pair.name_;
++        }
++                
++        static Value_type get_value( const Pair_type&amp; pair )
++        {
++            return pair.value_;
++        }
++    };
++
++    // typedefs for ASCII
++
++    typedef Config_vector&lt; std::string &gt; Config;
++
++    typedef Config::Value_type  Value;
++    typedef Config::Pair_type   Pair;
++    typedef Config::Object_type Object;
++    typedef Config::Array_type  Array;
++
++    // typedefs for Unicode
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    typedef Config_vector&lt; std::wstring &gt; wConfig;
++
++    typedef wConfig::Value_type  wValue;
++    typedef wConfig::Pair_type   wPair;
++    typedef wConfig::Object_type wObject;
++    typedef wConfig::Array_type  wArray;
++#endif
++
++    // map objects
++
++    template&lt; class String &gt;
++    struct Config_map
++    {
++        typedef String String_type;
++        typedef Value_impl&lt; Config_map &gt; Value_type;
++        typedef std::vector&lt; Value_type &gt; Array_type;
++        typedef std::map&lt; String_type, Value_type &gt; Object_type;
++        typedef typename Object_type::value_type Pair_type;
++
++        static Value_type&amp; add( Object_type&amp; obj, const String_type&amp; name, const Value_type&amp; value )
++        {
++            return obj[ name ] = value;
++        }
++                
++        static String_type get_name( const Pair_type&amp; pair )
++        {
++            return pair.first;
++        }
++                
++        static Value_type get_value( const Pair_type&amp; pair )
++        {
++            return pair.second;
++        }
++    };
++
++    // typedefs for ASCII
++
++    typedef Config_map&lt; std::string &gt; mConfig;
++
++    typedef mConfig::Value_type  mValue;
++    typedef mConfig::Object_type mObject;
++    typedef mConfig::Array_type  mArray;
++
++    // typedefs for Unicode
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    typedef Config_map&lt; std::wstring &gt; wmConfig;
++
++    typedef wmConfig::Value_type  wmValue;
++    typedef wmConfig::Object_type wmObject;
++    typedef wmConfig::Array_type  wmArray;
++
++#endif
++
++    ///////////////////////////////////////////////////////////////////////////////////////////////
++    //
++    // implementation
++
++    template&lt; class Config &gt;
++    const Value_impl&lt; Config &gt; Value_impl&lt; Config &gt;::null;
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl()
++    :   type_( null_type )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( const Const_str_ptr value )
++    :   type_( str_type )
++    ,   v_( String_type( value ) )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( const String_type&amp; value )
++    :   type_( str_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( const Object&amp; value )
++    :   type_( obj_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( const Array&amp; value )
++    :   type_( array_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( bool value )
++    :   type_( bool_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( int value )
++    :   type_( int_type )
++    ,   v_( static_cast&lt; boost::int64_t &gt;( value ) )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( boost::int64_t value )
++    :   type_( int_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( boost::uint64_t value )
++    :   type_( int_type )
++    ,   v_( static_cast&lt; boost::int64_t &gt;( value ) )
++    ,   is_uint64_( true )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( double value )
++    :   type_( real_type )
++    ,   v_( value )
++    ,   is_uint64_( false )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;::Value_impl( const Value_impl&lt; Config &gt;&amp; other )
++    :   type_( other.type() )
++    ,   v_( other.v_ )
++    ,   is_uint64_( other.is_uint64_ )
++    {
++    }
++
++    template&lt; class Config &gt;
++    Value_impl&lt; Config &gt;&amp; Value_impl&lt; Config &gt;::operator=( const Value_impl&amp; lhs )
++    {</code></pre></details><details><summary><code>json/json_spirit_writer.cpp</code></summary><pre><code>@@ -0,0 +1,95 @@
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#include &quot;json_spirit_writer.h&quot;
++#include &quot;json_spirit_writer_template.h&quot;
++
++void json_spirit::write( const Value&amp; value, std::ostream&amp; os )
++{
++    write_stream( value, os, false );
++}
++
++void json_spirit::write_formatted( const Value&amp; value, std::ostream&amp; os )
++{
++    write_stream( value, os, true );
++}
++
++std::string json_spirit::write( const Value&amp; value )
++{
++    return write_string( value, false );
++}
++
++std::string json_spirit::write_formatted( const Value&amp; value )
++{
++    return write_string( value, true );
++}
++
++#ifndef BOOST_NO_STD_WSTRING
++
++void json_spirit::write( const wValue&amp; value, std::wostream&amp; os )
++{
++    write_stream( value, os, false );
++}
++
++void json_spirit::write_formatted( const wValue&amp; value, std::wostream&amp; os )
++{
++    write_stream( value, os, true );
++}
++
++std::wstring json_spirit::write( const wValue&amp;  value )
++{
++    return write_string( value, false );
++}
++
++std::wstring json_spirit::write_formatted( const wValue&amp;  value )
++{
++    return write_string( value, true );
++}
++
++#endif
++
++void json_spirit::write( const mValue&amp; value, std::ostream&amp; os )
++{
++    write_stream( value, os, false );
++}
++
++void json_spirit::write_formatted( const mValue&amp; value, std::ostream&amp; os )
++{
++    write_stream( value, os, true );
++}
++
++std::string json_spirit::write( const mValue&amp; value )
++{
++    return write_string( value, false );
++}
++
++std::string json_spirit::write_formatted( const mValue&amp; value )
++{
++    return write_string( value, true );
++}
++
++#ifndef BOOST_NO_STD_WSTRING
++
++void json_spirit::write( const wmValue&amp; value, std::wostream&amp; os )
++{
++    write_stream( value, os, false );
++}
++
++void json_spirit::write_formatted( const wmValue&amp; value, std::wostream&amp; os )
++{
++    write_stream( value, os, true );
++}
++
++std::wstring json_spirit::write( const wmValue&amp;  value )
++{
++    return write_string( value, false );
++}
++
++std::wstring json_spirit::write_formatted( const wmValue&amp;  value )
++{
++    return write_string( value, true );
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_writer.h</code></summary><pre><code>@@ -0,0 +1,50 @@
++#ifndef JSON_SPIRIT_WRITER
++#define JSON_SPIRIT_WRITER
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#if defined(_MSC_VER) &amp;&amp; (_MSC_VER &gt;= 1020)
++# pragma once
++#endif
++
++#include &quot;json_spirit_value.h&quot;
++#include &lt;iostream&gt;
++
++namespace json_spirit
++{
++    // functions to convert JSON Values to text, 
++    // the &quot;formatted&quot; versions add whitespace to format the output nicely
++
++    void         write          ( const Value&amp; value, std::ostream&amp;  os );
++    void         write_formatted( const Value&amp; value, std::ostream&amp;  os );
++    std::string  write          ( const Value&amp; value );
++    std::string  write_formatted( const Value&amp; value );
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    void         write          ( const wValue&amp; value, std::wostream&amp; os );
++    void         write_formatted( const wValue&amp; value, std::wostream&amp; os );
++    std::wstring write          ( const wValue&amp; value );
++    std::wstring write_formatted( const wValue&amp; value );
++
++#endif
++
++    void         write          ( const mValue&amp; value, std::ostream&amp;  os );
++    void         write_formatted( const mValue&amp; value, std::ostream&amp;  os );
++    std::string  write          ( const mValue&amp; value );
++    std::string  write_formatted( const mValue&amp; value );
++
++#ifndef BOOST_NO_STD_WSTRING
++
++    void         write          ( const wmValue&amp; value, std::wostream&amp; os );
++    void         write_formatted( const wmValue&amp; value, std::wostream&amp; os );
++    std::wstring write          ( const wmValue&amp; value );
++    std::wstring write_formatted( const wmValue&amp; value );
++
++#endif
++}
++
++#endif</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -0,0 +1,245 @@
++#ifndef JSON_SPIRIT_WRITER_TEMPLATE
++#define JSON_SPIRIT_WRITER_TEMPLATE
++
++//          Copyright John W. Wilkinson 2007 - 2009.
++// Distributed under the MIT License, see accompanying file LICENSE.txt
++
++// json spirit version 4.03
++
++#include &quot;json_spirit_value.h&quot;
++
++#include &lt;cassert&gt;
++#include &lt;sstream&gt;
++#include &lt;iomanip&gt;
++
++namespace json_spirit
++{
++    inline char to_hex_char( unsigned int c )
++    {
++        assert( c &lt;= 0xF );
++
++        const char ch = static_cast&lt; char &gt;( c );
++
++        if( ch &lt; 10 ) return &#x27;0&#x27; + ch;
++
++        return &#x27;A&#x27; - 10 + ch;
++    }
++
++    template&lt; class String_type &gt;
++    String_type non_printable_to_string( unsigned int c )
++    {
++        typedef typename String_type::value_type Char_type;
++
++        String_type result( 6, &#x27;\\&#x27; );
++
++        result[1] = &#x27;u&#x27;;
++
++        result[ 5 ] = to_hex_char( c &amp; 0x000F ); c &gt;&gt;= 4;
++        result[ 4 ] = to_hex_char( c &amp; 0x000F ); c &gt;&gt;= 4;
++        result[ 3 ] = to_hex_char( c &amp; 0x000F ); c &gt;&gt;= 4;
++        result[ 2 ] = to_hex_char( c &amp; 0x000F );
++
++        return result;
++    }
++
++    template&lt; typename Char_type, class String_type &gt;
++    bool add_esc_char( Char_type c, String_type&amp; s )
++    {
++        switch( c )
++        {
++            case &#x27;&quot;&#x27;:  s += to_str&lt; String_type &gt;( &quot;\\\&quot;&quot; ); return true;
++            case &#x27;\\&#x27;: s += to_str&lt; String_type &gt;( &quot;\\\\&quot; ); return true;
++            case &#x27;\b&#x27;: s += to_str&lt; String_type &gt;( &quot;\\b&quot;  ); return true;
++            case &#x27;\f&#x27;: s += to_str&lt; String_type &gt;( &quot;\\f&quot;  ); return true;
++            case &#x27;\n&#x27;: s += to_str&lt; String_type &gt;( &quot;\\n&quot;  ); return true;
++            case &#x27;\r&#x27;: s += to_str&lt; String_type &gt;( &quot;\\r&quot;  ); return true;
++            case &#x27;\t&#x27;: s += to_str&lt; String_type &gt;( &quot;\\t&quot;  ); return true;
++        }
++
++        return false;
++    }
++
++    template&lt; class String_type &gt;
++    String_type add_esc_chars( const String_type&amp; s )
++    {
++        typedef typename String_type::const_iterator Iter_type;
++        typedef typename String_type::value_type     Char_type;
++
++        String_type result;
++
++        const Iter_type end( s.end() );
++
++        for( Iter_type i = s.begin(); i != end; ++i )
++        {
++            const Char_type c( *i );
++
++            if( add_esc_char( c, result ) ) continue;
++
++            const wint_t unsigned_c( ( c &gt;= 0 ) ? c : 256 + c );
++
++            if( iswprint( unsigned_c ) )
++            {
++                result += c;
++            }
++            else
++            {
++                result += non_printable_to_string&lt; String_type &gt;( unsigned_c );
++            }
++        }
++
++        return result;
++    }
++
++    // this class generates the JSON text,
++    // it keeps track of the indentation level etc.
++    //
++    template&lt; class Value_type, class Ostream_type &gt;
++    class Generator
++    {
++        typedef typename Value_type::Config_type Config_type;
++        typedef typename Config_type::String_type String_type;
++        typedef typename Config_type::Object_type Object_type;
++        typedef typename Config_type::Array_type Array_type;
++        typedef typename String_type::value_type Char_type;
++        typedef typename Object_type::value_type Obj_member_type;
++
++    public:
++
++        Generator( const Value_type&amp; value, Ostream_type&amp; os, bool pretty )
++        :   os_( os )
++        ,   indentation_level_( 0 )
++        ,   pretty_( pretty )
++        {
++            output( value );
++        }
++
++    private:
++
++        void output( const Value_type&amp; value )
++        {
++            switch( value.type() )
++            {
++                case obj_type:   output( value.get_obj() );   break;
++                case array_type: output( value.get_array() ); break;
++                case str_type:   output( value.get_str() );   break;
++                case bool_type:  output( value.get_bool() );  break;
++                case int_type:   output_int( value );         break;
++                case real_type:  os_ &lt;&lt; std::showpoint &lt;&lt; std::setprecision( 16 ) 
++                                     &lt;&lt; value.get_real();     break;
++                case null_type:  os_ &lt;&lt; &quot;null&quot;;               break;
++                default: assert( false );
++            }
++        }
++
++        void output( const Object_type&amp; obj )
++        {
++            output_array_or_obj( obj, &#x27;{&#x27;, &#x27;}&#x27; );
++        }
++
++        void output( const Array_type&amp; arr )
++        {
++            output_array_or_obj( arr, &#x27;[&#x27;, &#x27;]&#x27; );
++        }
++
++        void output( const Obj_member_type&amp; member )
++        {
++            output( Config_type::get_name( member ) ); space(); 
++            os_ &lt;&lt; &#x27;:&#x27;; space(); 
++            output( Config_type::get_value( member ) );
++        }
++
++        void output_int( const Value_type&amp; value )
++        {
++            if( value.is_uint64() )
++            {
++                os_ &lt;&lt; value.get_uint64();
++            }
++            else
++            {
++               os_ &lt;&lt; value.get_int64();
++            }
++        }
++
++        void output( const String_type&amp; s )
++        {
++            os_ &lt;&lt; &#x27;&quot;&#x27; &lt;&lt; add_esc_chars( s ) &lt;&lt; &#x27;&quot;&#x27;;
++        }
++
++        void output( bool b )
++        {
++            os_ &lt;&lt; to_str&lt; String_type &gt;( b ? &quot;true&quot; : &quot;false&quot; );
++        }
++
++        template&lt; class T &gt;
++        void output_array_or_obj( const T&amp; t, Char_type start_char, Char_type end_char )
++        {
++            os_ &lt;&lt; start_char; new_line();
++
++            ++indentation_level_;
++            
++            for( typename T::const_iterator i = t.begin(); i != t.end(); ++i )
++            {
++                indent(); output( *i );
++
++                typename T::const_iterator next = i;
++
++                if( ++next != t.end())
++                {
++                    os_ &lt;&lt; &#x27;,&#x27;;
++                }
++
++                new_line();
++            }
++
++            --indentation_level_;
++
++            indent(); os_ &lt;&lt; end_char;
++        }
++        
++        void indent()
++        {
++            if( !pretty_ ) return;
++
++            for( int i = 0; i &lt; indentation_level_; ++i )
++            { 
++                os_ &lt;&lt; &quot;    &quot;;
++            }
++        }
++
++        void space()
++        {
++            if( pretty_ ) os_ &lt;&lt; &#x27; &#x27;;
++        }
++
++        void new_line()
++        {
++            if( pretty_ ) os_ &lt;&lt; &#x27;\n&#x27;;
++        }
++
++        Generator&amp; operator=( const Generator&amp; ); // to prevent &quot;assignment operator could not be generated&quot; warning
++
++        Ostream_type&amp; os_;
++        int indentation_level_;
++        bool pretty_;
++    };
++
++    template&lt; class Value_type, class Ostream_type &gt;
++    void write_stream( const Value_type&amp; value, Ostream_type&amp; os, bool pretty )
++    {
++        Generator&lt; Value_type, Ostream_type &gt;( value, os, pretty );
++    }
++
++    template&lt; class Value_type &gt;
++    typename Value_type::String_type write_string( const Value_type&amp; value, bool pretty )
++    {
++        typedef typename Value_type::String_type::value_type Char_type;
++
++        std::basic_ostringstream&lt; Char_type &gt; os;
++
++        write_stream( value, os, pretty );
++
++        return os.str();
++    }
++}
++
++#endif</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c41226d/">← revert revision 56, going in different direction with…</a><a rel="next" href="../../commits/fa9dbd6/">better error message in check_type(), tell the types by… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

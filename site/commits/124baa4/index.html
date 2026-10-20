@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>build-osx.txt build instructions… (r77) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 May 2010: build-osx.txt build instructions and makefile.osx from Laszlo. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/124baa4/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="build-osx.txt build instructions… (r77) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 May 2010: build-osx.txt build instructions and makefile.osx from Laszlo. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/124baa4/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="build-osx.txt build instructions… (r77) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 May 2010: build-osx.txt build instructions and makefile.osx from Laszlo. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "build-osx.txt build instructions and makefile.osx from Laszlo", "url": "https://satoshimail.pages.dev/commits/124baa4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-05-25T23:58:27Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/124baa4ccbf3ecb78eab7ecdd40105fb54ee0369"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "build-osx.txt build instructions and…", "item": "https://satoshimail.pages.dev/commits/124baa4/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c124baa4ccb">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">build-osx.txt build instructions and…</span></div></nav>
+<main class="in">
+<h1>build-osx.txt build instructions and makefile.osx from Laszlo</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 25 May 2010 · SVN r77 · release v0.2.9 · 2 files, +274 −0</p>
+<p class="actions"><a class="btn" href="../../#t-c124baa4ccb">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/124baa4ccbf3ecb78eab7ecdd40105fb54ee0369" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-osx.txt</code></summary><pre><code>@@ -0,0 +1,209 @@
++Mac OS X build instructions
++Laszlo Hanyecz (solar@heliacal.net)
++
++
++Tested on 10.5 and 10.6 intel.  PPC is not supported because it&#x27;s big-endian.
++
++All of the commands should be executed in Terminal.app.. it&#x27;s in
++/Applications/Utilities
++
++You need to install XCode with all the options checked so that the compiler
++and everything is available in /usr not just /Developer
++I think it comes on the DVD but you can get the current version from
++http://developer.apple.com
++
++
++1.  Pick a directory to work inside.. something like ~/bitcoin works.  The
++structure I use looks like this:
++(~ is your home directory)
++
++~/bitcoin
++~/bitcoin/trunk         # source code
++~/bitcoin/deps          # dependencies.. like libraries and headers needed to compile
++~/bitcoin/Bitcoin.app   # the application bundle where you can run the app
++
++Just execute: mkdir ~/bitcoin
++This will create the top dir for you..
++
++WARNING: do not use the ~ notation with the configure scripts.. use the full
++name of the directory, for example /Users/james/bitcoin/deps for a user named
++&#x27;james&#x27;.  In my examples I am using &#x27;macosuser&#x27; so make sure you change that.
++
++2.  Check out the trunk version of the bitcoin code from subversion:
++
++cd ~/bitcoin
++svn checkout https://bitcoin.svn.sourceforge.net/svnroot/bitcoin/trunk
++
++This will make ~/bitcoin/trunk for you with all the files from subversion. 
++
++3.  Get and build the dependencies
++
++
++Boost
++-----
++
++Download from http://www.boost.org/users/download/
++I&#x27;m assuming it ended up in ~/Downloads..
++
++mkdir ~/bitcoin/deps
++cd ~/bitcoin/deps
++tar xvjf ~/Downloads/boost_1_42_0.tar.bz2
++cd boost_1_42_0
++./bootstrap.sh
++./bjam architecture=combined address-model=32_64 macosx-version=10.6 macosx-version-min=10.5 link=static runtime-link=static --toolset=darwin --prefix=/Users/macosuser/bitcoin/deps install
++
++This part takes a while.. use your judgement and fix it if something doesn&#x27;t
++build for some reason.
++
++Change the prefix to whatever your directory is (my username in this example
++is macosuser).  I&#x27;m also running on 10.6 so i have macosx-version=10.6  change
++to 10.5 if you&#x27;re using leopard.
++
++This is what my output looked like at the end:
++...failed updating 2 targets...
++...skipped 144 targets...
++...updated 8074 targets...
++
++
++OpenSSL
++-------
++
++Download from http://www.openssl.org/source/
++
++We would like to build this as a 32 bit/64 bit library so we actually build it
++2 times and join it together here..  If you downloaded with safari it already
++uncompressed it so it will just be a tar not a tar.gz
++
++cd ~/bitcoin/deps
++tar xvf ~/Downloads/openssl-1.0.0.tar
++mv openssl-1.0.0 openssl-1.0.0-i386
++tar xvf ~/Downloads/openssl-1.0.0.tar
++mv openssl-1.0.0 openssl-1.0.0-x86_64
++# build i386 (32 bit intel) binary
++cd openssl-1.0.0-i386
++./Configure --prefix=/Users/macosuser/bitcoin/deps --openssldir=/Users/macosuser/deps/openssl darwin-i386-cc &amp;&amp; make
++make install # only do this on one of the architectures, to install the headers
++cd ..
++# build x86_64 (64 bit intel) binary
++cd openssl-1.0.0-x86_64
++./Configure --prefix=/Users/macosuser/bitcoin/deps --openssldir=/Users/macosuser/deps/openssl darwin64-x86_64-cc &amp;&amp; make
++cd ..
++
++# combine the libs
++cd ~/bitcoin/deps
++lipo -arch i386 openssl-1.0.0-i386/libcrypto.a -arch x86_64 openssl-1.0.0-x86_64/libcrypto.a -o lib/libcrypto.a -create
++lipo -arch i386 openssl-1.0.0-i386/libssl.a -arch x86_64 openssl-1.0.0-x86_64/libssl.a -o lib/libssl.a -create
++
++Verify your binaries
++
++file lib/libcrypto.a
++
++output should look like this:
++
++ib/libcrypto.a: Mach-O universal binary with 2 architectures
++lib/libcrypto.a (for architecture i386):	current ar archive random library
++lib/libcrypto.a (for architecture x86_64):	current ar archive random library
++
++
++Berkeley DB
++-----------
++
++Download from http://freshmeat.net/projects/berkeleydb/
++
++cd ~/bitcoin/deps
++tar xvf ~/Downloads/db-4.8.26.tar
++cd db-4.8.26/build_unix
++../dist/configure --prefix=/Users/macosuser/bitcoin/deps --enable-cxx &amp;&amp; make &amp;&amp; make install
++
++
++wxWidgets
++---------
++
++This is the big one..
++
++Check it out from svn
++
++cd ~/bitcoin/deps
++svn checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk wxWidgets-trunk
++
++This will make a wxWidgets-trunk directory in deps.
++
++Use this script snippet, change your prefix to whatever your dir is:
++
++PREFIX=~/bitcoin/deps
++SRCDIR=&quot;$PREFIX/wxWidgets-trunk&quot;
++BUILDDIR=&quot;$SRCDIR/macbuild&quot;
++
++cd &quot;$PREFIX&quot; &amp;&amp;
++#svn checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk wxWidgets-trunk &amp;&amp;
++cd &quot;$SRCDIR&quot; &amp;&amp;
++
++[ -f include/wx/hashmap.h.orig ] || cp include/wx/hashmap.h include/wx/hashmap.h.orig &amp;&amp;
++sed &#x27;s/if wxUSE_STL/if 0 \&amp;\&amp; wxUSE_STL/g&#x27; &lt; include/wx/hashmap.h.orig &gt; include/wx/hashmap.h &amp;&amp;
++
++[ -f include/wx/hashset.h.orig ] || cp include/wx/hashset.h include/wx/hashset.h.orig &amp;&amp;
++sed &#x27;s/if wxUSE_STL/if 0 \&amp;\&amp; wxUSE_STL/g&#x27; &lt; include/wx/hashset.h.orig &gt; include/wx/hashset.h &amp;&amp;
++
++
++
++rm -vrf &quot;$BUILDDIR&quot; &amp;&amp;
++mkdir &quot;$BUILDDIR&quot; &amp;&amp;
++cd &quot;$BUILDDIR&quot; &amp;&amp;
++
++../configure --prefix=&quot;$PREFIX&quot; \
++--with-osx_cocoa \
++--disable-shared \
++--disable-debug_flag \
++--with-macosx-version-min=10.5 \
++--enable-stl \
++--enable-utf8 \
++--enable-universal_binary \
++--with-libjpeg=builtin \
++--with-libpng=builtin \
++--with-regex=builtin \
++--with-libtiff=builtin \
++--with-zlib=builtin \
++--with-expat=builtin \
++--with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk &amp;&amp;
++
++
++find . -name Makefile | 
++while read i; do 
++  echo $i; 
++  sed &#x27;s/-arch i386/-arch i386 -arch x86_64/g&#x27; &lt; &quot;$i&quot; &gt; &quot;$i&quot;.new &amp;&amp; 
++  mv &quot;$i&quot; &quot;$i&quot;.old &amp;&amp; 
++  mv &quot;$i&quot;.new &quot;$i&quot;; 
++done
++
++
++
++make &amp;&amp; 
++make install
++
++
++
++Now you should be able to build bitcoin
++
++cd ~/bitcoin/trunk
++make -f makefile.osx bitcoin
++
++Before you can run it, you need to create an application bundle for Mac OS.
++Create the directories in terminal using mkdir and copy the files into place.
++They are available at http://heliacal.net/~solar/bitcoin/mac-build/
++You need the Info.plist and the .ins file.  The Contents/MacOS/bitcoin file is
++the output of the build.
++Your directory structure should look like this:
++
++Bitcoin.app
++Bitcoin.app/Contents
++Bitcoin.app/Contents/Info.plist
++Bitcoin.app/Contents/MacOS
++Bitcoin.app/Contents/MacOS/bitcoin
++Bitcoin.app/Contents/Resources
++Bitcoin.app/Contents/Resources/BitcoinAppIcon.icns
++
++To run it you can just click the Bitcoin.app in Finder, or just do open
++~/bitcoin/Bitcoin.app
++If you want to run it with arguments you can just run it without backgrounding
++by specifying the full name in terminal:
++~/bitcoin/Bitcoin.app/Contents/MacOS/bitcoin -addnode=192.75.207.66</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -0,0 +1,65 @@
++# Copyright (c) 2009-2010 Satoshi Nakamoto
++# Distributed under the MIT/X11 software license, see the accompanying
++# file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++# Mac OS X makefile for bitcoin
++# Laszlo Hanyecz (solar@heliacal.net)
++
++DEPSDIR=/Users/macosuser/bitcoin/deps
++
++INCLUDEPATHS= \
++ -I&quot;$(DEPSDIR)/include&quot;
++
++LIBPATHS= \
++ -L&quot;$(DEPSDIR)/lib&quot;
++
++WXLIBS=$(shell $(DEPSDIR)/bin/wx-config --libs --static)
++
++LIBS= -dead_strip \
++ $(DEPSDIR)/lib/libdb_cxx-4.8.a \
++ $(DEPSDIR)/lib/libboost_system.a \
++ $(DEPSDIR)/lib/libboost_filesystem.a \
++ $(DEPSDIR)/lib/libcrypto.a 
++
++WXDEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -DNOPCH -DMSG_NOSIGNAL=0
++
++DEBUGFLAGS=-g -DwxDEBUG_LEVEL=0
++# ppc doesn&#x27;t work because we don&#x27;t support big-endian
++CFLAGS=-mmacosx-version-min=10.5 -arch i386 -arch x86_64 -O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
++    script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h init.h sha.h
++
++
++all: bitcoin
++
++
++obj/%.o: %.cpp $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/sha.o: sha.cpp sha.h
++	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
++
++OBJS= \
++    obj/util.o \
++    obj/script.o \
++    obj/db.o \
++    obj/net.o \
++    obj/irc.o \
++    obj/main.o \
++    obj/rpc.o \
++    obj/init.o
++	
++bitcoin: $(OBJS) obj/ui.o obj/uibase.o obj/sha.o
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++
++
++obj/nogui/%.o: %.cpp $(HEADERS)
++	g++ -c $(CFLAGS) -DwxUSE_GUI=0 -o $@ $&lt;
++
++bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++
++
++clean:
++	-rm -f obj/*.o
++	-rm -f obj/nogui/*.o</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2d98de1/">← Mac OS build fixes by laszlo -- version 0.2.8</a><a rel="next" href="../../commits/42605ce/">better prevention of inventory relaying during initial… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>a simple traffic load test run – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 25 July 2010: Was that on the test network? http://bitcointalk.org/index.php?topic=363.0">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p132-a-simple-traffic-load-test-run/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="a simple traffic load test run – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 25 July 2010: Was that on the test network? http://bitcointalk.org/index.php?topic=363.0">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p132-a-simple-traffic-load-test-run/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="a simple traffic load test run – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 25 July 2010: Was that on the test network? http://bitcointalk.org/index.php?topic=363.0">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "a simple traffic load test run", "url": "https://satoshimail.pages.dev/conversations/p132-a-simple-traffic-load-test-run/", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-07-25T13:02:28Z", "text": "I have seen some speculation about scalability and denial of service by spam transactions in the IRC channel so I thought it would be a good idea to try a test. I set up a stupid little bitcoind script on a couple of my linux machines to send 1000 tiny transaction to a third machine as quickly as they would run. I asked on IRC for any obvious reasons why I shouldn't do it and got one supporting response thinking it was a good idea to try and one reserved response saying I should ask here first. I brashly decided to go ahead with it. The scripts just printed a countdown of the number of remaining steps in the loop and the output of the bitcoind sendtoaddress command, normally just \"sent\". They both started out quickly till there was something like 600 transactions submitted then both senders started to slow down perceptibly. One was quite a bit faster than the other, 3 or 4 times faster, due I think to a faster CPU. I thought at first it was the clients throtteling me to save the net from overload or something but that was just speculation. We later figured maybe it was the databases getting a bit slow on my old disks. Then one of my machines suddenly seemed to speed up. But it wasn't really. It was an error, the bitcoind daemon had died. A little bit of investigation found the .bitcoin drive was full so you can't fault the program for giving up there! grin The other machine was grinding pretty slow by then down to maybe 5 sec per transaction or so just judging by eye. It eventually finished after about 50 minutes. no errors at all. The machine that crashed after I gave it some more disk space started right back up and showed it had only sent 424 transactions so there is an initial benchmark then - 1424 transactions in 50 minutes. It should be easy to get more. I think the main thing slowing them down was the .bitcoin/database directory. They seemed to get a lot of data written to them some 184MB on the one that ran outa disk space and 1341 MB on the one that did…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-07-25T13:09:05Z", "text": "I was able to run IRC and discus the progress of the test thruout so I don't think I was anywhere near saturating any network resources."}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-07-25T13:13:16Z", "text": "There was a lot of slowdown in the rate of transactions during the second half of the test. If this was a problem with the network, then I would be very worried about future denial of service attacks. Hopefully a bigger test can be organized later. Here is a packet capture of the event (from an \"edge\" computer with only one connection) if anyone is interested in exact times and stuff. http://www.freefilehostingnow.com/filedownload.aspx?code=6bb2dbeea18e6a419daaadda5798bb05ec6b"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-25T14:46:33Z", "text": "Was that on the test network? http://bitcointalk.org/index.php?topic=363.0"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-07-25T15:00:43Z", "text": "No."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-25T15:29:52Z", "text": "Please do these tests on the test network. That's what it's for. Thanks."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "a simple traffic load test run", "item": "https://satoshimail.pages.dev/conversations/p132-a-simple-traffic-load-test-run/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p132">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">a simple traffic load test run</span></div></nav>
+<main class="in">
+<h1>a simple traffic load test run</h1>
+<p class="lead">BitcoinTalk forum · 6 messages · from 25 July 2010 · with Satoshi Nakamoto, lfm, theymos</p>
+<p class="actions"><a class="btn" href="../../#t-p132">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/132/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-07-25T13:02:28Z">25 July 2010, 13:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5685#msg5685" rel="nofollow noopener">original</a></span></header>
+<div class="t">I have seen some speculation about scalability and denial of service by spam transactions in the IRC channel so I thought it would be a good idea to try a test.
+
+I set up a stupid little bitcoind script on a couple of my linux machines to send 1000 tiny transaction to a third machine as quickly as they would run.
+
+I asked on IRC for any obvious reasons why I shouldn&#x27;t do it and got one supporting response thinking it was a good idea to try and one reserved response saying I should ask here first. I brashly decided to go ahead with it.
+
+The scripts just printed a countdown of the number of remaining steps in the loop and the output of the bitcoind sendtoaddress command, normally just &quot;sent&quot;.
+
+They both started out quickly till there was something like 600 transactions submitted then both senders started to slow down perceptibly. One was quite a bit faster than the other, 3 or 4 times faster, due I think to a faster CPU. I thought at first it was the clients throtteling me to save the net from overload or something but that was just speculation. We later figured maybe it was the databases getting a bit slow on my old disks.
+
+Then one of my machines suddenly seemed to speed up. But it wasn&#x27;t really. It was an error, the bitcoind daemon had died. A little bit of investigation found the .bitcoin drive was full so you can&#x27;t fault the program for giving up there! grin
+
+The other machine was grinding pretty slow by then down to maybe 5 sec per transaction or so just judging by eye. It eventually finished after about 50 minutes. no errors at all.
+
+The machine that crashed after I gave it some more disk space started right back up and showed it had only sent 424 transactions so there is an initial benchmark then - 1424 transactions in 50 minutes. It should be easy to get more.
+
+I think the main thing slowing them down was the .bitcoin/database directory. They seemed to get a lot of data written to them some 184MB on the one that ran outa disk space and 1341 MB on the one that did the full 1000 transactions.
+
+It seems another test with more people more distributed around the net might be in order to try to shake down any potential problems.
+
+The net seemed to shrug it off as if nothing special happened anyway so that is a positive result. The clients mostly did just what they were told and expected except for a possible performance problem with the database.
+
+Thats all I can think of for now.</div></article><article class="msg" id="m1">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-07-25T13:09:05Z">25 July 2010, 13:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5686#msg5686" rel="nofollow noopener">original</a></span></header>
+<div class="t">I was able to run IRC and discus the progress of the test thruout so I don&#x27;t think I was anywhere near saturating any network resources.</div></article><article class="msg" id="m2">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-07-25T13:13:16Z">25 July 2010, 13:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5687#msg5687" rel="nofollow noopener">original</a></span></header>
+<div class="t">There was a lot of slowdown in the rate of transactions during the second half of the test. If this was a problem with the network, then I would be very worried about future denial of service attacks. Hopefully a bigger test can be organized later.
+
+Here is a packet capture of the event (from an &quot;edge&quot; computer with only one connection) if anyone is interested in exact times and stuff.
+<a href="http://www.freefilehostingnow.com/filedownload.aspx?code=6bb2dbeea18e6a419daaadda5798bb05ec6b" rel="nofollow noopener">http://www.freefilehostingnow.com/filedownload.aspx?code=6bb2dbeea18e6a419daaadda5798bb05ec6b</a></div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T14:46:33Z">25 July 2010, 14:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5694#msg5694" rel="nofollow noopener">original</a></span></header>
+<div class="t">Was that on the test network?
+<a href="http://bitcointalk.org/index.php?topic=363.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=363.0</a></div></article><article class="msg" id="m4">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-07-25T15:00:43Z">25 July 2010, 15:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5696#msg5696" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 25, 2010, 02:46:33 PM</div><div class="t">Was that on the test network?
+<a href="http://bitcointalk.org/index.php?topic=363.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=363.0</a></div></blockquote><div class="t">No.</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-25T15:29:52Z">25 July 2010, 15:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=567.msg5698#msg5698" rel="nofollow noopener">original</a></span></header>
+<div class="t">Please do these tests on the test network.  That&#x27;s what it&#x27;s for.  Thanks.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p131-version-0-3-2-5-please-test/">← Version 0.3.2.5 -- please test!</a><a rel="next" href="../../conversations/p133-bitcoin-0-3-3-released-please-upgrade/">Bitcoin 0.3.3 released -- PLEASE UPGRADE →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

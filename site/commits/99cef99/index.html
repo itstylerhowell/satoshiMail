@@ -1,0 +1,1531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/99cef99/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/99cef99/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut", "url": "https://satoshimail.pages.dev/commits/99cef99/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-21T01:08:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/99cef996c788755af95a0a614d7154a30928d4b9"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "flush wallet.dat, multi-proc, reorg…", "item": "https://satoshimail.pages.dev/commits/99cef99/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c99cef996c7">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">flush wallet.dat, multi-proc, reorg…</span></div></nav>
+<main class="in">
+<h1>flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 21 October 2009 · SVN r15 · release v0.2.0 · 20 files, +1,968 −1,373</p>
+<p class="actions"><a class="btn" href="../../#t-c99cef996c7">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/99cef996c788755af95a0a614d7154a30928d4b9" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build.txt</code></summary><pre><code>@@ -1,4 +1,4 @@
+-BitCoin v0.1.5 ALPHA
++BitCoin v0.1.6 ALPHA
+ 
+ Copyright (c) 2009 Satoshi Nakamoto
+ Distributed under the MIT/X11 software license, see the accompanying
+@@ -10,7 +10,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ 
+ Compilers Supported
+ -------------------
+-MinGW GCC (v3.4.5)
++MinGW GCC (currently v3.4.5)
+ Microsoft Visual C++ 6.0 SP6
+ 
+ 
+@@ -31,6 +31,16 @@ Berkeley DB    New BSD license with additional requirement that linked software
+ Boost          MIT-like license
+ 
+ 
++Notes
++-----
++The UI layout is edited with wxFormBuilder.  Open the project file
++uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
++classes that do the rote work of constructing all the UI elements.
++
++The release is built with GCC and then &quot;strip bitcoin.exe&quot; to strip the debug
++symbols, which reduces the executable size by about 90%.
++
++
+ OpenSSL
+ -------
+ Bitcoin does not use any encryption.  If you want to do a no-everything
+@@ -47,7 +57,7 @@ Add this to crypto\err\err_all.c before the ERR_load_crypto_strings line:
+ 
+ Edit ms\mingw32.bat and replace the Configure line&#x27;s parameters with this
+ no-everything list.  You have to put this in the batch file because batch
+-files can&#x27;t handle more than 9 parameters.
++files can&#x27;t take more than 9 command line parameters.
+   perl Configure mingw threads no-rc2 no-rc4 no-rc5 no-idea no-des no-bf no-cast no-aes no-camellia no-seed no-rsa no-dh
+ 
+ Also REM out the following line in ms\mingw32.bat.  The build fails after it&#x27;s
+@@ -64,7 +74,7 @@ If you want to use it with MSVC, generate the .lib file
+ 
+ Berkeley DB
+ -----------
+-MinGW with MSYS:
++Using MinGW and MSYS:
+ cd \DB\build_unix
+ sh ../dist/configure --enable-mingw --enable-cxx
+ make
+@@ -72,5 +82,6 @@ make
+ 
+ Boost
+ -----
+-You may need Boost version 1.35 to build with MSVC 6.0.  I couldn&#x27;t get
+-version 1.37 to compile with MSVC 6.0.
++If you have trouble compiling Boost with Microsoft Visual C++ 6.0, try going
++back to Boost version 1.35.  It looks like they may be starting to reduce
++support for MSVC 6.0.</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -453,11 +453,7 @@ bool CAddrDB::LoadAddresses()
+             }
+         }
+ 
+-        //// debug print
+-        printf(&quot;mapAddresses:\n&quot;);
+-        foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+-            item.second.print();
+-        printf(&quot;-----\n&quot;);
++        printf(&quot;Loaded %d addresses\n&quot;, mapAddresses.size());
+ 
+         // Fix for possible bug that manifests in mapAddresses.count in irc.cpp,
+         // just need to call count here and it doesn&#x27;t happen there.  The bug was the
+@@ -501,6 +497,26 @@ bool CReviewDB::WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews)
+ // CWalletDB
+ //
+ 
++CWalletDB::~CWalletDB()
++{
++    // Flush whenever all handles to wallet.dat are closed
++    Close();
++    CRITICAL_BLOCK(cs_db)
++    {
++        map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
++        if (mi != mapFileUseCount.end())
++        {
++            int nRefCount = (*mi).second;
++            if (nRefCount == 0)
++            {
++                dbenv.txn_checkpoint(0, 0, 0);
++                dbenv.lsn_reset(strFile.c_str(), 0);
++                mapFileUseCount.erase(mi++);
++            }
++        }
++    }
++}
++
+ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ {
+     vchDefaultKeyRet.clear();
+@@ -568,34 +584,51 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+             {
+                 ssValue &gt;&gt; vchDefaultKeyRet;
+             }
+-            else if (strType == &quot;setting&quot;)  /// or settings or option or options or config?
++            else if (strType == &quot;setting&quot;)
+             {
+                 string strKey;
+                 ssKey &gt;&gt; strKey;
++
++                // Menu state
++                if (strKey == &quot;fShowGenerated&quot;)     ssValue &gt;&gt; fShowGenerated;
+                 if (strKey == &quot;fGenerateBitcoins&quot;)  ssValue &gt;&gt; fGenerateBitcoins;
++
++                // Options
+                 if (strKey == &quot;nTransactionFee&quot;)    ssValue &gt;&gt; nTransactionFee;
+                 if (strKey == &quot;addrIncoming&quot;)       ssValue &gt;&gt; addrIncoming;
+-                if (strKey == &quot;minimizeToTray&quot;)       ssValue &gt;&gt; minimizeToTray;
+-                if (strKey == &quot;closeToTray&quot;)       ssValue &gt;&gt; closeToTray;
+-                if (strKey == &quot;startOnSysBoot&quot;)       ssValue &gt;&gt; startOnSysBoot;
+-                if (strKey == &quot;askBeforeClosing&quot;)       ssValue &gt;&gt; askBeforeClosing;
+-                if (strKey == &quot;alwaysShowTrayIcon&quot;)       ssValue &gt;&gt; alwaysShowTrayIcon;
++                if (strKey == &quot;fLimitProcessors&quot;)   ssValue &gt;&gt; fLimitProcessors;
++                if (strKey == &quot;nLimitProcessors&quot;)   ssValue &gt;&gt; nLimitProcessors;
++                if (strKey == &quot;fMinimizeToTray&quot;)    ssValue &gt;&gt; fMinimizeToTray;
++                if (strKey == &quot;fMinimizeOnClose&quot;)   ssValue &gt;&gt; fMinimizeOnClose;
+             }
+         }
+     }
+ 
++    printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
+     printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
+     printf(&quot;nTransactionFee = %I64d\n&quot;, nTransactionFee);
+     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());
++    printf(&quot;fMinimizeToTray = %d\n&quot;, fMinimizeToTray);
++    printf(&quot;fMinimizeOnClose = %d\n&quot;, fMinimizeOnClose);
++
++    // The transaction fee setting won&#x27;t be needed for many years to come.
++    // Setting it to zero here in case they set it to something in an earlier version.
++    if (nTransactionFee != 0)
++    {
++        nTransactionFee = 0;
++        WriteSetting(&quot;nTransactionFee&quot;, nTransactionFee);
++    }
+ 
+     return true;
+ }
+ 
+-bool LoadWallet()
++bool LoadWallet(bool&amp; fFirstRunRet)
+ {
++    fFirstRunRet = false;
+     vector&lt;unsigned char&gt; vchDefaultKey;
+     if (!CWalletDB(&quot;cr&quot;).LoadWallet(vchDefaultKey))
+         return false;
++    fFirstRunRet = vchDefaultKey.empty();
+ 
+     if (mapKeys.count(vchDefaultKey))
+     {</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -338,6 +338,7 @@ class CWalletDB : public CDB
+ {
+ public:
+     CWalletDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;wallet.dat&quot;, pszMode, fTxn) { }
++    ~CWalletDB();
+ private:
+     CWalletDB(const CWalletDB&amp;);
+     void operator=(const CWalletDB&amp;);
+@@ -412,7 +413,7 @@ public:
+     bool LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet);
+ };
+ 
+-bool LoadWallet();
++bool LoadWallet(bool&amp; fFirstRunRet);
+ 
+ inline bool SetAddressBookName(const string&amp; strAddress, const string&amp; strName)
+ {</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -10,11 +10,11 @@
+ #ifdef _WIN32_WINNT
+ #undef _WIN32_WINNT
+ #endif
+-#define _WIN32_WINNT 0x0500
++#define _WIN32_WINNT 0x0400
+ #ifdef _WIN32_IE
+ #undef _WIN32_IE
+ #endif
+-#define _WIN32_IE 0x0500
++#define _WIN32_IE 0x0400
+ #define WIN32_LEAN_AND_MEAN 1
+ #include &lt;wx/wx.h&gt;
+ #include &lt;wx/clipbrd.h&gt;
+@@ -28,6 +28,8 @@
+ #include &lt;windows.h&gt;
+ #include &lt;winsock2.h&gt;
+ #include &lt;mswsock.h&gt;
++#include &lt;shlobj.h&gt;
++#include &lt;shlwapi.h&gt;
+ #include &lt;stdio.h&gt;
+ #include &lt;stdlib.h&gt;
+ #include &lt;io.h&gt;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -52,7 +52,7 @@ bool DecodeAddress(string str, CAddress&amp; addr)
+ static bool Send(SOCKET hSocket, const char* pszSend)
+ {
+     if (strstr(pszSend, &quot;PONG&quot;) != pszSend)
+-        printf(&quot;SENDING: %s\n&quot;, pszSend);
++        printf(&quot;IRC SENDING: %s\n&quot;, pszSend);
+     const char* psz = pszSend;
+     const char* pszEnd = psz + strlen(psz);
+     while (psz &lt; pszEnd)
+@@ -145,7 +145,7 @@ bool Wait(int nSeconds)
+ {
+     if (fShutdown)
+         return false;
+-    printf(&quot;Waiting %d seconds to reconnect to IRC\n&quot;, nSeconds);
++    printf(&quot;IRC waiting %d seconds to reconnect\n&quot;, nSeconds);
+     for (int i = 0; i &lt; nSeconds; i++)
+     {
+         if (fShutdown)
+@@ -220,7 +220,6 @@ void ThreadIRCSeed(void* parg)
+         {
+             if (strLine.empty() || strLine.size() &gt; 900 || strLine[0] != &#x27;:&#x27;)
+                 continue;
+-            printf(&quot;IRC %s\n&quot;, strLine.c_str());
+ 
+             vector&lt;string&gt; vWords;
+             ParseString(strLine, &#x27; &#x27;, vWords);
+@@ -235,7 +234,7 @@ void ThreadIRCSeed(void* parg)
+                 // index 7 is limited to 16 characters
+                 // could get full length name at index 10, but would be different from join messages
+                 strcpy(pszName, vWords[7].c_str());
+-                printf(&quot;GOT WHO: [%s]  &quot;, pszName);
++                printf(&quot;IRC got who\n&quot;);
+             }
+ 
+             if (vWords[1] == &quot;JOIN&quot; &amp;&amp; vWords[0].size() &gt; 1)
+@@ -244,7 +243,7 @@ void ThreadIRCSeed(void* parg)
+                 strcpy(pszName, vWords[0].c_str() + 1);
+                 if (strchr(pszName, &#x27;!&#x27;))
+                     *strchr(pszName, &#x27;!&#x27;) = &#x27;\0&#x27;;
+-                printf(&quot;GOT JOIN: [%s]  &quot;, pszName);
++                printf(&quot;IRC got join\n&quot;);
+             }
+ 
+             if (pszName[0] == &#x27;u&#x27;)
+@@ -254,7 +253,7 @@ void ThreadIRCSeed(void* parg)
+                 {
+                     CAddrDB addrdb;
+                     if (AddAddress(addrdb, addr))
+-                        printf(&quot;new  &quot;);
++                        printf(&quot;IRC got new address\n&quot;);
+                     else
+                     {
+                         // make it try connecting again
+@@ -262,14 +261,13 @@ void ThreadIRCSeed(void* parg)
+                             if (mapAddresses.count(addr.GetKey()))
+                                 mapAddresses[addr.GetKey()].nLastFailed = 0;
+                     }
+-                    addr.print();
+ 
+                     CRITICAL_BLOCK(cs_mapIRCAddresses)
+                         mapIRCAddresses.insert(make_pair(addr.GetKey(), addr));
+                 }
+                 else
+                 {
+-                    printf(&quot;decode failed\n&quot;);
++                    printf(&quot;IRC decode failed\n&quot;);
+                 }
+             }
+         }</code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -44,6 +44,7 @@ class CKey
+ {
+ protected:
+     EC_KEY* pkey;
++    bool fSet;
+ 
+ public:
+     CKey()
+@@ -51,6 +52,7 @@ public:
+         pkey = EC_KEY_new_by_curve_name(NID_secp256k1);
+         if (pkey == NULL)
+             throw key_error(&quot;CKey::CKey() : EC_KEY_new_by_curve_name failed&quot;);
++        fSet = false;
+     }
+ 
+     CKey(const CKey&amp; b)
+@@ -58,12 +60,14 @@ public:
+         pkey = EC_KEY_dup(b.pkey);
+         if (pkey == NULL)
+             throw key_error(&quot;CKey::CKey(const CKey&amp;) : EC_KEY_dup failed&quot;);
++        fSet = b.fSet;
+     }
+ 
+     CKey&amp; operator=(const CKey&amp; b)
+     {
+         if (!EC_KEY_copy(pkey, b.pkey))
+             throw key_error(&quot;CKey::operator=(const CKey&amp;) : EC_KEY_copy failed&quot;);
++        fSet = b.fSet;
+         return (*this);
+     }
+ 
+@@ -72,10 +76,16 @@ public:
+         EC_KEY_free(pkey);
+     }
+ 
++    bool IsNull() const
++    {
++        return !fSet;
++    }
++
+     void MakeNewKey()
+     {
+         if (!EC_KEY_generate_key(pkey))
+             throw key_error(&quot;CKey::MakeNewKey() : EC_KEY_generate_key failed&quot;);
++        fSet = true;
+     }
+ 
+     bool SetPrivKey(const CPrivKey&amp; vchPrivKey)
+@@ -83,6 +93,7 @@ public:
+         const unsigned char* pbegin = &amp;vchPrivKey[0];
+         if (!d2i_ECPrivateKey(&amp;pkey, &amp;pbegin, vchPrivKey.size()))
+             return false;
++        fSet = true;
+         return true;
+     }
+ 
+@@ -103,6 +114,7 @@ public:
+         const unsigned char* pbegin = &amp;vchPubKey[0];
+         if (!o2i_ECPublicKey(&amp;pkey, &amp;pbegin, vchPubKey.size()))
+             return false;
++        fSet = true;
+         return true;
+     }
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -34,7 +34,7 @@ map&lt;uint256, CDataStream*&gt; mapOrphanTransactions;
+ multimap&lt;uint256, CDataStream*&gt; mapOrphanTransactionsByPrev;
+ 
+ map&lt;uint256, CWalletTx&gt; mapWallet;
+-vector&lt;pair&lt;uint256, bool&gt; &gt; vWalletUpdated;
++vector&lt;uint256&gt; vWalletUpdated;
+ CCriticalSection cs_mapWallet;
+ 
+ map&lt;vector&lt;unsigned char&gt;, CPrivKey&gt; mapKeys;
+@@ -46,9 +46,12 @@ string strSetDataDir;
+ int nDropMessagesTest = 0;
+ 
+ // Settings
+-int fGenerateBitcoins;
++int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+ CAddress addrIncoming;
++int fLimitProcessors = false;
++int nLimitProcessors = 1;
++
+ 
+ 
+ 
+@@ -135,7 +138,7 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
+             return false;
+ 
+         // Notify UI
+-        vWalletUpdated.push_back(make_pair(hash, fInsertedNew));
++        vWalletUpdated.push_back(hash);
+     }
+ 
+     // Refresh UI
+@@ -1126,6 +1129,9 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+             }
+         }
+ 
++        // Notify UI to update prev block coinbase if it was ours
++        vWalletUpdated.push_back(hashBestChain);
++
+         // New best link
+         hashBestChain = hash;
+         pindexBest = pindexNew;
+@@ -1702,7 +1708,7 @@ bool ProcessMessages(CNode* pfrom)
+         }
+         CATCH_PRINT_EXCEPTION(&quot;ProcessMessage()&quot;)
+         if (!fRet)
+-            printf(&quot;ProcessMessage(%s, %d bytes) from %s to %s FAILED\n&quot;, strCommand.c_str(), nMessageSize, pfrom-&gt;addr.ToString().c_str(), addrLocalHost.ToString().c_str());
++            printf(&quot;ProcessMessage(%s, %d bytes) FAILED\n&quot;, strCommand.c_str(), nMessageSize);
+     }
+ 
+     vRecv.Compact();
+@@ -1715,10 +1721,7 @@ bool ProcessMessages(CNode* pfrom)
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ {
+     static map&lt;unsigned int, vector&lt;unsigned char&gt; &gt; mapReuseKey;
+-    printf(&quot;received: %-12s (%d bytes)  &quot;, strCommand.c_str(), vRecv.size());
+-    for (int i = 0; i &lt; min(vRecv.size(), (unsigned int)20); i++)
+-        printf(&quot;%02x &quot;, vRecv[i] &amp; 0xff);
+-    printf(&quot;\n&quot;);
++    printf(&quot;received: %-12s (%d bytes)\n&quot;, strCommand.c_str(), vRecv.size());
+     if (nDropMessagesTest &gt; 0 &amp;&amp; GetRand(nDropMessagesTest) == 0)
+     {
+         printf(&quot;dropmessages DROPPING RECV MESSAGE\n&quot;);
+@@ -1759,7 +1762,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             pfrom-&gt;PushMessage(&quot;getblocks&quot;, CBlockLocator(pindexBest), uint256(0));
+         }
+ 
+-        printf(&quot;version message: %s has version %d, addrMe=%s\n&quot;, pfrom-&gt;addr.ToString().c_str(), pfrom-&gt;nVersion, addrMe.ToString().c_str());
++        printf(&quot;version message: version %d\n&quot;, pfrom-&gt;nVersion);
+     }
+ 
+ 
+@@ -1775,13 +1778,24 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vector&lt;CAddress&gt; vAddr;
+         vRecv &gt;&gt; vAddr;
+ 
++        // Clear addrknown lists periodically to allow refresh broadcasts
++        static int64 nLastClearedAddrKnown;
++        if (nLastClearedAddrKnown &lt; GetAdjustedTime() - 24 * 60 * 60)
++        {
++            nLastClearedAddrKnown = GetAdjustedTime();
++            CRITICAL_BLOCK(cs_vNodes)
++                foreach(CNode* pnode, vNodes)
++                    pnode-&gt;setAddrKnown.clear();
++        }
++
+         // Store the new addresses
+         CAddrDB addrdb;
+         foreach(const CAddress&amp; addr, vAddr)
+         {
+             if (fShutdown)
+                 return true;
+-            if (AddAddress(addrdb, addr))
++            AddAddress(addrdb, addr);
++            if (addr.IsRoutable() &amp;&amp; addr.ip != addrLocalHost.ip)
+             {
+                 // Put on lists to send to other nodes
+                 pfrom-&gt;setAddrKnown.insert(addr);
+@@ -1989,8 +2003,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                 if (fShutdown)
+                     return true;
+                 const CAddress&amp; addr = item.second;
+-                //// will need this if we lose IRC
+-                //if (addr.nTime &gt; nSince || (rand() % nSize) &lt; 500)
+                 if (addr.nTime &gt; nSince)
+                     pfrom-&gt;vAddrToSend.push_back(addr);
+             }
+@@ -2132,9 +2144,11 @@ bool SendMessages(CNode* pto)
+         while (!pto-&gt;mapAskFor.empty() &amp;&amp; (*pto-&gt;mapAskFor.begin()).first &lt;= nNow)
+         {
+             const CInv&amp; inv = (*pto-&gt;mapAskFor.begin()).second;
+-            printf(&quot;sending getdata: %s\n&quot;, inv.ToString().c_str());
+             if (!AlreadyHave(txdb, inv))
++            {
++                printf(&quot;sending getdata: %s\n&quot;, inv.ToString().c_str());
+                 vAskFor.push_back(inv);
++            }
+             pto-&gt;mapAskFor.erase(pto-&gt;mapAskFor.begin());
+         }
+         if (!vAskFor.empty())
+@@ -2162,6 +2176,49 @@ bool SendMessages(CNode* pto)
+ // BitcoinMiner
+ //
+ 
++void GenerateBitcoins(bool fGenerate)
++{
++    if (fGenerateBitcoins != fGenerate)
++    {
++        fGenerateBitcoins = fGenerate;
++        CWalletDB().WriteSetting(&quot;fGenerateBitcoins&quot;, fGenerateBitcoins);
++        MainFrameRepaint();
++    }
++    if (fGenerateBitcoins)
++    {
++        int nProcessors = atoi(getenv(&quot;NUMBER_OF_PROCESSORS&quot;));
++        printf(&quot;%d processors\n&quot;, nProcessors);
++        if (nProcessors &lt; 1)
++            nProcessors = 1;
++        if (fLimitProcessors &amp;&amp; nProcessors &gt; nLimitProcessors)
++            nProcessors = nLimitProcessors;
++        int nAddThreads = nProcessors - vnThreadsRunning[3];
++        printf(&quot;starting %d bitcoinminer threads\n&quot;, nAddThreads);
++        for (int i = 0; i &lt; nAddThreads; i++)
++            if (_beginthread(ThreadBitcoinMiner, 0, NULL) == -1)
++                printf(&quot;Error: _beginthread(ThreadBitcoinMiner) failed\n&quot;);
++    }
++}
++
++void ThreadBitcoinMiner(void* parg)
++{
++    vnThreadsRunning[3]++;
++    CheckForShutdown(3);
++    try
++    {
++        bool fRet = BitcoinMiner();
++        printf(&quot;BitcoinMiner returned %s\n\n\n&quot;, fRet ? &quot;true&quot; : &quot;false&quot;);
++        vnThreadsRunning[3]--;
++    }
++    catch (std::exception&amp; e) {
++        vnThreadsRunning[3]--;
++        PrintException(&amp;e, &quot;ThreadBitcoinMiner()&quot;);
++    } catch (...) {
++        vnThreadsRunning[3]--;
++        PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
++    }
++}
++
+ int FormatHashBlocks(void* pbuffer, unsigned int len)
+ {
+     unsigned char* pdata = (unsigned char*)pbuffer;
+@@ -2210,13 +2267,13 @@ void BlockSHA256(const void* pin, unsigned int nBlocks, void* pout)
+ bool BitcoinMiner()
+ {
+     printf(&quot;BitcoinMiner started\n&quot;);
+-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
+ 
+     CKey key;
+     key.MakeNewKey();
+     CBigNum bnExtraNonce = 0;
+     while (fGenerateBitcoins)
+     {
++        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
+         Sleep(50);
+         CheckForShutdown(3);
+         while (vNodes.empty())
+@@ -2338,7 +2395,6 @@ bool BitcoinMiner()
+             BlockSHA256(&amp;tmp.block, nBlocks0, &amp;tmp.hash1);
+             BlockSHA256(&amp;tmp.hash1, nBlocks1, &amp;hash);
+ 
+-
+             if (hash &lt;= hashTarget)
+             {
+                 pblock-&gt;nNonce = tmp.block.nNonce;
+@@ -2352,6 +2408,12 @@ bool BitcoinMiner()
+                 SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
+                 CRITICAL_BLOCK(cs_main)
+                 {
++                    if (pindexPrev != pindexBest)
++                    {
++                        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
++                        break;
++                    }
++
+                     // Save key
+                     if (!AddKey(key))
+                         return false;
+@@ -2368,7 +2430,7 @@ bool BitcoinMiner()
+             }
+ 
+             // Update nTime every few seconds
+-            if ((++tmp.block.nNonce &amp; 0x3ffff) == 0)
++            if ((++tmp.block.nNonce &amp; 0xffff) == 0)
+             {
+                 CheckForShutdown(3);
+                 if (tmp.block.nNonce == 0)
+@@ -2379,6 +2441,8 @@ bool BitcoinMiner()
+                     break;
+                 if (!fGenerateBitcoins)
+                     break;
++                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
++                    return true;
+                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+             }
+         }
+@@ -2538,7 +2602,7 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ 
+ 
+ 
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, int64&amp; nFeeRequiredRet)
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet)
+ {
+     nFeeRequiredRet = 0;
+     CRITICAL_BLOCK(cs_main)
+@@ -2565,30 +2629,28 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, in
+                 foreach(CWalletTx* pcoin, setCoins)
+                     nValueIn += pcoin-&gt;GetCredit();
+ 
+-                // Fill vout[0] to the payee
+-                wtxNew.vout.push_back(CTxOut(nValueOut, scriptPubKey));
++                // Fill a vout to the payee
++                bool fChangeFirst = GetRand(2);
++                if (!fChangeFirst)
++                    wtxNew.vout.push_back(CTxOut(nValueOut, scriptPubKey));
+ 
+-                // Fill vout[1] back to self with any change
++                // Fill a vout back to self with any change
+                 if (nValueIn &gt; nValue)
+                 {
+-                    /// todo: for privacy, should randomize the order of outputs,
+-                    //        would also have to use a new key for the change.
+-                    // Use the same key as one of the coins
+-                    vector&lt;unsigned char&gt; vchPubKey;
+-                    CTransaction&amp; txFirst = *(*setCoins.begin());
+-                    foreach(const CTxOut&amp; txout, txFirst.vout)
+-                        if (txout.IsMine())
+-                            if (ExtractPubKey(txout.scriptPubKey, true, vchPubKey))
+-                                break;
+-                    if (vchPubKey.empty())
+-                        return false;
++                    // New private key
++                    if (keyRet.IsNull())
++                        keyRet.MakeNewKey();
+ 
+-                    // Fill vout[1] to ourself
++                    // Fill a vout to ourself
+                     CScript scriptPubKey;
+-                    scriptPubKey &lt;&lt; vchPubKey &lt;&lt; OP_CHECKSIG;
++                    scriptPubKey &lt;&lt; keyRet.GetPubKey() &lt;&lt; OP_CHECKSIG;
+                     wtxNew.vout.push_back(CTxOut(nValueIn - nValue, scriptPubKey));
+                 }
+ 
++                // Fill a vout to the payee
++                if (fChangeFirst)
++                    wtxNew.vout.push_back(CTxOut(nValueOut, scriptPubKey));
++
+                 // Fill vin
+                 foreach(CWalletTx* pcoin, setCoins)
+                     for (int nOut = 0; nOut &lt; pcoin-&gt;vout.size(); nOut++)
+@@ -2621,13 +2683,24 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, in
+ }
+ 
+ // Call after CreateTransaction unless you want to abort
+-bool CommitTransactionSpent(const CWalletTx&amp; wtxNew)
++bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+ {
+     CRITICAL_BLOCK(cs_main)
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+-        //// todo: make this transactional, never want to add a transaction
+-        ////  without marking spent transactions
++        //// todo: eventually should make this transactional, never want to add a
++        ////  transaction without marking spent transactions, although the risk of
++        ////  interruption during this step is remote.
++
++        // This is only to keep the database open to defeat the auto-flush for the
++        // duration of this scope.  This is the only place where this optimization
++        // maybe makes sense; please don&#x27;t do it anywhere else.  Keeping databases
++        // open longer than necessary can create deadlocks.
++        CWalletDB walletdb(&quot;r&quot;);
++</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -41,6 +41,9 @@ extern int nDropMessagesTest;
+ extern int fGenerateBitcoins;
+ extern int64 nTransactionFee;
+ extern CAddress addrIncoming;
++extern int fLimitProcessors;
++extern int nLimitProcessors;
++
+ 
+ 
+ 
+@@ -58,14 +61,17 @@ void ReacceptWalletTransactions();
+ void RelayWalletTransactions();
+ bool LoadBlockIndex(bool fAllowNew=true);
+ void PrintBlockTree();
+-bool BitcoinMiner();
+ bool ProcessMessages(CNode* pfrom);
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+ bool SendMessages(CNode* pto);
+ int64 GetBalance();
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; txNew, int64&amp; nFeeRequiredRet);
+-bool CommitTransactionSpent(const CWalletTx&amp; wtxNew);
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
++bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
+ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
++void GenerateBitcoins(bool fGenerate);
++void ThreadBitcoinMiner(void* parg);
++bool BitcoinMiner();
++
+ 
+ 
+ 
+@@ -1320,7 +1326,7 @@ public:
+ 
+ extern map&lt;uint256, CTransaction&gt; mapTransactions;
+ extern map&lt;uint256, CWalletTx&gt; mapWallet;
+-extern vector&lt;pair&lt;uint256, bool&gt; &gt; vWalletUpdated;
++extern vector&lt;uint256&gt; vWalletUpdated;
+ extern CCriticalSection cs_mapWallet;
+ extern map&lt;vector&lt;unsigned char&gt;, CPrivKey&gt; mapKeys;
+ extern map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -12,7 +12,7 @@ ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+ D=d
+ # note: gcc 3.x profile doesn&#x27;t work
+ #DEBUGFLAGS=-O0 -g -pg -D__WXDEBUG__
+-DEBUGFLAGS=-g -D__WXDEBUG__ -Wall -Wextra
++DEBUGFLAGS=-g -D__WXDEBUG__
+ endif
+ 
+ 
+@@ -23,7 +23,7 @@ LIBS= \
+  -l db_cxx \
+  -l eay32 \
+  -l wxmsw28$(D)_richtext -l wxmsw28$(D)_html -l wxmsw28$(D)_core -l wxmsw28$(D)_adv -l wxbase28$(D) -l wxtiff$(D) -l wxjpeg$(D) -l wxpng$(D) -l wxzlib$(D) -l wxregex$(D) -l wxexpat$(D) \
+- -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32
++ -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
+ WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
+ CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -18,8 +18,8 @@ LIBPATHS=/LIBPATH:&quot;/DB/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/OpenSSL/out&quot; /LIBPATH:
+ LIBS= \
+     libdb47s$(D).lib \
+     libeay32.lib \
+-    wxmsw28$(D)_richtext.lib wxmsw28$(D)_html.lib wxmsw28$(D)_core.lib wxbase28$(D).lib wxtiff$(D).lib wxjpeg$(D).lib wxpng$(D).lib wxzlib$(D).lib wxregex$(D).lib wxexpat$(D).lib \
+-    kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib
++    wxmsw28$(D)_richtext.lib wxmsw28$(D)_html.lib wxmsw28$(D)_core.lib wxmsw28$(D)_adv.lib wxbase28$(D).lib wxtiff$(D).lib wxjpeg$(D).lib wxpng$(D).lib wxzlib$(D).lib wxregex$(D).lib wxexpat$(D).lib \
++    kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
+ WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
+ CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 /YX /Fpobj/headers.pch $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -23,7 +23,8 @@ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
+ CNode nodeLocalHost(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
+ CNode* pnodeLocalHost = &amp;nodeLocalHost;
+ bool fShutdown = false;
+-array&lt;bool, 10&gt; vfThreadRunning;
++array&lt;int, 10&gt; vnThreadsRunning;
++
+ vector&lt;CNode*&gt; vNodes;
+ CCriticalSection cs_vNodes;
+ map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapAddresses;
+@@ -57,7 +58,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+ 
+     if (fProxy)
+     {
+-        printf(&quot;Proxy connecting to %s\n&quot;, addrConnect.ToString().c_str());
++        printf(&quot;Proxy connecting %s\n&quot;, addrConnect.ToStringLog().c_str());
+         char pszSocks4IP[] = &quot;\4\1\0\0\0\0\0\0user&quot;;
+         memcpy(pszSocks4IP + 2, &amp;addrConnect.port, 2);
+         memcpy(pszSocks4IP + 4, &amp;addrConnect.ip, 4);
+@@ -81,7 +82,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+             closesocket(hSocket);
+             return error(&quot;Proxy returned error %d\n&quot;, pchRet[1]);
+         }
+-        printf(&quot;Proxy connection established %s\n&quot;, addrConnect.ToString().c_str());
++        printf(&quot;Proxy connection established %s\n&quot;, addrConnect.ToStringLog().c_str());
+     }
+ 
+     hSocketRet = hSocket;
+@@ -219,6 +220,13 @@ bool AddAddress(CAddrDB&amp; addrdb, const CAddress&amp; addr)
+                 addrdb.WriteAddress(addrFound);
+                 return true;
+             }
++            else if (addrFound.nTime &lt; GetAdjustedTime() - 24 * 60 * 60)
++            {
++                // Periodically update most recently seen time
++                addrFound.nTime = GetAdjustedTime();
++                addrdb.WriteAddress(addrFound);
++                return false;
++            }
+         }
+     }
+     return false;
+@@ -373,14 +381,14 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+     }
+ 
+     /// debug print
+-    printf(&quot;trying %s\n&quot;, addrConnect.ToString().c_str());
++    printf(&quot;trying connection %s\n&quot;, addrConnect.ToStringLog().c_str());
+ 
+     // Connect
+     SOCKET hSocket;
+     if (ConnectSocket(addrConnect, hSocket))
+     {
+         /// debug print
+-        printf(&quot;connected %s\n&quot;, addrConnect.ToString().c_str());
++        printf(&quot;connected %s\n&quot;, addrConnect.ToStringLog().c_str());
+ 
+         // Set to nonblocking
+         u_long nOne = 1;
+@@ -410,7 +418,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+ 
+ void CNode::Disconnect()
+ {
+-    printf(&quot;disconnecting node %s\n&quot;, addr.ToString().c_str());
++    printf(&quot;disconnecting node %s\n&quot;, addr.ToStringLog().c_str());
+ 
+     closesocket(hSocket);
+ 
+@@ -450,14 +458,20 @@ void ThreadSocketHandler(void* parg)
+ 
+     loop
+     {
+-        vfThreadRunning[0] = true;
++        vnThreadsRunning[0] = true;
+         CheckForShutdown(0);
+         try
+         {
+             ThreadSocketHandler2(parg);
++            vnThreadsRunning[0] = false;
++        }
++        catch (std::exception&amp; e) {
++            vnThreadsRunning[0] = false;
++            PrintException(&amp;e, &quot;ThreadSocketHandler()&quot;);
++        } catch (...) {
++            vnThreadsRunning[0] = false;
++            PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
+         }
+-        CATCH_PRINT_EXCEPTION(&quot;ThreadSocketHandler()&quot;)
+-        vfThreadRunning[0] = false;
+         Sleep(5000);
+     }
+ }
+@@ -548,9 +562,9 @@ void ThreadSocketHandler2(void* parg)
+             }
+         }
+ 
+-        vfThreadRunning[0] = false;
++        vnThreadsRunning[0] = false;
+         int nSelect = select(hSocketMax + 1, &amp;fdsetRecv, &amp;fdsetSend, NULL, &amp;timeout);
+-        vfThreadRunning[0] = true;
++        vnThreadsRunning[0] = true;
+         CheckForShutdown(0);
+         if (nSelect == SOCKET_ERROR)
+         {
+@@ -590,7 +604,7 @@ void ThreadSocketHandler2(void* parg)
+             }
+             else
+             {
+-                printf(&quot;accepted connection from %s\n&quot;, addr.ToString().c_str());
++                printf(&quot;accepted connection %s\n&quot;, addr.ToStringLog().c_str());
+                 CNode* pnode = new CNode(hSocket, addr, true);
+                 pnode-&gt;AddRef();
+                 CRITICAL_BLOCK(cs_vNodes)
+@@ -697,14 +711,20 @@ void ThreadOpenConnections(void* parg)
+ 
+     loop
+     {
+-        vfThreadRunning[1] = true;
++        vnThreadsRunning[1] = true;
+         CheckForShutdown(1);
+         try
+         {
+             ThreadOpenConnections2(parg);
++            vnThreadsRunning[1] = false;
++        }
++        catch (std::exception&amp; e) {
++            vnThreadsRunning[1] = false;
++            PrintException(&amp;e, &quot;ThreadOpenConnections()&quot;);
++        } catch (...) {
++            vnThreadsRunning[1] = false;
++            PrintException(NULL, &quot;ThreadOpenConnections()&quot;);
+         }
+-        CATCH_PRINT_EXCEPTION(&quot;ThreadOpenConnections()&quot;)
+-        vfThreadRunning[1] = false;
+         Sleep(5000);
+     }
+ }
+@@ -720,14 +740,14 @@ void ThreadOpenConnections2(void* parg)
+     loop
+     {
+         // Wait
+-        vfThreadRunning[1] = false;
++        vnThreadsRunning[1] = false;
+         Sleep(500);
+         while (vNodes.size() &gt;= nMaxConnections || vNodes.size() &gt;= mapAddresses.size())
+         {
+             CheckForShutdown(1);
+             Sleep(2000);
+         }
+-        vfThreadRunning[1] = true;
++        vnThreadsRunning[1] = true;
+         CheckForShutdown(1);
+ 
+ 
+@@ -823,9 +843,9 @@ void ThreadOpenConnections2(void* parg)
+             if (addrConnect.ip == addrLocalHost.ip || !addrConnect.IsIPv4() || FindNode(addrConnect.ip))
+                 continue;
+ 
+-            vfThreadRunning[1] = false;
++            vnThreadsRunning[1] = false;
+             CNode* pnode = ConnectNode(addrConnect);
+-            vfThreadRunning[1] = true;
++            vnThreadsRunning[1] = true;
+             CheckForShutdown(1);
+             if (!pnode)
+                 continue;
+@@ -867,14 +887,20 @@ void ThreadMessageHandler(void* parg)
+ 
+     loop
+     {
+-        vfThreadRunning[2] = true;
++        vnThreadsRunning[2] = true;
+         CheckForShutdown(2);
+         try
+         {
+             ThreadMessageHandler2(parg);
++            vnThreadsRunning[2] = false;
++        }
++        catch (std::exception&amp; e) {
++            vnThreadsRunning[2] = false;
++            PrintException(&amp;e, &quot;ThreadMessageHandler()&quot;);
++        } catch (...) {
++            vnThreadsRunning[2] = false;
++            PrintException(NULL, &quot;ThreadMessageHandler()&quot;);
+         }
+-        CATCH_PRINT_EXCEPTION(&quot;ThreadMessageHandler()&quot;)
+-        vfThreadRunning[2] = false;
+         Sleep(5000);
+     }
+ }
+@@ -905,9 +931,9 @@ void ThreadMessageHandler2(void* parg)
+         }
+ 
+         // Wait and allow messages to bunch up
+-        vfThreadRunning[2] = false;
++        vnThreadsRunning[2] = false;
+         Sleep(100);
+-        vfThreadRunning[2] = true;
++        vnThreadsRunning[2] = true;
+         CheckForShutdown(2);
+     }
+ }
+@@ -920,29 +946,6 @@ void ThreadMessageHandler2(void* parg)
+ 
+ 
+ 
+-//// todo: start one thread per processor, use getenv(&quot;NUMBER_OF_PROCESSORS&quot;)
+-void ThreadBitcoinMiner(void* parg)
+-{
+-    vfThreadRunning[3] = true;
+-    CheckForShutdown(3);
+-    try
+-    {
+-        bool fRet = BitcoinMiner();
+-        printf(&quot;BitcoinMiner returned %s\n\n\n&quot;, fRet ? &quot;true&quot; : &quot;false&quot;);
+-    }
+-    CATCH_PRINT_EXCEPTION(&quot;BitcoinMiner()&quot;)
+-    vfThreadRunning[3] = false;
+-}
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ 
+ bool StartNode(string&amp; strError)
+ {
+@@ -1067,17 +1070,17 @@ bool StopNode()
+     fShutdown = true;
+     nTransactionsUpdated++;
+     int64 nStart = GetTime();
+-    while (vfThreadRunning[0] || vfThreadRunning[2] || vfThreadRunning[3])
++    while (vnThreadsRunning[0] || vnThreadsRunning[2] || vnThreadsRunning[3])
+     {
+         if (GetTime() - nStart &gt; 15)
+             break;
+         Sleep(20);
+     }
+-    if (vfThreadRunning[0]) printf(&quot;ThreadSocketHandler still running\n&quot;);
+-    if (vfThreadRunning[1]) printf(&quot;ThreadOpenConnections still running\n&quot;);
+-    if (vfThreadRunning[2]) printf(&quot;ThreadMessageHandler still running\n&quot;);
+-    if (vfThreadRunning[3]) printf(&quot;ThreadBitcoinMiner still running\n&quot;);
+-    while (vfThreadRunning[2])
++    if (vnThreadsRunning[0]) printf(&quot;ThreadSocketHandler still running\n&quot;);
++    if (vnThreadsRunning[1]) printf(&quot;ThreadOpenConnections still running\n&quot;);
++    if (vnThreadsRunning[2]) printf(&quot;ThreadMessageHandler still running\n&quot;);
++    if (vnThreadsRunning[3]) printf(&quot;ThreadBitcoinMiner still running\n&quot;);
++    while (vnThreadsRunning[2])
+         Sleep(20);
+     Sleep(50);
+ 
+@@ -1091,7 +1094,7 @@ void CheckForShutdown(int n)
+     if (fShutdown)
+     {
+         if (n != -1)
+-            vfThreadRunning[n] = false;
++            vnThreadsRunning[n] = false;
+         if (n == 0)
+             foreach(CNode* pnode, vNodes)
+                 closesocket(pnode-&gt;hSocket);</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -20,8 +20,6 @@ enum
+ 
+ 
+ 
+-
+-
+ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
+ bool GetMyExternalIP(unsigned int&amp; ipRet);
+ bool AddAddress(CAddrDB&amp; addrdb, const CAddress&amp; addr);
+@@ -29,7 +27,6 @@ CNode* FindNode(unsigned int ip);
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
+ bool AnySubscribed(unsigned int nChannel);
+-void ThreadBitcoinMiner(void* parg);
+ bool StartNode(string&amp; strError=REF(string()));
+ bool StopNode();
+ void CheckForShutdown(int n);
+@@ -206,7 +203,7 @@ public:
+             READWRITE(nTime);
+         }
+         READWRITE(nServices);
+-        READWRITE(FLATDATA(pchReserved));
++        READWRITE(FLATDATA(pchReserved)); // for IPv6
+         READWRITE(ip);
+         READWRITE(port);
+     )
+@@ -280,10 +277,14 @@ public:
+         return strprintf(&quot;%u.%u.%u.%u&quot;, GetByte(3), GetByte(2), GetByte(1), GetByte(0));
+     }
+ 
++    string ToStringLog() const
++    {
++        return &quot;&quot;;
++    }
++
+     string ToString() const
+     {
+         return strprintf(&quot;%u.%u.%u.%u:%u&quot;, GetByte(3), GetByte(2), GetByte(1), GetByte(0), ntohs(port));
+-        //return strprintf(&quot;%u.%u.%u.%u&quot;, GetByte(3), GetByte(2), GetByte(1), GetByte(0));
+     }
+ 
+     void print() const
+@@ -416,7 +417,7 @@ extern uint64 nLocalServices;
+ extern CAddress addrLocalHost;
+ extern CNode* pnodeLocalHost;
+ extern bool fShutdown;
+-extern array&lt;bool, 10&gt; vfThreadRunning;
++extern array&lt;int, 10&gt; vnThreadsRunning;
+ extern vector&lt;CNode*&gt; vNodes;
+ extern CCriticalSection cs_vNodes;
+ extern map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapAddresses;
+@@ -599,9 +600,7 @@ public:
+         unsigned int nSize = vSend.size() - nPushPos - sizeof(CMessageHeader);
+         memcpy((char*)&amp;vSend[nPushPos] + offsetof(CMessageHeader, nMessageSize), &amp;nSize, sizeof(nSize));
+ 
+-        printf(&quot;(%d bytes)  &quot;, nSize);
+-        //for (int i = nPushPos+sizeof(CMessageHeader); i &lt; min(vSend.size(), nPushPos+sizeof(CMessageHeader)+20U); i++)
+-        //    printf(&quot;%02x &quot;, vSend[i] &amp; 0xff);
++        printf(&quot;(%d bytes) &quot;, nSize);
+         printf(&quot;\n&quot;);
+ 
+         nPushPos = -1;</code></pre></details><details><summary><code>readme.txt</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 105;
++static const int VERSION = 106;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,6 +7,13 @@
+ #include &lt;crtdbg.h&gt;
+ #endif
+ 
++void ThreadRequestProductDetails(void* parg);
++void ThreadRandSendTest(void* parg);
++bool GetStartOnSystemStartup();
++void SetStartOnSystemStartup(bool fAutoStart);
++
++
++
+ DEFINE_EVENT_TYPE(wxEVT_CROSSTHREADCALL)
+ DEFINE_EVENT_TYPE(wxEVT_REPLY1)
+ DEFINE_EVENT_TYPE(wxEVT_REPLY2)
+@@ -16,22 +23,21 @@ DEFINE_EVENT_TYPE(wxEVT_TABLEUPDATED)
+ DEFINE_EVENT_TYPE(wxEVT_TABLEDELETED)
+ 
+ CMainFrame* pframeMain = NULL;
++CMyTaskBarIcon* ptaskbaricon = NULL;
+ map&lt;string, string&gt; mapAddressBook;
+-CBitcoinTBIcon* taskBarIcon = NULL; // Tray icon
+-
+-
+-void ThreadRequestProductDetails(void* parg);
+-void ThreadRandSendTest(void* parg);
++map&lt;string, string&gt; mapArgs;
+ bool fRandSendTest = false;
+ void RandSend();
+ extern int g_isPainting;
+ 
+-// UI settings and their default values
+-int minimizeToTray = 1;
+-int closeToTray = 1;
+-int startOnSysBoot = 1;
+-int askBeforeClosing = 1;
+-int alwaysShowTrayIcon = 1;
++// Settings
++int fShowGenerated = true;
++int fMinimizeToTray = true;
++int fMinimizeOnClose = true;
++
++
++
++
+ 
+ 
+ 
+@@ -282,7 +288,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+     SetIcon(wxICON(bitcoin));
+-    m_menuOptions-&gt;Check(wxID_OPTIONSGENERATEBITCOINS, fGenerateBitcoins);
++    ptaskbaricon = new CMyTaskBarIcon();
+ 
+     // Init toolbar with transparency masked bitmaps
+     m_toolBar-&gt;ClearTools();
+@@ -327,7 +333,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     //m_listCtrlOrdersReceived-&gt;InsertColumn(4, &quot;&quot;,                wxLIST_FORMAT_LEFT,  100);
+ 
+     // Init status bar
+-    int pnWidths[3] = { -100, 81, 286 };
++    int pnWidths[3] = { -100, 88, 290 };
+     m_statusBar-&gt;SetFieldsCount(3, pnWidths);
+ 
+     // Fill your address text box
+@@ -342,6 +348,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ CMainFrame::~CMainFrame()
+ {
+     pframeMain = NULL;
++    delete ptaskbaricon;
++    ptaskbaricon = NULL;
+ }
+ 
+ void Shutdown(void* parg)
+@@ -362,28 +370,24 @@ void Shutdown(void* parg)
+ 
+ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+ {
+-	if (closeToTray &amp;&amp; event.CanVeto()) {
+-		event.Veto();
+-		SendToTray();
+-	}
+-	else if (!event.CanVeto() || !askBeforeClosing || wxMessageBox(&quot;Quit program?&quot;, &quot;Confirm&quot;, wxYES_NO, this) == wxYES) {
+-		delete taskBarIcon;
+-	    Destroy();
+-	    _beginthread(Shutdown, 0, NULL);
+-	}
++    if (fMinimizeToTray &amp;&amp; fMinimizeOnClose &amp;&amp; event.CanVeto() &amp;&amp; !IsIconized())
++    {
++        // Divert close to minimize
++        event.Veto();
++        Iconize(true);
++    }
++    else
++    {
++        Destroy();
++        _beginthread(Shutdown, 0, NULL);
++    }
+ }
+ 
+ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ {
+-	if (minimizeToTray) {
+-		SendToTray();
+-	}
+-}
+-
+-void CMainFrame::SendToTray()
+-{
+-	Hide();
+-	taskBarIcon-&gt;Show();
++    // Hide the task bar button when minimized.
++    // Event is sent when the frame is minimized or restored.
++    Show(!fMinimizeToTray || !event.Iconized());
+ }
+ 
+ void CMainFrame::OnMouseEvents(wxMouseEvent&amp; event)
+@@ -405,25 +409,21 @@ void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSo
+     string str0 = strSort;
+     long nData = *(long*)&amp;hashKey;
+ 
+-    if (fNew)
++    // Find item
++    if (!fNew &amp;&amp; nIndex == -1)
++    {
++        while ((nIndex = m_listCtrl-&gt;FindItem(nIndex, nData)) != -1)
++            if (GetItemText(m_listCtrl, nIndex, 1) == hashKey.ToString())
++                break;
++    }
++
++    // fNew is for blind insert, only use if you&#x27;re sure it&#x27;s new
++    if (fNew || nIndex == -1)
+     {
+         nIndex = m_listCtrl-&gt;InsertItem(0, str0);
+     }
+     else
+     {
+-        if (nIndex == -1)
+-        {
+-            // Find item
+-            while ((nIndex = m_listCtrl-&gt;FindItem(nIndex, nData)) != -1)
+-                if (GetItemText(m_listCtrl, nIndex, 1) == hashKey.ToString())
+-                    break;
+-            if (nIndex == -1)
+-            {
+-                printf(&quot;CMainFrame::InsertLine : Couldn&#x27;t find item to be updated\n&quot;);
+-                return;
+-            }
+-        }
+-
+         // If sort key changed, must delete and reinsert to make it relocate
+         if (GetItemText(m_listCtrl, nIndex, 0) != str0)
+         {
+@@ -484,6 +484,28 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+     string strStatus = FormatTxStatus(wtx);
+     map&lt;string, string&gt; mapValue = wtx.mapValue;
+ 
++    // Filter
++    if (wtx.IsCoinBase())
++    {
++        // View-&gt;Show Generated
++        if (!fShowGenerated)
++            return;
++
++        // Don&#x27;t show generated coin until confirmed by at least one block after it
++        // so we don&#x27;t get the user&#x27;s hopes up until it looks like it&#x27;s probably accepted.
++        //
++        // It is not an error when generated blocks are not accepted.  By design,
++        // some percentage of blocks, like 10% or more, will end up not accepted.
++        // This is the normal mechanism by which the network copes with latency.
++        //
++        // We display regular transactions right away before any confirmation
++        // because they can always get into some block eventually.  Generated coins
++        // are special because if their block is not accepted, they are not valid.
++        //
++        if (wtx.GetDepthInMainChain() &lt; 2)
++            return;
++    }
++
+     // Find the block the tx is in
+     CBlockIndex* pindex = NULL;
+     map&lt;uint256, CBlockIndex*&gt;::iterator mi = mapBlockIndex.find(wtx.hashBlock);
+@@ -785,16 +807,11 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     {
+         TRY_CRITICAL_BLOCK(cs_mapWallet)
+         {
+-            pair&lt;uint256, bool&gt; item;
+-            foreach(item, vWalletUpdated)
++            foreach(uint256 hash, vWalletUpdated)
+             {
+-                bool fNew = item.second;
+-                map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(item.first);
++                map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(hash);
+                 if (mi != mapWallet.end())
+-                {
+-                    printf(&quot;vWalletUpdated: %s %s\n&quot;, (*mi).second.GetHash().ToString().substr(0,6).c_str(), fNew ? &quot;new&quot; : &quot;&quot;);
+-                    InsertTransaction((*mi).second, fNew);
+-                }
++                    InsertTransaction((*mi).second, false);
+             }
+             m_listCtrl-&gt;ScrollList(0, INT_MAX);
+             vWalletUpdated.clear();
+@@ -807,7 +824,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     // Update status bar
+     string strGen = &quot;&quot;;
+     if (fGenerateBitcoins)
+-        strGen = &quot;    Generating&quot;;
++        strGen = &quot;     Generating&quot;;
+     if (fGenerateBitcoins &amp;&amp; vNodes.empty())
+         strGen = &quot;(not connected)&quot;;
+     m_statusBar-&gt;SetStatusText(strGen, 1);
+@@ -856,39 +873,54 @@ void CMainFrame::OnCrossThreadCall(wxCommandEvent&amp; event)
+ 
+ void CMainFrame::OnMenuFileExit(wxCommandEvent&amp; event)
+ {
++    // File-&gt;Exit
+     Close(true);
+ }
+ 
++void CMainFrame::OnMenuViewShowGenerated(wxCommandEvent&amp; event)
++{
++    // View-&gt;Show Generated
++    fShowGenerated = event.IsChecked();
++    CWalletDB().WriteSetting(&quot;fShowGenerated&quot;, fShowGenerated);
++    RefreshListCtrl();
++}
++
++void CMainFrame::OnUpdateUIViewShowGenerated(wxUpdateUIEvent&amp; event)
++{
++    event.Check(fShowGenerated);
++}
++
+ void CMainFrame::OnMenuOptionsGenerate(wxCommandEvent&amp; event)
+ {
++    // Options-&gt;Generate Coins
+     GenerateBitcoins(event.IsChecked());
++}
+ 
+-    Refresh();
+-    wxPaintEvent eventPaint;
+-    AddPendingEvent(eventPaint);
++void CMainFrame::OnUpdateUIOptionsGenerate(wxUpdateUIEvent&amp; event)
++{
++    event.Check(fGenerateBitcoins);
+ }
+ 
+ void CMainFrame::OnMenuOptionsChangeYourAddress(wxCommandEvent&amp; event)
+ {
++    // Options-&gt;Change Your Address
+     OnButtonChange(event);
+ }
+ 
+ void CMainFrame::OnMenuOptionsOptions(wxCommandEvent&amp; event)
+ {
++    // Options-&gt;Options
+     COptionsDialog dialog(this);
+     dialog.ShowModal();
+ }
+ 
+ void CMainFrame::OnMenuHelpAbout(wxCommandEvent&amp; event)
+ {
++    // Help-&gt;About
+     CAboutDialog dialog(this);
+     dialog.ShowModal();
+ }
+ 
+-void CMainFrame::OnUpdateMenuGenerate( wxUpdateUIEvent&amp; event ) {
+-	event.Check(fGenerateBitcoins);
+-}
+-
+ void CMainFrame::OnButtonSend(wxCommandEvent&amp; event)
+ {
+     /// debug test
+@@ -1252,58 +1284,74 @@ void CTxDetailsDialog::OnButtonOK(wxCommandEvent&amp; event)
+ 
+ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+ {
++    // Set up list box of page choices
++    m_listBox-&gt;Append(&quot;Main&quot;);
++    //m_listBox-&gt;Append(&quot;Test 2&quot;);
++    m_listBox-&gt;SetSelection(0);
++    SelectPage(0);
++
++    // Init values
++    m_textCtrlTransactionFee-&gt;SetValue(FormatMoney(nTransactionFee));
++    m_checkBoxLimitProcessors-&gt;SetValue(fLimitProcessors);
++    m_spinCtrlLimitProcessors-&gt;Enable(fLimitProcessors);
++    m_spinCtrlLimitProcessors-&gt;SetValue(nLimitProcessors);
++    int nProcessors = atoi(getenv(&quot;NUMBER_OF_PROCESSORS&quot;));
++    if (nProcessors &lt; 1)
++        nProcessors = 999;
++    m_spinCtrlLimitProcessors-&gt;SetRange(1, nProcessors);
++    m_checkBoxStartOnSystemStartup-&gt;SetValue(fTmpStartOnSystemStartup = GetStartOnSystemStartup());
++    m_checkBoxMinimizeToTray-&gt;SetValue(fMinimizeToTray);
++    m_checkBoxMinimizeOnClose-&gt;Enable(fMinimizeToTray);
++    m_checkBoxMinimizeOnClose-&gt;SetValue(fMinimizeToTray &amp;&amp; fMinimizeOnClose);
++    fTmpMinimizeOnClose = fMinimizeOnClose;
+     m_buttonOK-&gt;SetFocus();
+-    m_treeCtrl-&gt;AddRoot(wxT(&quot;Settings&quot;));
+-    m_treeCtrl-&gt;AppendItem(m_treeCtrl-&gt;GetRootItem(), wxT(&quot;Bitcoin&quot;));</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -21,21 +21,25 @@ enum
+ 
+ 
+ 
++
++extern map&lt;string, string&gt; mapArgs;
++
++// Settings
++extern int fShowGenerated;
++extern int fMinimizeToTray;
++extern int fMinimizeOnClose;
++
++
++
+ extern void HandleCtrlA(wxKeyEvent&amp; event);
+ extern string DateTimeStr(int64 nTime);
+ extern string FormatTxStatus(const CWalletTx&amp; wtx);
+ extern void CrossThreadCall(int nID, void* pdata);
+ extern void MainFrameRepaint();
+ extern void Shutdown(void* parg);
+-void ApplyUISettings();
+-void GenerateBitcoins(bool flag);
+ 
+-// UI settings
+-extern int minimizeToTray;
+-extern int closeToTray;
+-extern int startOnSysBoot;
+-extern int askBeforeClosing;
+-extern int alwaysShowTrayIcon;
++
++
+ 
+ 
+ 
+@@ -44,14 +48,17 @@ class CMainFrame : public CMainFrameBase
+ protected:
+     // Event handlers
+     void OnClose(wxCloseEvent&amp; event);
+-    void OnIconize( wxIconizeEvent&amp; event );
++    void OnIconize(wxIconizeEvent&amp; event);
+     void OnMouseEvents(wxMouseEvent&amp; event);
+     void OnKeyDown(wxKeyEvent&amp; event) { HandleCtrlA(event); }
+     void OnIdle(wxIdleEvent&amp; event);
+     void OnPaint(wxPaintEvent&amp; event);
+     void OnPaintListCtrl(wxPaintEvent&amp; event);
+     void OnMenuFileExit(wxCommandEvent&amp; event);
++    void OnMenuViewShowGenerated(wxCommandEvent&amp; event);
++    void OnUpdateUIViewShowGenerated(wxUpdateUIEvent&amp; event);
+     void OnMenuOptionsGenerate(wxCommandEvent&amp; event);
++    void OnUpdateUIOptionsGenerate(wxUpdateUIEvent&amp; event);
+     void OnMenuOptionsChangeYourAddress(wxCommandEvent&amp; event);
+     void OnMenuOptionsOptions(wxCommandEvent&amp; event);
+     void OnMenuHelpAbout(wxCommandEvent&amp; event);
+@@ -66,7 +73,6 @@ protected:
+     void OnListItemActivatedProductsSent(wxListEvent&amp; event);
+     void OnListItemActivatedOrdersSent(wxListEvent&amp; event);
+     void OnListItemActivatedOrdersReceived(wxListEvent&amp; event);
+-    void OnUpdateMenuGenerate( wxUpdateUIEvent&amp; event );
+ 	
+ public:
+     /** Constructor */
+@@ -85,7 +91,6 @@ public:
+     void InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
+     void RefreshListCtrl();
+     void RefreshStatus();
+-    void SendToTray();
+ };
+ 
+ 
+@@ -107,47 +112,26 @@ public:
+ 
+ 
+ 
+-class COptionsPanelBitcoin : public COptionsPanelBitcoinBase
+-{
+-protected:
+-    // Event handlers
+-	void OnKillFocusTransactionFee( wxFocusEvent&amp; event );
+-
+-public:
+-    /** Constructor */
+-    COptionsPanelBitcoin(wxWindow* parent);
+-};
+-
+-
+-
+-class COptionsPanelUI : public COptionsPanelUIBase
+-{
+-protected:
+-    // Event handlers
+-	void OnOptionsChanged( wxCommandEvent&amp; event );
+-
+-public:
+-    /** Constructor */
+-    COptionsPanelUI(wxWindow* parent);
+-};
+-
+-
+-
+ class COptionsDialog : public COptionsDialogBase
+ {
+ protected:
+     // Event handlers
+-	void MenuSelChanged( wxTreeEvent&amp; event );
++    void OnListBox(wxCommandEvent&amp; event);
++    void OnKillFocusTransactionFee(wxFocusEvent&amp; event);
++    void OnCheckBoxLimitProcessors(wxCommandEvent&amp; event);
++    void OnCheckBoxMinimizeToTray(wxCommandEvent&amp; event);
+     void OnButtonOK(wxCommandEvent&amp; event);
+     void OnButtonCancel(wxCommandEvent&amp; event);
++    void OnButtonApply(wxCommandEvent&amp; event);
+ 
+-    // Panels
+-    COptionsPanelBitcoin* panelBitcoin;
+-    COptionsPanelUI* panelUI;
+-    wxPanel* currentPanel;
+ public:
+     /** Constructor */
+     COptionsDialog(wxWindow* parent);
++
++    // Custom
++    bool fTmpStartOnSystemStartup;
++    bool fTmpMinimizeOnClose;
++    void SelectPage(int nPage);
+ };
+ 
+ 
+@@ -180,6 +164,11 @@ protected:
+ public:
+     /** Constructor */
+     CSendDialog(wxWindow* parent, const wxString&amp; strAddress=&quot;&quot;);
++
++    // Custom
++    bool fEnabledPrev;
++    string strFromSave;
++    string strMessageSave;
+ };
+ 
+ 
+@@ -455,22 +444,33 @@ public:
+ 
+ 
+ 
+-class CBitcoinTBIcon : public wxTaskBarIcon
++class CMyTaskBarIcon : public wxTaskBarIcon
+ {
+ protected:
+-	void Restore();
+-
+-	// Event handlers
+-	void OnLeftButtonDClick(wxTaskBarIconEvent&amp;);
+-	void OnMenuExit(wxCommandEvent&amp;);
+-	void OnMenuGenerate(wxCommandEvent&amp;);
+-	void OnMenuRestore(wxCommandEvent&amp;);
++    // Event handlers
++    void OnLeftButtonDClick(wxTaskBarIconEvent&amp; event);
++    void OnMenuRestore(wxCommandEvent&amp; event);
++    void OnUpdateUIGenerate(wxUpdateUIEvent&amp; event);
++    void OnMenuGenerate(wxCommandEvent&amp; event);
++    void OnMenuExit(wxCommandEvent&amp; event);
+ 
+ public:
+-	void Show();
+-	void Hide();</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code></code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><span></span><a rel="next" href="../../commits/fa2a033/">fix display of new generated coins, fix assertion in… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

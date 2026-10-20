@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin&#x27;s TEST network as -testnet… (r168) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 October 2010: Gavin&#x27;s TEST network as -testnet switch, misc fixes. 14 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/5cbf753/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin&#x27;s TEST network as -testnet… (r168) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 October 2010: Gavin&#x27;s TEST network as -testnet switch, misc fixes. 14 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/5cbf753/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin&#x27;s TEST network as -testnet… (r168) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 October 2010: Gavin&#x27;s TEST network as -testnet switch, misc fixes. 14 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin's TEST network as -testnet switch, misc fixes", "url": "https://satoshimail.pages.dev/commits/5cbf753/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-10-19T17:16:51Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/5cbf75324d1509a1262b65c5073314a4da3f6d77"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin's TEST network as -testnet…", "item": "https://satoshimail.pages.dev/commits/5cbf753/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c5cbf75324d">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin&#x27;s TEST network as -testnet…</span></div></nav>
+<main class="in">
+<h1>Gavin&#x27;s TEST network as -testnet switch, misc fixes</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 19 October 2010 · SVN r168 · release v0.3.14 · 14 files, +155 −82</p>
+<p class="actions"><a class="btn" href="../../#t-c5cbf75324d">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/5cbf75324d1509a1262b65c5073314a4da3f6d77" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>base58.h</code></summary><pre><code>@@ -152,7 +152,7 @@ inline bool DecodeBase58Check(const string&amp; str, vector&lt;unsigned char&gt;&amp; vchRet)
+ 
+ 
+ 
+-static const unsigned char ADDRESSVERSION = 0;
++#define ADDRESSVERSION   ((unsigned char)(fTestNet ? 111 : 0))
+ 
+ inline string Hash160ToAddress(uint160 hash160)
+ {</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -846,10 +846,13 @@ void BackupWallet(const string&amp; strDest)
+     }
+ }
+ 
++
+ void CWalletDB::ReserveKeyFromKeyPool(int64&amp; nIndex, CKeyPool&amp; keypool)
+ {
+     nIndex = -1;
+     keypool.vchPubKey.clear();
++    CRITICAL_BLOCK(cs_main)
++    CRITICAL_BLOCK(cs_mapWallet)
+     CRITICAL_BLOCK(cs_setKeyPool)
+     {
+         // Top up key pool
+@@ -881,7 +884,11 @@ void CWalletDB::ReserveKeyFromKeyPool(int64&amp; nIndex, CKeyPool&amp; keypool)
+ void CWalletDB::KeepKey(int64 nIndex)
+ {
+     // Remove from key pool
+-    Erase(make_pair(string(&quot;pool&quot;), nIndex));
++    CRITICAL_BLOCK(cs_main)
++    CRITICAL_BLOCK(cs_mapWallet)
++    {
++        Erase(make_pair(string(&quot;pool&quot;), nIndex));
++    }
+     printf(&quot;keypool keep %&quot;PRI64d&quot;\n&quot;, nIndex);
+ }
+ </code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -455,7 +455,8 @@ public:
+ 
+     ~CReserveKey()
+     {
+-        ReturnKey();
++        if (!fShutdown)
++            ReturnKey();
+     }
+ 
+     vector&lt;unsigned char&gt; GetReservedKey()</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -165,22 +165,22 @@ bool AppInit2(int argc, char* argv[])
+             &quot;  bitcoin [options] help              \t\t  &quot; + _(&quot;List commands\n&quot;) +
+             &quot;  bitcoin [options] help &lt;command&gt;    \t\t  &quot; + _(&quot;Get help for a command\n&quot;) +
+           _(&quot;Options:\n&quot;) +
+-            &quot;  -conf=&lt;file&gt;     \t  &quot; + _(&quot;Specify configuration file (default: bitcoin.conf)\n&quot;) +
+-            &quot;  -gen             \t  &quot; + _(&quot;Generate coins\n&quot;) +
+-            &quot;  -gen=0           \t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
+-            &quot;  -min             \t  &quot; + _(&quot;Start minimized\n&quot;) +
+-            &quot;  -datadir=&lt;dir&gt;   \t  &quot; + _(&quot;Specify data directory\n&quot;) +
+-            &quot;  -proxy=&lt;ip:port&gt; \t  &quot; + _(&quot;Connect through socks4 proxy\n&quot;) +
+-            &quot;  -addnode=&lt;ip&gt;    \t  &quot; + _(&quot;Add a node to connect to\n&quot;) +
+-            &quot;  -connect=&lt;ip&gt;    \t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
+-            &quot;  -server          \t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
+-            &quot;  -daemon          \t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
+-            &quot;  -rpcuser=&lt;user&gt;  \t  &quot; + _(&quot;Username for JSON-RPC connections\n&quot;) +
+-            &quot;  -rpcpassword=&lt;pw&gt;\t  &quot; + _(&quot;Password for JSON-RPC connections\n&quot;) +
+-            &quot;  -rpcport=&lt;port&gt;  \t  &quot; + _(&quot;Listen for JSON-RPC connections on &lt;port&gt;\n&quot;) +
+-            &quot;  -rpcallowip=&lt;ip&gt; \t  &quot; + _(&quot;Allow JSON-RPC connections from specified IP address\n&quot;) +
+-            &quot;  -rpcconnect=&lt;ip&gt; \t  &quot; + _(&quot;Send commands to node running on &lt;ip&gt;\n&quot;) +
+-            &quot;  -?               \t  &quot; + _(&quot;This help message\n&quot;);
++            &quot;  -conf=&lt;file&gt;     \t\t  &quot; + _(&quot;Specify configuration file (default: bitcoin.conf)\n&quot;) +
++            &quot;  -gen             \t\t  &quot; + _(&quot;Generate coins\n&quot;) +
++            &quot;  -gen=0           \t\t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
++            &quot;  -min             \t\t  &quot; + _(&quot;Start minimized\n&quot;) +
++            &quot;  -datadir=&lt;dir&gt;   \t\t  &quot; + _(&quot;Specify data directory\n&quot;) +
++            &quot;  -proxy=&lt;ip:port&gt; \t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +
++            &quot;  -addnode=&lt;ip&gt;    \t  &quot;   + _(&quot;Add a node to connect to\n&quot;) +
++            &quot;  -connect=&lt;ip&gt;    \t\t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
++            &quot;  -server          \t\t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
++            &quot;  -daemon          \t\t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
++            &quot;  -testnet         \t\t  &quot; + _(&quot;Use the test network\n&quot;) +
++            &quot;  -rpcuser=&lt;user&gt;  \t  &quot;   + _(&quot;Username for JSON-RPC connections\n&quot;) +
++            &quot;  -rpcpassword=&lt;pw&gt;\t  &quot;   + _(&quot;Password for JSON-RPC connections\n&quot;) +
++            &quot;  -rpcport=&lt;port&gt;  \t\t  &quot; + _(&quot;Listen for JSON-RPC connections on &lt;port&gt;\n&quot;) +
++            &quot;  -rpcallowip=&lt;ip&gt; \t\t  &quot; + _(&quot;Allow JSON-RPC connections from specified IP address\n&quot;) +
++            &quot;  -rpcconnect=&lt;ip&gt; \t  &quot;   + _(&quot;Send commands to node running on &lt;ip&gt;\n&quot;);
+ 
+ #ifdef USE_SSL
+         strUsage += string() +
+@@ -191,6 +191,9 @@ bool AppInit2(int argc, char* argv[])
+             &quot;  -rpcsslciphers=&lt;ciphers&gt;              \t  &quot; + _(&quot;Acceptable ciphers (default: TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!AH:!3DES:@STRENGTH)\n&quot;);
+ #endif
+ 
++        strUsage += string() +
++            &quot;  -?               \t\t  &quot; + _(&quot;This help message\n&quot;);
++
+ #if defined(__WXMSW__) &amp;&amp; defined(GUI)
+         // Tabs make the columns line up in the message box
+         wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
+@@ -208,6 +211,9 @@ bool AppInit2(int argc, char* argv[])
+     if (mapArgs.count(&quot;-printtodebugger&quot;))
+         fPrintToDebugger = true;
+ 
++    if (mapArgs.count(&quot;-testnet&quot;))
++        fTestNet = true;
++
+     if (fCommandLine)
+     {
+         int ret = CommandLineRPC(argc, argv);</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -252,8 +252,8 @@ void ThreadIRCSeed2(void* parg)
+         }
+         Sleep(500);
+ 
+-        Send(hSocket, &quot;JOIN #bitcoin\r&quot;);
+-        Send(hSocket, &quot;WHO #bitcoin\r&quot;);
++        Send(hSocket, fTestNet ? &quot;JOIN #bitcoinTEST\r&quot; : &quot;JOIN #bitcoin\r&quot;);
++        Send(hSocket, fTestNet ? &quot;WHO #bitcoinTEST\r&quot;  : &quot;WHO #bitcoin\r&quot;);
+ 
+         int64 nStart = GetTime();
+         string strLine;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -21,7 +21,8 @@ unsigned int nTransactionsUpdated = 0;
+ map&lt;COutPoint, CInPoint&gt; mapNextTx;
+ 
+ map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+-const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;);
++uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;);
++CBigNum bnProofOfWorkLimit(~uint256(0) &gt;&gt; 32);
+ CBlockIndex* pindexGenesisBlock = NULL;
+ int nBestHeight = -1;
+ CBigNum bnBestChainWork = 0;
+@@ -1487,12 +1488,13 @@ bool CBlock::AcceptBlock()
+             return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+     // Check that the block chain matches the known block chain up to a checkpoint
+-    if ((nHeight == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
+-        (nHeight == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
+-        (nHeight == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;)) ||
+-        (nHeight == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;)) ||
+-        (nHeight == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at %d&quot;, nHeight);
++    if (!fTestNet)
++        if ((nHeight == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
++            (nHeight == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
++            (nHeight == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;)) ||
++            (nHeight == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;)) ||
++            (nHeight == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
++            return error(&quot;AcceptBlock() : rejected by checkpoint lockin at %d&quot;, nHeight);
+ 
+     // Write block to history file
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+@@ -1683,6 +1685,16 @@ FILE* AppendBlockFile(unsigned int&amp; nFileRet)
+ 
+ bool LoadBlockIndex(bool fAllowNew)
+ {
++    if (fTestNet)
++    {
++        hashGenesisBlock = uint256(&quot;0x0000000224b1593e3ff16a0e3b61285bbc393a39f78c8aa48c456142671f7110&quot;);
++        bnProofOfWorkLimit = CBigNum(~uint256(0) &gt;&gt; 28);
++        pchMessageStart[0] = 0xfa;
++        pchMessageStart[1] = 0xbf;
++        pchMessageStart[2] = 0xb5;
++        pchMessageStart[3] = 0xda;
++    }
++
+     //
+     // Load block index
+     //
+@@ -1723,13 +1735,19 @@ bool LoadBlockIndex(bool fAllowNew)
+         block.nBits    = 0x1d00ffff;
+         block.nNonce   = 2083236893;
+ 
+-            //// debug print
+-            printf(&quot;%s\n&quot;, block.GetHash().ToString().c_str());
+-            printf(&quot;%s\n&quot;, hashGenesisBlock.ToString().c_str());
+-            printf(&quot;%s\n&quot;, block.hashMerkleRoot.ToString().c_str());
+-            assert(block.hashMerkleRoot == uint256(&quot;0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b&quot;));
+-            block.print();
++        if (fTestNet)
++        {
++            block.nTime    = 1279232055;
++            block.nBits    = 0x1d07fff8;
++            block.nNonce   = 81622180;
++        }
+ 
++        //// debug print
++        printf(&quot;%s\n&quot;, block.GetHash().ToString().c_str());
++        printf(&quot;%s\n&quot;, hashGenesisBlock.ToString().c_str());
++        printf(&quot;%s\n&quot;, block.hashMerkleRoot.ToString().c_str());
++        assert(block.hashMerkleRoot == uint256(&quot;0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b&quot;));
++        block.print();
+         assert(block.GetHash() == hashGenesisBlock);
+ 
+         // Start new block file
+@@ -1963,7 +1981,10 @@ bool AlreadyHave(CTxDB&amp; txdb, const CInv&amp; inv)
+ 
+ 
+ 
+-
++// The message start string is designed to be unlikely to occur in normal data.
++// The characters are rarely used upper ascii, not valid as UTF-8, and produce
++// a large 4-byte int at any alignment.
++char pchMessageStart[4] = { 0xf9, 0xbe, 0xb4, 0xd9 };
+ 
+ 
+ bool ProcessMessages(CNode* pfrom)
+@@ -2022,19 +2043,14 @@ bool ProcessMessages(CNode* pfrom)
+         if (nMessageSize &gt; vRecv.size())
+         {
+             // Rewind and wait for rest of message
+-            ///// need a mechanism to give up waiting for overlong message size error
+             vRecv.insert(vRecv.begin(), vHeaderSave.begin(), vHeaderSave.end());
+             break;
+         }
+ 
+-        // Copy message to its own buffer
+-        CDataStream vMsg(vRecv.begin(), vRecv.begin() + nMessageSize, vRecv.nType, vRecv.nVersion);
+-        vRecv.ignore(nMessageSize);
+-
+         // Checksum
+         if (vRecv.GetVersion() &gt;= 209)
+         {
+-            uint256 hash = Hash(vMsg.begin(), vMsg.end());
++            uint256 hash = Hash(vRecv.begin(), vRecv.begin() + nMessageSize);
+             unsigned int nChecksum = 0;
+             memcpy(&amp;nChecksum, &amp;hash, sizeof(nChecksum));
+             if (nChecksum != hdr.nChecksum)
+@@ -2045,6 +2061,10 @@ bool ProcessMessages(CNode* pfrom)
+             }
+         }
+ 
++        // Copy message to its own buffer
++        CDataStream vMsg(vRecv.begin(), vRecv.begin() + nMessageSize, vRecv.nType, vRecv.nVersion);
++        vRecv.ignore(nMessageSize);
++
+         // Process message
+         bool fRet = false;
+         try
+@@ -2208,20 +2228,27 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                 addr.nTime -= 5 * 24 * 60 * 60;
+             AddAddress(addr);
+             pfrom-&gt;AddAddressKnown(addr);
+-            if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
++            if (!pfrom-&gt;fGetAddr &amp;&amp; vAddr.size() &lt;= 10 &amp;&amp; addr.IsRoutable())
+             {
+                 // Relay to a limited number of other nodes
+                 CRITICAL_BLOCK(cs_vNodes)
+                 {
+-                    // Use deterministic randomness to send to
+-                    // the same places for 12 hours at a time
++                    // Use deterministic randomness to send to the same nodes for 24 hours
++                    // at a time so the setAddrKnowns of the chosen nodes prevent repeats
+                     static uint256 hashSalt;
+                     if (hashSalt == 0)
+                         RAND_bytes((unsigned char*)&amp;hashSalt, sizeof(hashSalt));
+-                    uint256 hashRand = addr.ip ^ ((GetTime()+addr.ip)/(12*60*60)) ^ hashSalt;
++                    uint256 hashRand = hashSalt ^ (((int64)addr.ip)&lt;&lt;32) ^ ((GetTime()+addr.ip)/(24*60*60));
++                    hashRand = Hash(BEGIN(hashRand), END(hashRand));
+                     multimap&lt;uint256, CNode*&gt; mapMix;
+                     foreach(CNode* pnode, vNodes)
+-                        mapMix.insert(make_pair(hashRand = Hash(BEGIN(hashRand), END(hashRand)), pnode));
++                    {
++                        unsigned int nPointer;
++                        memcpy(&amp;nPointer, &amp;pnode, sizeof(nPointer));
++                        uint256 hashKey = hashRand ^ nPointer;
++                        hashKey = Hash(BEGIN(hashKey), END(hashKey));
++                        mapMix.insert(make_pair(hashKey, pnode));
++                    }
+                     int nRelayNodes = 2;
+                     for (multimap&lt;uint256, CNode*&gt;::iterator mi = mapMix.begin(); mi != mapMix.end() &amp;&amp; nRelayNodes-- &gt; 0; ++mi)
+                         ((*mi).second)-&gt;PushAddress(addr);
+@@ -2446,7 +2473,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+             {
+                 const CAddress&amp; addr = item.second;
+-                if (addr.nTime &gt; nSince &amp;&amp; GetRand(nCount) &lt; 2000)
++                if (addr.nTime &gt; nSince &amp;&amp; GetRand(nCount) &lt; 2500)
+                     pfrom-&gt;PushAddress(addr);
+             }
+         }
+@@ -2931,10 +2958,12 @@ void BitcoinMiner()
+         f4WaySSE2 = (mapArgs[&quot;-4way&quot;] != &quot;0&quot;);
+ 
+     CReserveKey reservekey;
+-    CBigNum bnExtraNonce = 0;
++    unsigned int nExtraNonce = 0;
++    int64 nPrevTime = 0;
+     while (fGenerateBitcoins)
+     {
+-        Sleep(50);
++        if (AffinityBugWorkaround(ThreadBitcoinMiner))
++            return;
+         if (fShutdown)
+             return;
+         while (vNodes.empty() || IsInitialBlockDownload())
+@@ -2957,7 +2986,13 @@ void BitcoinMiner()
+         CTransaction txNew;
+         txNew.vin.resize(1);
+         txNew.vin[0].prevout.SetNull();
+-        txNew.vin[0].scriptSig &lt;&lt; ++bnExtraNonce;
++        int64 nNow = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++        if (nNow &gt; nPrevTime+1 &amp;&amp; ++nExtraNonce &gt;= 0x7f)
++        {
++            nExtraNonce = 1;
++            nPrevTime = nNow;
++        }
++        txNew.vin[0].scriptSig &lt;&lt; nBits &lt;&lt; CBigNum(nExtraNonce);
+         txNew.vout.resize(1);
+         txNew.vout[0].scriptPubKey &lt;&lt; reservekey.GetReservedKey() &lt;&lt; OP_CHECKSIG;
+ 
+@@ -3045,9 +3080,9 @@ void BitcoinMiner()
+         tmpworkspace&amp; tmp = *(tmpworkspace*)alignup&lt;16&gt;(tmpbuf);
+ 
+         tmp.block.nVersion       = pblock-&gt;nVersion;
+-        tmp.block.hashPrevBlock  = pblock-&gt;hashPrevBlock  = (pindexPrev ? pindexPrev-&gt;GetBlockHash() : 0);
++        tmp.block.hashPrevBlock  = pblock-&gt;hashPrevBlock  = pindexPrev-&gt;GetBlockHash();
+         tmp.block.hashMerkleRoot = pblock-&gt;hashMerkleRoot = pblock-&gt;BuildMerkleTree();
+-        tmp.block.nTime          = pblock-&gt;nTime          = max((pindexPrev ? pindexPrev-&gt;GetMedianTimePast()+1 : 0), GetAdjustedTime());
++        tmp.block.nTime          = pblock-&gt;nTime          = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+         tmp.block.nBits          = pblock-&gt;nBits          = nBits;
+         tmp.block.nNonce         = pblock-&gt;nNonce         = 0;
+ 
+@@ -3177,10 +3212,7 @@ void BitcoinMiner()
+                 break;
+ 
+             // Update nTime every few seconds
+-            int64 nNewTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+-            if (nNewTime != pblock-&gt;nTime &amp;&amp; bnExtraNonce &gt; 10)
+-                bnExtraNonce = 0;
+-            pblock-&gt;nTime = nNewTime;
++            pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+             tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
+         }
+     }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -22,7 +22,6 @@ static const int64 CENT = 1000000;
+ static const int64 MAX_MONEY = 21000000 * COIN;
+ inline bool MoneyRange(int64 nValue) { return (nValue &gt;= 0 &amp;&amp; nValue &lt;= MAX_MONEY); }
+ static const int COINBASE_MATURITY = 100;
+-static const CBigNum bnProofOfWorkLimit(~uint256(0) &gt;&gt; 32);
+ 
+ 
+ 
+@@ -31,7 +30,8 @@ static const CBigNum bnProofOfWorkLimit(~uint256(0) &gt;&gt; 32);
+ 
+ extern CCriticalSection cs_main;
+ extern map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+-extern const uint256 hashGenesisBlock;
++extern uint256 hashGenesisBlock;
++extern CBigNum bnProofOfWorkLimit;
+ extern CBlockIndex* pindexGenesisBlock;
+ extern int nBestHeight;
+ extern CBigNum bnBestChainWork;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -937,7 +937,7 @@ void ThreadOpenConnections2(void* parg)
+             // Add seed nodes if IRC isn&#x27;t working
+             static bool fSeedUsed;
+             bool fTOR = (fUseProxy &amp;&amp; addrProxy.port == htons(9050));
+-            if (mapAddresses.empty() &amp;&amp; (GetTime() - nStart &gt; 60 || fTOR))
++            if (mapAddresses.empty() &amp;&amp; (GetTime() - nStart &gt; 60 || fTOR) &amp;&amp; !fTestNet)
+             {
+                 for (int i = 0; i &lt; ARRAYLEN(pnSeed); i++)
+                 {</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -48,10 +48,7 @@ bool StopNode();
+ //  (4) size
+ //  (4) checksum
+ 
+-// The message start string is designed to be unlikely to occur in normal data.
+-// The characters are rarely used upper ascii, not valid as UTF-8, and produce
+-// a large 4-byte int at any alignment.
+-static const char pchMessageStart[4] = { 0xf9, 0xbe, 0xb4, 0xd9 };
++extern char pchMessageStart[4];
+ 
+ class CMessageHeader
+ {</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -776,16 +776,11 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         return false;
+ 
+                     int nKeysCount = CastToBigNum(stacktop(-i)).getint();
+-                    if (nKeysCount &lt; 0)
++                    if (nKeysCount &lt; 0 || nKeysCount &gt; 20)
++                        return false;
++                    nOpCount += nKeysCount;
++                    if (nOpCount &gt; 201)
+                         return false;
+-                    if (nBestHeight &gt; 84000)
+-                    {
+-                        if (nKeysCount &gt; 20)
+-                            return false;
+-                        nOpCount += nKeysCount;
+-                        if (nOpCount &gt; 201)
+-                            return false;
+-                    }
+                     int ikey = ++i;
+                     i += nKeysCount;
+                     if (stack.size() &lt; i)</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,7 +22,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31304;
++static const int VERSION = 31305;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -763,6 +763,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                            SingleLine(strDescription),
+                            FormatMoney(-nValue, true),
+                            &quot;&quot;);
++                nIndex = -1;
+                 wtx.nLinesDisplayed++;
+             }
+         }</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -16,6 +16,7 @@ bool fShutdown = false;
+ bool fDaemon = false;
+ bool fCommandLine = false;
+ string strMiscWarning;
++bool fTestNet = false;
+ 
+ 
+ 
+@@ -649,15 +650,11 @@ string GetDefaultDataDir()
+ void GetDataDir(char* pszDir)
+ {
+     // pszDir must be at least MAX_PATH length.
++    int nVariation;
+     if (pszSetDataDir[0] != 0)
+     {
+         strlcpy(pszDir, pszSetDataDir, MAX_PATH);
+-        static bool fMkdirDone;
+-        if (!fMkdirDone)
+-        {
+-            fMkdirDone = true;
+-            filesystem::create_directory(pszDir);
+-        }
++        nVariation = 0;
+     }
+     else
+     {
+@@ -665,11 +662,23 @@ void GetDataDir(char* pszDir)
+         // value so we don&#x27;t have to do memory allocations after that.
+         static char pszCachedDir[MAX_PATH];
+         if (pszCachedDir[0] == 0)
+-        {
+             strlcpy(pszCachedDir, GetDefaultDataDir().c_str(), sizeof(pszCachedDir));
+-            filesystem::create_directory(pszCachedDir);
+-        }
+         strlcpy(pszDir, pszCachedDir, MAX_PATH);
++        nVariation = 1;
++    }
++    if (fTestNet)
++    {
++        char* p = pszDir + strlen(pszDir);
++        if (p &gt; pszDir &amp;&amp; p[-1] != &#x27;/&#x27; &amp;&amp; p[-1] != &#x27;\\&#x27;)
++            *p++ = &#x27;/&#x27;;
++        strcpy(p, &quot;testnet&quot;);
++        nVariation += 2;
++    }
++    static bool pfMkdir[4];
++    if (!pfMkdir[nVariation])
++    {
++        pfMkdir[nVariation] = true;
++        filesystem::create_directory(pszDir);
+     }
+ }
+ </code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -145,6 +145,7 @@ extern bool fShutdown;
+ extern bool fDaemon;
+ extern bool fCommandLine;
+ extern string strMiscWarning;
++extern bool fTestNet;
+ 
+ void RandAddSeed();
+ void RandAddSeedPerfmon();
+@@ -621,3 +622,27 @@ inline void ExitThread(unsigned int nExitCode)
+     pthread_exit((void*)nExitCode);
+ }
+ #endif
++
++
++
++
++
++inline bool AffinityBugWorkaround(void(*pfn)(void*))
++{
++#ifdef __WXMSW__
++    // Sometimes after a few hours affinity gets stuck on one processor
++    DWORD dwProcessAffinityMask = -1;
++    DWORD dwSystemAffinityMask = -1;
++    GetProcessAffinityMask(GetCurrentProcess(), &amp;dwProcessAffinityMask, &amp;dwSystemAffinityMask);
++    DWORD dwPrev1 = SetThreadAffinityMask(GetCurrentThread(), dwProcessAffinityMask);
++    DWORD dwPrev2 = SetThreadAffinityMask(GetCurrentThread(), dwProcessAffinityMask);
++    if (dwPrev2 != dwProcessAffinityMask)
++    {
++        printf(&quot;AffinityBugWorkaround() : SetThreadAffinityMask=%d, ProcessAffinityMask=%d, restarting thread\n&quot;, dwPrev2, dwProcessAffinityMask);
++        if (!CreateThread(pfn, NULL))
++            printf(&quot;Error: CreateThread() failed\n&quot;);
++        return true;
++    }
++#endif
++    return false;
++}</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/83082f0/">← dkaparis: boost::bind build fix for c++0x</a><a rel="next" href="../../commits/d9c6b09/">Gavin Andresen: multiple instance check, -testnet use port… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

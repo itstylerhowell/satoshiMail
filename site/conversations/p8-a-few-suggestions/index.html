@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A few suggestions – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 9 December 2009: Helpful suggestions, thanks. That&#x27;s a good idea. The side accepting the connection just needs to withhold from sending…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p8-a-few-suggestions/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="A few suggestions – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 9 December 2009: Helpful suggestions, thanks. That&#x27;s a good idea. The side accepting the connection just needs to withhold from sending…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p8-a-few-suggestions/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="A few suggestions – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 9 December 2009: Helpful suggestions, thanks. That&#x27;s a good idea. The side accepting the connection just needs to withhold from sending…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "A few suggestions", "url": "https://satoshimail.pages.dev/conversations/p8-a-few-suggestions/", "author": {"@type": "Person", "name": "madhatter"}, "datePublished": "2009-12-09T05:34:46Z", "text": "Hey, First off I must say that this is an amazing concept. I have been dreaming of a P2P money system for a LONG time. You have my complete kudos and respect. I have a few suggestions: - When the bitcoin software establishes a connection with a peer (client TCP socket) have the client send the handshake string. Right now you have the server (server TCP socket) send the handshake. My reasons for this are anonymity of course. It is far too easy for ISPs to portscan clients and detect they are running this program. - Use some sort of encryption during the handshake (sort of goes with the statement/request above) to obfuscate what the software is during DPI (deep packet inspection). I am really thinking about people in non-free (as in freedom) countries such as China/Iran. - Some sort of an API is needed so that this system can be integrated with websites to provide instant-on services. A simple https receipt mechanism would do wonders. Have the client post each incoming payment to an https url with all of the relevant information and provide status updates. Also an outbound payment mechanism would be nice. So one could automate payments (and batch payments) outbound. Status could be returned via the https receipt interface. - Static port/Random port. Have a setting to randomly assign the port that it runs on. (also be able to set it statically for very restrictive firewalls). - UPnP support. Have the client automatically create the port forward on upstream routers. Enabled by default. Can be turned off in the options menu. - Ability to compile a headless (console only) install for *NIX systems. Also have the ability to just run as a network service. Perhaps with a telnet-able port for control (or even a unix socket would be ok). Smiley", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-09T18:45:10Z", "text": "Helpful suggestions, thanks. That's a good idea. The side accepting the connection just needs to withhold from sending anything until it receives a valid handshake. Any portscan would only get a dead connection that doesn't volunteer to identify itself. I have thought about eventually SSLing all the connections. I assume anything short of SSL would be pointless against DPI. Maybe a better more immediate solution is to connect through TOR, which will be possible with 0.2. That's one of the main…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nanaimogold"}, "datePublished": "2009-12-09T19:25:31Z", "text": "Thank you for this effort. A P2P payment system has been needed for a long time. Shane"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-10T14:00:17Z", "text": "Most modern P2P software tries UPnP by default. You can (of course) disable it (usually) in the options. Hmm. I had thought about that as well. Your first idea is probably best. That way you can run the server daemon \"headless\" and have your choice of a front end. (One of the front ends could be a PHP [or C++ CGI] program that runs on your favorite webserver). This would also enable you to run the front end and back end on different machines. (Ex. headless on a linux server that has a static…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-10T19:31:49Z", "text": "That's a good approach for mobile. Programmatic API used by PHP (any language) to present a web UI covers remote admin, mobile and any other client that can't be online all the time with a static IP. It would be like webmail. It would be easier for new users to get started if they only need to create an account on a website, not install software. Yeah, we can phase out IRC when there are enough static nodes to preprogram a seed list. Once you get seeded, you don't need IRC. There were some…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-11T04:59:19Z", "text": "Okay, let me get registered on SF and get you my username. I haven't used SF in years so I'll have to familiarize myself. Will this give me access to the current branch you fellows are currently working on? (0.2) I have been trying to think of the options that will be needed for the backend process. I wonder which would be better: a long set of command line switches or a configuration file. Hmm... I have a lot of servers spread across the globe. If we can get to the point where we have a…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-11T19:27:55Z", "text": "Right, the SVN has the almost-release-candidate 0.2 source, which can also be built and run on Linux. It hasn't been tested on FreeBSD. That would be a big help. TOR users wouldn't have to worry about how to get seeded, and we wouldn't depend on IRC. It can be run in a few simple modes without access to the UI if you don't mind a minimized window on the desktop. (0.1.5 doesn't have -min so it would be an open window) To only run a seed: bitcoin -min -gen=0 You could sort of monitor it by…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-12T06:34:21Z", "text": "I almost have the svn 0.2 compiling on Mac OS X 10.4.11/Intel (I also have a PPC970 machine here as well so a PPC build would be possible as well). The windowing is native carbon too via wxwidgets! It is FAST! Wink I had to create a new makefile (makefile.osx; based on makefile.unix of course.. given any thought to using autoconf?) and put some ifdef's into header.h. I have patches. I will keep toying around. I might try it on FreeBSD next. I already run a great deal of TOR and I2P nodes so…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2009-12-12T13:08:17Z", "text": "Suggestion : Since the coins are generated faster on fast machines, many people will want to use their GPU power to do this, too. So, my suggestion is to implement a GPU-computing support using ATI Stream and Nvidia CUDA."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-12T17:52:44Z", "text": "The average total coins generated across the network per day stays the same. Faster machines just get a larger share than slower machines. If everyone bought faster machines, they wouldn't get more coins than before. We should have a gentleman's agreement to postpone the GPU arms race as long as we can for the good of the network. It's much easer to get new users up to speed if they don't have to worry about GPU drivers and compatibility. It's nice how anyone with just a CPU can compete fairly…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-12T18:17:10Z", "text": "Mac support would be nice. wxWidgets really pays off for cross platform. Please don't try PPC. PPC is big-endian and Bitcoin is little-endian, there would be endless endian bugs making it harder for me to debug the network if there's a potentially byte-swapping node out there. PPC is on its way out anyway. Considered autoconf. Autoconf is a necessity for large projects with a quagmire makefile, but I think we're small enough that it's more optimal without it. I'd rather keep the makefile…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2009-12-12T18:47:45Z", "text": "I'd choose cmake instead of autoconf if we want build automation at some point."}, {"@type": "Comment", "author": {"@type": "Person", "name": "SmokeTooMuch"}, "datePublished": "2009-12-12T20:46:14Z", "text": "Suggestion: Add IPv6-Support for payments."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-13T06:44:04Z", "text": "Okay, Mac PPC is EOL now anyway. Console mode would be awesome."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-13T06:46:30Z", "text": "Um, so command line only mode could be selected at compile-time? Perhaps with a define? And that would shut off the graphical UI stuff? Just want to be on the same page here. Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-13T06:50:05Z", "text": "One quick question about \"natural deflation\" (as I call it). I have noticed that it is possible to spend to old addresses that no longer work. In essence the coins can not be claimed. Wouldn't there be a natural deflation effect because of this? I mean if the coins max out at 21,000,000 wouldn't the number of coins slowly work backwards due to payment errors?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-13T16:51:25Z", "text": "There would be a command line switch at runtime to tell it to run without UI. All it needs to do is not create the main window. A simplistic way would be to disable \"pframeMain->Show\" and \"ptaskbaricon->Show\" in ui.cpp. The network threads don't care that the UI isn't there. The only other UI is a message box in CheckDiskSpace if it runs out of disk space. Then a separate command line utility to communicate with it to do things. Not sure what it should be named. \"natural deflation\"... I like…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-14T09:29:44Z", "text": "Okay, thanks for the tips. I am going to try running bitcoin 0.2/svn on FreeBSD tonight in console-only mode. I'll create some notes / patches / etc."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-14T13:09:48Z", "text": "Got it working on FreeBSD! I'll submit my work here soon. $gmake -f makefile.fbsd g++ -c -O0 -Wno-invalid-offsetof -Wformat -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I\"/usr/include\" -I\"/usr/local/include\" -I\"/usr/local/include/db47\" -I\"/usr/local/include/wx-2.8\" -I\"/usr/local/lib/wx/include/gtk2-ansi-release-2.8\" -o headers.h.gch headers.h g++ -c -O0 -Wno-invalid-offsetof -Wformat -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I\"/usr/include\" -I\"/usr/local/include\" -I\"/usr/local/include/db47\"…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-14T15:01:39Z", "text": "Can anyone shed some light here? g++ -c -O0 -Wno-invalid-offsetof -Wformat -g -D__WXMAC__ -DNOPCH -DBUILD_MACOSX -I\"/usr/include\" -I\"/usr/local/include/wx-2.8\" -I\"/usr/local/include\" -I\"/usr/local/boost_1_41_0\" -I\"/sw/include/db4\" -I\"/usr/local/ssl/include\" -I\"/usr/local/lib/wx/include/mac-ansi-release-2.8\" -o headers.h.gch headers.h ui.h: In constructor 'CGetTextFromUserDialog::CGetTextFromUserDialog(wxWindow*, const std::string&, const std::string&, const std::string&, const std::string&…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-14T17:15:56Z", "text": "It looks like the implicit conversion from std::string to wxString isn't working. That's used everywhere, the conversion needs to work. wxString is complicated by supporting win32's 16-bit wchar and 8-bit ansi dual-compile. You can get that problem on Windows if the \"unicode\" (meaning wchar) build is used, so that wxString is wchar and std::string is char. It's probably some wxWidgets compile defines or build configuration. What \"configure\" options did you use? I'm not sure __WXMAC__ is the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-15T05:21:09Z", "text": "Okay, I will look into the std::string issue. It is also throwing the same std::string issue on the latest version of Ubuntu Linux. So this isn't just OSX related. I have to say that my main background is C, not C++ so I am still learning some of the C++ data types/headers/and other specifics \"as I go\". Smiley There are only defines for __WXCOCOA__ and __WXMAC__ in wx/defs.h (I must be missing something here..maybe my wxwidgets needs to be rebuilt -- I'll try that). I have tried combinations…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-15T05:30:53Z", "text": "Okay, I am on SF now. Username \"madhatter2\". Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-15T20:37:32Z", "text": "Then it must be something you're doing differently with building or configuring wxWidgets. What options did you use on the wxWidgets \"configure\" script? The options I used are in build-unix.txt. Never heard of that happening. Is there anything in debug.log? If you touched the file, that sounds like something is there. Does the program have write access to the file?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-15T21:14:13Z", "text": "I used the default build options. I will try the options from your txt file. On FreeBSD it just worked right from the normal ports system. Which is excellent. It means that installing bitcoin via the same ports system (my goal) will be a snap. Yes, the debug.log has the proper permissions. I'll re-read the source. There must be something I am missing."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2009-12-16T15:49:23Z", "text": "I worked around the string problem by using wxWidgets 2.9. It worked with the default configuration."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-17T13:21:49Z", "text": "[madhatter@10 /home/madhatter/src/bitcoin]# diff -u headers.h.orig headers.h --- headers.h.orig 2009-12-14 12:29:39.000000000 +0000 +++ headers.h 2009-12-14 12:41:08.000000000 +0000 @@ -35,7 +35,12 @@ #include <limits.h> #include <float.h> #include <assert.h> +#ifndef BUILD_FREEBSD //malloc.h is part of stdlib.h on FreeBSD #include <malloc.h> +#endif +#ifdef BUILD_FREEBSD +#include <netinet/in.h> +#endif #include <memory> #define BOUNDSCHECK 1 #include <sstream> [madhatter@10…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2009-12-17T13:23:43Z", "text": "To build on FreeBSD: Install all of the required software from /usr/ports and then compile using the makefile.fbsd \"It just works\". Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-17T18:38:06Z", "text": "That's good, is it running fine on FreeBSD? I committed the changes to headers.h. For consistency, I used __BSD__. The complete list of defines is at http://docs.wxwidgets.org/stable/wx_cppconst.html #ifdef __BSD__ #include <netinet/in.h> #endif malloc.h is only needed on windows, I'll move that into the __WXMSW__ section before it causes any more trouble."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Doctor"}, "datePublished": "2009-12-18T15:11:53Z", "text": "Hi. I would like to second the headless/non-GUI mode for /*nix/i systems. It would be useful to be able to start the Bitcoin software from an initscript or one's ~/.bashrc (or equivalent) file and let it run in the background, silently cranking away. Also, what would the feasibility of changing the location of the wallet.dat file be for the Win32 client? I ask this because I was playing around with the .zipped Windows Bitcoin client yesterday, and it struck me that it would make a good…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-12-18T17:37:48Z", "text": "What you can currently do is set \"Minimize to the tray\" in options, then run it as \"bitcoin -min\" so it starts minimized. The only visible part will be a small (20x20) icon on the tray, which can be doubleclicked if you want to access the UI. Note: there's a bug with tray icons sometimes disappearing on 64-bit Karmic Koala, not sure if it's from 64-bit or Karmic, it was fine on 32-bit Jaunty. We didn't have time to implement the \"Start Bitcoin on system startup\" feature on Linux in time for…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "A few suggestions", "item": "https://satoshimail.pages.dev/conversations/p8-a-few-suggestions/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p8">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">A few suggestions</span></div></nav>
+<main class="in">
+<h1>A few suggestions</h1>
+<p class="lead">BitcoinTalk forum · 31 messages · from 9 December 2009 · with Satoshi Nakamoto, SmokeTooMuch, The Doctor, The Madhatter, madhatter, nanaimogold…</p>
+<p class="actions"><a class="btn" href="../../#t-p8">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/8/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>madhatter</b><span class="muted"> · <time datetime="2009-12-09T05:34:46Z">9 December 2009, 05:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg40#msg40" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hey,
+
+First off I must say that this is an amazing concept. I have been dreaming of a P2P money system for a LONG time.
+
+You have my complete kudos and respect.
+
+I have a few suggestions:
+
+- When the bitcoin software establishes a connection with a peer (client TCP socket) have the client send the handshake string. Right now you have the server (server TCP socket) send the handshake. My reasons for this are anonymity of course. It is far too easy for ISPs to portscan clients and detect they are running this program.
+
+- Use some sort of encryption during the handshake (sort of goes with the statement/request above) to obfuscate what the software is during DPI (deep packet inspection). I am really thinking about people in non-free (as in freedom) countries such as China/Iran.
+
+- Some sort of an API is needed so that this system can be integrated with websites to provide instant-on services. A simple https receipt mechanism would do wonders. Have the client post each incoming payment to an https url with all of the relevant information and provide status updates. Also an outbound payment mechanism would be nice. So one could automate payments (and batch payments) outbound. Status could be returned via the https receipt interface.
+
+- Static port/Random port. Have a setting to randomly assign the port that it runs on. (also be able to set it statically for very restrictive firewalls).
+
+- UPnP support. Have the client automatically create the port forward on upstream routers. Enabled by default. Can be turned off in the options menu.
+
+- Ability to compile a headless (console only) install for *NIX systems. Also have the ability to just run as a network service. Perhaps with a telnet-able port for control (or even a unix socket would be ok).
+
+Smiley</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-09T18:45:10Z">9 December 2009, 18:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg41#msg41" rel="nofollow noopener">original</a></span></header>
+<div class="t">Helpful suggestions, thanks.</div><blockquote><div class=qh>Quote from: madhatter on December 09, 2009, 05:34:46 AM</div><div class="t">- When the bitcoin software establishes a connection with a peer (client TCP socket) have the client send the handshake string. Right now you have the server (server TCP socket) send the handshake. My reasons for this are anonymity of course. It is far too easy for ISPs to portscan clients and detect they are running this program.</div></blockquote><div class="t">That&#x27;s a good idea.  The side accepting the connection just needs to withhold from sending anything until it receives a valid handshake.  Any portscan would only get a dead connection that doesn&#x27;t volunteer to identify itself.</div><blockquote><div class=qh>Quote</div><div class="t">- Use some sort of encryption during the handshake (sort of goes with the statement/request above) to obfuscate what the software is during DPI (deep packet inspection). I am really thinking about people in non-free (as in freedom) countries such as China/Iran.</div></blockquote><div class="t">I have thought about eventually SSLing all the connections.  I assume anything short of SSL would be pointless against DPI.  Maybe a better more immediate solution is to connect through TOR, which will be possible with 0.2.  </div><blockquote><div class=qh>Quote</div><div class="t">- Some sort of an API is needed so that this system can be integrated with websites to provide instant-on services. A simple https receipt mechanism would do wonders. Have the client post each incoming payment to an https url with all of the relevant information and provide status updates. Also an outbound payment mechanism would be nice. So one could automate payments (and batch payments) outbound. Status could be returned via the https receipt interface.</div></blockquote><div class="t">That&#x27;s one of the main things on the agenda after 0.2.</div><blockquote><div class=qh>Quote</div><div class="t">- Static port/Random port. Have a setting to randomly assign the port that it runs on. (also be able to set it statically for very restrictive firewalls).</div></blockquote><div class="t">Yeah, the other stealth stuff would be kinda pointless if it&#x27;s always the same port number.</div><blockquote><div class=qh>Quote</div><div class="t">- UPnP support. Have the client automatically create the port forward on upstream routers. Enabled by default. Can be turned off in the options menu.</div></blockquote><div class="t">I&#x27;m looking forward to trying UPnP.  Do most P2P clients typically have UPnP enabled by default?</div><blockquote><div class=qh>Quote</div><div class="t">- Ability to compile a headless (console only) install for *NIX systems. Also have the ability to just run as a network service. Perhaps with a telnet-able port for control (or even a unix socket would be ok).</div></blockquote><div class="t">I&#x27;m still thinking about how best to structure the management interface.  Maybe command line commands to communicate with the background daemon to query transactions received and initiate sending transfers.  That would be more automation friendly.  Or what about an http interface on some port other than 80 to manage it with a browser?</div></article><article class="msg" id="m2">
+<header><b>nanaimogold</b><span class="muted"> · <time datetime="2009-12-09T19:25:31Z">9 December 2009, 19:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg42#msg42" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thank you for this effort. A P2P payment system has been needed for a long time.
+
+Shane</div></article><article class="msg" id="m3">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-10T14:00:17Z">10 December 2009, 14:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg44#msg44" rel="nofollow noopener">original</a></span></header>
+<div class="t">Most modern P2P software tries UPnP by default. You can (of course) disable it (usually) in the options.
+
+Hmm. I had thought about that as well. Your first idea is probably best. That way you can run the server daemon &quot;headless&quot; and have your choice of a front end. (One of the front ends could be a PHP [or C++ CGI] program that runs on your favorite webserver).
+
+This would also enable you to run the front end and back end on different machines. (Ex. headless on a linux server that has a static IP to make receiving payments easier [pay by ip mode] and a front end client for management that can be ran on windows/mac/or something else). Front ends can also be ran on clients with very low cpu power such as mobile phones. *nudge nudge* Wink
+
+One other thing I have thought of is the seeding. The app could be pre-seeded before downloading. You could prepare a new archive daily that is pre-seeded. That would do away with the IRC connection. (Or it could be used as a fallback, I suppose. I still haven&#x27;t audited the IRC connection code. I am thinking of a few exploits but I don&#x27;t want to mention them until I am sure they exist.) Pre-seeding would also cure the TOR+IRC problem. I know that people will want to run this system over I2P+TOR. Tongue
+
+Also you could pre-seed the blocks so they won&#x27;t have to be downloaded upon initial run. (Downloading 28,000 blocks on a slower ADSL takes forever I couldn&#x27;t imagine how long it would take when there are millions of blocks -- a lifetime).
+
+Can you give me CVS access or something? (If not, can I send you patches?) I&#x27;d like to help out. I am mostly a Linux/BSD guy and I would like to lend my expertise in those areas.
+
+Cheers! Smiley</div><blockquote><div class=qh>Quote from: satoshi on December 09, 2009, 06:45:10 PM</div><div class="t">I&#x27;m looking forward to trying UPnP.  Do most P2P clients typically have UPnP enabled by default?
+
+I&#x27;m still thinking about how best to structure the management interface.  Maybe command line commands to communicate with the background daemon to query transactions received and initiate sending transfers.  That would be more automation friendly.  Or what about an http interface on some port other than 80 to manage it with a browser?</div></blockquote></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-10T19:31:49Z">10 December 2009, 19:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg45#msg45" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: madhatter2 on December 10, 2009, 02:00:17 PM</div><div class="t">Front ends can also be ran on clients with very low cpu power such as mobile phones.</div></blockquote><div class="t">That&#x27;s a good approach for mobile.  Programmatic API used by PHP (any language) to present a web UI covers remote admin, mobile and any other client that can&#x27;t be online all the time with a static IP.  It would be like webmail.  It would be easier for new users to get started if they only need to create an account on a website, not install software.</div><blockquote><div class=qh>Quote</div><div class="t">The app could be pre-seeded before downloading. Pre-seeding would also cure the TOR+IRC problem. I know that people will want to run this system over I2P+TOR.</div></blockquote><div class="t">Yeah, we can phase out IRC when there are enough static nodes to preprogram a seed list.  Once you get seeded, you don&#x27;t need IRC.</div><blockquote><div class=qh>Quote</div><div class="t">Also you could pre-seed the blocks so they won&#x27;t have to be downloaded upon initial run. (Downloading 28,000 blocks on a slower ADSL takes forever I couldn&#x27;t imagine how long it would take when there are millions of blocks -- a lifetime).</div></blockquote><div class="t">There were some issues in 0.1.5 where the initial block download could get bogged down.  0.2 has code to make sure it goes smoothly.  It ought to take less than an hour, I think.  I need to hurry up and get 0.2 out the door.
+
+The blocks increase linearly, it&#x27;ll be decades before it&#x27;s millions.  In theory, the block download time should top out 8 months from now when Moore&#x27;s Law will be growing faster than the block chain.</div><blockquote><div class=qh>Quote</div><div class="t">Can you give me CVS access or something? (If not, can I send you patches?) I&#x27;d like to help out.</div></blockquote><div class="t">It&#x27;s SVN on sourceforge.  PM or e-mail me your sourceforge account and I&#x27;ll give you access.</div><blockquote><div class=qh>Quote</div><div class="t">I am mostly a Linux/BSD guy and I would like to lend my expertise in those areas.</div></blockquote><div class="t">That&#x27;s great because that&#x27;s where I have less expertise.  For instance, I haven&#x27;t researched the best way to do the &quot;Start Bitcoin on system startup&quot; feature on Linux.  On Windows, the option adds/removes an icon in the Startup folder.</div></article><article class="msg" id="m5">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-11T04:59:19Z">11 December 2009, 04:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg47#msg47" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, let me get registered on SF and get you my username. I haven&#x27;t used SF in years so I&#x27;ll have to familiarize myself. Will this give me access to the current branch you fellows are currently working on? (0.2)
+
+I have been trying to think of the options that will be needed for the backend process. I wonder which would be better: a long set of command line switches or a configuration file. Hmm...
+
+I have a lot of servers spread across the globe. If we can get to the point where we have a working backend process that will run on FreeBSD I can run always-on seeds.
+
+I really think that having the download package contain a daily seed snapshot will improve the bootstrapping. I have seen instances on new test installs here where the application will sit with 0 connections / 1 block. Upon inspecting the debug.log I find that the IRC server (freenode, I believe) claims I am already connected and refuses to let me seed the application. (Just an example).
+
+I think that a simple network monitor plugin for Nagios would be helpful as well. Something that can emulate a connecting client, and retrieve a valid status code from the backend process. I have a lot of ideas. Smiley
+
+In any event, I would like to help. I have a lot of time and a project like this one is very exciting.
+
+Thanks for letting me be a part of it. Smiley</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-11T19:27:55Z">11 December 2009, 19:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg50#msg50" rel="nofollow noopener">original</a></span></header>
+<div class="t">Right, the SVN has the almost-release-candidate 0.2 source, which can also be built and run on Linux.   It hasn&#x27;t been tested on FreeBSD.</div><blockquote><div class=qh>Quote from: madhatter2 on December 11, 2009, 04:59:19 AM</div><div class="t">If we can get to the point where we have a working backend process that will run on FreeBSD I can run always-on seeds.</div></blockquote><div class="t">That would be a big help.  TOR users wouldn&#x27;t have to worry about how to get seeded, and we wouldn&#x27;t depend on IRC.
+
+It can be run in a few simple modes without access to the UI if you don&#x27;t mind a minimized window on the desktop.  (0.1.5 doesn&#x27;t have -min so it would be an open window)
+
+To only run a seed:
+bitcoin -min -gen=0
+
+You could sort of monitor it by looking at debug.log.  To stop it, kill the process, the database won&#x27;t mind.
+
+To generate:
+bitcoin -min -gen
+
+To get the generated bitcoins, you&#x27;d have to copy wallet.dat (with version 0.2) to a machine with a UI, swap in the wallet.dat, run bitcoin and transfer the coins to your main account.  (With version 0.1.5 you&#x27;d have to copy the whole &quot;%appdata%/Bitcoin&quot; directory.)  There is one caveat about copying wallet.dat: if you happened to kill the program at the exact moment that it generated a coin or received a payment, wallet.dat might not work by itself and you&#x27;d have to copy the whole directory.</div><blockquote><div class=qh>Quote</div><div class="t">I really think that having the download package contain a daily seed snapshot will improve the bootstrapping. I have seen instances on new test installs here where the application will sit with 0 connections / 1 block. Upon inspecting the debug.log I find that the IRC server (freenode, I believe) claims I am already connected and refuses to let me seed the application. (Just an example).</div></blockquote><div class="t">I see, that would happen with multiple nodes using the same NAT or VPN or some ISP that funnels everyone through a few proxy servers.  I just committed a fix to SVN for this.  If it gets &quot;433&quot; name already in use (it was error 433, right?), it&#x27;ll retry with a non-address random username.  </div><blockquote><div class=qh>Quote</div><div class="t">In any event, I would like to help. I have a lot of time and a project like this one is very exciting.</div></blockquote><div class="t">That&#x27;s great, any help is really appreciated!</div></article><article class="msg" id="m7">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-12T06:34:21Z">12 December 2009, 06:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg51#msg51" rel="nofollow noopener">original</a></span></header>
+<div class="t">I almost have the svn 0.2 compiling on Mac OS X 10.4.11/Intel (I also have a PPC970 machine here as well so a PPC build would be possible as well). The windowing is native carbon too via wxwidgets! It is FAST! Wink I had to create a new makefile (makefile.osx; based on makefile.unix of course.. given any thought to using autoconf?) and put some ifdef&#x27;s into header.h. I have patches. I will keep toying around. I might try it on FreeBSD next.
+
+I already run a great deal of TOR and I2P nodes so for me to add this app to those same servers is a snap. Smiley
+
+I think that breaking bitcoin into two apps is ideal. A wxwidgets front end (since it is mostly all there) and a backend that binds to a control TCP socket. I have been reading over the source to see how hard it would be to break it apart and I think it should be fairly simple. Of course an API would have to be developed.
+
+I&#x27;ll keep toying around with the source code and see what I can come up with.
+
+Smiley</div></article><article class="msg" id="m8">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2009-12-12T13:08:17Z">12 December 2009, 13:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg52#msg52" rel="nofollow noopener">original</a></span></header>
+<div class="t">Suggestion :
+
+Since the coins are generated faster on fast machines, many people will want to use their GPU power to do this, too.
+
+So, my suggestion is to implement a GPU-computing support using ATI Stream and Nvidia CUDA.</div></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-12T17:52:44Z">12 December 2009, 17:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg54#msg54" rel="nofollow noopener">original</a></span></header>
+<div class="t">The average total coins generated across the network per day stays the same.  Faster machines just get a larger share than slower machines.  If everyone bought faster machines, they wouldn&#x27;t get more coins than before.
+
+We should have a gentleman&#x27;s agreement to postpone the GPU arms race as long as we can for the good of the network.  It&#x27;s much easer to get new users up to speed if they don&#x27;t have to worry about GPU drivers and compatibility.  It&#x27;s nice how anyone with just a CPU can compete fairly equally right now.</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-12T18:17:10Z">12 December 2009, 18:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg55#msg55" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: madhatter2 on December 12, 2009, 06:34:21 AM</div><div class="t">I almost have the svn 0.2 compiling on Mac OS X 10.4.11/Intel (I also have a PPC970 machine here as well so a PPC build would be possible as well). The windowing is native carbon too via wxwidgets! It is FAST! Wink I had to create a new makefile (makefile.osx; based on makefile.unix of course.. given any thought to using autoconf?) and put some ifdef&#x27;s into header.h. I have patches. I will keep toying around. I might try it on FreeBSD next.</div></blockquote><div class="t">Mac support would be nice.  wxWidgets really pays off for cross platform.
+
+Please don&#x27;t try PPC.  PPC is big-endian and Bitcoin is little-endian, there would be endless endian bugs making it harder for me to debug the network if there&#x27;s a potentially byte-swapping node out there.  PPC is on its way out anyway.
+
+Considered autoconf.  Autoconf is a necessity for large projects with a quagmire makefile, but I think we&#x27;re small enough that it&#x27;s more optimal without it.  I&#x27;d rather keep the makefile simple as long as possible.</div><blockquote><div class=qh>Quote</div><div class="t">I think that breaking bitcoin into two apps is ideal. A wxwidgets front end (since it is mostly all there) and a backend that binds to a control TCP socket. I have been reading over the source to see how hard it would be to break it apart and I think it should be fairly simple. Of course an API would have to be developed.</div></blockquote><div class="t">My head hurts just thinking about that.  Funnelling all the UI backend through a TCP connection would make everything twice as hard.  There&#x27;s too much bandwidth between the UI and the internal data structures in order to keep the listview control updated, because of the way the listview control works.
+
+I&#x27;d rather have command line control, that would get us remote admin and batch automation.</div></article><article class="msg" id="m11">
+<header><b>sirius</b><span class="muted"> · <time datetime="2009-12-12T18:47:45Z">12 December 2009, 18:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg57#msg57" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: madhatter2 on December 12, 2009, 06:34:21 AM</div><div class="t">given any thought to using autoconf?</div></blockquote><div class="t">I&#x27;d choose cmake instead of autoconf if we want build automation at some point.</div></article><article class="msg" id="m12">
+<header><b>SmokeTooMuch</b><span class="muted"> · <time datetime="2009-12-12T20:46:14Z">12 December 2009, 20:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg58#msg58" rel="nofollow noopener">original</a></span></header>
+<div class="t">Suggestion:
+
+Add IPv6-Support for payments.</div></article><article class="msg" id="m13">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-13T06:44:04Z">13 December 2009, 06:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg59#msg59" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, Mac PPC is EOL now anyway. Console mode would be awesome.</div></article><article class="msg" id="m14">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-13T06:46:30Z">13 December 2009, 06:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg60#msg60" rel="nofollow noopener">original</a></span></header>
+<div class="t">Um, so command line only mode could be selected at compile-time? Perhaps with a define? And that would shut off the graphical UI stuff?
+
+Just want to be on the same page here. Smiley</div></article><article class="msg" id="m15">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-13T06:50:05Z">13 December 2009, 06:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg61#msg61" rel="nofollow noopener">original</a></span></header>
+<div class="t">One quick question about &quot;natural deflation&quot; (as I call it). I have noticed that it is possible to spend to old addresses that no longer work. In essence the coins can not be claimed. Wouldn&#x27;t there be a natural deflation effect because of this? I mean if the coins max out at 21,000,000 wouldn&#x27;t the number of coins slowly work backwards due to payment errors?</div></article><article class="msg sat" id="m16">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-13T16:51:25Z">13 December 2009, 16:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg62#msg62" rel="nofollow noopener">original</a></span></header>
+<div class="t">There would be a command line switch at runtime to tell it to run without UI.  All it needs to do is not create the main window.  A simplistic way would be to disable &quot;pframeMain-&gt;Show&quot; and &quot;ptaskbaricon-&gt;Show&quot; in ui.cpp.  The network threads don&#x27;t care that the UI isn&#x27;t there.  The only other UI is a message box in CheckDiskSpace if it runs out of disk space.
+
+Then a separate command line utility to communicate with it to do things.  Not sure what it should be named.
+
+&quot;natural deflation&quot;... I like that name for it.  Yes, there will be natural deflation due to payment mistakes and lost data.  Coin creation will eventually get slow enough that it is exceeded by natural deflation and we&#x27;ll have net deflation.</div></article><article class="msg" id="m17">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-14T09:29:44Z">14 December 2009, 09:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg63#msg63" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, thanks for the tips. I am going to try running bitcoin 0.2/svn on FreeBSD tonight in console-only mode. I&#x27;ll create some notes / patches / etc.</div></article><article class="msg" id="m18">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-14T13:09:48Z">14 December 2009, 13:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg64#msg64" rel="nofollow noopener">original</a></span></header>
+<div class="t">Got it working on FreeBSD! I&#x27;ll submit my work here soon.
+
+$gmake -f makefile.fbsd     
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o headers.h.gch headers.h
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/util.o util.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/script.o script.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/db.o db.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/net.o net.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/main.o main.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/market.o market.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/ui.o ui.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/uibase.o uibase.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -O3 -o obj/sha.o sha.cpp
+g++ -c -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o obj/irc.o irc.cpp
+g++ -O0 -Wno-invalid-offsetof -Wformat  -D__WXGTK__ -DNOPCH -DBUILD_FREEBSD -I&quot;/usr/include&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/include/db47&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot; -o bitcoin -L&quot;/usr/lib&quot; -L&quot;/usr/local/lib&quot; -L&quot;/usr/local/lib/db47&quot; obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o obj/ui.o obj/uibase.o obj/sha.o obj/irc.o -Wl,-Bstatic -l boost_system -l boost_filesystem -l db_cxx -Wl,-Bdynamic -l wx_base-2.8 -l wx_gtk2_core-2.8 -l wx_gtk2_html-2.8 -l wx_gtk2_richtext-2.8 -l crypto -l gtk-x11-2.0 -l gthread-2.0 -l SM
+$ file ./bitcoin
+./bitcoin: ELF 32-bit LSB executable, Intel 80386, version 1 (FreeBSD), for FreeBSD 7.2, dynamically linked (uses shared libs), FreeBSD-style, not stripped</div></article><article class="msg" id="m19">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-14T15:01:39Z">14 December 2009, 15:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg66#msg66" rel="nofollow noopener">original</a></span></header>
+<div class="t">Can anyone shed some light here?
+
+g++ -c -O0 -Wno-invalid-offsetof -Wformat -g -D__WXMAC__ -DNOPCH -DBUILD_MACOSX -I&quot;/usr/include&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/boost_1_41_0&quot; -I&quot;/sw/include/db4&quot; -I&quot;/usr/local/ssl/include&quot; -I&quot;/usr/local/lib/wx/include/mac-ansi-release-2.8&quot; -o headers.h.gch headers.h
+ui.h: In constructor &#x27;CGetTextFromUserDialog::CGetTextFromUserDialog(wxWindow*, const std::string&amp;, const std::string&amp;, const std::string&amp;, const std::string&amp;, const std::string&amp;)&#x27;:
+ui.h:421: error: no matching function for call to &#x27;CGetTextFromUserDialogBase::CGetTextFromUserDialogBase(wxWindow*&amp;, &lt;anonymous enum&gt;, const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+uibase.h:673: note: candidates are: CGetTextFromUserDialogBase::CGetTextFromUserDialogBase(wxWindow*, wxWindowID, const wxString&amp;, const wxPoint&amp;, const wxSize&amp;, long int)
+uibase.h:651: note:                 CGetTextFromUserDialogBase::CGetTextFromUserDialogBase(const CGetTextFromUserDialogBase&amp;)
+ui.h:423: error: no matching function for call to &#x27;wxStaticText::SetLabel(const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+/usr/local/include/wx-2.8/wx/mac/carbon/stattext.h:38: note: candidates are: virtual void wxStaticText::SetLabel(const wxString&amp;)
+ui.h:424: error: no matching function for call to &#x27;wxTextCtrl::SetValue(const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+/usr/local/include/wx-2.8/wx/textctrl.h:303: note: candidates are: virtual void wxTextCtrlBase::SetValue(const wxString&amp;)
+ui.h:428: error: no matching function for call to &#x27;wxStaticText::SetLabel(const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+/usr/local/include/wx-2.8/wx/mac/carbon/stattext.h:38: note: candidates are: virtual void wxStaticText::SetLabel(const wxString&amp;)
+ui.h:430: error: no matching function for call to &#x27;wxTextCtrl::SetValue(const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+/usr/local/include/wx-2.8/wx/textctrl.h:303: note: candidates are: virtual void wxTextCtrlBase::SetValue(const wxString&amp;)
+make: *** [headers.h.gch] Error 1</div></article><article class="msg sat" id="m20">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-14T17:15:56Z">14 December 2009, 17:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg67#msg67" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: madhatter2 on December 14, 2009, 03:01:39 PM</div><div class="t">Can anyone shed some light here?
+
+g++ -c -O0 -Wno-invalid-offsetof -Wformat -g -D__WXMAC__ -DNOPCH -DBUILD_MACOSX -I&quot;/usr/include&quot; -I&quot;/usr/local/include/wx-2.8&quot; -I&quot;/usr/local/include&quot; -I&quot;/usr/local/boost_1_41_0&quot; -I&quot;/sw/include/db4&quot; -I&quot;/usr/local/ssl/include&quot; -I&quot;/usr/local/lib/wx/include/mac-ansi-release-2.8&quot; -o headers.h.gch headers.h
+...
+ui.h:430: error: no matching function for call to &#x27;wxTextCtrl::SetValue(const std::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;)&#x27;
+/usr/local/include/wx-2.8/wx/textctrl.h:303: note: candidates are: virtual void wxTextCtrlBase::SetValue(const wxString&amp;)</div></blockquote><div class="t">It looks like the implicit conversion from std::string to wxString isn&#x27;t working.  That&#x27;s used everywhere, the conversion needs to work.
+
+wxString is complicated by supporting win32&#x27;s 16-bit wchar and 8-bit ansi dual-compile.  You can get that problem on Windows if the &quot;unicode&quot; (meaning wchar) build is used, so that wxString is wchar and std::string is char.
+
+It&#x27;s probably some wxWidgets compile defines or build configuration.  What &quot;configure&quot; options did you use?
+
+I&#x27;m not sure __WXMAC__ is the right define.  It may be the Mac Classic support that&#x27;s complicating wxString, and we only want OSX.  Try __WXOSX__ (or see below)
+
+<a href="http://docs.wxwidgets.org/stable/wx_cppconst.html" rel="nofollow noopener">http://docs.wxwidgets.org/stable/wx_cppconst.html</a>
+&quot;There are two wxWidgets ports to Mac OS. One of them, wxMac, exists in two versions: Classic and Carbon. The Classic version is the only one to work on Mac OS version 8. The Carbon version may be built either as CFM or Mach-O (binary format, like ELF) and the former may run under OS 9 while the latter only runs under OS X. Finally, there is a new Cocoa port which can only be used under OS X. To summarize:
+
+    * If you want to test for all Mac platforms, classic and OS X, you should test both __WXMAC__ and __WXCOCOA__.
+    * If you want to test for any GUI Mac port under OS X, use __WXOSX__.
+    * If you want to test for any port under Mac OS X, including, for example, wxGTK and also wxBase, use __DARWIN__&quot;</div></article><article class="msg" id="m21">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-15T05:21:09Z">15 December 2009, 05:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg68#msg68" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, I will look into the std::string issue. It is also throwing the same std::string issue on the latest version of Ubuntu Linux. So this isn&#x27;t just OSX related. I have to say that my main background is C, not C++ so I am still learning some of the C++ data types/headers/and other specifics &quot;as I go&quot;. Smiley
+
+There are only defines for __WXCOCOA__ and __WXMAC__ in wx/defs.h (I must be missing something here..maybe my wxwidgets needs to be rebuilt -- I&#x27;ll try that). I have tried combinations of those existing defines without success. The other option is to use gtk on OSX but the windowing will be slower and (my opinion) &quot;ugly&quot;. Carbon would be the best selection for OSX.  I&#x27;ll keep hacking at it until I get it working. Smiley
+
+I also now have a working startup script for FreeBSD that will launch xorg&#x27;s virtual framebuffer onto the localhost, fire up bitcoin and have the X11 screen output get stuffed into memory (instead of the monitor). This is a real big hack, but it does enable someone to run bitcoin as a pseudo unix daemon. I have had the code running for over 12h now and I don&#x27;t detect any memory leaks or other weirdness.
+
+Also I have a simple network monitor that will detect if bitcoin has crashed/stopped responding on port 8333, send me a page, and start the daemon back up again. This setup is ideal. I have started deploying seeds on servers I control that are all over the world. Smiley
+
+One question: how do I enable the debug.log? I have tried stopping bitcoin and touching ~/.bitcoin/debug.log and starting bitcoin again. It never seems to write to the file. Am I missing something?
+
+I will include these tools once I get SF setup.
+
+Cheers!</div></article><article class="msg" id="m22">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-15T05:30:53Z">15 December 2009, 05:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg69#msg69" rel="nofollow noopener">original</a></span></header>
+<div class="t">Okay, I am on SF now. Username &quot;madhatter2&quot;.
+
+Smiley</div></article><article class="msg sat" id="m23">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-15T20:37:32Z">15 December 2009, 20:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg70#msg70" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: madhatter2 on December 15, 2009, 05:21:09 AM</div><div class="t">It is also throwing the same std::string issue on the latest version of Ubuntu Linux.</div></blockquote><div class="t">Then it must be something you&#x27;re doing differently with building or configuring wxWidgets.
+
+What options did you use on the wxWidgets &quot;configure&quot; script?  The options I used are in build-unix.txt.</div><blockquote><div class=qh>Quote</div><div class="t">One question: how do I enable the debug.log? I have tried stopping bitcoin and touching ~/.bitcoin/debug.log and starting bitcoin again. It never seems to write to the file. Am I missing something?</div></blockquote><div class="t">Never heard of that happening.  Is there anything in debug.log?  If you touched the file, that sounds like something is there.  Does the program have write access to the file?</div></article><article class="msg" id="m24">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-15T21:14:13Z">15 December 2009, 21:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg71#msg71" rel="nofollow noopener">original</a></span></header>
+<div class="t">I used the default build options. I will try the options from your txt file. On FreeBSD it just worked right from the normal ports system. Which is excellent. It means that installing bitcoin via the same ports system (my goal) will be a snap.
+
+Yes, the debug.log has the proper permissions. I&#x27;ll re-read the source. There must be something I am missing.</div></article><article class="msg" id="m25">
+<header><b>sirius</b><span class="muted"> · <time datetime="2009-12-16T15:49:23Z">16 December 2009, 15:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg72#msg72" rel="nofollow noopener">original</a></span></header>
+<div class="t">I worked around the string problem by using wxWidgets 2.9. It worked with the default configuration.</div></article><article class="msg" id="m26">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-17T13:21:49Z">17 December 2009, 13:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg75#msg75" rel="nofollow noopener">original</a></span></header>
+<div class="t">[madhatter@10 /home/madhatter/src/bitcoin]# diff -u headers.h.orig headers.h     
+--- headers.h.orig      2009-12-14 12:29:39.000000000 +0000
++++ headers.h   2009-12-14 12:41:08.000000000 +0000
+@@ -35,7 +35,12 @@
+ #include &lt;limits.h&gt;
+ #include &lt;float.h&gt;
+ #include &lt;assert.h&gt;
++#ifndef BUILD_FREEBSD //malloc.h is part of stdlib.h on FreeBSD
+ #include &lt;malloc.h&gt;
++#endif
++#ifdef BUILD_FREEBSD
++#include &lt;netinet/in.h&gt;
++#endif
+ #include &lt;memory&gt;
+ #define BOUNDSCHECK 1
+ #include &lt;sstream&gt;
+
+[madhatter@10 /home/madhatter/src/bitcoin]# cat makefile.fbsd
+# Copyright (c) 2009 Satoshi Nakamoto
+# Distributed under the MIT/X11 software license, see the accompanying
+# file license.txt or <a href="http://www.opensource.org/licenses/mit-license.php." rel="nofollow noopener">http://www.opensource.org/licenses/mit-license.php.</a>
+
+ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
+ifneq &quot;$(BUILD)&quot; &quot;release&quot;
+BUILD=debug
+endif
+endif
+ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+D=d
+DEBUGFLAGS=-g
+endif
+
+INCLUDEPATHS= \
+ -I&quot;/usr/include&quot; \
+ -I&quot;/usr/local/include&quot; \
+ -I&quot;/usr/local/include/db47&quot; \
+ -I&quot;/usr/local/include/wx-2.8&quot; \
+ -I&quot;/usr/local/lib/wx/include/gtk2-ansi-release-2.8&quot;
+
+LIBPATHS= \
+ -L&quot;/usr/lib&quot; \
+ -L&quot;/usr/local/lib&quot; \
+ -L&quot;/usr/local/lib/db47&quot;
+
+LIBS= \
+ -Wl,-Bstatic \
+   -l boost_system -l boost_filesystem \
+   -l db_cxx \
+ -Wl,-Bdynamic \
+   -l wx_base-2.8 \
+   -l wx_gtk2_core-2.8 \
+   -l wx_gtk2_html-2.8 \
+   -l wx_gtk2_richtext-2.8 \
+   -l crypto \
+   -l gtk-x11-2.0 -l gthread-2.0 -l SM
+
+WXDEFS=-D__WXGTK__ -DNOPCH -DBUILD_FREEBSD
+CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
+
+all: bitcoin
+
+headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/util.o: util.cpp                $(HEADERS)
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/script.o: script.cpp            $(HEADERS)
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/db.o: db.cpp                    $(HEADERS) market.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/net.o: net.cpp                  $(HEADERS) net.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/market.o: market.cpp            $(HEADERS) market.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/uibase.o: uibase.cpp            uibase.h
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+obj/sha.o: sha.cpp                  sha.h
+        g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+
+obj/irc.o: irc.cpp                  $(HEADERS)
+        g++ -c $(CFLAGS) -o $@ $&lt;
+
+OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
+
+bitcoin: headers.h.gch $(OBJS)
+        g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+
+clean:
+        -rm obj/*
+        -rm headers.h.gch</div></article><article class="msg" id="m27">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2009-12-17T13:23:43Z">17 December 2009, 13:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg76#msg76" rel="nofollow noopener">original</a></span></header>
+<div class="t">To build on FreeBSD:
+
+Install all of the required software from /usr/ports and then compile using the makefile.fbsd
+
+&quot;It just works&quot;. Smiley</div></article><article class="msg sat" id="m28">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-17T18:38:06Z">17 December 2009, 18:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg77#msg77" rel="nofollow noopener">original</a></span></header>
+<div class="t">That&#x27;s good, is it running fine on FreeBSD?
+
+I committed the changes to headers.h.  For consistency, I used __BSD__.  The complete list of defines is at <a href="http://docs.wxwidgets.org/stable/wx_cppconst.html" rel="nofollow noopener">http://docs.wxwidgets.org/stable/wx_cppconst.html</a>
+#ifdef __BSD__
+#include &lt;netinet/in.h&gt;
+#endif
+
+malloc.h is only needed on windows, I&#x27;ll move that into the __WXMSW__ section before it causes any more trouble.</div></article><article class="msg" id="m29">
+<header><b>The Doctor</b><span class="muted"> · <time datetime="2009-12-18T15:11:53Z">18 December 2009, 15:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg78#msg78" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hi.  I would like to second the headless/non-GUI mode for /*nix/i systems.  It would be useful to be able to start the Bitcoin software from an initscript or one&#x27;s ~/.bashrc (or equivalent) file and let it run in the background, silently cranking away.
+
+Also, what would the feasibility of changing the location of the wallet.dat file be for the Win32 client?  I ask this because I was playing around with the .zipped Windows Bitcoin client yesterday, and it struck me that it would make a good portable application.  I was toying with the idea of decompressing it into a TrueCrypt volume on a USB drive so that it could, say, be taken on the road, run for a few hours, and then shut down just before the volume was unmounted, but it created the wallet.dat file in the C:\Documents and Settings\username\Application Data\Bitcoin directory.  In effect, using a portable version of Bitcoin to eventually grow a portable wallet.</div></article><article class="msg sat" id="m30">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-12-18T17:37:48Z">18 December 2009, 17:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=12.msg79#msg79" rel="nofollow noopener">original</a></span></header>
+<div class="t">What you can currently do is set &quot;Minimize to the tray&quot; in options, then run it as &quot;bitcoin -min&quot; so it starts minimized.  The only visible part will be a small (20x20) icon on the tray, which can be doubleclicked if you want to access the UI.  Note: there&#x27;s a bug with tray icons sometimes disappearing on 64-bit Karmic Koala, not sure if it&#x27;s from 64-bit or Karmic, it was fine on 32-bit Jaunty.
+
+We didn&#x27;t have time to implement the &quot;Start Bitcoin on system startup&quot; feature on Linux in time for 0.2 so it&#x27;s greyed out.  I figured Linux people wouldn&#x27;t mind doing that manually anyway.  I guess they need to know about the -min switch to do it right.
+
+You can locate the data directory where you want with the &quot;-datadir=&lt;directory&gt;&quot; switch.  I know someone is already doing that to put it on a TrueCrypt USB drive.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p7-old-thread-bitcoin-version-0-2-development-status/">← [OLD THREAD] Bitcoin version 0.2 development status</a><a rel="next" href="../../conversations/p9-questions-about-bitcoin/">Questions about Bitcoin →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

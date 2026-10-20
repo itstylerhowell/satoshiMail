@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gavin Andresen&#x27;s JSON-RPC HTTP… (r109) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 18…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/3b7cd5d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Gavin Andresen&#x27;s JSON-RPC HTTP… (r109) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 18…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/3b7cd5d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Gavin Andresen&#x27;s JSON-RPC HTTP… (r109) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 25 July 2010: Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3. 18…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen's JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3", "url": "https://satoshimail.pages.dev/commits/3b7cd5d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-25T16:45:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/3b7cd5d89a226426df9c723d1f9ddfe08b7d1def"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen's JSON-RPC HTTP…", "item": "https://satoshimail.pages.dev/commits/3b7cd5d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c3b7cd5d89a">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Gavin Andresen&#x27;s JSON-RPC HTTP…</span></div></nav>
+<main class="in">
+<h1>Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 25 July 2010 · SVN r109 · release v0.3.10 · 18 files, +405 −137</p>
+<p class="actions"><a class="btn" href="../../#t-c3b7cd5d89a">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/3b7cd5d89a226426df9c723d1f9ddfe08b7d1def" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -130,7 +130,14 @@ void CDB::Close()
+         vTxn.front()-&gt;abort();
+     vTxn.clear();
+     pdb = NULL;
+-    dbenv.txn_checkpoint(0, 0, 0);
++
++    // Flush database activity from memory pool to disk log
++    unsigned int nMinutes = 0;
++    if (strFile == &quot;addr.dat&quot;)
++        nMinutes = 2;
++    if (strFile == &quot;blkindex.dat&quot; &amp;&amp; IsInitialBlockDownload() &amp;&amp; nBestHeight % 500 != 0)
++        nMinutes = 1;
++    dbenv.txn_checkpoint(0, nMinutes, 0);
+ 
+     CRITICAL_BLOCK(cs_db)
+         --mapFileUseCount[strFile];
+@@ -357,11 +364,12 @@ CBlockIndex* InsertBlockIndex(uint256 hash)
+ 
+ bool CTxDB::LoadBlockIndex()
+ {
+-    // Get cursor
++    // Get database cursor
+     Dbc* pcursor = GetCursor();
+     if (!pcursor)
+         return false;
+ 
++    // Load mapBlockIndex
+     unsigned int fFlags = DB_SET_RANGE;
+     loop
+     {
+@@ -398,7 +406,7 @@ bool CTxDB::LoadBlockIndex()
+             pindexNew-&gt;nBits          = diskindex.nBits;
+             pindexNew-&gt;nNonce         = diskindex.nNonce;
+ 
+-            // Watch for genesis block and best block
++            // Watch for genesis block
+             if (pindexGenesisBlock == NULL &amp;&amp; diskindex.GetBlockHash() == hashGenesisBlock)
+                 pindexGenesisBlock = pindexNew;
+         }
+@@ -409,17 +417,33 @@ bool CTxDB::LoadBlockIndex()
+     }
+     pcursor-&gt;close();
+ 
++    // Calculate bnChainWork
++    vector&lt;pair&lt;int, CBlockIndex*&gt; &gt; vSortedByHeight;
++    vSortedByHeight.reserve(mapBlockIndex.size());
++    foreach(const PAIRTYPE(uint256, CBlockIndex*)&amp; item, mapBlockIndex)
++    {
++        CBlockIndex* pindex = item.second;
++        vSortedByHeight.push_back(make_pair(pindex-&gt;nHeight, pindex));
++    }
++    sort(vSortedByHeight.begin(), vSortedByHeight.end());
++    foreach(const PAIRTYPE(int, CBlockIndex*)&amp; item, vSortedByHeight)
++    {
++        CBlockIndex* pindex = item.second;
++        pindex-&gt;bnChainWork = (pindex-&gt;pprev ? pindex-&gt;pprev-&gt;bnChainWork : 0) + pindex-&gt;GetBlockWork();
++    }
++
++    // Load hashBestChain pointer to end of best chain
+     if (!ReadHashBestChain(hashBestChain))
+     {
+         if (pindexGenesisBlock == NULL)
+             return true;
+-        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not loaded&quot;);
+     }
+-
+     if (!mapBlockIndex.count(hashBestChain))
+-        return error(&quot;CTxDB::LoadBlockIndex() : blockindex for hashBestChain not found&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found in the block index&quot;);
+     pindexBest = mapBlockIndex[hashBestChain];
+     nBestHeight = pindexBest-&gt;nHeight;
++    bnBestChainWork = pindexBest-&gt;bnChainWork;
+     printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+ 
+     return true;</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -16,7 +16,7 @@ extern map&lt;string, string&gt; mapAddressBook;
+ extern CCriticalSection cs_mapAddressBook;
+ extern vector&lt;unsigned char&gt; vchDefaultKey;
+ extern bool fClient;
+-
++extern int nBestHeight;
+ 
+ 
+ extern unsigned int nWalletDBUpdated;
+@@ -210,7 +210,7 @@ public:
+         if (!pdb)
+             return false;
+         DbTxn* ptxn = NULL;
+-        int ret = dbenv.txn_begin(GetTxn(), &amp;ptxn, 0);
++        int ret = dbenv.txn_begin(GetTxn(), &amp;ptxn, DB_TXN_NOSYNC);
+         if (!ptxn || ret != 0)
+             return false;
+         vTxn.push_back(ptxn);</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -26,6 +26,7 @@
+ #include &lt;wx/clipbrd.h&gt;
+ #include &lt;wx/taskbar.h&gt;
+ #endif
++#include &lt;openssl/buffer.h&gt;
+ #include &lt;openssl/ecdsa.h&gt;
+ #include &lt;openssl/evp.h&gt;
+ #include &lt;openssl/rand.h&gt;
+@@ -64,6 +65,9 @@
+ #include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;
+ #include &lt;boost/date_time/gregorian/gregorian_types.hpp&gt;
+ #include &lt;boost/date_time/posix_time/posix_time_types.hpp&gt;
++#include &lt;boost/config.hpp&gt;
++#include &lt;boost/program_options/detail/config_file.hpp&gt;
++#include &lt;boost/program_options/parsers.hpp&gt;
+ 
+ #ifdef __WXMSW__
+ #include &lt;windows.h&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -240,33 +240,34 @@ IMPLEMENT_APP(CMyApp)
+ 
+ bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
+ {
+-    if (argc &gt; 1 &amp;&amp; argv[1][0] != &#x27;-&#x27; &amp;&amp; (!fWindows || argv[1][0] != &#x27;/&#x27;) &amp;&amp;
+-        wxString(argv[1]) != &quot;start&quot;)
+-    {
+-        fCommandLine = true;
+-    }
+-    else if (!fGUI)
+-    {
+-        fDaemon = true;
+-    }
+-    else
++    for (int i = 1; i &lt; argc; i++)
++        if (!IsSwitchChar(argv[i][0]))
++            fCommandLine = true;
++
++    if (!fCommandLine)
+     {
+-        // wxApp::Initialize will remove environment-specific parameters,
+-        // so it&#x27;s too early to call ParseParameters yet
+-        for (int i = 1; i &lt; argc; i++)
++        if (!fGUI)
++        {
++            fDaemon = true;
++        }
++        else
+         {
+-            wxString str = argv[i];
+-            #ifdef __WXMSW__
+-            if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
+-                str[0] = &#x27;-&#x27;;
+-            char pszLower[MAX_PATH];
+-            strlcpy(pszLower, str.c_str(), sizeof(pszLower));
+-            strlwr(pszLower);
+-            str = pszLower;
+-            #endif
+-            // haven&#x27;t decided which argument to use for this yet
+-            if (str == &quot;-daemon&quot; || str == &quot;-d&quot; || str == &quot;start&quot;)
+-                fDaemon = true;
++            // wxApp::Initialize will remove environment-specific parameters,
++            // so it&#x27;s too early to call ParseParameters yet
++            for (int i = 1; i &lt; argc; i++)
++            {
++                wxString str = argv[i];
++                #ifdef __WXMSW__
++                if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
++                    str[0] = &#x27;-&#x27;;
++                char pszLower[MAX_PATH];
++                strlcpy(pszLower, str.c_str(), sizeof(pszLower));
++                strlwr(pszLower);
++                str = pszLower;
++                #endif
++                if (str == &quot;-daemon&quot;)
++                    fDaemon = true;
++            }
+         }
+     }
+ 
+@@ -375,22 +376,23 @@ bool CMyApp::OnInit2()
+     //
+     // Parameters
+     //
+-    if (fCommandLine)
+-    {
+-        int ret = CommandLineRPC(argc, argv);
+-        exit(ret);
+-    }
+-
+     ParseParameters(argc, argv);
++
++    if (mapArgs.count(&quot;-datadir&quot;))
++        strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
++
++    ReadConfigFile(mapArgs, mapMultiArgs); // Must be done after processing datadir
++
+     if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+     {
+         wxString strUsage = string() +
+           _(&quot;Usage:&quot;) + &quot;\t\t\t\t\t\t\t\t\t\t\n&quot; +
+-            &quot;  bitcoin [options]       \t&quot; + &quot;\n&quot; +
+-            &quot;  bitcoin [command]       \t&quot; + _(&quot;Send command to bitcoin running with -server or -daemon\n&quot;) +
+-            &quot;  bitcoin [command] -?    \t&quot; + _(&quot;Get help for a command\n&quot;) +
+-            &quot;  bitcoin help &lt;pw&gt;       \t&quot; + _(&quot;List commands\n&quot;) +
++            &quot;  bitcoin [options]                   \t  &quot; + &quot;\n&quot; +
++            &quot;  bitcoin [options] &lt;command&gt; [params]\t  &quot; + _(&quot;Send command to -server or bitcoind\n&quot;) +
++            &quot;  bitcoin [options] &lt;command&gt; -?      \t\t  &quot; + _(&quot;Get help for a command\n&quot;) +
++            &quot;  bitcoin help                        \t\t\t  &quot; + _(&quot;List commands\n&quot;) +
+           _(&quot;Options:\n&quot;) +
++            &quot;  -conf=&lt;file&gt;    \t  &quot; + _(&quot;Specify configuration file (default: bitcoin.conf)\n&quot;) +
+             &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +
+             &quot;  -gen=0          \t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
+             &quot;  -min            \t  &quot; + _(&quot;Start minimized\n&quot;) +
+@@ -398,7 +400,7 @@ bool CMyApp::OnInit2()
+             &quot;  -proxy=&lt;ip:port&gt;\t  &quot; + _(&quot;Connect through socks4 proxy\n&quot;) +
+             &quot;  -addnode=&lt;ip&gt;   \t  &quot; + _(&quot;Add a node to connect to\n&quot;) +
+             &quot;  -connect=&lt;ip&gt;   \t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
+-            &quot;  -rpcpw=&lt;pw&gt;     \t  &quot; + _(&quot;Accept command line and JSON-RPC commands with the given password\n&quot;) +
++            &quot;  -server         \t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
+             &quot;  -daemon         \t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
+             &quot;  -?              \t  &quot; + _(&quot;This help message\n&quot;);
+ 
+@@ -413,15 +415,18 @@ bool CMyApp::OnInit2()
+         return false;
+     }
+ 
+-    if (mapArgs.count(&quot;-datadir&quot;))
+-        strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
+-
+     if (mapArgs.count(&quot;-debug&quot;))
+         fDebug = true;
+ 
+     if (mapArgs.count(&quot;-printtodebugger&quot;))
+         fPrintToDebugger = true;
+ 
++    if (fCommandLine)
++    {
++        int ret = CommandLineRPC(argc, argv);
++        exit(ret);
++    }
++
+     if (!fDebug &amp;&amp; !pszSetDataDir[0])
+         ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+@@ -611,7 +616,7 @@ bool CMyApp::OnInit2()
+     if (!CreateThread(StartNode, NULL))
+         wxMessageBox(&quot;Error: CreateThread(StartNode) failed&quot;, &quot;Bitcoin&quot;);
+ 
+-    if (mapArgs.count(&quot;-server&quot;) || mapArgs.count(&quot;-rpcpw&quot;) || fDaemon)
++    if (mapArgs.count(&quot;-server&quot;) || fDaemon)
+         CreateThread(ThreadRPCServer, NULL);
+ 
+     if (fFirstRun)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -24,6 +24,7 @@ map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+ const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;);
+ CBlockIndex* pindexGenesisBlock = NULL;
+ int nBestHeight = -1;
++CBigNum bnBestChainWork = 0;
+ uint256 hashBestChain = 0;
+ CBlockIndex* pindexBest = NULL;
+ int64 nTimeBestReceived = 0;
+@@ -848,6 +849,23 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+     return bnNew.GetCompact();
+ }
+ 
++vector&lt;int&gt; vStartingHeight;
++void AddStartingHeight(int nStartingHeight)
++{
++    if (nStartingHeight != -1)
++    {
++        vStartingHeight.push_back(nStartingHeight);
++        sort(vStartingHeight.begin(), vStartingHeight.end());
++    }
++}
++
++bool IsInitialBlockDownload()
++{
++    int nMedian = 69000;
++    if (vStartingHeight.size() &gt;= 5)
++        nMedian = vStartingHeight[vStartingHeight.size()/2];
++    return nBestHeight &lt; nMedian-1000;
++}
+ 
+ 
+ 
+@@ -1208,13 +1226,14 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         pindexNew-&gt;pprev = (*miPrev).second;
+         pindexNew-&gt;nHeight = pindexNew-&gt;pprev-&gt;nHeight + 1;
+     }
++    pindexNew-&gt;bnChainWork = (pindexNew-&gt;pprev ? pindexNew-&gt;pprev-&gt;bnChainWork : 0) + pindexNew-&gt;GetBlockWork();
+ 
+     CTxDB txdb;
+     txdb.TxnBegin();
+     txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
+ 
+     // New best
+-    if (pindexNew-&gt;nHeight &gt; nBestHeight)
++    if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+     {
+         if (pindexGenesisBlock == NULL &amp;&amp; hash == hashGenesisBlock)
+         {
+@@ -1253,6 +1272,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         hashBestChain = hash;
+         pindexBest = pindexNew;
+         nBestHeight = pindexBest-&gt;nHeight;
++        bnBestChainWork = pindexNew-&gt;bnChainWork;
+         nTimeBestReceived = GetTime();
+         nTransactionsUpdated++;
+         printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+@@ -1900,6 +1920,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         }
+ 
+         AddTimeData(pfrom-&gt;addr.ip, nTime);
++        AddStartingHeight(pfrom-&gt;nStartingHeight);
+ 
+         // Change version
+         if (pfrom-&gt;nVersion &gt;= 209)
+@@ -2845,6 +2866,10 @@ int64 GetBalance()
+ }
+ 
+ 
++int GetRandInt(int nMax)
++{
++    return GetRand(nMax);
++}
+ 
+ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ {
+@@ -2858,9 +2883,14 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ 
+     CRITICAL_BLOCK(cs_mapWallet)
+     {
+-        for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+-        {
+-            CWalletTx* pcoin = &amp;(*it).second;
++       vector&lt;CWalletTx*&gt; vCoins;
++       vCoins.reserve(mapWallet.size());
++       for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
++           vCoins.push_back(&amp;(*it).second);
++       random_shuffle(vCoins.begin(), vCoins.end(), GetRandInt);
++
++       foreach(CWalletTx* pcoin, vCoins)
++       {
+             if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent)
+                 continue;
+             int64 n = pcoin-&gt;GetCredit();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -32,6 +32,7 @@ extern map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+ extern const uint256 hashGenesisBlock;
+ extern CBlockIndex* pindexGenesisBlock;
+ extern int nBestHeight;
++extern CBigNum bnBestChainWork;
+ extern uint256 hashBestChain;
+ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
+@@ -78,6 +79,7 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();
++bool IsInitialBlockDownload();
+ 
+ 
+ 
+@@ -986,11 +988,14 @@ public:
+ 
+         // Flush stdio buffers and commit to disk before returning
+         fflush(fileout);
++        if (!IsInitialBlockDownload() || (nBestHeight+1) % 500 == 0)
++        {
+ #ifdef __WXMSW__
+-        _commit(_fileno(fileout));
++            _commit(_fileno(fileout));
+ #else
+-        fsync(fileno(fileout));
++            fsync(fileno(fileout));
+ #endif
++        }
+ 
+         return true;
+     }
+@@ -1072,6 +1077,7 @@ public:
+     unsigned int nFile;
+     unsigned int nBlockPos;
+     int nHeight;
++    CBigNum bnChainWork;
+ 
+     // block header
+     int nVersion;
+@@ -1089,6 +1095,7 @@ public:
+         nFile = 0;
+         nBlockPos = 0;
+         nHeight = 0;
++        bnChainWork = 0;
+ 
+         nVersion       = 0;
+         hashMerkleRoot = 0;
+@@ -1105,6 +1112,7 @@ public:
+         nFile = nFileIn;
+         nBlockPos = nBlockPosIn;
+         nHeight = 0;
++        bnChainWork = 0;
+ 
+         nVersion       = block.nVersion;
+         hashMerkleRoot = block.hashMerkleRoot;
+@@ -1118,6 +1126,11 @@ public:
+         return *phashBlock;
+     }
+ 
++    CBigNum GetBlockWork() const
++    {
++        return (CBigNum(1)&lt;&lt;256) / (CBigNum().SetCompact(nBits)+1);
++    }
++
+     bool IsInMainChain() const
+     {
+         return (pnext || this == pindexBest);</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -22,7 +22,7 @@ WXLIBS= \
+  -l wxmsw29ud_html -l wxmsw29ud_core -l wxmsw29ud_adv -l wxbase29ud -l wxtiffd -l wxjpegd -l wxpngd -l wxzlibd
+ 
+ LIBS= \
+- -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d \
++ -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d -l libboost_program_options-mgw34-mt-d \
+  -l db_cxx \
+  -l eay32 \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -19,6 +19,7 @@ LIBS= -dead_strip \
+  $(DEPSDIR)/lib/libdb_cxx-4.8.a \
+  $(DEPSDIR)/lib/libboost_system.a \
+  $(DEPSDIR)/lib/libboost_filesystem.a \
++ $(DEPSDIR)/lib/libboost_program_options.a \
+  $(DEPSDIR)/lib/libcrypto.a 
+ 
+ WXDEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -DNOPCH -DMSG_NOSIGNAL=0</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
+ 
+ LIBS= \
+  -Wl,-Bstatic \
+-   -l boost_system -l boost_filesystem \
++   -l boost_system -l boost_filesystem -l boost_program_options \
+    -l db_cxx \
+    -l crypto \
+  -Wl,-Bdynamic \</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -19,7 +19,7 @@ LIBPATHS= \
+   /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
+ 
+ LIBS= \
+-  libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib \
++  libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib libboost_program_options-vc80-mt-gd.lib \
+   libdb47sd.lib \
+   libeay32.lib \
+   wxmsw29ud_html.lib wxmsw29ud_core.lib wxmsw29ud_adv.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib \</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,7 +21,27 @@ void ThreadRPCServer2(void* parg);
+ typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
+ extern map&lt;string, rpcfn_type&gt; mapCallTable;
+ 
+-static string strRPCPassword;
++
++
++void PrintConsole(const char* format, ...)
++{
++    char buffer[50000];
++    int limit = sizeof(buffer);
++    va_list arg_ptr;
++    va_start(arg_ptr, format);
++    int ret = _vsnprintf(buffer, limit, format, arg_ptr);
++    va_end(arg_ptr);
++    if (ret &lt; 0 || ret &gt;= limit)
++    {
++        ret = limit - 1;
++        buffer[limit-1] = 0;
++    }
++#if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
++    MyMessageBox(buffer, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
++#else
++    fprintf(stdout, &quot;%s&quot;, buffer);
++#endif
++}
+ 
+ 
+ 
+@@ -34,12 +54,11 @@ static string strRPCPassword;
+ ///
+ 
+ 
+-
+ Value help(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;help &lt;pw&gt;\n&quot;
++            &quot;help\n&quot;
+             &quot;List commands.&quot;);
+ 
+     string strRet;
+@@ -76,7 +95,7 @@ Value stop(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;stop &lt;pw&gt;\n&quot;
++            &quot;stop\n&quot;
+             &quot;Stop bitcoin server.&quot;);
+ 
+     // Shutdown will take long enough that the response should get back
+@@ -89,7 +108,7 @@ Value getblockcount(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblockcount &lt;pw&gt;\n&quot;
++            &quot;getblockcount\n&quot;
+             &quot;Returns the number of blocks in the longest block chain.&quot;);
+ 
+     return nBestHeight + 1;
+@@ -100,7 +119,7 @@ Value getblocknumber(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblocknumber &lt;pw&gt;\n&quot;
++            &quot;getblocknumber\n&quot;
+             &quot;Returns the block number of the latest block in the longest block chain.&quot;);
+ 
+     return nBestHeight;
+@@ -111,7 +130,7 @@ Value getconnectioncount(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getconnectioncount &lt;pw&gt;\n&quot;
++            &quot;getconnectioncount\n&quot;
+             &quot;Returns the number of connections to other nodes.&quot;);
+ 
+     return (int)vNodes.size();
+@@ -134,7 +153,7 @@ Value getdifficulty(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getdifficulty &lt;pw&gt;\n&quot;
++            &quot;getdifficulty\n&quot;
+             &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
+ 
+     return GetDifficulty();
+@@ -145,7 +164,7 @@ Value getbalance(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getbalance &lt;pw&gt;\n&quot;
++            &quot;getbalance\n&quot;
+             &quot;Returns the server&#x27;s available balance.&quot;);
+ 
+     return ((double)GetBalance() / (double)COIN);
+@@ -156,7 +175,7 @@ Value getgenerate(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getgenerate &lt;pw&gt;\n&quot;
++            &quot;getgenerate\n&quot;
+             &quot;Returns true or false.&quot;);
+ 
+     return (bool)fGenerateBitcoins;
+@@ -167,7 +186,7 @@ Value setgenerate(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;setgenerate &lt;pw&gt; &lt;generate&gt; [genproclimit]\n&quot;
++            &quot;setgenerate &lt;generate&gt; [genproclimit]\n&quot;
+             &quot;&lt;generate&gt; is true or false to turn generation on or off.\n&quot;
+             &quot;Generation is limited to [genproclimit] processors, -1 is unlimited.&quot;);
+ 
+@@ -193,7 +212,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getinfo &lt;pw&gt;&quot;);
++            &quot;getinfo&quot;);
+ 
+     Object obj;
+     obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
+@@ -211,7 +230,7 @@ Value getnewaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 1)
+         throw runtime_error(
+-            &quot;getnewaddress &lt;pw&gt; [label]\n&quot;
++            &quot;getnewaddress [label]\n&quot;
+             &quot;Returns a new bitcoin address for receiving payments.  &quot;
+             &quot;If [label] is specified (recommended), it is added to the address book &quot;
+             &quot;so payments received with the address will be labeled.&quot;);
+@@ -233,7 +252,7 @@ Value setlabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;setlabel &lt;pw&gt; &lt;bitcoinaddress&gt; &lt;label&gt;\n&quot;
++            &quot;setlabel &lt;bitcoinaddress&gt; &lt;label&gt;\n&quot;
+             &quot;Sets the label associated with the given address.&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -250,7 +269,7 @@ Value getlabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 1)
+         throw runtime_error(
+-            &quot;getlabel &lt;pw&gt; &lt;bitcoinaddress&gt;\n&quot;
++            &quot;getlabel &lt;bitcoinaddress&gt;\n&quot;
+             &quot;Returns the label associated with the given address.&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -270,7 +289,7 @@ Value getaddressesbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 1)
+         throw runtime_error(
+-            &quot;getaddressesbylabel &lt;pw&gt; &lt;label&gt;\n&quot;
++            &quot;getaddressesbylabel &lt;label&gt;\n&quot;
+             &quot;Returns the list of addresses with the given label.&quot;);
+ 
+     string strLabel = params[0].get_str();
+@@ -300,7 +319,7 @@ Value sendtoaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 2 || params.size() &gt; 4)
+         throw runtime_error(
+-            &quot;sendtoaddress &lt;pw&gt; &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
++            &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
+             &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -328,7 +347,7 @@ Value listtransactions(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listtransactions &lt;pw&gt; [count=10] [includegenerated=false]\n&quot;
++            &quot;listtransactions [count=10] [includegenerated=false]\n&quot;
+             &quot;Returns up to [count] most recent transactions.&quot;);
+ 
+     int64 nCount = 10;
+@@ -349,7 +368,7 @@ Value getreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;getreceivedbyaddress &lt;pw&gt; &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
++            &quot;getreceivedbyaddress &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by &lt;bitcoinaddress&gt; in transactions with at least [minconf] confirmations.&quot;);
+ 
+     // Bitcoin address
+@@ -390,7 +409,7 @@ Value getreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;getreceivedbylabel &lt;pw&gt; &lt;label&gt; [minconf=1]\n&quot;
++            &quot;getreceivedbylabel &lt;label&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by addresses with &lt;label&gt; in transactions with at least [minconf] confirmations.&quot;);
+ 
+     // Get the set of pub keys that have the label
+@@ -553,7 +572,7 @@ Value listreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listreceivedbyaddress &lt;pw&gt; [minconf=1] [includeempty=false]\n&quot;
++            &quot;listreceivedbyaddress [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+             &quot;[includeempty] whether to include addresses that haven&#x27;t received any payments.\n&quot;
+             &quot;Returns an array of objects containing:\n&quot;
+@@ -569,7 +588,7 @@ Value listreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listreceivedbylabel &lt;pw&gt; [minconf=1] [includeempty=false]\n&quot;
++            &quot;listreceivedbylabel [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+             &quot;[includeempty] whether to include labels that haven&#x27;t received any payments.\n&quot;
+             &quot;Returns an array of objects containing:\n&quot;
+@@ -632,23 +651,41 @@ map&lt;string, rpcfn_type&gt; mapCallTable(pCallTable, pCallTable + sizeof(pCallTable)
+ // and to be compatible with other JSON-RPC implementations.
+ //
+ 
+-string HTTPPost(const string&amp; strMsg)
++string HTTPPost(const string&amp; strMsg, const map&lt;string,string&gt;&amp; mapRequestHeaders)
+ {
+-    return strprintf(
+-            &quot;POST / HTTP/1.1\r\n&quot;
+-            &quot;User-Agent: json-rpc/1.0\r\n&quot;
+-            &quot;Host: 127.0.0.1\r\n&quot;
+-            &quot;Content-Type: application/json\r\n&quot;
+-            &quot;Content-Length: %d\r\n&quot;
+-            &quot;Accept: application/json\r\n&quot;
+-            &quot;\r\n&quot;
+-            &quot;%s&quot;,
+-        strMsg.size(),
+-        strMsg.c_str());
++    ostringstream s;
++    s &lt;&lt; &quot;POST / HTTP/1.1\r\n&quot;
++      &lt;&lt; &quot;User-Agent: json-rpc/1.0\r\n&quot;
++      &lt;&lt; &quot;Host: 127.0.0.1\r\n&quot;
++      &lt;&lt; &quot;Content-Type: application/json\r\n&quot;
++      &lt;&lt; &quot;Content-Length: &quot; &lt;&lt; strMsg.size() &lt;&lt; &quot;\r\n&quot;
++      &lt;&lt; &quot;Accept: application/json\r\n&quot;;
++    for (map&lt;string,string&gt;::const_iterator it = mapRequestHeaders.begin(); it != mapRequestHeaders.end(); ++it)
++        s &lt;&lt; it-&gt;first &lt;&lt; &quot;: &quot; &lt;&lt; it-&gt;second &lt;&lt; &quot;\r\n&quot;;
++    s &lt;&lt; &quot;\r\n&quot; &lt;&lt; strMsg;
++
++    return s.str();
+ }
+ 
+ string HTTPReply(const string&amp; strMsg, int nStatus=200)
+ {
++    if (nStatus == 401)
++        return &quot;HTTP/1.0 401 Authorization Required\r\n&quot;
++            &quot;Server: HTTPd/1.0\r\n&quot;
++            &quot;Date: Sat, 08 Jul 2006 12:04:08 GMT\r\n&quot;
++            &quot;WWW-Authenticate: Basic realm=\&quot;jsonrpc\&quot;\r\n&quot;
++            &quot;Content-Type: text/html\r\n&quot;
++            &quot;Content-Length: 311\r\n&quot;
++            &quot;\r\n&quot;
++            &quot;&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.01 Transitional//EN\&quot;\r\n&quot;
++            &quot;\&quot;http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd\&quot;&gt;\r\n&quot;
++            &quot;&lt;HTML&gt;\r\n&quot;
++            &quot;&lt;HEAD&gt;\r\n&quot;
++            &quot;&lt;TITLE&gt;Error&lt;/TITLE&gt;\r\n&quot;
++            &quot;&lt;META HTTP-EQUIV=&#x27;Content-Type&#x27; CONTENT=&#x27;text/html; charset=ISO-8859-1&#x27;&gt;\r\n&quot;
++            &quot;&lt;/HEAD&gt;\r\n&quot;
++            &quot;&lt;BODY&gt;&lt;H1&gt;401 Unauthorized.&lt;/H1&gt;&lt;/BODY&gt;\r\n&quot;
++            &quot;&lt;/HTML&gt;\r\n&quot;;
+     string strStatus;
+     if (nStatus == 200) strStatus = &quot;OK&quot;;
+     if (nStatus == 500) strStatus = &quot;Internal Server Error&quot;;
+@@ -667,7 +704,17 @@ string HTTPReply(const string&amp; strMsg, int nStatus=200)
+         strMsg.c_str());
+ }
+ 
+-int ReadHTTPHeader(tcp::iostream&amp; stream)
++int ReadHTTPStatus(tcp::iostream&amp; stream)
++{
++    string str;
++    getline(stream, str);
++    vector&lt;string&gt; vWords;
++    boost::split(vWords, str, boost::is_any_of(&quot; &quot;));
++    int nStatus = atoi(vWords[1].c_str());
++    return nStatus;
++}
++
++int ReadHTTPHeader(tcp::iostream&amp; stream, map&lt;string, string&gt;&amp; mapHeadersRet)
+ {
+     int nLen = 0;
+     loop
+@@ -676,26 +723,92 @@ int ReadHTTPHeader(tcp::iostream&amp; stream)
+         std::getline(stream, str);
+         if (str.empty() || str == &quot;\r&quot;)
+             break;
+-        if (str.substr(0,15) == &quot;Content-Length:&quot;)
+-            nLen = atoi(str.substr(15));
++        string::size_type nColon = str.find(&quot;:&quot;);
++        if (nColon != string::npos)
++        {
++            string strHeader = str.substr(0, nColon);
++            boost::trim(strHeader);
++            string strValue = str.substr(nColon+1);
++            boost::trim(strValue);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 302;
+-static const char* pszSubVer = &quot;.2&quot;;
++static const int VERSION = 303;
++static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.2
++!define VERSION 0.3.3
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.2-win32-setup.exe
++OutFile bitcoin-0.3.3-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.2.0
++VIProductVersion 0.3.3.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1614,6 +1614,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+     m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
++    //m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
+ 
+     // Change (c) into UTF-8 or ANSI copyright symbol
+     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+ 	
+ 	public:
+ 		wxStaticText* m_staticTextVersion;
+-		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,333 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CAboutDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;532,329&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;532,333&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -416,7 +416,7 @@ void ParseParameters(int argc, char* argv[])
+ {
+     mapArgs.clear();
+     mapMultiArgs.clear();
+-    for (int i = 0; i &lt; argc; i++)
++    for (int i = 1; i &lt; argc; i++)
+     {
+         char psz[10000];
+         strlcpy(psz, argv[i], sizeof(psz));
+@@ -431,6 +431,8 @@ void ParseParameters(int argc, char* argv[])
+         if (psz[0] == &#x27;/&#x27;)
+             psz[0] = &#x27;-&#x27;;
+         #endif
++        if (psz[0] != &#x27;-&#x27;)
++            break;
+         mapArgs[psz] = pszValue;
+         mapMultiArgs[psz].push_back(pszValue);
+     }
+@@ -619,6 +621,38 @@ string GetDataDir()
+     return pszDir;
+ }
+ 
++string GetConfigFile()
++{
++    namespace fs = boost::filesystem;
++    fs::path pathConfig(mapArgs.count(&quot;-conf&quot;) ? mapArgs[&quot;-conf&quot;] : string(&quot;bitcoin.conf&quot;));
++    if (!pathConfig.is_complete())
++        pathConfig = fs::path(GetDataDir()) / pathConfig;
++    return pathConfig.string();
++}
++
++void ReadConfigFile(map&lt;string, string&gt;&amp; mapSettingsRet,
++                    map&lt;string, vector&lt;string&gt; &gt;&amp; mapMultiSettingsRet)
++{
++    namespace fs = boost::filesystem;
++    namespace pod = boost::program_options::detail;
++
++    fs::ifstream streamConfig(GetConfigFile());
++    if (!streamConfig.good())
++        return;
++
++    set&lt;string&gt; setOptions;
++    setOptions.insert(&quot;*&quot;);
++    
++    for (pod::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
++    {
++        // Don&#x27;t overwrite existing settings so command line settings override bitcoin.conf
++        string strKey = string(&quot;-&quot;) + it-&gt;string_key;
++        if (mapSettingsRet.count(strKey) == 0)
++            mapSettingsRet[strKey] = it-&gt;value[0];
++        mapMultiSettingsRet[strKey].push_back(it-&gt;value[0]);
++    }
++}
++
+ int GetFilesize(FILE* file)
+ {
+     int nSavePos = ftell(file);
+@@ -656,9 +690,6 @@ void ShrinkDebugFile()
+ 
+ 
+ 
+-
+-
+-
+ //
+ // &quot;Never go to sea with two chronometers; take one or three.&quot;
+ // Our three chronometers are:
+@@ -701,7 +732,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+         sort(vTimeOffsets.begin(), vTimeOffsets.end());
+         int64 nMedian = vTimeOffsets[vTimeOffsets.size()/2];
+         nTimeOffset = nMedian;
+-        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 36 * 60 * 60)
++        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 70 * 60)
+         {
+             // Only let other nodes change our clock so far before we
+             // go to the NTP servers</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,8 @@ void ParseParameters(int argc, char* argv[]);
+ const char* wxGetTranslation(const char* psz);
+ int GetFilesize(FILE* file);
+ void GetDataDir(char* pszDirRet);
++string GetConfigFile();
++void ReadConfigFile(map&lt;string, string&gt;&amp; mapSettingsRet, map&lt;string, vector&lt;string&gt; &gt;&amp; mapMultiSettingsRet);
+ #ifdef __WXMSW__
+ string MyGetSpecialFolderPath(int nFolder, bool fCreate);
+ #endif
+@@ -348,7 +350,14 @@ void skipspaces(T&amp; it)
+         ++it;
+ }
+ 
+-
++inline bool IsSwitchChar(char c)
++{
++#ifdef __WXMSW__
++    return c == &#x27;-&#x27; || c == &#x27;/&#x27;;
++#else
++    return c == &#x27;-&#x27;;
++#endif
++}
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e8bff10/">← minor UI tweaks, removed some outdated txt files, (and…</a><a rel="next" href="../../commits/7d46f92/">Lachesis: remove newlines every 64 characters in… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

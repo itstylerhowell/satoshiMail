@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Non-GUI option – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 22 February 2010: I see it calls gtk-init-check in wxApp::Initialize. I can subclass Initialize, call the original one while…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x63-non-gui-option/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Non-GUI option – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 22 February 2010: I see it calls gtk-init-check in wxApp::Initialize. I can subclass Initialize, call the original one while…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x63-non-gui-option/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Non-GUI option – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 22 February 2010: I see it calls gtk-init-check in wxApp::Initialize. I can subclass Initialize, call the original one while…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Non-GUI option", "url": "https://satoshimail.pages.dev/conversations/x63-non-gui-option/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2010-02-17T17:32:04Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-17T17:32:04Z", "text": "Just a few clues I've found about running the same binary without a GUI: 1) GTK supports running a program without display: http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check. This doesn't tell if it's possible in wxWidgets though. 2) wxAppConsole of wx 2.9 might be useful somehow. Just replacing wxApp with wxAppConsole doesn't work, I'm not sure how it should be used. It's not very well documented. 3) Another option might be to use IMPLEMENT_APP_NO_MAIN() and make our own…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-22T20:17:42Z", "text": "I see it calls gtk-init-check in wxApp::Initialize. I can subclass Initialize, call the original one while suppressing the error message and ignore the return value. It seems to be working. Any suggestions what to name the command line switches and how to describe them? Is there any traditional standard? I'm currently using: -daemon (or -d) (Enables RPC and runs in the background) -server (Enables RPC)"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-23T01:41:01Z", "text": "This is working. A few more things and I'll upload it. We'll need to tell people to install the GTK libraries. Do you remember the apt-get command to install GTK, and can you install it without having a GUI installed?"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-23T13:19:51Z", "text": "That seems good, I don't know of any standards about it."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-02-23T14:47:59Z", "text": "It was probably apt-get install libgtk2.0-0. You can search for available packages like this: \"apt-cache search libgtk\". I'll give Drupal accounts to the bitcoin.org translators, so they can keep the translations up to date."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-24T06:34:52Z", "text": "Good, that gives them a little sense of ownership and responsibility. I hope we get at least one .mo file for the software translation in time to put into the 0.3 release."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Non-GUI option", "item": "https://satoshimail.pages.dev/conversations/x63-non-gui-option/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x63">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Non-GUI option</span></div></nav>
+<main class="in">
+<h1>Non-GUI option</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 6 messages · from 17 February 2010 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x63">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-02-17T17:32:04Z">17 February 2010, 17:32 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-167" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just a few clues I&#x27;ve found about running the same binary without a GUI:
+
+1) GTK supports running a program without display:
+<a href="http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check." rel="nofollow noopener">http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check.</a> This
+doesn&#x27;t tell if it&#x27;s possible in wxWidgets though.
+
+2) wxAppConsole of wx 2.9 might be useful somehow. Just replacing
+wxApp with wxAppConsole doesn&#x27;t work, I&#x27;m not sure how it should be
+used. It&#x27;s not very well documented.
+
+3) Another option might be to use IMPLEMENT_APP_NO_MAIN() and make our
+own main method.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-22T20:17:42Z">22 February 2010, 20:17 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-168" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Just a few clues I&#x27;ve found about running the same binary without a GUI:
+
+1) GTK supports running a program without display:
+<a href="http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check." rel="nofollow noopener">http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check.</a>
+This doesn&#x27;t tell if it&#x27;s possible in wxWidgets though.</div></blockquote><div class="t">I see it calls gtk-init-check in wxApp::Initialize.
+
+I can subclass Initialize, call the original one while suppressing the
+error message and ignore the return value.  It seems to be working.
+
+Any suggestions what to name the command line switches and how to
+describe them?  Is there any traditional standard?  I&#x27;m currently using:
+-daemon (or -d)   (Enables RPC and runs in the background)
+-server           (Enables RPC)</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2010-02-23T01:41:01Z">23 February 2010, 01:41 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-169" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">&gt; Just a few clues I&#x27;ve found about running the same binary without a GUI:
+&gt;
+&gt; 1) GTK supports running a program without display:
+&gt; <a href="http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check." rel="nofollow noopener">http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check.</a>
+&gt; This doesn&#x27;t tell if it&#x27;s possible in wxWidgets though.
+
+I see it calls gtk-init-check in wxApp::Initialize.
+
+I can subclass Initialize, call the original one while suppressing the
+error message and ignore the return value.  It seems to be working.</div></blockquote><div class="t">This is working.  A few more things and I&#x27;ll upload it.
+
+We&#x27;ll need to tell people to install the GTK libraries.  Do you remember
+the apt-get command to install GTK, and can you install it without
+having a GUI installed?</div></article><article class="msg" id="m3">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-02-23T13:19:51Z">23 February 2010, 13:19 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-170" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">mmalmi@cc.hut.fi wrote:
+&gt; Just a few clues I&#x27;ve found about running the same binary without a GUI:
+&gt;
+&gt; 1) GTK supports running a program without display:
+&gt; <a href="http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check." rel="nofollow noopener">http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check.</a>
+&gt; This doesn&#x27;t tell if it&#x27;s possible in wxWidgets though.
+
+I see it calls gtk-init-check in wxApp::Initialize.
+
+I can subclass Initialize, call the original one while suppressing the
+error message and ignore the return value.  It seems to be working.
+
+Any suggestions what to name the command line switches and how to
+describe them?  Is there any traditional standard?  I&#x27;m currently using:
+-daemon (or -d)   (Enables RPC and runs in the background)
+-server           (Enables RPC)</div></blockquote><div class="t">That seems good, I don&#x27;t know of any standards about it.</div></article><article class="msg" id="m4">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-02-23T14:47:59Z">23 February 2010, 14:47 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-171" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">&gt;&gt; Just a few clues I&#x27;ve found about running the same binary without a GUI:
+&gt;&gt;
+&gt;&gt; 1) GTK supports running a program without display:
+&gt;&gt; <a href="http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check." rel="nofollow noopener">http://library.gnome.org/devel/gtk/2.12/gtk-General.html#gtk-init-check.</a>
+&gt;&gt; This doesn&#x27;t tell if it&#x27;s possible in wxWidgets though.
+&gt;
+&gt; I see it calls gtk-init-check in wxApp::Initialize.
+&gt;
+&gt; I can subclass Initialize, call the original one while suppressing
+&gt; the error message and ignore the return value.  It seems to be
+&gt; working.
+
+This is working.  A few more things and I&#x27;ll upload it.
+
+We&#x27;ll need to tell people to install the GTK libraries.  Do you
+remember the apt-get command to install GTK, and can you install it
+without having a GUI installed?</div></blockquote><div class="t">It was probably apt-get install libgtk2.0-0. You can search for
+available packages like this: &quot;apt-cache search libgtk&quot;.
+
+I&#x27;ll give Drupal accounts to the bitcoin.org translators, so they can
+keep the translations up to date.</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-02-24T06:34:52Z">24 February 2010, 06:34 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-172" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">I&#x27;ll give Drupal accounts to the bitcoin.org translators, so they can
+keep the translations up to date.</div></blockquote><div class="t">Good, that gives them a little sense of ownership and responsibility.
+
+I hope we get at least one .mo file for the software translation in time
+to put into the 0.3 release.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x62-translation/">← Translation</a><a rel="next" href="../../conversations/x64-bitcoind/">Bitcoind →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

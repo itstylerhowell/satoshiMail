@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How divisible are bitcoins - the technical side – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 23 September 2010: I would not encourage using the extra decimal places. They&#x27;re only intended for future use. You are correct that…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p224-how-divisible-are-bitcoins-the-technical-side/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="How divisible are bitcoins - the technical side – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 23 September 2010: I would not encourage using the extra decimal places. They&#x27;re only intended for future use. You are correct that…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p224-how-divisible-are-bitcoins-the-technical-side/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="How divisible are bitcoins - the technical side – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 September 2010: I would not encourage using the extra decimal places. They&#x27;re only intended for future use. You are correct that…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "How divisible are bitcoins - the technical side", "url": "https://satoshimail.pages.dev/conversations/p224-how-divisible-are-bitcoins-the-technical-side/", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-09-23T17:35:35Z", "text": "Hey, So there is another thread asking about bc and decimal places. It is stated that the client(s) only show 2 decimal places, but there are 8 in total. Now, working on stuff, I find that it would be nice if I could transfer at least 4 decimals precision, but the full 8 would be great. Looking at the code it seems simple enough to remove the rounding from bitcoind, but what about the receiving side? If it's a non UI client, then it will show everything, but would I be making things overly confusing for GUI clients? Is there any shortcoming in me patching my client to handle full precision?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "FreeMoney"}, "datePublished": "2010-09-23T18:01:27Z", "text": "Won't transaction fees make that pointless? If you are trying to give accurate payouts from the sportsbook I don't think anyone will mind having it rounded off at .01 for now. That is only $0.0006 after all."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-09-23T18:10:35Z", "text": "Will transaction fees be applied to transfers above 0.01, but with more precision? I wasn't aware of it being that way. And yes, I am rounding for now, but I like things clean, and I can either allow withdrawal of higher precision amounts, or I can round to 2 decimals the prize handout, I just rather do the former, that's all. And no, it's not *only* for the sportsbook. I have plans... Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-23T18:39:56Z", "text": "I would not encourage using the extra decimal places. They're only intended for future use. You are correct that above 0.01 can still have additional precision, but the recipient won't be able to see it. The UI will show it rounded down."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "How divisible are bitcoins - the technical side", "item": "https://satoshimail.pages.dev/conversations/p224-how-divisible-are-bitcoins-the-technical-side/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p224">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">How divisible are bitcoins - the technical side</span></div></nav>
+<main class="in">
+<h1>How divisible are bitcoins - the technical side</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 23 September 2010 · with FreeMoney, Satoshi Nakamoto, nelisky</p>
+<p class="actions"><a class="btn" href="../../#t-p224">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/224/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-09-23T17:35:35Z">23 September 2010, 17:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1271.msg13839#msg13839" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hey,
+
+So there is another thread asking about bc and decimal places. It is stated that the client(s) only show 2 decimal places, but there are 8 in total. Now, working on stuff, I find that it would be nice if I could transfer at least 4 decimals precision, but the full 8 would be great.
+
+Looking at the code it seems simple enough to remove the rounding from bitcoind, but what about the receiving side? If it&#x27;s a non UI client, then it will show everything, but would I be making things overly confusing for GUI clients?
+
+Is there any shortcoming in me patching my client to handle full precision?</div></article><article class="msg" id="m1">
+<header><b>FreeMoney</b><span class="muted"> · <time datetime="2010-09-23T18:01:27Z">23 September 2010, 18:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1271.msg13845#msg13845" rel="nofollow noopener">original</a></span></header>
+<div class="t">Won&#x27;t transaction fees make that pointless?
+
+If you are trying to give accurate payouts from the sportsbook I don&#x27;t think anyone will mind having it rounded off at .01 for now. That is only $0.0006 after all. </div></article><article class="msg" id="m2">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-09-23T18:10:35Z">23 September 2010, 18:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1271.msg13847#msg13847" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: FreeMoney on September 23, 2010, 06:01:27 PM</div><div class="t">Won&#x27;t transaction fees make that pointless?
+
+If you are trying to give accurate payouts from the sportsbook I don&#x27;t think anyone will mind having it rounded off at .01 for now. That is only $0.0006 after all.</div></blockquote><div class="t">Will transaction fees be applied to transfers above 0.01, but with more precision? I wasn&#x27;t aware of it being that way.
+
+And yes, I am rounding for now, but I like things clean, and I can either allow withdrawal of higher precision amounts, or I can round to 2 decimals the prize handout, I just rather do the former, that&#x27;s all.
+
+And no, it&#x27;s not *only* for the sportsbook. I have plans... Smiley</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-23T18:39:56Z">23 September 2010, 18:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1271.msg13848#msg13848" rel="nofollow noopener">original</a></span></header>
+<div class="t">I would not encourage using the extra decimal places.  They&#x27;re only intended for future use.
+
+You are correct that above 0.01 can still have additional precision, but the recipient won&#x27;t be able to see it.  The UI will show it rounded down.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p223-internal-version-number/">← Internal version number</a><a rel="next" href="../../conversations/p225-how-to-make-a-distributed-bitcoin-escrow-service/">How To Make a Distributed BitCoin Escrow Service →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

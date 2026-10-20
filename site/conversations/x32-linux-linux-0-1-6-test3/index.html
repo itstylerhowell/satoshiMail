@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linux - linux-0.1.6-test3 – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 12 November 2009: Right now (04:50 GMT) my node is connecting to yours and getting zombie connections each time. The socket isn&#x27;t…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x32-linux-linux-0-1-6-test3/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Linux - linux-0.1.6-test3 – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 12 November 2009: Right now (04:50 GMT) my node is connecting to yours and getting zombie connections each time. The socket isn&#x27;t…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x32-linux-linux-0-1-6-test3/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Linux - linux-0.1.6-test3 – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 12 November 2009: Right now (04:50 GMT) my node is connecting to yours and getting zombie connections each time. The socket isn&#x27;t…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Linux - linux-0.1.6-test3", "url": "https://satoshimail.pages.dev/conversations/x32-linux-linux-0-1-6-test3/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-12T05:36:06Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-12T05:36:06Z", "text": "Right now (04:50 GMT) my node is connecting to yours and getting zombie connections each time. The socket isn't returning an error, just zombie without notice. If you're running the linux build right now, it would be interesting to see what the log says on your side. test3: I've added specific code to detect zombie sockets. It'll detect if the socket hasn't sent or received any data within 60 seconds of connecting, and detect if data is queued to send and hasn't sent for 3 minutes. I think I…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Linux - linux-0.1.6-test3", "item": "https://satoshimail.pages.dev/conversations/x32-linux-linux-0-1-6-test3/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x32">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Linux - linux-0.1.6-test3</span></div></nav>
+<main class="in">
+<h1>Linux - linux-0.1.6-test3</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 1 message · from 12 November 2009 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x32">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Liberty Standard &lt;newlibertystandard@gmail.com&gt;</span><span class="muted"> · <time datetime="2009-11-12T05:36:06Z">12 November 2009, 05:36 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-76" rel="nofollow noopener">original</a></span></header>
+<div class="t">Right now (04:50 GMT) my node is connecting to yours and getting zombie
+connections each time.  The socket isn&#x27;t returning an error, just zombie
+without notice.  If you&#x27;re running the linux build right now, it would
+be interesting to see what the log says on your side.
+
+test3:
+
+I&#x27;ve added specific code to detect zombie sockets.  It&#x27;ll detect if the
+socket hasn&#x27;t sent or received any data within 60 seconds of connecting,
+and detect if data is queued to send and hasn&#x27;t sent for 3 minutes.
+
+I think I may have weakened the reconnect speed in test2.  In test3 I&#x27;m
+making it more determined to reconnect quickly.
+
+I added checking to track whether other nodes received your generated
+blocks.  If none did, it&#x27;ll warn you in the description:
+&quot;Generated - Warning: This block was not received by any other nodes and
+will probably not be accepted!&quot;
+
+The status can go to &quot;#/offline?&quot; for blocks or transactions you create
+if they don&#x27;t get out to any other nodes.
+
+With all this, it should be impossible not to notice as soon as it
+screws up.  It should hopefully disconnect all the zombie sockets.
+After that, whether it&#x27;s able to make some good connections, or sockets
+is completely hosed and it stays at 0 connections, I don&#x27;t know.
+
+If this doesn&#x27;t work, I guess I&#x27;ll look at the sourcecode of some other
+P2P apps like BitTorrent and see how they deal with this stuff.  Maybe
+there&#x27;s some magic flag or procedure to bash the sockets system back to
+life.
+
+File linux-0.1.6-test3.tar.bz2 attached in the next message.</div><blockquote><div class=qh>Liberty Standard wrote:</div><div class="t">On Wed, Nov 11, 2009 at 8:08 AM, Liberty Standard
+&lt;newlibertystandard@gmail.com &lt;mailto:newlibertystandard@gmail.com&gt;&gt; wrote:
+
+    My network connection is direct to my computer. My ISP requires that
+    I run VPN to connect to the Internet. I then have a second NIC that
+    shares my Internet with other devices. My IP address while using my
+    computer is my actual IP address, but the devices connected through
+    my second NIC use NAT. When I connect through a virtual machine,
+    that also uses NAT. All this requires very little configuration.
+    NetworkManager in Ubuntu has an option to share my Internet
+    connection through the second NIC and VirtualBox has the option to
+    use NAT.
+
+    I lost a couple packs of bitcoins again, so that problem is not yet
+    fixed. It&#x27;s a bit more bearable now that I have an idea of what is
+    going on. I figure for now I&#x27;ll just restart bitcoin whenever I see
+    a pack of bitcoins starting to mature. I may go back and forth a bit
+    between Linux and Wine, but I&#x27;ll definitely test every new version
+    that comes out. At the moment I&#x27;m still running the Linux build.
+
+    On Wed, Nov 11, 2009 at 7:49 AM, Satoshi Nakamoto &lt;satoshin@gmx.com
+    &lt;mailto:satoshin@gmx.com&gt;&gt; wrote:
+
+        Thanks.  The log didn&#x27;t stop on anything special, just simple
+        message passing.  Chances are it&#x27;s UI related.  Most of the
+        initial bugs were all UI.
+
+        What brand/model of firewall do you have?  It&#x27;s possible for
+        BitTorrent to overwhelm the number of connections some models
+        can handle.  Most are underpowered and flaky under load.
+
+        NewLibertyStandard wrote:
+
+            I have been getting your attachments just fine. I just
+            thought I&#x27;d spare Martti the large attachment.
+
+            I am not able to reproduce the bug. I don&#x27;t know whether the
+            paste, the blocks finishing, a combination of the two or
+            something else entirely caused the fault.
+
+        ...
+
+                    But after they started
+                   downloading, I took a look a look at my BitTorrent
+            client, and
+                   sure enough, I had forgotten about a torrent and my
+            upload was
+                   quite high, at the limit I had set for it.</div></blockquote></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x31-re-linux-linux-0-1-6-test2-attachment/">← Re: Linux - linux-0.1.6-test2 attachment</a><a rel="next" href="../../conversations/x33-linux-0-1-6-test3-tar-bz2-attached/">linux-0.1.6-test3.tar.bz2 attached →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>correct typo for mac compile, update… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: correct typo for mac compile, update makefile to use llvm. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/dd9e718/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="correct typo for mac compile, update… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: correct typo for mac compile, update makefile to use llvm. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/dd9e718/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="correct typo for mac compile, update… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 August 2010: correct typo for mac compile, update makefile to use llvm. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "correct typo for mac compile, update makefile to use llvm", "url": "https://satoshimail.pages.dev/commits/dd9e718/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-10T15:57:38Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dd9e71843bc79e8c7e33734cc8b975275992cc05"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "correct typo for mac compile, update…", "item": "https://satoshimail.pages.dev/commits/dd9e718/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cdd9e71843b">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">correct typo for mac compile, update…</span></div></nav>
+<main class="in">
+<h1>correct typo for mac compile, update makefile to use llvm</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 10 August 2010 · release v0.3.11_notexact · 2 files, +9 −7</p>
+<p class="actions"><a class="btn" href="../../#t-cdd9e71843b">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/dd9e71843bc79e8c7e33734cc8b975275992cc05" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>makefile.osx</code></summary><pre><code>@@ -5,6 +5,7 @@
+ # Mac OS X makefile for bitcoin
+ # Laszlo Hanyecz (solar@heliacal.net)
+ 
++CXX=llvm-g++
+ DEPSDIR=/Users/macosuser/bitcoin/deps
+ 
+ INCLUDEPATHS= \
+@@ -27,7 +28,7 @@ DEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -D__WXMAC_OSX__ -DNOPCH -DMSG_
+ 
+ DEBUGFLAGS=-g -DwxDEBUG_LEVEL=0
+ # ppc doesn&#x27;t work because we don&#x27;t support big-endian
+-CFLAGS=-mmacosx-version-min=10.5 -arch i386 -arch x86_64 -O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
++CFLAGS=-mmacosx-version-min=10.5 -arch i386 -arch x86_64 -O3 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
+     script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h noui.h init.h
+ 
+@@ -48,22 +49,23 @@ all: bitcoin
+ 
+ 
+ obj/%.o: %.cpp $(HEADERS)
+-	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
++	$(CXX) -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+-	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_ASM -o $@ $&lt;
++	$(CXX) -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_ASM -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
++	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
+ 
+ 
+ obj/nogui/%.o: %.cpp $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
++	$(CXX) -c $(CFLAGS) -o $@ $&lt;
+ 
+ bitcoind: $(OBJS:obj/%=obj/nogui/%)
+-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
++	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+ 
+ 
+ clean:
++	-rm -f bitcoin bitcoind
+ 	-rm -f obj/*.o
+ 	-rm -f obj/nogui/*.o</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -388,7 +388,7 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+         fClosedToTray = true;
+     Show(!fClosedToTray);
+     ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+-#ifdef __WXGTK__
++#if defined(__WXGTK__) || defined(__WXMAC_OSX__)
+     }
+ #endif
+ }</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/94cfec0/">← always make 8 outbound connections even if have inbound…</a><a rel="next" href="../../commits/8a38d56/">enable SSE2 in all builds to fix crypto++ SHA-256 on 64-bit →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

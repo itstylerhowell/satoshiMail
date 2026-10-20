@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>revert revision 56, going in… (r57) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: revert revision 56, going in different direction with boost::asio and JSON-RPC. 7 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c41226d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="revert revision 56, going in… (r57) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: revert revision 56, going in different direction with boost::asio and JSON-RPC. 7 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c41226d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="revert revision 56, going in… (r57) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 February 2010: revert revision 56, going in different direction with boost::asio and JSON-RPC. 7 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "revert revision 56, going in different direction with boost::asio and JSON-RPC", "url": "https://satoshimail.pages.dev/commits/c41226d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-10T19:33:04Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c41226d847c7d32ade7f02c0d53c85b0800fc71b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "revert revision 56, going in different…", "item": "https://satoshimail.pages.dev/commits/c41226d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cc41226d847">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">revert revision 56, going in different…</span></div></nav>
+<main class="in">
+<h1>revert revision 56, going in different direction with boost::asio and JSON-RPC</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 10 February 2010 · SVN r57 · release v0.2.2 · 7 files, +8 −101</p>
+<p class="actions"><a class="btn" href="../../#t-cc41226d847">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/c41226d847c7d32ade7f02c0d53c85b0800fc71b" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -24,8 +24,6 @@
+ #include &lt;wx/taskbar.h&gt;
+ #include &lt;wx/stdpaths.h&gt;
+ #include &lt;wx/utils.h&gt;
+-#include &lt;wx/ipc.h&gt;
+-#include &lt;wx/ipcbase.h&gt;
+ #include &lt;openssl/ecdsa.h&gt;
+ #include &lt;openssl/evp.h&gt;
+ #include &lt;openssl/rand.h&gt;
+@@ -104,7 +102,6 @@ using namespace boost;
+ #include &quot;market.h&quot;
+ #include &quot;uibase.h&quot;
+ #include &quot;ui.h&quot;
+-#include &quot;ipc.h&quot;
+ 
+ #include &quot;xpm/addressbook16.xpm&quot;
+ #include &quot;xpm/addressbook20.xpm&quot;</code></pre></details><details><summary><code>ipc.cpp</code></summary><pre><code>@@ -1,33 +0,0 @@
+-/*
+- * Inter-process calling functionality
+- */
+-
+-#include &quot;headers.h&quot;
+-
+-wxConnectionBase * CServer::OnAcceptConnection (const wxString &amp;topic) {
+-    return new CServerConnection;
+-}
+-
+-wxConnectionBase * CClient::OnMakeConnection () {
+-    return new CClientConnection;
+-}
+-
+-// For request based handling
+-const void * CServerConnection::OnRequest (const wxString &amp;topic, const wxString &amp;item, size_t *size, wxIPCFormat format) {
+-    const char * output;
+-
+-    if (item == &quot;blockamount&quot;) {
+-        stringstream stream;
+-        stream &lt;&lt; nBestHeight + 1;
+-        output = stream.str().c_str();
+-    }
+-    else
+-        output = &quot;Unknown identifier&quot;;
+-    
+-    return output;
+-}
+-
+-// For event based handling
+-bool CClientConnection::OnAdvise (const wxString &amp;topic, const wxString &amp;item, const void *data, size_t size, wxIPCFormat format) {
+-    return false;
+-}
+\ No newline at end of file</code></pre></details><details><summary><code>ipc.h</code></summary><pre><code>@@ -1,28 +0,0 @@
+-#ifndef _IPC_H
+-#define	_IPC_H
+-
+-class CServer : public wxServer {
+-public:
+-    wxConnectionBase * OnAcceptConnection (const wxString &amp;topic);
+-};
+-
+-class CClient : public wxClient {
+-public:
+-    wxConnectionBase * OnMakeConnection ();
+-};
+-
+-class CServerConnection : public wxConnection {
+-public:
+-    const void * OnRequest (const wxString &amp;topic, const wxString &amp;item, size_t *size, wxIPCFormat format);
+-};
+-
+-class CClientConnection : public wxConnection {
+-public:
+-    CClientConnection() : wxConnection() {}
+-    ~CClientConnection() {}
+-    
+-    bool OnAdvise (const wxString &amp;topic, const wxString &amp;item, const void *data, size_t size, wxIPCFormat format);
+-};
+-
+-#endif	/* _IPC_H */
+-</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -67,12 +67,10 @@ obj/irc.o: irc.cpp                  $(HEADERS)
+ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+ 	windres $(WXDEFS) $(INCLUDEPATHS) -o $@ -i $&lt;
+ 
+-obj/ipc.o: ipc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o obj/ipc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
+ 
+ bitcoin.exe: headers.h.gch $(OBJS)
+ 	-kill /f bitcoin.exe</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -75,12 +75,11 @@ obj/sha.o: sha.cpp                  sha.h
+ obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ipc.o: ipc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
++
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ipc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -31,7 +31,7 @@ LIBS= \
+    -l wx_gtk2u$(D)-2.9 \
+  -Wl,-Bdynamic \
+    -l crypto \
+-   -l gtk-x11-2.0 -l gthread-2.0 -l SM \
++   -l gtk-x11-2.0 -l gthread-2.0 -l SM
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+@@ -75,12 +75,11 @@ obj/sha.o: sha.cpp                  sha.h
+ obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ipc.o: ipc.cpp                  $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
++
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ipc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ DEFINE_EVENT_TYPE(wxEVT_REPLY3)
+ 
+ CMainFrame* pframeMain = NULL;
+ CMyTaskBarIcon* ptaskbaricon = NULL;
+-CServer* pserver = NULL;
+ map&lt;string, string&gt; mapAddressBook;
+ bool fRandSendTest = false;
+ void RandSend();
+@@ -385,8 +384,6 @@ CMainFrame::~CMainFrame()
+     pframeMain = NULL;
+     delete ptaskbaricon;
+     ptaskbaricon = NULL;
+-    delete pserver;
+-    pserver = NULL;
+ }
+ 
+ void ExitTimeout(void* parg)
+@@ -1690,8 +1687,8 @@ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ #if !wxUSE_UNICODE
+     // Workaround until upgrade to wxWidgets supporting UTF-8
+     wxString str = m_staticTextMain-&gt;GetLabel();
+-    if (str.Find(&#x27;ï¿½&#x27;) != wxNOT_FOUND)
+-        str.Remove(str.Find(&#x27;ï¿½&#x27;), 1);
++    if (str.Find(&#x27;Â&#x27;) != wxNOT_FOUND)
++        str.Remove(str.Find(&#x27;Â&#x27;), 1);
+     m_staticTextMain-&gt;SetLabel(str);
+ #endif
+ #ifndef __WXMSW__
+@@ -3551,26 +3548,6 @@ bool CMyApp::OnInit2()
+         return false;
+     }
+ 
+-    if (mapArgs.count(&quot;-blockamount&quot;)) {
+-        CClient client;
+-        wxString hostname = &quot;localhost&quot;;
+-        wxString server = GetDataDir() + &quot;service&quot;;
+-        CClientConnection * pconnection = (CClientConnection *)client.MakeConnection(hostname, server, &quot;ipc test&quot;);
+-        string output = &quot;&quot;;
+-        if (pconnection) {
+-            char * pbuffer = (char *)pconnection-&gt;Request(&quot;blockamount&quot;);
+-            while (*pbuffer != &#x27;\n&#x27;) {
+-                output += *pbuffer;
+-                pbuffer++;
+-            }
+-        }
+-        else {
+-            output = &quot;Cannot access Bitcoin. Are you sure the program is running?\n&quot;;
+-        }
+-        fprintf(stderr, &quot;%s&quot;, output.c_str());
+-        return false;
+-    }
+-
+     if (mapArgs.count(&quot;-datadir&quot;))
+         strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
+ 
+@@ -3778,8 +3755,6 @@ bool CMyApp::OnInit2()
+     if (fFirstRun)
+         SetStartOnSystemStartup(true);
+ 
+-    pserver = new CServer;
+-    pserver-&gt;Create(GetDataDir() + &quot;service&quot;);
+ 
+     //
+     // Tests</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/53d5080/">← update fSpent flag on wallet transactions if they&#x27;re seen…</a><a rel="next" href="../../commits/75990a4/">JSON Spirit library from… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

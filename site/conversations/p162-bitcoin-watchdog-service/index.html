@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin Watchdog Service – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 12 August 2010: True, there would probably be someone with a dial-up modem or satellite dish internet. Rarer would be someone who has…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p162-bitcoin-watchdog-service/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin Watchdog Service – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 12 August 2010: True, there would probably be someone with a dial-up modem or satellite dish internet. Rarer would be someone who has…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p162-bitcoin-watchdog-service/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin Watchdog Service – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 12 August 2010: True, there would probably be someone with a dial-up modem or satellite dish internet. Rarer would be someone who has…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Bitcoin Watchdog Service", "url": "https://satoshimail.pages.dev/conversations/p162-bitcoin-watchdog-service/", "author": {"@type": "Person", "name": "MoonShadow"}, "datePublished": "2010-08-03T17:53:51Z", "text": "Another thread that asked what would happen if the bitcoin network were to split over a period of time and reconnect got me thinking.... One way to protect against such an unlikey event would be to have a watchdog process that kept track of the average time between blocks since the last change in difficulty, and alert the owner if the time between blocks were to jump significantly and uncharacteristicly over one or more consecutive blocks. This would also help protect a vendor from a double-spending scam if the theives involved were talented enough to be able to spoof his client's connections to delay another spend event from reaching him. But then I realized that a server running a modified client on another machine, without a hard connection limit, could do the above for a collection of vendors, while monitoring the vendor's client by maintaining a connection to it and notifying the vendor by other means if the connection is lost. Also, if a war, internet virus, or other were to divide the bitcoin network for an extended time; the watchdog would be able to deterimine *where* the problem on the Internet actually is by analysis of it's customers' connections that were lost, and notify all customers in the affected zone that, presumedly, they are on the wrong side of the split. The watchdog would also work quite well as a rapid annouce clearinghouse, improving the odds for it's customers that if they are subjects of a double-spending scam, that it's less likely that they are those left holding the raw deal. Any talented programmers willing to take this up?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-03T18:12:28Z", "text": "A good way to prevent long-chain takeover is to store the signature of the last-known \"good\" block in each bitcoin release binary."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-08-03T18:59:58Z", "text": "But that is only as good as the trust you have in the distribution channels, which are being discussed in other threads. If a compromised client was to be served as an upgrade, and most running clients would be using this version, then a new chain would replace the old one. What would happen when, after some time, the attack was disclosed and new clients with the real block chain signatures were run? Would the old (real) chain still be alive and replace the bogus one?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "throughput"}, "datePublished": "2010-08-12T15:28:43Z", "text": "Definitively, we need some overall network hps meter in every node. And at last I've found that article: http://www.informit.com/articles/article.aspx?p=1237179 Network splits are easier to produce, and happen more often, than many users on this forum think. You don't really need to cut any cable, nor hack into ISP's router to plug that ISP off Internet. You don't need to hack his peers either. All you need is BGP router in any AS (and some unwary BGP peers). I have one Grin So, it is possible…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-12T16:14:11Z", "text": "We could convince satoshi to always post SHA1 signatures of uploads inside a PGP-signed blocks... establish a chain of trust for both source code and official binaries."}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-12T17:02:43Z", "text": "How would an attacker connect to both sides during this split in order to spend the coins? And if the attacker can do it, the likelihood that one or more honest nodes could bridge the divide is pretty good."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-12T21:34:44Z", "text": "True, there would probably be someone with a dial-up modem or satellite dish internet. Rarer would be someone who has both that and the wired internet that has the outage, but if it's a big enough segment to matter, out of a million people there's bound to be a multi-home geek. ISP network cuts are just your local area. If you still have communication with the rest of your area, it would probably be something like 1/1000 of the world or less. Block generation in the segment would take several…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "throughput"}, "datePublished": "2010-08-13T06:45:50Z", "text": "1. Why an attacker is forced to be a single person with a single PC? Copy the wallet on another PC and use it anywhere! 2. Why should network isolation only be used for double spending? Can't it be used to slow down block generation? Will that affect difficulty adjustment? But there will be no irc server to bootsrap from."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-13T17:09:27Z", "text": "Which doesn't matter because you can't access sourceforge to download the software either. If you've ever been connected before, you don't need IRC to bootstrap anymore. Even if you haven't, you can bootstrap from seed nodes. IRC is completely redundant since 0.3.0."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Bitcoin Watchdog Service", "item": "https://satoshimail.pages.dev/conversations/p162-bitcoin-watchdog-service/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p162">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Bitcoin Watchdog Service</span></div></nav>
+<main class="in">
+<h1>Bitcoin Watchdog Service</h1>
+<p class="lead">BitcoinTalk forum · 9 messages · from 3 August 2010 · with MoonShadow, Satoshi Nakamoto, aceat64, jgarzik, nelisky, throughput</p>
+<p class="actions"><a class="btn" href="../../#t-p162">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/162/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>MoonShadow</b><span class="muted"> · <time datetime="2010-08-03T17:53:51Z">3 August 2010, 17:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg7283#msg7283" rel="nofollow noopener">original</a></span></header>
+<div class="t">Another thread that asked what would happen if the bitcoin network were to split over a period of time and reconnect got me thinking....
+
+One way to protect against such an unlikey event would be to have a watchdog process that kept track of the average time between blocks since the last change in difficulty, and alert the owner if the time between blocks were to jump significantly and uncharacteristicly over one or more consecutive blocks.  This would also help protect a vendor from a double-spending scam if the theives involved were talented enough to be able to spoof his client&#x27;s connections to delay another spend event from reaching him.
+
+But then I realized that a server running a modified client on another machine, without a hard connection limit, could do the above for a collection of vendors, while monitoring the vendor&#x27;s client by maintaining a connection to it and notifying the vendor by other means if the connection is lost.  Also, if a war, internet virus, or other were to divide the bitcoin network for an extended time; the watchdog would be able to deterimine *where* the problem on the Internet actually is by analysis of it&#x27;s customers&#x27; connections that were lost, and notify all customers in the affected zone that, presumedly, they are on the wrong side of the split.
+
+The watchdog would also work quite well as a rapid annouce clearinghouse, improving the odds for it&#x27;s customers that if they are subjects of a double-spending scam, that it&#x27;s less likely that they are those left holding the raw deal.
+
+Any talented programmers willing to take this up?</div></article><article class="msg" id="m1">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-03T18:12:28Z">3 August 2010, 18:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg7290#msg7290" rel="nofollow noopener">original</a></span></header>
+<div class="t">A good way to prevent long-chain takeover is to store the signature of the last-known &quot;good&quot; block in each bitcoin release binary.</div></article><article class="msg" id="m2">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-08-03T18:59:58Z">3 August 2010, 18:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg7301#msg7301" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 03, 2010, 06:12:28 PM</div><div class="t">A good way to prevent long-chain takeover is to store the signature of the last-known &quot;good&quot; block in each bitcoin release binary.</div></blockquote><div class="t">But that is only as good as the trust you have in the distribution channels, which are being discussed in other threads. If a compromised client was to be served as an upgrade, and most running clients would be using this version, then a new chain would replace the old one. What would happen when, after some time, the attack was disclosed and new clients with the real block chain signatures were run? Would the old (real) chain still be alive and replace the bogus one?</div></article><article class="msg" id="m3">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-08-12T15:28:43Z">12 August 2010, 15:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg8897#msg8897" rel="nofollow noopener">original</a></span></header>
+<div class="t">Definitively, we need some overall network hps meter in every node.
+
+And at last I&#x27;ve found that article:
+<a href="http://www.informit.com/articles/article.aspx?p=1237179" rel="nofollow noopener">http://www.informit.com/articles/article.aspx?p=1237179</a>
+
+Network splits are easier to produce, and happen more often, than many users on this forum think.
+You don&#x27;t really need to cut any cable, nor hack into ISP&#x27;s router to plug that ISP off Internet.
+You don&#x27;t need to hack his peers either. All you need is BGP router in any AS (and some unwary BGP peers).
+I have one  Grin
+
+So, it is possible to talk about a short (1 - 3 hours) and controlled network split.
+Not just split in half, but split into ASes. After an hour or three-four most of ISPs will recover, but that
+really depends on work hours. Weekend attack may have more prolonged effect.
+Perhaps in the future that will be fixed and no BGP router will be vulnerable, but
+anyway, nobody should count on Internet stability and persistent connectivity.</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-12T16:14:11Z">12 August 2010, 16:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg8902#msg8902" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nelisky on August 03, 2010, 06:59:58 PM</div><div class="t">&gt; Quote from: jgarzik on August 03, 2010, 06:12:28 PM
+&gt; A good way to prevent long-chain takeover is to store the signature of the last-known &quot;good&quot; block in each bitcoin release binary.
+
+But that is only as good as the trust you have in the distribution channels, which are being discussed in other threads. If a compromised client was to be served as an upgrade, and most running clients would be using this version, then a new chain would replace the old one. What would happen when, after some time, the attack was disclosed and new clients with the real block chain signatures were run? Would the old (real) chain still be alive and replace the bogus one?</div></blockquote><div class="t">We could convince satoshi to always post SHA1 signatures of uploads inside a PGP-signed blocks...  establish a chain of trust for both source code and official binaries.</div></article><article class="msg" id="m5">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-12T17:02:43Z">12 August 2010, 17:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg8906#msg8906" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: throughput on August 12, 2010, 03:28:43 PM</div><div class="t">Definitively, we need some overall network hps meter in every node.
+
+And at last I&#x27;ve found that article:
+<a href="http://www.informit.com/articles/article.aspx?p=1237179" rel="nofollow noopener">http://www.informit.com/articles/article.aspx?p=1237179</a>
+
+Network splits are easier to produce, and happen more often, than many users on this forum think.
+You don&#x27;t really need to cut any cable, nor hack into ISP&#x27;s router to plug that ISP off Internet.
+You don&#x27;t need to hack his peers either. All you need is BGP router in any AS (and some unwary BGP peers).
+I have one  Grin
+
+So, it is possible to talk about a short (1 - 3 hours) and controlled network split.
+Not just split in half, but split into ASes. After an hour or three-four most of ISPs will recover, but that
+really depends on work hours. Weekend attack may have more prolonged effect.
+Perhaps in the future that will be fixed and no BGP router will be vulnerable, but
+anyway, nobody should count on Internet stability and persistent connectivity.</div></blockquote><div class="t">How would an attacker connect to both sides during this split in order to spend the coins? And if the attacker can do it, the likelihood that one or more honest nodes could bridge the divide is pretty good.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:34:44Z">12 August 2010, 21:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg8922#msg8922" rel="nofollow noopener">original</a></span></header>
+<div class="t">True, there would probably be someone with a dial-up modem or satellite dish internet.  Rarer would be someone who has both that and the wired internet that has the outage, but if it&#x27;s a big enough segment to matter, out of a million people there&#x27;s bound to be a multi-home geek.
+
+ISP network cuts are just your local area.  If you still have communication with the rest of your area, it would probably be something like 1/1000 of the world or less.  Block generation in the segment would take several hours per block.
+
+I favour the plan to monitor if the frequency of blocks received drops too slow.  That covers a large range of possibilities.</div></article><article class="msg" id="m7">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-08-13T06:45:50Z">13 August 2010, 06:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg8978#msg8978" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: aceat64 on August 12, 2010, 05:02:43 PM</div><div class="t">&gt; Quote from: throughput on August 12, 2010, 03:28:43 PM
+&gt; Definitively, we need some overall network hps meter in every node.
+&gt;
+&gt; And at last I&#x27;ve found that article:
+&gt; <a href="http://www.informit.com/articles/article.aspx?p=1237179" rel="nofollow noopener">http://www.informit.com/articles/article.aspx?p=1237179</a>
+&gt;
+&gt; Network splits are easier to produce, and happen more often, than many users on this forum think.
+&gt; You don&#x27;t really need to cut any cable, nor hack into ISP&#x27;s router to plug that ISP off Internet.
+&gt; You don&#x27;t need to hack his peers either. All you need is BGP router in any AS (and some unwary BGP peers).
+&gt; I have one  Grin
+&gt;
+&gt; So, it is possible to talk about a short (1 - 3 hours) and controlled network split.
+&gt; Not just split in half, but split into ASes. After an hour or three-four most of ISPs will recover, but that
+&gt; really depends on work hours. Weekend attack may have more prolonged effect.
+&gt; Perhaps in the future that will be fixed and no BGP router will be vulnerable, but
+&gt; anyway, nobody should count on Internet stability and persistent connectivity.
+How would an attacker connect to both sides during this split in order to spend the coins? And if the attacker can do it, the likelihood that one or more honest nodes could bridge the divide is pretty good.</div></blockquote><div class="t">1. Why an attacker is forced to be a single person with a single PC?
+Copy the wallet on another PC and use it anywhere!
+
+2. Why should network isolation only be used for double spending?
+Can&#x27;t it be used to slow down block generation? Will that affect difficulty adjustment?</div><blockquote><div class=qh>Quote from: satoshi on August 12, 2010, 09:34:44 PM</div><div class="t">True, there would probably be someone with a dial-up modem or satellite dish internet.  Rarer would be someone who has both that and the wired internet that has the outage, but if it&#x27;s a big enough segment to matter, out of a million people there&#x27;s bound to be a multi-home geek.</div></blockquote><div class="t">But there will be no irc server to bootsrap from.</div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T17:09:27Z">13 August 2010, 17:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=691.msg9041#msg9041" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote</div><div class="t">But there will be no irc server to bootstrap from.</div></blockquote><div class="t">Which doesn&#x27;t matter because you can&#x27;t access sourceforge to download the software either.
+
+If you&#x27;ve ever been connected before, you don&#x27;t need IRC to bootstrap anymore.  Even if you haven&#x27;t, you can bootstrap from seed nodes.  IRC is completely redundant since 0.3.0.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p161-authentication-json-rpc-and-python/">← Authentication, JSON RPC and Python</a><a rel="next" href="../../conversations/p163-please-upgrade-to-0-3-8/">Please upgrade to 0.3.8! →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

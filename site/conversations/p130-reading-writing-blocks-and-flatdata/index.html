@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reading/Writing Blocks and FLATDATA – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 24 July 2010: FLATDATA was a workaround to serialize a fixed field length array. There was a cleaner way to make it understand how to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p130-reading-writing-blocks-and-flatdata/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Reading/Writing Blocks and FLATDATA – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 24 July 2010: FLATDATA was a workaround to serialize a fixed field length array. There was a cleaner way to make it understand how to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p130-reading-writing-blocks-and-flatdata/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Reading/Writing Blocks and FLATDATA – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 24 July 2010: FLATDATA was a workaround to serialize a fixed field length array. There was a cleaner way to make it understand how to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Reading/Writing Blocks and FLATDATA", "url": "https://satoshimail.pages.dev/conversations/p130-reading-writing-blocks-and-flatdata/", "author": {"@type": "Person", "name": "Hepatizon"}, "datePublished": "2010-07-24T01:27:32Z", "text": "I'm trying to understand the way Bitcoin stores block data - among other things I want to run some statistics on the block chain / transaction history and check just how anonymous Bitcoin really is. So I went to the source to see how Bitcoin reads/writes block data to file. (ETA: this is in 0.3.2) In main.h we have: bool WriteToDisk(bool fWriteTransactions, unsigned int& nFileRet, unsigned int& nBlockPosRet) { // Open history file to append CAutoFile fileout = AppendBlockFile(nFileRet); if (!fileout) return error(\"CBlock::WriteToDisk() : AppendBlockFile failed\"); if (!fWriteTransactions) fileout.nType |= SER_BLOCKHEADERONLY; // Write index header unsigned int nSize = fileout.GetSerializeSize(*this); fileout << FLATDATA(pchMessageStart) << nSize; // Write block nBlockPosRet = ftell(fileout); if (nBlockPosRet == -1) return error(\"CBlock::WriteToDisk() : ftell failed\"); fileout << *this; // Flush stdio buffers and commit to disk before returning fflush(fileout); #ifdef __WXMSW__ _commit(_fileno(fileout)); #else fsync(fileno(fileout)); #endif return true; } and bool ReadFromDisk(unsigned int nFile, unsigned int nBlockPos, bool fReadTransactions=true) { SetNull(); // Open history file to read CAutoFile filein = OpenBlockFile(nFile, nBlockPos, \"rb\"); if (!filein) return error(\"CBlock::ReadFromDisk() : OpenBlockFile failed\"); if (!fReadTransactions) filein.nType |= SER_BLOCKHEADERONLY; // Read block filein >> *this; // Check the header if (CBigNum().SetCompact(nBits) > bnProofOfWorkLimit) return error(\"CBlock::ReadFromDisk() : nBits errors in block header\"); if (GetHash() > CBigNum().SetCompact(nBits).getuint256()) return error(\"CBlock::ReadFromDisk() : GetHash() errors in block header\"); return true; } FLATDATA is defined in serialize.h like so: // // Wrapper for serializing arrays and POD // There's a clever template way to make arrays serialize normally, but MSVC6 doesn't support it // #define FLATDATA(obj) REF(CFlatData((char*)&(obj), (char*)&(obj) + sizeof(obj)))…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-07-24T01:44:02Z", "text": "They key bits of code are: fileout << FLATDATA(pchMessageStart) << nSize; ... fileout << *this; pchMessageStart are the four magic bytes, and those are written with FLATDATA. The CBlock itself is written by << *this, and that's done by the IMPLEMENT_SERIALIZE in main.h: IMPLEMENT_SERIALIZE ( READWRITE(this->nVersion); nVersion = this->nVersion; READWRITE(hashPrevBlock); READWRITE(hashMerkleRoot); READWRITE(nTime); READWRITE(nBits); READWRITE(nNonce); // ConnectBlock depends on vtx being last…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Hepatizon"}, "datePublished": "2010-07-24T02:53:05Z", "text": "Thanks for clearing that up for me. I keep making really elementary code mistakes...."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-24T04:04:20Z", "text": "FLATDATA was a workaround to serialize a fixed field length array. There was a cleaner way to make it understand how to serialize arrays directly, but MSVC6 couldn't do it and I wanted to keep compatibility with MSVC6 at that time. We don't support MSVC6 anymore because we use something in Boost that doesn't. We lost support for it after 0.2.0. Maybe someday I'll swap in the clean way that just knows how to serialize fixed length arrays without wrapping them in FLATDATA."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Reading/Writing Blocks and FLATDATA", "item": "https://satoshimail.pages.dev/conversations/p130-reading-writing-blocks-and-flatdata/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p130">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Reading/Writing Blocks and FLATDATA</span></div></nav>
+<main class="in">
+<h1>Reading/Writing Blocks and FLATDATA</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 24 July 2010 · with Gavin Andresen, Hepatizon, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-p130">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/130/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Hepatizon</b><span class="muted"> · <time datetime="2010-07-24T01:27:32Z">24 July 2010, 01:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=555.msg5423#msg5423" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m trying to understand the way Bitcoin stores block data - among other things I want to run some statistics on the block chain / transaction history and check just how anonymous Bitcoin really is.  So I went to the source to see how Bitcoin reads/writes block data to file.
+
+(ETA: this is in 0.3.2)
+
+In main.h we have:</div><pre><code>bool WriteToDisk(bool fWriteTransactions, unsigned int&amp; nFileRet, unsigned int&amp; nBlockPosRet)
+{
+    // Open history file to append
+    CAutoFile fileout = AppendBlockFile(nFileRet);
+    if (!fileout)
+        return error(&quot;CBlock::WriteToDisk() : AppendBlockFile failed&quot;);
+    if (!fWriteTransactions)
+        fileout.nType |= SER_BLOCKHEADERONLY;
+
+    // Write index header
+    unsigned int nSize = fileout.GetSerializeSize(*this);
+    fileout &lt;&lt; FLATDATA(pchMessageStart) &lt;&lt; nSize;
+
+    // Write block
+    nBlockPosRet = ftell(fileout);
+    if (nBlockPosRet == -1)
+        return error(&quot;CBlock::WriteToDisk() : ftell failed&quot;);
+    fileout &lt;&lt; *this;
+
+    // Flush stdio buffers and commit to disk before returning
+    fflush(fileout);
+#ifdef __WXMSW__
+    _commit(_fileno(fileout));
+#else
+    fsync(fileno(fileout));
+#endif
+
+    return true;
+}</code></pre><div class="t">and</div><pre><code>bool ReadFromDisk(unsigned int nFile, unsigned int nBlockPos, bool fReadTransactions=true)
+{
+    SetNull();
+
+    // Open history file to read
+    CAutoFile filein = OpenBlockFile(nFile, nBlockPos, &quot;rb&quot;);
+    if (!filein)
+        return error(&quot;CBlock::ReadFromDisk() : OpenBlockFile failed&quot;);
+    if (!fReadTransactions)
+        filein.nType |= SER_BLOCKHEADERONLY;
+
+    // Read block
+    filein &gt;&gt; *this;
+
+    // Check the header
+    if (CBigNum().SetCompact(nBits) &gt; bnProofOfWorkLimit)
+        return error(&quot;CBlock::ReadFromDisk() : nBits errors in block header&quot;);
+    if (GetHash() &gt; CBigNum().SetCompact(nBits).getuint256())
+        return error(&quot;CBlock::ReadFromDisk() : GetHash() errors in block header&quot;);
+
+    return true;
+}</code></pre><div class="t">FLATDATA is defined in serialize.h like so:</div><pre><code>//
+// Wrapper for serializing arrays and POD
+// There&#x27;s a clever template way to make arrays serialize normally, but MSVC6 doesn&#x27;t support it
+//
+#define FLATDATA(obj)   REF(CFlatData((char*)&amp;(obj), (char*)&amp;(obj) + sizeof(obj)))
+class CFlatData
+{
+protected:
+    char* pbegin;
+    char* pend;
+public:
+    CFlatData(void* pbeginIn, void* pendIn) : pbegin((char*)pbeginIn), pend((char*)pendIn) { }
+    char* begin() { return pbegin; }
+    const char* begin() const { return pbegin; }
+    char* end() { return pend; }
+    const char* end() const { return pend; }
+
+    unsigned int GetSerializeSize(int, int=0) const
+    {
+        return pend - pbegin;
+    }
+
+    template&lt;typename Stream&gt;
+    void Serialize(Stream&amp; s, int, int=0) const
+    {
+        s.write(pbegin, pend - pbegin);
+    }
+
+    template&lt;typename Stream&gt;
+    void Unserialize(Stream&amp; s, int, int=0)
+    {
+        s.read(pbegin, pend - pbegin);
+    }
+};</code></pre><div class="t">Now - and I apologize if I&#x27;m reading this wrong, this is a little more advanced C/C++ code than I&#x27;m used to - as I understand it, the FLATDATA call interprets the raw bytes of a CBlock object as an array (stream??) of characters.  The CBlock::WriteToDisk method writes the constant 4-byte message header (0xf9, 0xbe, 0xb4, 0xd9), the size of the CBlock object in bytes, and then the FLATDATA of the CBlock it&#x27;s writing to disk - which is just the raw bytes of the CBlock object.  So after the header, the data written to file is byte-for-byte the same as the CBlock object represented in memory.  Also, if I&#x27;m reading it correctly, CBlock::ReadFromFile copies those bytes directly into the space allocated for a CBlock object in memory to re-create the block.  Is this correct?
+
+Related question - I am under the impression that the exact way an instance of a C++ class is represented internally not guaranteed under standards; compiling a program with different compilers or different optimization flags can change the order in which member variables are stored in memory, and some debug mode compilers even add a few bytes between member variables to make memory inspection easier.  I&#x27;m not positive about this, it&#x27;s just something I&#x27;ve picked up and never seriously questioned.</div></article><article class="msg" id="m1">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-24T01:44:02Z">24 July 2010, 01:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=555.msg5424#msg5424" rel="nofollow noopener">original</a></span></header>
+<div class="t">They key bits of code are:</div><pre><code>fileout &lt;&lt; FLATDATA(pchMessageStart) &lt;&lt; nSize;
+...
+fileout &lt;&lt; *this;</code></pre><div class="t">pchMessageStart are the four magic bytes, and those are written with FLATDATA.
+
+The CBlock itself is written by &lt;&lt; *this, and that&#x27;s done by the IMPLEMENT_SERIALIZE in main.h:</div><pre><code>    IMPLEMENT_SERIALIZE
+    (
+        READWRITE(this-&gt;nVersion);
+        nVersion = this-&gt;nVersion;
+        READWRITE(hashPrevBlock);
+        READWRITE(hashMerkleRoot);
+        READWRITE(nTime);
+        READWRITE(nBits);
+        READWRITE(nNonce);
+
+        // ConnectBlock depends on vtx being last so it can calculate offset                                             
+        if (!(nType &amp; (SER_GETHASH|SER_BLOCKHEADERONLY)))
+            READWRITE(vtx);
+        else if (fRead)
+            const_cast&lt;CBlock*&gt;(this)-&gt;vtx.clear();
+    )</code></pre><div class="t">The READWRITE macros Do The Right Thing, reading in or writing out the members in a machine-independent way.
+
+See <a href="http://github.com/gavinandresen/bitcointools" rel="nofollow noopener">http://github.com/gavinandresen/bitcointools</a> for simplified Python code that can dump out transactions and blocks.</div></article><article class="msg" id="m2">
+<header><b>Hepatizon</b><span class="muted"> · <time datetime="2010-07-24T02:53:05Z">24 July 2010, 02:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=555.msg5435#msg5435" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for clearing that up for me.
+
+I keep making really elementary code mistakes....</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-24T04:04:20Z">24 July 2010, 04:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=555.msg5450#msg5450" rel="nofollow noopener">original</a></span></header>
+<div class="t">FLATDATA was a workaround to serialize a fixed field length array.  There was a cleaner way to make it understand how to serialize arrays directly, but MSVC6 couldn&#x27;t do it and I wanted to keep compatibility with MSVC6 at that time.  We don&#x27;t support MSVC6 anymore because we use something in Boost that doesn&#x27;t.  We lost support for it after 0.2.0.  Maybe someday I&#x27;ll swap in the clean way that just knows how to serialize fixed length arrays without wrapping them in FLATDATA.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p129-faster-initial-block-download-5x-faster/">← Faster initial block download (5x faster)</a><a rel="next" href="../../conversations/p131-version-0-3-2-5-please-test/">Version 0.3.2.5 -- please test! →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

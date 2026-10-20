@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fixed colors on ubuntu lucid… (r86) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/68b973a/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fixed colors on ubuntu lucid… (r86) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/68b973a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fixed colors on ubuntu lucid… (r86) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library names in 1.40, updated bitcoin icon, hashmeter, generated and hashmeter log entries -- version 0.2.13", "url": "https://satoshimail.pages.dev/commits/68b973a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-21T01:33:44Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/68b973a913fd1569d3a9a444d4233b15f7866e3e"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed colors on ubuntu lucid, enabled…", "item": "https://satoshimail.pages.dev/commits/68b973a/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c68b973a913">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fixed colors on ubuntu lucid, enabled…</span></div></nav>
+<main class="in">
+<h1>fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library names in 1.40, updated bitcoin icon, hashmeter, generated and hashmeter log entries -- version 0.2.13</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 21 June 2010 · SVN r86 · release v0.2.13 · 23 files, +1,046 −1,122</p>
+<p class="actions"><a class="btn" href="../../#t-c68b973a913">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/68b973a913fd1569d3a9a444d4233b15f7866e3e" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -692,8 +692,6 @@ msgstr &quot;Version&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;This is experimental software.  Do not rely on it for actual financial transactions.\n&quot;
+-&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -703,9 +701,6 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;Dies ist experimentelle Software.  Verlassen Sie sich für tatsächliche\n&quot;
+-&quot;finanzielle Transaktionen nicht auf sie.\n&quot;
+-&quot;\n&quot;
+ &quot;Lizensiert unter der MIT/X11 Software-Lizenz. Beachten Sie die beiliegende\n&quot;
+ &quot;Datei license.txt oder http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;</code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -690,8 +690,6 @@ msgstr &quot;versione&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;This is experimental software.  Do not rely on it for actual financial transactions.\n&quot;
+-&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -701,13 +699,12 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;Questo è un software sperimentale. Non affidartici per gli attuali trasferimenti finanziari.\n&quot;
+-&quot;\n&quot;
+-&quot;Distribuito sotto la licenza software MIT/X11, guarda il file license.txt incluso oppure su http://www.opensource.org/licenses/mit-license.php.\n&quot;
++&quot;Distribuito sotto la licenza software MIT/X11, guarda il file license.txt\n&quot;
++&quot;incluso oppure su http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+-&quot;Questo prodoto include software sviluppato dal progetto OpenSSL per l&#x27;uso del  \n&quot;
+-&quot;(http://www.openssl.org/) e il software criptografico scritto da \n&quot;
+-&quot;Eric Young (eay@cryptsoft.com).&quot;
++&quot;Questo prodoto include software sviluppato dal progetto OpenSSL per\n&quot;
++&quot;l&#x27;uso del (http://www.openssl.org/) e il software criptografico scritto\n&quot;
++&quot;da Eric Young (eay@cryptsoft.com).&quot;
+ 
+ #: ../../../uibase.cpp:619
+ msgid &quot;Enter a Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) or IP address (e.g. 123.45.6.7)&quot;</code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -691,8 +691,6 @@ msgstr &quot;versie&quot;
+ msgid &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;This is experimental software.  Do not rely on it for actual financial transactions.\n&quot;
+-&quot;\n&quot;
+ &quot;Distributed under the MIT/X11 software license, see the accompanying file \n&quot;
+ &quot;license.txt or http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+@@ -702,14 +700,12 @@ msgid &quot;&quot;
+ msgstr &quot;&quot;
+ &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
+ &quot;\n&quot;
+-&quot;Dit is experimentele software.  Vertrouw niet op het voor echte financiele transacties.\n&quot;
+-&quot;\n&quot;
+ &quot;Gedistributeerd onder de MIT/X11 software licentie, see het bijbehorende bestand \n&quot;
+-&quot;license.txt of \&quot;http://www.opensource.org/licenses/mit-license.php.\n&quot;
++&quot;license.txt of http://www.opensource.org/licenses/mit-license.php.\n&quot;
+ &quot;\n&quot;
+-&quot;Dit product komt met software ontwikkeld door het OpenSSL Project for gebruik in de\n&quot;
+-&quot;OpenSSL Toolkit (http://www.openssl.org/) and de cryptografische software geschreven door \n&quot;
+-&quot;Eric Young (eay@cryptsoft.com).&quot;
++&quot;Dit product komt met software ontwikkeld door het OpenSSL Project for gebruik \n&quot;
++&quot;in de OpenSSL Toolkit (http://www.openssl.org/) and de cryptografische \n&quot;
++&quot;software geschreven door Eric Young (eay@cryptsoft.com).&quot;
+ 
+ #: ../../../uibase.cpp:619
+ msgid &quot;Enter a Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) or IP address (e.g. 123.45.6.7)&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2487,6 +2487,7 @@ void ThreadBitcoinMiner(void* parg)
+         vnThreadsRunning[3]--;
+         PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
+     }
++    UIThreadCall(bind(CalledSetStatusBar, &quot;&quot;, 0));
+     printf(&quot;ThreadBitcoinMiner exiting, %d threads remaining\n&quot;, vnThreadsRunning[3]);
+ }
+ 
+@@ -2677,6 +2678,8 @@ void BitcoinMiner()
+                     printf(&quot;BitcoinMiner:\n&quot;);
+                     printf(&quot;proof-of-work found  \n  hash: %s  \ntarget: %s\n&quot;, hash.GetHex().c_str(), hashTarget.GetHex().c_str());
+                     pblock-&gt;print();
++                    printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                    printf(&quot;generated %s\n&quot;, FormatMoney(pblock-&gt;vtx[0].vout[0].nValue).c_str());
+ 
+                 SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                 CRITICAL_BLOCK(cs_main)
+@@ -2704,8 +2707,33 @@ void BitcoinMiner()
+             }
+ 
+             // Update nTime every few seconds
+-            if ((++tmp.block.nNonce &amp; 0xffff) == 0)
++            const uint64 nMask = 0xffff;
++            if ((++tmp.block.nNonce &amp; nMask) == 0)
+             {
++                // Meter hashes/sec
++                static int64 nHashCounter;
++                static int64 nLastTick;
++                if (nLastTick == 0)
++                    nLastTick = GetTimeMillis();
++                else
++                    nHashCounter += nMask + 1;
++                if (GetTimeMillis() - nLastTick &gt; 4000)
++                {
++                    double dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nLastTick);
++                    nLastTick = GetTimeMillis();
++                    nHashCounter = 0;
++                    string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
++                    UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                    static int64 nLogTime;
++                    if (GetTime() - nLogTime &gt; 60 * 60)
++                    {
++                        nLogTime = GetTime();
++                        printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                        printf(&quot;hashmeter %3d CPUs %6.0f khash/s\n&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
++                    }
++                }
++
++                // Check for stop or if block needs to be rebuilt
+                 if (fShutdown)
+                     return;
+                 if (!fGenerateBitcoins)
+@@ -2738,6 +2766,7 @@ void BitcoinMiner()
+                     }
+                     break;
+                 }
++
+                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+             }
+         }</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
+ 
+ LIBS= \
+  -Wl,-Bstatic \
+-   -l boost_system-mt -l boost_filesystem-mt \
++   -l boost_system -l boost_filesystem \
+    -l db_cxx \
+  -Wl,-Bdynamic \
+    -l crypto \
+@@ -29,7 +29,7 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ DEBUGFLAGS=-g -D__WXDEBUG__
+-CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++CFLAGS=-O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
+     script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h init.h sha.h
+ 
+@@ -68,6 +68,6 @@ bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
+ 
+ 
+ clean:
+-	-rm obj/*
+-	-rm obj/nogui/*
++	-rm obj/*.o
++	-rm obj/nogui/*.o
+ 	-rm headers.h.gch</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -965,7 +965,7 @@ void ThreadOpenConnections2(void* parg)
+                 int64 nSinceLastTry = GetAdjustedTime() - addr.nLastTry;
+ 
+                 // Randomize the order in a deterministic way, putting the standard port first
+-                int64 nRandomizer = (uint64)(nStart + addr.nLastTry * 9567851 + addr.ip * 7789) % (2 * 60 * 60);
++                int64 nRandomizer = (uint64)(nStart * 4951 + addr.nLastTry * 9567851 + addr.ip * 7789) % (2 * 60 * 60);
+                 if (addr.port != DEFAULT_PORT)
+                     nRandomizer += 2 * 60 * 60;
+ </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -12,7 +12,7 @@ extern int nBestHeight;
+ 
+ 
+ 
+-#define DEFAULT_PORT    htons(8333)
++static const unsigned short DEFAULT_PORT = 0x8d20; // htons(8333)
+ static const unsigned int PUBLISH_HOPS = 5;
+ enum
+ {</code></pre></details><details><summary><code>rc/bitcoin-bc.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/bitcoin.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/favicon.ico</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 212;
++static const int VERSION = 213;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -250,7 +250,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ #ifdef __WXMSW__
+     SetIcon(wxICON(bitcoin));
+ #else
+-    SetIcon(bitcoin16_xpm);
++    SetIcon(bitcoin20_xpm);
++    SetBackgroundColour(m_toolBar-&gt;GetBackgroundColour());
+     wxFont fontTmp = m_staticText41-&gt;GetFont();
+     fontTmp.SetFamily(wxFONTFAMILY_TELETYPE);
+     m_staticTextBalance-&gt;SetFont(fontTmp);
+@@ -374,13 +375,13 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+     // to get rid of the deprecated warning.  Just ignore it.
+     if (!event.Iconized())
+         fClosedToTray = false;
+-#ifndef __WXMSW__
+-    // Tray is not reliable on ubuntu 9.10 gnome
+-    fClosedToTray = false;
+-#endif
++#ifdef __WXMSW__
++    // The tray icon sometimes disappears on ubuntu karmic
++    // Hiding the taskbar button doesn&#x27;t work reliably on ubuntu lucid
+     if (fMinimizeToTray &amp;&amp; event.Iconized())
+         fClosedToTray = true;
+     Show(!fClosedToTray);
++#endif
+     ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+ }
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -20,8 +20,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	this-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+ 	
+ 	m_menubar = new wxMenuBar( 0 );
+-	m_menubar-&gt;SetBackgroundColour( wxColour( 240, 240, 240 ) );
+-	
+ 	m_menuFile = new wxMenu();
+ 	wxMenuItem* m_menuFileExit;
+ 	m_menuFileExit = new wxMenuItem( m_menuFile, wxID_EXIT, wxString( _(&quot;E&amp;xit&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+@@ -95,25 +93,21 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer3;
+ 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_panel14 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+ 	wxBoxSizer* bSizer66;
+ 	bSizer66 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_staticText41 = new wxStaticText( m_panel14, wxID_ANY, _(&quot;Balance:&quot;), wxDefaultPosition, wxSize( -1,15 ), 0 );
++	m_staticText41 = new wxStaticText( this, wxID_ANY, _(&quot;Balance:&quot;), wxDefaultPosition, wxSize( -1,15 ), 0 );
+ 	m_staticText41-&gt;Wrap( -1 );
+ 	bSizer66-&gt;Add( m_staticText41, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+ 	
+-	m_staticTextBalance = new wxStaticText( m_panel14, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 120,15 ), wxALIGN_RIGHT|wxST_NO_AUTORESIZE );
++	m_staticTextBalance = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 120,15 ), wxALIGN_RIGHT|wxST_NO_AUTORESIZE );
+ 	m_staticTextBalance-&gt;Wrap( -1 );
+ 	m_staticTextBalance-&gt;SetFont( wxFont( 8, 70, 90, 90, false, wxEmptyString ) );
+ 	m_staticTextBalance-&gt;SetBackgroundColour( wxColour( 255, 255, 255 ) );
+ 	
+ 	bSizer66-&gt;Add( m_staticTextBalance, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+-	m_panel14-&gt;SetSizer( bSizer66 );
+-	m_panel14-&gt;Layout();
+-	bSizer66-&gt;Fit( m_panel14 );
+-	bSizer3-&gt;Add( m_panel14, 1, wxEXPAND|wxALIGN_BOTTOM|wxALL, 5 );
++	bSizer3-&gt;Add( bSizer66, 1, wxEXPAND|wxALL, 5 );
+ 	
+ 	
+ 	bSizer3-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+@@ -560,12 +554,12 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextMain-&gt;Wrap( -1 );
+ 	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
+ 	
+ 	
+-	bSizer631-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
++	bSizer631-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+ 	bSizer62-&gt;Add( bSizer631, 1, wxEXPAND, 5 );
+ 	
+@@ -578,9 +572,9 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	bSizer61-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, _(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer61-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
++	bSizer61-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 6 );
+ 	
+-	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
++	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 2 );
+ 	
+ 	bSizer63-&gt;Add( bSizer60, 1, wxEXPAND|wxLEFT, 5 );
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -25,9 +25,9 @@
+ #include &lt;wx/textctrl.h&gt;
+ #include &lt;wx/button.h&gt;
+ #include &lt;wx/sizer.h&gt;
+-#include &lt;wx/panel.h&gt;
+ #include &lt;wx/choice.h&gt;
+ #include &lt;wx/listctrl.h&gt;
++#include &lt;wx/panel.h&gt;
+ #include &lt;wx/notebook.h&gt;
+ #include &lt;wx/frame.h&gt;
+ #include &lt;wx/html/htmlwin.h&gt;
+@@ -82,7 +82,6 @@ class CMainFrameBase : public wxFrame
+ 		wxButton* m_buttonNew;
+ 		wxButton* m_buttonCopy;
+ 		
+-		wxPanel* m_panel14;
+ 		wxStaticText* m_staticText41;
+ 		wxStaticText* m_staticTextBalance;
+ 		
+@@ -228,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+ 	
+ 	public:
+ 		wxStaticText* m_staticTextVersion;
+-		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,315 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CAboutDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -71,7 +71,7 @@
+             &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+             &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;1&quot;&gt;
+-                &lt;property name=&quot;bg&quot;&gt;240,240,240&lt;/property&gt;
++                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                 &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+@@ -583,156 +583,113 @@
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxALIGN_BOTTOM|wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxALL&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
+-                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;name&quot;&gt;m_panel14&lt;/property&gt;
+-                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
+-                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+-                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                    &lt;property name=&quot;name&quot;&gt;bSizer66&lt;/property&gt;
+-                                    &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+-                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                        &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT&lt;/property&gt;
+-                                        &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                        &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                                            &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                            &lt;property name=&quot;label&quot;&gt;Balance:&lt;/property&gt;
+-                                            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;name&quot;&gt;m_staticText41&lt;/property&gt;
+-                                            &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;size&quot;&gt;-1,15&lt;/property&gt;
+-                                            &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
+-                                            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                        &lt;/object&gt;
++                                &lt;property name=&quot;name&quot;&gt;bSizer66&lt;/property&gt;
++                                &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
++                                &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT&lt;/property&gt;
++                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                    &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
++                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                        &lt;property name=&quot;label&quot;&gt;Balance:&lt;/property&gt;
++                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;name&quot;&gt;m_staticText41&lt;/property&gt;
++                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;size&quot;&gt;-1,15&lt;/property&gt;
++                                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
++                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                                     &lt;/object&gt;
+-                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                        &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxALL&lt;/property&gt;
+-                                        &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                        &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                                            &lt;property name=&quot;bg&quot;&gt;255,255,255&lt;/property&gt;
+-                                            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;font&quot;&gt;,90,90,8,70,0&lt;/property&gt;
+-                                            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                            &lt;property name=&quot;label&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;name&quot;&gt;m_staticTextBalance&lt;/property&gt;
+-                                            &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;size&quot;&gt;120,15&lt;/property&gt;
+-                                            &lt;property name=&quot;style&quot;&gt;wxALIGN_RIGHT|wxST_NO_AUTORESIZE&lt;/property&gt;
+-                                            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
+-                                            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                        &lt;/object&gt;
++                                &lt;/object&gt;
++                                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxALL&lt;/property&gt;
++                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                    &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
++                                        &lt;property name=&quot;bg&quot;&gt;255,255,255&lt;/property&gt;
++                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;font&quot;&gt;,90,90,8,70,0&lt;/property&gt;
++                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                        &lt;property name=&quot;label&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;name&quot;&gt;m_staticTextBalance&lt;/property&gt;
++                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;size&quot;&gt;120,15&lt;/property&gt;
++                                        &lt;property name=&quot;style&quot;&gt;wxALIGN_RIGHT|wxST_NO_AUTORESIZE&lt;/property&gt;
++                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                                        &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
++                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                                     &lt;/object&gt;
+                                 &lt;/object&gt;
+                             &lt;/object&gt;
+@@ -1653,7 +1610,7 @@
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                             &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxLEFT&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                            &lt;object class=&quot;wxScrolledWindow&quot; expanded=&quot;1&quot;&gt;
++                            &lt;object class=&quot;wxScrolledWindow&quot; expanded=&quot;0&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+@@ -2909,7 +2866,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;532,329&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;532,315&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;
+@@ -3173,7 +3130,7 @@
+                                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.  Do not rely on it for actual financial transactions.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
++                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
+                                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;
+@@ -3215,7 +3172,7 @@
+                                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -101,10 +101,8 @@ void RandAddSeedPerfmon()
+         hash = 0;
+         memset(pdata, 0, nSize);
+ 
+-        printf(&quot;%s RandAddSeed() %d bytes\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str(), nSize);
++        printf(&quot;%s RandAddSeed() %d bytes\n&quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str(), nSize);
+     }
+-#else
+-    printf(&quot;%s RandAddSeed()\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+ #endif
+ }
+ </code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,203 +1,219 @@
+ /* XPM */
+ static const char * bitcoin16_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+-&quot;16 16 181 2&quot;,
+-&quot;   c #775605&quot;,
+-&quot;.  c #745507&quot;,
+-&quot;X  c #785806&quot;,
+-&quot;o  c #7D5A06&quot;,
+-&quot;O  c #745508&quot;,
+-&quot;+  c #755508&quot;,
+-&quot;@  c #755608&quot;,
+-&quot;#  c #775708&quot;,
+-&quot;$  c #77580B&quot;,
+-&quot;%  c #7A5A0B&quot;,
+-&quot;&amp;  c #7D5E14&quot;,
+-&quot;*  c #86630D&quot;,
+-&quot;=  c #8D6B16&quot;,
+-&quot;-  c #886818&quot;,
+-&quot;;  c #927019&quot;,
+-&quot;:  c #91701E&quot;,
+-&quot;&gt;  c #9A751E&quot;,
+-&quot;,  c #957627&quot;,
+-&quot;&lt;  c #9A7925&quot;,
+-&quot;1  c #987827&quot;,
+-&quot;2  c #98782B&quot;,
+-&quot;3  c #9D7C2F&quot;,
+-&quot;4  c #9E7E31&quot;,
+-&quot;5  c #A57D22&quot;,
+-&quot;6  c #A88227&quot;,
+-&quot;7  c #B78D2E&quot;,
+-&quot;8  c #B78F2E&quot;,
+-&quot;9  c #A78430&quot;,
+-&quot;0  c #A48733&quot;,
+-&quot;q  c #A68536&quot;,
+-&quot;w  c #A98937&quot;,
+-&quot;e  c #B98F31&quot;,
+-&quot;r  c #B49233&quot;,
+-&quot;t  c #B39337&quot;,
+-&quot;y  c #C09837&quot;,
+-&quot;u  c #C39936&quot;,
+-&quot;i  c #C49936&quot;,
+-&quot;p  c #C69C39&quot;,
+-&quot;a  c #C89C3A&quot;,
+-&quot;s  c #CCA23A&quot;,
+-&quot;d  c #AF9240&quot;,
+-&quot;f  c #B99644&quot;,
+-&quot;g  c #BE9C46&quot;,
+-&quot;h  c #BF9D4A&quot;,
+-&quot;j  c #BA9F58&quot;,
+-&quot;k  c #BEA04B&quot;,
+-&quot;l  c #BBA253&quot;,
+-&quot;z  c #BAA057&quot;,
+-&quot;x  c #C29E44&quot;,
+-&quot;c  c #C2A144&quot;,
+-&quot;v  c #CAA246&quot;,
+-&quot;b  c #CCA344&quot;,
+-&quot;n  c #CEA645&quot;,
+-&quot;m  c #C2A04A&quot;,
+-&quot;M  c #C7A349&quot;,
+-&quot;N  c #C5A34A&quot;,
+-&quot;B  c #C7A64D&quot;,
+-&quot;V  c #CFA649&quot;,
+-&quot;C  c #CEAA4C&quot;,
+-&quot;Z  c #D1A84B&quot;,
+-&quot;A  c #D4AC49&quot;,
+-&quot;S  c #D5AC49&quot;,
+-&quot;D  c #D7AD48&quot;,
+-&quot;F  c #D5AF4D&quot;,
+-&quot;G  c #C0A451&quot;,
+-&quot;H  c #CAA550&quot;,
+-&quot;J  c #CBAA58&quot;,
+-&quot;K  c #CAAD5D&quot;,
+-&quot;L  c #D9AD53&quot;,
+-&quot;P  c #DFB757&quot;,
+-&quot;I  c #D5B058&quot;,
+-&quot;U  c #D7B75D&quot;,
+-&quot;Y  c #DCB75A&quot;,
+-&quot;T  c #DFBB5E&quot;,
+-&quot;R  c #E1B957&quot;,
+-&quot;E  c #E3B759&quot;,
+-&quot;W  c #E6BC5B&quot;,
+-&quot;Q  c #E7BE5D&quot;,
+-&quot;!  c #E5BC5E&quot;,
+-&quot;~  c #CAAE62&quot;,
+-&quot;^  c #C8AF6A&quot;,
+-&quot;/  c #CDB565&quot;,
+-&quot;(  c #CDB46D&quot;,
+-&quot;)  c #D7B360&quot;,
+-&quot;_  c #D5B862&quot;,
+-&quot;`  c #D1B66C&quot;,
+-&quot;&#x27;  c #D8BB68&quot;,
+-&quot;]  c #DBBA6E&quot;,
+-&quot;[  c #DFBE6D&quot;,
+-&quot;{  c #D0B872&quot;,
+-&quot;}  c #D2B974&quot;,
+-&quot;|  c #DABF74&quot;,
+-&quot; . c #D8BF77&quot;,
+-&quot;.. c #D6BD79&quot;,
+-&quot;X. c #D5BE7B&quot;,
+-&quot;o. c #D7BF7A&quot;,
+-&quot;O. c #E8BC61&quot;,
+-&quot;+. c #DDC075&quot;,
+-&quot;@. c #DCC279&quot;,
+-&quot;#. c #DCC47E&quot;,
+-&quot;$. c #EDC661&quot;,
+-&quot;%. c #EEC562&quot;,
+-&quot;&amp;. c #E0C16B&quot;,
+-&quot;*. c #E0C36B&quot;,
+-&quot;=. c #E3C26A&quot;,
+-&quot;-. c #E7C26A&quot;,
+-&quot;;. c #E3C569&quot;,
+-&quot;:. c #E3C26C&quot;,
+-&quot;&gt;. c #E4C16C&quot;,
+-&quot;,. c #EEC969&quot;,
+-&quot;&lt;. c #F4C664&quot;,
+-&quot;1. c #F0CA68&quot;,
+-&quot;2. c #F7CA68&quot;,
+-&quot;3. c #F6CD69&quot;,
+-&quot;4. c #F7CD69&quot;,
+-&quot;5. c #F7CF68&quot;,
+-&quot;6. c #E6C374&quot;,
+-&quot;7. c #E1C47A&quot;,
+-&quot;8. c #E1C77B&quot;,
+-&quot;9. c #E5C578&quot;,
+-&quot;0. c #E4C579&quot;,
+-&quot;q. c #E4C67A&quot;,
+-&quot;w. c #E5C67C&quot;,
+-&quot;e. c #E8C57B&quot;,
+-&quot;r. c #E8CB7B&quot;,
+-&quot;t. c #EDCC78&quot;,
+-&quot;y. c #EBCB7C&quot;,
+-&quot;u. c #F0CF73&quot;,
+-&quot;i. c #F6CF74&quot;,
+-&quot;p. c #F4D173&quot;,
+-&quot;a. c #F7D072&quot;,
+-&quot;s. c #F5D376&quot;,
+-&quot;d. c #FAD071&quot;,
+-&quot;f. c #FBD470&quot;,
+-&quot;g. c #FAD572&quot;,
+-&quot;h. c #FDD671&quot;,
+-&quot;j. c #FDD773&quot;,
+-&quot;k. c #F3DB76&quot;,
+-&quot;l. c #F8D578&quot;,
+-&quot;z. c #FBDB79&quot;,
+-&quot;x. c #FFE57E&quot;,
+-&quot;c. c #DEC681&quot;,
+-&quot;v. c #DFC782&quot;,
+-&quot;b. c #E0C682&quot;,
+-&quot;n. c #E1C984&quot;,
+-&quot;m. c #E2C985&quot;,
+-&quot;M. c #E3CB87&quot;,
+-&quot;N. c #E9C980&quot;,
+-&quot;B. c #EBCC82&quot;,
+-&quot;V. c #E3CC88&quot;,
+-&quot;C. c #E4CF8D&quot;,
+-&quot;Z. c #EFD187&quot;,
+-&quot;A. c #EFD488&quot;,
+-&quot;S. c #EFD58D&quot;,
+-&quot;D. c #F6D581&quot;,
+-&quot;F. c #F1D687&quot;,
+-&quot;G. c #F9D680&quot;,
+-&quot;H. c #F7DA8B&quot;,
+-&quot;J. c #F2DE93&quot;,
+-&quot;K. c #FADF93&quot;,
+-&quot;L. c #F3DB98&quot;,
+-&quot;P. c #F0DB9B&quot;,
+-&quot;I. c #FEE081&quot;,
+-&quot;U. c #FEE18C&quot;,
+-&quot;Y. c #FCE38F&quot;,
+-&quot;T. c #F7E98E&quot;,
+-&quot;R. c #FFE88C&quot;,
+-&quot;E. c #F6E491&quot;,
+-&quot;W. c #FBEA91&quot;,
+-&quot;Q. c #FFE897&quot;,
+-&quot;!. c #FFEE9A&quot;,
+-&quot;~. c #FEE99D&quot;,
+-&quot;^. c #FEEC9F&quot;,
+-&quot;/. c #FEF092&quot;,
+-&quot;(. c #FFF29A&quot;,
+-&quot;). c #FBE7A9&quot;,
+-&quot;_. c #F4EDA8&quot;,
+-&quot;`. c #FAEBAA&quot;,
+-&quot;&#x27;. c #FEEBAD&quot;,
+-&quot;]. c #FEFABD&quot;,
+-&quot;[. c None&quot;,
++&quot;16 16 197 2&quot;,
++&quot;   c #755507&quot;,
++&quot;.  c #775606&quot;,
++&quot;X  c #795707&quot;,
++&quot;o  c #7D5A07&quot;,
++&quot;O  c #765608&quot;,
++&quot;+  c #74550A&quot;,
++&quot;@  c #75550A&quot;,
++&quot;#  c #75560A&quot;,
++&quot;$  c #785708&quot;,
++&quot;%  c #78580B&quot;,
++&quot;&amp;  c #7D5C0B&quot;,
++&quot;*  c #78590E&quot;,
++&quot;=  c #7E5F14&quot;,
++&quot;-  c #8A6711&quot;,
++&quot;;  c #8D6B15&quot;,
++&quot;:  c #8A691A&quot;,
++&quot;&gt;  c #93711C&quot;,
++&quot;,  c #9D7A23&quot;,
++&quot;&lt;  c #9F7B22&quot;,
++&quot;1  c #9C7B2A&quot;,
++&quot;2  c #9E7C28&quot;,
++&quot;3  c #A37F26&quot;,
++&quot;4  c #B4831B&quot;,
++&quot;5  c #A68126&quot;,
++&quot;6  c #A5852E&quot;,
++&quot;7  c #A9872E&quot;,
++&quot;8  c #AC862D&quot;,
++&quot;9  c #AC872F&quot;,
++&quot;0  c #AF8B30&quot;,
++&quot;q  c #AC8932&quot;,
++&quot;w  c #AF8A34&quot;,
++&quot;e  c #B08E36&quot;,
++&quot;r  c #B98F33&quot;,
++&quot;t  c #B18E3A&quot;,
++&quot;y  c #B39036&quot;,
++&quot;u  c #B69237&quot;,
++&quot;i  c #B3913B&quot;,
++&quot;p  c #B6923C&quot;,
++&quot;a  c #BD9338&quot;,
++&quot;s  c #B9993F&quot;,
++&quot;d  c #BA993F&quot;,
++&quot;f  c #C2932D&quot;,
++&quot;g  c #C09437&quot;,
++&quot;h  c #C59832&quot;,
++&quot;j  c #C39836&quot;,
++&quot;k  c #C89835&quot;,
++&quot;l  c #C59C3D&quot;,
++&quot;z  c #CF9E3E&quot;,
++&quot;x  c #CFA23F&quot;,
++&quot;c  c #D0A13A&quot;,
++&quot;v  c #D3A23A&quot;,
++&quot;b  c #D4A338&quot;,
++&quot;n  c #D6A33F&quot;,
++&quot;m  c #B19345&quot;,
++&quot;M  c #BF9940&quot;,
++&quot;N  c #BF9D43&quot;,
++&quot;B  c #B3954B&quot;,
++&quot;V  c #BD9A48&quot;,
++&quot;C  c #BC9C4B&quot;,
++&quot;Z  c #BD9F51&quot;,
++&quot;A  c #CAA244&quot;,
++&quot;S  c #C2A14B&quot;,
++&quot;D  c #C4A44B&quot;,
++&quot;F  c #C1A24C&quot;,
++&quot;G  c #C7A64C&quot;,
++&quot;H  c #C5A64E&quot;,
++&quot;J  c #C9A94F&quot;,
++&quot;K  c #D1A343&quot;,
++&quot;L  c #D7A644&quot;,
++&quot;P  c #D5A547&quot;,
++&quot;I  c #D6A547&quot;,
++&quot;U  c #DCAD42&quot;,
++&quot;Y  c #DDAB45&quot;,
++&quot;T  c #C3A151&quot;,
++&quot;R  c #C9A551&quot;,
++&quot;E  c #CAAA50&quot;,
++&quot;W  c #CBAD53&quot;,
++&quot;Q  c #CDAC52&quot;,
++&quot;!  c #CEA855&quot;,
++&quot;~  c #CEB15A&quot;,
++&quot;^  c #DEB154&quot;,
++&quot;/  c #D1B35A&quot;,
++&quot;(  c #D7B35A&quot;,
++&quot;)  c #D8B45D&quot;,
++&quot;_  c #E3B34A&quot;,
++&quot;`  c #E2B34E&quot;,
++&quot;&#x27;  c #E6B54F&quot;,
++&quot;]  c #E2B350&quot;,
++&quot;[  c #E3B352&quot;,
++&quot;{  c #E4B451&quot;,
++&quot;}  c #E2B355&quot;,
++&quot;|  c #E7B853&quot;,
++&quot; . c #E9BC51&quot;,
++&quot;.. c #ECBC53&quot;,
++&quot;X. c #E7BE5A&quot;,
++&quot;o. c #E2BA5C&quot;,
++&quot;O. c #E2BC5C&quot;,
++&quot;+. c #E9BB59&quot;,
++&quot;@. c #EBBE59&quot;,
++&quot;#. c #EABD5B&quot;,
++&quot;$. c #E8BF5C&quot;,
++&quot;%. c #E9BE5E&quot;,
++&quot;&amp;. c #C8AC63&quot;,
++&quot;*. c #D0B162&quot;,
++&quot;=. c #D5B567&quot;,
++&quot;-. c #DABC62&quot;,
++&quot;;. c #D2B66B&quot;,
++&quot;:. c #D0B56D&quot;,
++&quot;&gt;. c #DCBC6E&quot;,
++&quot;,. c #D2B972&quot;,
++&quot;&lt;. c #D7BE78&quot;,
++&quot;1. c #E9BE62&quot;,
++&quot;2. c #EEC05A&quot;,</code></pre></details><details><summary><code>xpm/bitcoin20.xpm</code></summary><pre><code>@@ -1,226 +1,160 @@
+ /* XPM */
+ static const char * bitcoin20_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+-&quot;20 20 200 2&quot;,
+-&quot;   c #7B5500&quot;,
+-&quot;.  c #7B5900&quot;,
+-&quot;X  c #735508&quot;,
+-&quot;o  c #7B5908&quot;,
+-&quot;O  c #7B5D08&quot;,
+-&quot;+  c #7B5910&quot;,
+-&quot;@  c #7B6118&quot;,
+-&quot;#  c #845D08&quot;,
+-&quot;$  c #846108&quot;,
+-&quot;%  c #8C6510&quot;,
+-&quot;&amp;  c #8C6910&quot;,
+-&quot;*  c #8C6918&quot;,
+-&quot;=  c #946D10&quot;,
+-&quot;-  c #947118&quot;,
+-&quot;;  c #9C7518&quot;,
+-&quot;:  c #A57918&quot;,
+-&quot;&gt;  c #846929&quot;,
+-&quot;,  c #846D29&quot;,
+-&quot;&lt;  c #947121&quot;,
+-&quot;1  c #8C7539&quot;,
+-&quot;2  c #947939&quot;,
+-&quot;3  c #8C7542&quot;,
+-&quot;4  c #AD8221&quot;,
+-&quot;5  c #B58E29&quot;,
+-&quot;6  c #B58E31&quot;,
+-&quot;7  c #B59231&quot;,
+-&quot;8  c #BD9231&quot;,
+-&quot;9  c #BD9631&quot;,
+-&quot;0  c #C69A31&quot;,
+-&quot;q  c #C69A39&quot;,
+-&quot;w  c #C69E39&quot;,
+-&quot;e  c #CE9E39&quot;,
+-&quot;r  c #CEA239&quot;,
+-&quot;t  c #948652&quot;,
+-&quot;y  c #A58A4A&quot;,
+-&quot;u  c #BD9642&quot;,
+-&quot;i  c #BD9A42&quot;,
+-&quot;p  c #B5964A&quot;,
+-&quot;a  c #B59A4A&quot;,
+-&quot;s  c #BD9E4A&quot;,
+-&quot;d  c #A58E5A&quot;,
+-&quot;f  c #BD9A52&quot;,
+-&quot;g  c #BD9E52&quot;,
+-&quot;h  c #BDA252&quot;,
+-&quot;j  c #BDA25A&quot;,
+-&quot;k  c #BD9E63&quot;,
+-&quot;l  c #A59673&quot;,
+-&quot;z  c #AD9A73&quot;,
+-&quot;x  c #AD9E7B&quot;,
+-&quot;c  c #BDA263&quot;,
+-&quot;v  c #BDA26B&quot;,
+-&quot;b  c #BDA273&quot;,
+-&quot;n  c #BDA673&quot;,
+-&quot;m  c #B5A27B&quot;,
+-&quot;M  c #BDAA7B&quot;,
+-&quot;N  c #C69E42&quot;,
+-&quot;B  c #CE9E42&quot;,
+-&quot;V  c #C6A242&quot;,
+-&quot;C  c #CEA242&quot;,
+-&quot;Z  c #CEA642&quot;,
+-&quot;A  c #C6A24A&quot;,
+-&quot;S  c #C6A64A&quot;,
+-&quot;D  c #CEA64A&quot;,
+-&quot;F  c #CEAA4A&quot;,
+-&quot;G  c #D6A642&quot;,
+-&quot;H  c #DEAE4A&quot;,
+-&quot;J  c #DEB24A&quot;,
+-&quot;K  c #C6A252&quot;,
+-&quot;L  c #C6A652&quot;,
+-&quot;P  c #CEAA52&quot;,
+-&quot;I  c #CEAE52&quot;,
+-&quot;U  c #C6A65A&quot;,
+-&quot;Y  c #C6AA5A&quot;,
+-&quot;T  c #CEAA5A&quot;,
+-&quot;R  c #CEAE5A&quot;,
+-&quot;E  c #D6AE52&quot;,
+-&quot;W  c #DEAE52&quot;,
+-&quot;Q  c #D6AE5A&quot;,
+-&quot;!  c #D6B252&quot;,
+-&quot;~  c #DEB252&quot;,
+-&quot;^  c #DEB652&quot;,
+-&quot;/  c #D6B65A&quot;,
+-&quot;(  c #DEB65A&quot;,
+-&quot;)  c #DEBA5A&quot;,
+-&quot;_  c #EFBE52&quot;,
+-&quot;`  c #E7BA5A&quot;,
+-&quot;&#x27;  c #E7BE5A&quot;,
+-&quot;]  c #EFBE5A&quot;,
+-&quot;[  c #C6A663&quot;,
+-&quot;{  c #C6AE63&quot;,
+-&quot;}  c #CEAE63&quot;,
+-&quot;|  c #D6AE63&quot;,
+-&quot; . c #CEB26B&quot;,
+-&quot;.. c #CEB66B&quot;,
+-&quot;X. c #DEB663&quot;,
+-&quot;o. c #D6BE63&quot;,
+-&quot;O. c #DEBA63&quot;,
+-&quot;+. c #DEBE63&quot;,
+-&quot;@. c #D6B66B&quot;,
+-&quot;#. c #DEB66B&quot;,
+-&quot;$. c #D6BA6B&quot;,
+-&quot;%. c #D6BE6B&quot;,
+-&quot;&amp;. c #DEBA6B&quot;,
+-&quot;*. c #DEBE6B&quot;,
+-&quot;=. c #D6BA73&quot;,
+-&quot;-. c #DEBE73&quot;,
+-&quot;;. c #EFBE63&quot;,
+-&quot;:. c #E7BE73&quot;,
+-&quot;&gt;. c #DEC37B&quot;,
+-&quot;,. c #E7C363&quot;,
+-&quot;&lt;. c #EFC763&quot;,
+-&quot;1. c #EFCF63&quot;,
+-&quot;2. c #E7C36B&quot;,
+-&quot;3. c #E7C76B&quot;,
+-&quot;4. c #EFC36B&quot;,
+-&quot;5. c #EFC76B&quot;,
+-&quot;6. c #E7CB6B&quot;,
+-&quot;7. c #EFCB6B&quot;,
+-&quot;8. c #F7CB63&quot;,
+-&quot;9. c #F7CB6B&quot;,
+-&quot;0. c #F7CF6B&quot;,
+-&quot;q. c #FFCB6B&quot;,
+-&quot;w. c #F7D36B&quot;,
+-&quot;e. c #FFD36B&quot;,
+-&quot;r. c #E7C373&quot;,
+-&quot;t. c #E7CB73&quot;,
+-&quot;y. c #EFCF73&quot;,
+-&quot;u. c #E7C37B&quot;,
+-&quot;i. c #E7C77B&quot;,
+-&quot;p. c #E7CB7B&quot;,
+-&quot;a. c #EFCB7B&quot;,
+-&quot;s. c #F7CF73&quot;,
+-&quot;d. c #EFD373&quot;,
+-&quot;f. c #EFD37B&quot;,
+-&quot;g. c #F7D373&quot;,
+-&quot;h. c #FFD373&quot;,
+-&quot;j. c #FFD773&quot;,
+-&quot;k. c #FFDB73&quot;,
+-&quot;l. c #F7DB7B&quot;,
+-&quot;z. c #FFDF7B&quot;,
+-&quot;x. c #ADA284&quot;,
+-&quot;c. c #BDAA84&quot;,
+-&quot;v. c #BDAE84&quot;,
+-&quot;b. c #B5A68C&quot;,
+-&quot;n. c #B5AE9C&quot;,
+-&quot;m. c #BDB6A5&quot;,
+-&quot;M. c #C6BA9C&quot;,
+-&quot;N. c #C6BAA5&quot;,
+-&quot;B. c #C6BEA5&quot;,
+-&quot;V. c #DEC784&quot;,
+-&quot;C. c #E7CB84&quot;,
+-&quot;Z. c #E7CF84&quot;,
+-&quot;A. c #EFCF84&quot;,
+-&quot;S. c #E7CF8C&quot;,
+-&quot;D. c #EFCF8C&quot;,
+-&quot;F. c #EFD384&quot;,
+-&quot;G. c #E7D38C&quot;,
+-&quot;H. c #EFD38C&quot;,
+-&quot;J. c #EFD78C&quot;,
+-&quot;K. c #F7D784&quot;,
+-&quot;L. c #FFD784&quot;,
+-&quot;P. c #F7DB84&quot;,
+-&quot;I. c #F7DF84&quot;,
+-&quot;U. c #FFDB84&quot;,
+-&quot;Y. c #FFDF84&quot;,
+-&quot;T. c #F7DB8C&quot;,
+-&quot;R. c #EFD394&quot;,
+-&quot;E. c #EFD794&quot;,
+-&quot;W. c #EFDB94&quot;,
+-&quot;Q. c #EFDB9C&quot;,
+-&quot;!. c #F7DB9C&quot;,
+-&quot;~. c #F7DF9C&quot;,
+-&quot;^. c #FFE384&quot;,
+-&quot;/. c #FFE784&quot;,
+-&quot;(. c #FFE38C&quot;,
+-&quot;). c #FFEB8C&quot;,
+-&quot;_. c #EFE79C&quot;,
+-&quot;`. c #FFE794&quot;,
+-&quot;&#x27;. c #FFEB94&quot;,
+-&quot;]. c #FFEF94&quot;,
+-&quot;[. c #FFEB9C&quot;,
+-&quot;{. c #FFEF9C&quot;,
+-&quot;}. c #FFF394&quot;,
+-&quot;|. c #FFF794&quot;,
+-&quot; X c #C6C3B5&quot;,
+-&quot;.X c #CEC7BD&quot;,
+-&quot;XX c #F7E3A5&quot;,
+-&quot;oX c #FFE7A5&quot;,
+-&quot;OX c #F7EBA5&quot;,
+-&quot;+X c #FFEBA5&quot;,
+-&quot;@X c #FFEFA5&quot;,
+-&quot;#X c #FFE7AD&quot;,
+-&quot;$X c #FFEBAD&quot;,
+-&quot;%X c #FFEFAD&quot;,
+-&quot;&amp;X c #FFF3AD&quot;,
+-&quot;*X c #FFF7B5&quot;,
+-&quot;=X c #FFFBB5&quot;,
+-&quot;-X c #FFFFBD&quot;,
+-&quot;;X c #CEC7C6&quot;,
+-&quot;:X c None&quot;,
++&quot;20 20 134 2&quot;,
++&quot;   c #735305&quot;,
++&quot;.  c #785706&quot;,
++&quot;X  c #7E5C07&quot;,
++&quot;o  c #755509&quot;,
++&quot;O  c #76580D&quot;,
++&quot;+  c #7F6015&quot;,
++&quot;@  c #85620D&quot;,
++&quot;#  c #89650D&quot;,
++&quot;$  c #836215&quot;,
++&quot;%  c #886510&quot;,
++&quot;&amp;  c #8E6B11&quot;,
++&quot;*  c #81641F&quot;,
++&quot;=  c #906D19&quot;,
++&quot;-  c #977116&quot;,
++&quot;;  c #96741E&quot;,
++&quot;:  c #9B761E&quot;,
++&quot;&gt;  c #947424&quot;,
++&quot;,  c #9B7722&quot;,
++&quot;&lt;  c #9D7824&quot;,
++&quot;1  c #A47F23&quot;,
++&quot;2  c #A17D2A&quot;,
++&quot;3  c #A58125&quot;,
++&quot;4  c #AA8327&quot;,
++&quot;5  c #A4832F&quot;,
++&quot;6  c #AD862B&quot;,
++&quot;7  c #B28B2E&quot;,
++&quot;8  c #A58433&quot;,
++&quot;9  c #A88637&quot;,
++&quot;0  c #AD8932&quot;,
++&quot;q  c #A78639&quot;,
++&quot;w  c #A8893C&quot;,
++&quot;e  c #B28C34&quot;,
++&quot;r  c #B88E33&quot;,
++&quot;t  c #B28E3A&quot;,
++&quot;y  c #B79136&quot;,
++&quot;u  c #BB9235&quot;,
++&quot;i  c #BB9639&quot;,
++&quot;p  c #C19836&quot;,
++&quot;a  c #C29539&quot;,
++&quot;s  c #C59C3C&quot;,
++&quot;d  c #A88B41&quot;,
++&quot;f  c #AF9045&quot;,
++&quot;g  c #B49342&quot;,
++&quot;h  c #BE9641&quot;,
++&quot;j  c #BD9B44&quot;,
++&quot;k  c #B29448&quot;,
++&quot;l  c #B7994B&quot;,
++&quot;z  c #B8994C&quot;,
++&quot;x  c #C09946&quot;,
++&quot;c  c #CB9E46&quot;,
++&quot;v  c #C59D4C&quot;,
++&quot;b  c #CFA246&quot;,
++&quot;n  c #CBAB47&quot;,
++&quot;m  c #CEA74A&quot;,
++&quot;M  c #D4A749&quot;,
++&quot;N  c #D6A94D&quot;,
++&quot;B  c #C7A754&quot;,
++&quot;V  c #CEA453&quot;,
++&quot;C  c #C6AA56&quot;,
++&quot;Z  c #CDA955&quot;,
++&quot;A  c #CBAB5B&quot;,
++&quot;S  c #D2AB54&quot;,
++&quot;D  c #D2AE5E&quot;,
++&quot;F  c #D9AE5A&quot;,
++&quot;G  c #D7B356&quot;,
++&quot;H  c #DDB35F&quot;,
++&quot;J  c #DFB95A&quot;,
++&quot;K  c #E1B554&quot;,
++&quot;L  c #E4BA56&quot;,
++&quot;P  c #E6BC5A&quot;,
++&quot;I  c #E9BE5E&quot;,
++&quot;U  c #C7AC64&quot;,
++&quot;Y  c #CBAF64&quot;,
++&quot;T  c #CDB166&quot;,
++&quot;R  c #D4B364&quot;,
++&quot;E  c #DBB463&quot;,
++&quot;W  c #DFB867&quot;,
++&quot;Q  c #D5B76B&quot;,
++&quot;!  c #DFBA6F&quot;,
++&quot;~  c #D5BB76&quot;,
++&quot;^  c #D7BE79&quot;,
++&quot;/  c #E3BC64&quot;,
++&quot;(  c #E8BF64&quot;,
++&quot;)  c #E0BB68&quot;,
++&quot;_  c #DECA7A&quot;,
++&quot;`  c #EBC265&quot;,
++&quot;&#x27;  c #EBC36B&quot;,
++&quot;]  c #EFC96B&quot;,
++&quot;[  c #F1C564&quot;,
++&quot;{  c #F3CB6A&quot;,
++&quot;}  c #F9CD6C&quot;,
++&quot;|  c #FAD16C&quot;,
++&quot; . c #E5C770&quot;,
++&quot;.. c #EEC774&quot;,</code></pre></details><details><summary><code>xpm/bitcoin32.xpm</code></summary><pre><code>@@ -1,223 +1,232 @@
+ /* XPM */
+ static const char * bitcoin32_xpm[] = {
+ /* columns rows colors chars-per-pixel */
+-&quot;32 32 185 2&quot;,
+-&quot;   c #715103&quot;,
+-&quot;.  c #725203&quot;,
+-&quot;X  c #725204&quot;,
+-&quot;o  c #735304&quot;,
+-&quot;O  c #745404&quot;,
+-&quot;+  c #765504&quot;,
+-&quot;@  c #775504&quot;,
+-&quot;#  c #785604&quot;,
+-&quot;$  c #795704&quot;,
+-&quot;%  c #795705&quot;,
+-&quot;&amp;  c #77580A&quot;,
+-&quot;*  c #77580B&quot;,
+-&quot;=  c #77580C&quot;,
+-&quot;-  c #785808&quot;,
+-&quot;;  c #785809&quot;,
+-&quot;:  c #78590D&quot;,
+-&quot;&gt;  c #795A0D&quot;,
+-&quot;,  c #7F5E0D&quot;,
+-&quot;&lt;  c #7C5C0E&quot;,
+-&quot;1  c #815F0E&quot;,
+-&quot;2  c #89650F&quot;,
+-&quot;3  c #8C670F&quot;,
+-&quot;4  c #8D680F&quot;,
+-&quot;5  c #836110&quot;,
+-&quot;6  c #866410&quot;,
+-&quot;7  c #8F6A11&quot;,
+-&quot;8  c #926C12&quot;,
+-&quot;9  c #946F14&quot;,
+-&quot;0  c #967015&quot;,
+-&quot;q  c #987217&quot;,
+-&quot;w  c #997318&quot;,
+-&quot;e  c #9A751C&quot;,
+-&quot;r  c #9B761E&quot;,
+-&quot;t  c #9C7720&quot;,
+-&quot;y  c #9D7924&quot;,
+-&quot;u  c #9D7B28&quot;,
+-&quot;i  c #9E7C2C&quot;,
+-&quot;p  c #A07F31&quot;,
+-&quot;a  c #AA852D&quot;,
+-&quot;s  c #A9852E&quot;,
+-&quot;d  c #AC872D&quot;,
+-&quot;f  c #AE892E&quot;,
+-&quot;g  c #AF8A2E&quot;,
+-&quot;h  c #B08B2F&quot;,
+-&quot;j  c #A18133&quot;,
+-&quot;k  c #A78533&quot;,
+-&quot;l  c #A28235&quot;,
+-&quot;z  c #A48435&quot;,
+-&quot;x  c #A68535&quot;,
+-&quot;c  c #A58536&quot;,
+-&quot;v  c #A68536&quot;,
+-&quot;b  c #A88530&quot;,
+-&quot;n  c #B18C30&quot;,
+-&quot;m  c #B18D33&quot;,
+-&quot;M  c #B08D37&quot;,
+-&quot;N  c #B08F3B&quot;,
+-&quot;B  c #B08F3D&quot;,
+-&quot;V  c #BC9537&quot;,
+-&quot;C  c #BE9736&quot;,
+-&quot;Z  c #BF9737&quot;,
+-&quot;A  c #B6933B&quot;,
+-&quot;S  c #B0903F&quot;,
+-&quot;D  c #B2913E&quot;,
+-&quot;F  c #B4923D&quot;,
+-&quot;G  c #B99438&quot;,
+-&quot;H  c #C09736&quot;,
+-&quot;J  c #C19835&quot;,
+-&quot;K  c #C29836&quot;,
+-&quot;L  c #C39937&quot;,
+-&quot;P  c #C39A37&quot;,
+-&quot;I  c #C49B38&quot;,
+-&quot;U  c #C59C3A&quot;,
+-&quot;Y  c #C69D3B&quot;,
+-&quot;T  c #C79E3C&quot;,
+-&quot;R  c #C89F3D&quot;,
+-&quot;E  c #CAA03F&quot;,
+-&quot;W  c #C6A247&quot;,
+-&quot;Q  c #CAA140&quot;,
+-&quot;!  c #C9A242&quot;,
+-&quot;~  c #C8A245&quot;,
+-&quot;^  c #C2A14B&quot;,
+-&quot;/  c #C3A24D&quot;,
+-&quot;(  c #C3A24F&quot;,
+-&quot;)  c #C2A351&quot;,
+-&quot;_  c #C1A352&quot;,
+-&quot;`  c #C0A355&quot;,
+-&quot;&#x27;  c #C1A457&quot;,
+-&quot;]  c #C1A458&quot;,
+-&quot;[  c #C1A55A&quot;,
+-&quot;{  c #C2A65C&quot;,
+-&quot;}  c #C3A75D&quot;,
+-&quot;|  c #C3A85E&quot;,
+-&quot; . c #C6AA5D&quot;,
+-&quot;.. c #C7AA5D&quot;,
+-&quot;X. c #C5A95E&quot;,
+-&quot;o. c #CFAE5A&quot;,
+-&quot;O. c #C8AB5E&quot;,
+-&quot;+. c #D4AF56&quot;,
+-&quot;@. c #D1AE58&quot;,
+-&quot;#. c #D6B056&quot;,
+-&quot;$. c #D8B155&quot;,
+-&quot;%. c #D9B256&quot;,
+-&quot;&amp;. c #DAB357&quot;,
+-&quot;*. c #DBB457&quot;,
+-&quot;=. c #DDB558&quot;,
+-&quot;-. c #DFB759&quot;,
+-&quot;;. c #E2BB5B&quot;,
+-&quot;:. c #E3BC5D&quot;,
+-&quot;&gt;. c #E4BD5E&quot;,
+-&quot;,. c #C9AC61&quot;,
+-&quot;&lt;. c #C9AD62&quot;,
+-&quot;1. c #CAAE62&quot;,
+-&quot;2. c #CCAF62&quot;,
+-&quot;3. c #DDBC69&quot;,
+-&quot;4. c #DFBD68&quot;,
+-&quot;5. c #DCBB6E&quot;,
+-&quot;6. c #DCBC6C&quot;,
+-&quot;7. c #DBBC70&quot;,
+-&quot;8. c #DABD72&quot;,
+-&quot;9. c #DBBE74&quot;,
+-&quot;0. c #E4BD61&quot;,
+-&quot;q. c #E4BE60&quot;,
+-&quot;w. c #E3BE65&quot;,
+-&quot;e. c #E2BF66&quot;,
+-&quot;r. c #DDC177&quot;,
+-&quot;t. c #DFC279&quot;,
+-&quot;y. c #EFCB6F&quot;,
+-&quot;u. c #F1CA6B&quot;,
+-&quot;i. c #F4CB6A&quot;,
+-&quot;p. c #F5CC6A&quot;,
+-&quot;a. c #F7CD6B&quot;,
+-&quot;s. c #F0CA6D&quot;,
+-&quot;d. c #F7CF6E&quot;,
+-&quot;f. c #EFCD72&quot;,
+-&quot;g. c #EFCE77&quot;,
+-&quot;h. c #E0C47B&quot;,
+-&quot;j. c #E3C77E&quot;,
+-&quot;k. c #E4C87F&quot;,
+-&quot;l. c #F7D070&quot;,
+-&quot;z. c #F8D171&quot;,
+-&quot;x. c #F8D272&quot;,
+-&quot;c. c #FAD473&quot;,
+-&quot;v. c #FBD676&quot;,
+-&quot;b. c #FCD574&quot;,
+-&quot;n. c #FCD674&quot;,
+-&quot;m. c #FCD777&quot;,
+-&quot;M. c #F0D17E&quot;,
+-&quot;N. c #FCD778&quot;,
+-&quot;B. c #FCDA7A&quot;,
+-&quot;V. c #FDDC7C&quot;,
+-&quot;C. c #FDDE7E&quot;,
+-&quot;Z. c #E6CA80&quot;,
+-&quot;A. c #E8CC83&quot;,
+-&quot;S. c #EACD84&quot;,
+-&quot;D. c #ECD086&quot;,
+-&quot;F. c #EFD286&quot;,
+-&quot;G. c #EED287&quot;,
+-&quot;H. c #F0D283&quot;,
+-&quot;J. c #FDDF80&quot;,
+-&quot;K. c #F6DF91&quot;,
+-&quot;L. c #F5DE92&quot;,
+-&quot;P. c #F4DE95&quot;,
+-&quot;I. c #F4DF98&quot;,
+-&quot;U. c #FDE081&quot;,
+-&quot;Y. c #FCE184&quot;,
+-&quot;T. c #FBE188&quot;,
+-&quot;R. c #FAE18B&quot;,
+-&quot;E. c #F8E08D&quot;,
+-&quot;W. c #F5E19B&quot;,
+-&quot;Q. c #F5E29C&quot;,
+-&quot;!. c #F7E49D&quot;,
+-&quot;~. c #F9E69B&quot;,
+-&quot;^. c #FBE89B&quot;,
+-&quot;/. c #FDEB9B&quot;,
+-&quot;(. c #FDEC9B&quot;,
+-&quot;). c #FEEE9B&quot;,
+-&quot;_. c #FEEF9C&quot;,
+-&quot;`. c #FEEEA3&quot;,
+-&quot;&#x27;. c #FDEBA9&quot;,
+-&quot;]. c #FDEBAC&quot;,
+-&quot;[. c #FDEBAD&quot;,
+-&quot;{. c #FDECAD&quot;,
+-&quot;}. c #FDF0B0&quot;,
+-&quot;|. c #FDF2B1&quot;,
+-&quot; X c None&quot;,
++&quot;32 32 194 2&quot;,
++&quot;   c #745305&quot;,
++&quot;.  c #785704&quot;,
++&quot;X  c #7C5903&quot;,
++&quot;o  c #75560B&quot;,
++&quot;O  c #77590F&quot;,
++&quot;+  c #7C5C0B&quot;,
++&quot;@  c #795B12&quot;,
++&quot;#  c #7F631D&quot;,
++&quot;$  c #825E07&quot;,
++&quot;%  c #825F0B&quot;,
++&quot;&amp;  c #85610A&quot;,
++&quot;*  c #8C660C&quot;,
++&quot;=  c #8E680E&quot;,
++&quot;-  c #916B0F&quot;,
++&quot;;  c #856515&quot;,
++&quot;:  c #8B6714&quot;,
++&quot;&gt;  c #8F6A16&quot;,
++&quot;,  c #816218&quot;,
++&quot;&lt;  c #88691C&quot;,
++&quot;1  c #926D12&quot;,
++&quot;2  c #936F1C&quot;,
++&quot;3  c #997417&quot;,
++&quot;4  c #94721E&quot;,
++&quot;5  c #9B761C&quot;,
++&quot;6  c #9F781C&quot;,
++&quot;7  c #A17B1E&quot;,
++&quot;8  c #826622&quot;,
++&quot;9  c #916E20&quot;,
++&quot;0  c #967425&quot;,
++&quot;q  c #9D7420&quot;,
++&quot;w  c #9C7923&quot;,
++&quot;e  c #997728&quot;,
++&quot;r  c #99792C&quot;,
++&quot;t  c #A37D23&quot;,
++&quot;y  c #A37F2C&quot;,
++&quot;u  c #A68125&quot;,
++&quot;i  c #AB8225&quot;,
++&quot;p  c #A5832B&quot;,
++&quot;a  c #AA852C&quot;,
++&quot;s  c #B28A2C&quot;,
++&quot;d  c #A58233&quot;,
++&quot;f  c #AC8734&quot;,
++&quot;g  c #AE8C33&quot;,
++&quot;h  c #AC8C3C&quot;,
++&quot;j  c #B28C33&quot;,
++&quot;k  c #B98E34&quot;,
++&quot;l  c #B28D3D&quot;,
++&quot;z  c #B59136&quot;,
++&quot;x  c #BC9335&quot;,
++&quot;c  c #B3913E&quot;,
++&quot;v  c #BC933A&quot;,
++&quot;b  c #BF9A3D&quot;,
++&quot;n  c #C19235&quot;,
++&quot;m  c #C2953C&quot;,
++&quot;M  c #C39B3C&quot;,
++&quot;N  c #CA9C3D&quot;,
++&quot;B  c #B59343&quot;,
++&quot;V  c #BE9642&quot;,
++&quot;C  c #B69A44&quot;,
++&quot;Z  c #BD9A45&quot;,
++&quot;A  c #B49649&quot;,
++&quot;S  c #BB9A49&quot;,
++&quot;D  c #BB9F52&quot;,
++&quot;F  c #BFA256&quot;,
++&quot;G  c #C49C43&quot;,
++&quot;H  c #CA9D41&quot;,
++&quot;J  c #C59D4A&quot;,
++&quot;K  c #C99E4D&quot;,
++&quot;L  c #C3A144&quot;,
++&quot;P  c #CDA244&quot;,
++&quot;I  c #CFAA47&quot;,
++&quot;U  c #C3A14D&quot;,
++&quot;Y  c #CDA24A&quot;,
++&quot;T  c #CCAB49&quot;,
++&quot;R  c #D2A644&quot;,
++&quot;E  c #D2A54B&quot;,
++&quot;W  c #D6AA4C&quot;,
++&quot;Q  c #DAAE4E&quot;,
++&quot;!  c #DAB04F&quot;,
++&quot;~  c #C7A656&quot;,
++&quot;^  c #CDA452&quot;,
++&quot;/  c #CFAC52&quot;,
++&quot;(  c #C0A65E&quot;,
++&quot;)  c #CEA75A&quot;,
++&quot;_  c #CCAC59&quot;,
++&quot;`  c #D2AB53&quot;,
++&quot;&#x27;  c #DCAF52&quot;,</code></pre></details><details><summary><code>xpm/bitcoin48.xpm</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/24ba1b6/">← use seed nodes as fallback if IRC fails or with TOR --…</a><a rel="next" href="../../commits/161c38b/">80x80 xpm icon for ubuntu, alignment tweaked to scale… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

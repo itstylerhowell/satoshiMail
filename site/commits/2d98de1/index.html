@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mac OS build fixes by laszlo --… (r76) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 May 2010: Mac OS build fixes by laszlo -- version 0.2.8. 12 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/2d98de1/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Mac OS build fixes by laszlo --… (r76) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 May 2010: Mac OS build fixes by laszlo -- version 0.2.8. 12 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/2d98de1/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Mac OS build fixes by laszlo --… (r76) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 May 2010: Mac OS build fixes by laszlo -- version 0.2.8. 12 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Mac OS build fixes by laszlo -- version 0.2.8", "url": "https://satoshimail.pages.dev/commits/2d98de1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-05-19T00:26:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2d98de1b3ae2ade8b1e5493bc63c0c1d776deeb1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Mac OS build fixes by laszlo --…", "item": "https://satoshimail.pages.dev/commits/2d98de1/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c2d98de1b3a">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Mac OS build fixes by laszlo --…</span></div></nav>
+<main class="in">
+<h1>Mac OS build fixes by laszlo -- version 0.2.8</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 19 May 2010 · SVN r76 · release v0.2.8 · 12 files, +109 −74</p>
+<p class="actions"><a class="btn" href="../../#t-c2d98de1b3a">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/2d98de1b3ae2ade8b1e5493bc63c0c1d776deeb1" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>init.cpp</code></summary><pre><code>@@ -284,6 +284,10 @@ bool CMyApp::OnInit2()
+     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+     _CrtSetReportFile(_CRT_WARN, CreateFileA(&quot;NUL&quot;, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0));
+ #endif
++#if _MSC_VER &gt;= 1400
++    // Disable confusing &quot;helpful&quot; text message on abort, ctrl-c
++    _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
++#endif
+ #if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__) &amp;&amp; wxUSE_GUI
+     // Disable malfunctioning wxWidgets debug assertion
+     g_isPainting = 10000;
+@@ -291,10 +295,12 @@ bool CMyApp::OnInit2()
+ #if wxUSE_GUI
+     wxImage::AddHandler(new wxPNGHandler);
+ #endif
+-#ifdef __WXMSW__
++#if defined(__WXMSW__ ) || defined(__WXMAC__)
+     SetAppName(&quot;Bitcoin&quot;);
+ #else
+     SetAppName(&quot;bitcoin&quot;);
++#endif
++#ifndef __WXMSW__
+     umask(077);
+ #endif
+ #ifdef __WXMSW__</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1338,7 +1338,7 @@ bool CBlock::AcceptBlock()
+ 
+     // Don&#x27;t relay old inventory during initial block download.
+     // Please keep this number updated to a few thousand below current block count.
+-    if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 40000)
++    if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 55000)
+         RelayInventory(CInv(MSG_BLOCK, hash));
+ 
+     // // Add atoms to user reviews for coins created
+@@ -2255,9 +2255,9 @@ bool SendMessages(CNode* pto)
+         // Delay tx inv messages to protect privacy,
+         // trickle them out to a few nodes at a time.
+         bool fSendTxInv = false;
+-        if (GetTimeMillis() - pto-&gt;nLastSentTxInv &gt; 1800 + GetRand(200))
++        if (GetTimeMillis() &gt; pto-&gt;nNextSendTxInv)
+         {
+-            pto-&gt;nLastSentTxInv = GetTimeMillis();
++            pto-&gt;nNextSendTxInv = GetTimeMillis() + 3000 + GetRand(2000);
+             fSendTxInv = true;
+         }
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -927,9 +927,7 @@ void ThreadOpenConnections2(void* parg)
+                     continue;
+ 
+                 // Only try the old stuff if we don&#x27;t have enough connections
+-                if (vNodes.size() &gt;= 2 &amp;&amp; nSinceLastSeen &gt; 7 * 24 * 60 * 60)
+-                    continue;
+-                if (vNodes.size() &gt;= 5 &amp;&amp; nSinceLastSeen &gt; 24 * 60 * 60)
++                if (vNodes.size() &gt;= 8 &amp;&amp; nSinceLastSeen &gt; 24 * 60 * 60)
+                     continue;
+ 
+                 // If multiple addresses are ready, prioritize by time since</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -45,6 +45,7 @@ bool StopNode();
+ //  (4) message start
+ //  (12) command
+ //  (4) size
++//  (4) checksum
+ 
+ // The message start string is designed to be unlikely to occur in normal data.
+ // The characters are rarely used upper ascii, not valid as UTF-8, and produce
+@@ -58,6 +59,7 @@ public:
+     char pchMessageStart[sizeof(::pchMessageStart)];
+     char pchCommand[COMMAND_SIZE];
+     unsigned int nMessageSize;
++    //unsigned int nChecksum;
+ 
+     CMessageHeader()
+     {
+@@ -65,6 +67,7 @@ public:
+         memset(pchCommand, 0, sizeof(pchCommand));
+         pchCommand[1] = 1;
+         nMessageSize = -1;
++        //nChecksum = 0;
+     }
+ 
+     CMessageHeader(const char* pszCommand, unsigned int nMessageSizeIn)
+@@ -79,6 +82,8 @@ public:
+         READWRITE(FLATDATA(pchMessageStart));
+         READWRITE(FLATDATA(pchCommand));
+         READWRITE(nMessageSize);
++        //if (nVersion &gt;= 209 &amp;&amp; GetCommand() != &quot;version&quot;)
++        //    READWRITE(nChecksum);
+     )
+ 
+     string GetCommand()
+@@ -484,7 +489,8 @@ public:
+     int64 nLastRecv;
+     int64 nLastSendEmpty;
+     int64 nTimeConnected;
+-    unsigned int nPushPos;
++    unsigned int nHeaderStart;
++    unsigned int nMessageStart;
+     CAddress addr;
+     int nVersion;
+     bool fClient;
+@@ -512,7 +518,7 @@ public:
+     vector&lt;CInv&gt; vInventoryToSend;
+     CCriticalSection cs_inventory;
+     multimap&lt;int64, CInv&gt; mapAskFor;
+-    int64 nLastSentTxInv;
++    int64 nNextSendTxInv;
+ 
+     // publish and subscription
+     vector&lt;char&gt; vfSubscribe;
+@@ -528,7 +534,8 @@ public:
+         nLastRecv = 0;
+         nLastSendEmpty = GetTime();
+         nTimeConnected = GetTime();
+-        nPushPos = -1;
++        nHeaderStart = -1;
++        nMessageStart = -1;
+         addr = addrIn;
+         nVersion = 0;
+         fClient = false; // set by version message
+@@ -542,6 +549,7 @@ public:
+         pindexLastGetBlocksBegin = 0;
+         hashLastGetBlocksEnd = 0;
+         fGetAddr = false;
++        nNextSendTxInv = 0;
+         vfSubscribe.assign(256, false);
+ 
+         // Push a version message
+@@ -639,10 +647,11 @@ public:
+     void BeginMessage(const char* pszCommand)
+     {
+         cs_vSend.Enter();
+-        if (nPushPos != -1)
++        if (nHeaderStart != -1)
+             AbortMessage();
+-        nPushPos = vSend.size();
++        nHeaderStart = vSend.size();
+         vSend &lt;&lt; CMessageHeader(pszCommand, 0);
++        nMessageStart = vSend.size();
+         if (fDebug)
+             printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
+         printf(&quot;sending: %s &quot;, pszCommand);
+@@ -650,10 +659,11 @@ public:
+ 
+     void AbortMessage()
+     {
+-        if (nPushPos == -1)
++        if (nHeaderStart == -1)
+             return;
+-        vSend.resize(nPushPos);
+-        nPushPos = -1;
++        vSend.resize(nHeaderStart);
++        nHeaderStart = -1;
++        nMessageStart = -1;
+         cs_vSend.Leave();
+         printf(&quot;(aborted)\n&quot;);
+     }
+@@ -667,25 +677,26 @@ public:
+             return;
+         }
+ 
+-        if (nPushPos == -1)
++        if (nHeaderStart == -1)
+             return;
+ 
+         // Patch in the size
+-        unsigned int nSize = vSend.size() - nPushPos - sizeof(CMessageHeader);
+-        memcpy((char*)&amp;vSend[nPushPos] + offsetof(CMessageHeader, nMessageSize), &amp;nSize, sizeof(nSize));
++        unsigned int nSize = vSend.size() - nMessageStart;
++        memcpy((char*)&amp;vSend[nHeaderStart] + offsetof(CMessageHeader, nMessageSize), &amp;nSize, sizeof(nSize));
+ 
+         printf(&quot;(%d bytes) &quot;, nSize);
+         printf(&quot;\n&quot;);
+ 
+-        nPushPos = -1;
++        nHeaderStart = -1;
++        nMessageStart = -1;
+         cs_vSend.Leave();
+     }
+ 
+     void EndMessageAbortIfEmpty()
+     {
+-        if (nPushPos == -1)
++        if (nHeaderStart == -1)
+             return;
+-        int nSize = vSend.size() - nPushPos - sizeof(CMessageHeader);
++        int nSize = vSend.size() - nMessageStart;
+         if (nSize &gt; 0)
+             EndMessage();
+         else
+@@ -694,9 +705,9 @@ public:
+ 
+     const char* GetMessageCommand() const
+     {
+-        if (nPushPos == -1)
++        if (nHeaderStart == -1)
+             return &quot;&quot;;
+-        return &amp;vSend[nPushPos] + offsetof(CMessageHeader, pchCommand);
++        return &amp;vSend[nHeaderStart] + offsetof(CMessageHeader, pchCommand);
+     }
+ 
+ </code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -77,24 +77,28 @@ Value getconnectioncount(const Array&amp; params)
+ }
+ 
+ 
+-Value getdifficulty(const Array&amp; params)
++double GetDifficulty()
+ {
+-    if (params.size() != 0)
+-        throw runtime_error(
+-            &quot;getdifficulty (no parameters)\n&quot;
+-            &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
+-
+-    if (pindexBest == NULL)
+-        throw runtime_error(&quot;block chain not loaded&quot;);
+-
+     // Floating point number that is a multiple of the minimum difficulty,
+     // minimum difficulty = 1.0.
++    if (pindexBest == NULL)
++        return 1.0;
+     int nShift = 256 - 32 - 31; // to fit in a uint
+     double dMinimum = (CBigNum().SetCompact(bnProofOfWorkLimit.GetCompact()) &gt;&gt; nShift).getuint();
+     double dCurrently = (CBigNum().SetCompact(pindexBest-&gt;nBits) &gt;&gt; nShift).getuint();
+     return dMinimum / dCurrently;
+ }
+ 
++Value getdifficulty(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getdifficulty (no parameters)\n&quot;
++            &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
++
++    return GetDifficulty();
++}
++
+ 
+ Value getbalance(const Array&amp; params)
+ {
+@@ -157,6 +161,7 @@ Value getinfo(const Array&amp; params)
+     obj.push_back(Pair(&quot;proxy&quot;,         (fUseProxy ? addrProxy.ToStringIPPort() : string())));
+     obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));
+     obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
++    obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
+     return obj;
+ }
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 207;
+-static const char* pszSubVer = &quot;.1&quot;;
++static const int VERSION = 208;
++static const char* pszSubVer = &quot;.0&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -256,11 +256,20 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+     ptaskbaricon = new CMyTaskBarIcon();
++#ifdef __WXMAC__
++    // Mac automatically moves wxID_EXIT, wxID_PREFERENCES and wxID_ABOUT
++    // to their standard places, leaving these menus empty.
++    GetMenuBar()-&gt;Remove(2); // remove Help menu
++    GetMenuBar()-&gt;Remove(0); // remove File menu
++#endif
+ 
+     // Init column headers
+     int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
+     if (!strstr(DateTimeStr(1229413914).c_str(), &quot;2008&quot;))
+         nDateWidth += 12;
++#ifdef __WXMAC__
++    nDateWidth += 2;
++#endif
+     wxListCtrl* pplistCtrl[] = {m_listCtrlAll, m_listCtrlSentReceived, m_listCtrlSent, m_listCtrlReceived};
+     foreach(wxListCtrl* p, pplistCtrl)
+     {
+@@ -274,7 +283,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     }
+ 
+     // Init status bar
+-    int pnWidths[3] = { -100, 88, 290 };
++    int pnWidths[3] = { -100, 88, 300 };
+ #ifndef __WXMSW__
+     pnWidths[1] = pnWidths[1] * 1.1 * dResize;
+     pnWidths[2] = pnWidths[2] * 1.1 * dResize;
+@@ -2157,7 +2166,7 @@ CAddressBookDialog::CAddressBookDialog(wxWindow* parent, const wxString&amp; strInit
+             bool fMine = (AddressToHash160(strAddress, hash160) &amp;&amp; mapPubKeys.count(hash160));
+             wxListCtrl* plistCtrl = fMine ? m_listCtrlReceiving : m_listCtrlSending;
+             int nIndex = InsertLine(plistCtrl, strName, strAddress);
+-            if (strAddress == (fMine ? strDefaultReceiving : strInitSelected))
++            if (strAddress == (fMine ? strDefaultReceiving : string(strInitSelected)))
+                 plistCtrl-&gt;SetItemState(nIndex, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
+         }
+     }
+@@ -2444,7 +2453,7 @@ void CMyTaskBarIcon::OnMenuRestore(wxCommandEvent&amp; event)
+ void CMyTaskBarIcon::OnMenuOptions(wxCommandEvent&amp; event)
+ {
+     // Since it&#x27;s modal, get the main window to do it
+-    wxCommandEvent event2(wxEVT_COMMAND_MENU_SELECTED, wxID_MENUOPTIONSOPTIONS);
++    wxCommandEvent event2(wxEVT_COMMAND_MENU_SELECTED, wxID_PREFERENCES);
+     pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event2);
+ }
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -24,7 +24,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	m_menuFile = new wxMenu();
+ 	wxMenuItem* m_menuFileExit;
+-	m_menuFileExit = new wxMenuItem( m_menuFile, wxID_ANY, wxString( _(&quot;E&amp;xit&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuFileExit = new wxMenuItem( m_menuFile, wxID_EXIT, wxString( _(&quot;E&amp;xit&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuFile-&gt;Append( m_menuFileExit );
+ 	
+ 	m_menubar-&gt;Append( m_menuFile, _(&quot;&amp;File&quot;) );
+@@ -39,14 +39,14 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_menuOptions-&gt;Append( m_menuOptionsChangeYourAddress );
+ 	
+ 	wxMenuItem* m_menuOptionsOptions;
+-	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_MENUOPTIONSOPTIONS, wxString( _(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_PREFERENCES, wxString( _(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsOptions );
+ 	
+ 	m_menubar-&gt;Append( m_menuOptions, _(&quot;&amp;Settings&quot;) );
+ 	
+ 	m_menuHelp = new wxMenu();
+ 	wxMenuItem* m_menuHelpAbout;
+-	m_menuHelpAbout = new wxMenuItem( m_menuHelp, wxID_ANY, wxString( _(&quot;&amp;About...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuHelpAbout = new wxMenuItem( m_menuHelp, wxID_ABOUT, wxString( _(&quot;&amp;About...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuHelp-&gt;Append( m_menuHelpAbout );
+ 	
+ 	m_menubar-&gt;Append( m_menuHelp, _(&quot;&amp;Help&quot;) );
+@@ -133,7 +133,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer11;
+ 	bSizer11 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_listCtrlAll = new wxListCtrl( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	m_listCtrlAll = new wxListCtrl( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING );
+ 	bSizer11-&gt;Add( m_listCtrlAll, 1, wxEXPAND, 5 );
+ 	
+ 	m_panel9-&gt;SetSizer( bSizer11 );
+@@ -144,7 +144,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer111;
+ 	bSizer111 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_listCtrlSentReceived = new wxListCtrl( m_panel91, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	m_listCtrlSentReceived = new wxListCtrl( m_panel91, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING );
+ 	bSizer111-&gt;Add( m_listCtrlSentReceived, 1, wxEXPAND, 5 );
+ 	
+ 	m_panel91-&gt;SetSizer( bSizer111 );
+@@ -155,7 +155,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer112;
+ 	bSizer112 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_listCtrlSent = new wxListCtrl( m_panel92, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	m_listCtrlSent = new wxListCtrl( m_panel92, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING );
+ 	bSizer112-&gt;Add( m_listCtrlSent, 1, wxEXPAND, 5 );
+ 	
+ 	m_panel92-&gt;SetSizer( bSizer112 );
+@@ -166,7 +166,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer113;
+ 	bSizer113 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_listCtrlReceived = new wxListCtrl( m_panel93, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	m_listCtrlReceived = new wxListCtrl( m_panel93, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING );
+ 	bSizer113-&gt;Add( m_listCtrlReceived, 1, wxEXPAND, 5 );
+ 	
+ 	m_panel93-&gt;SetSizer( bSizer113 );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -42,29 +42,28 @@
+ 
+ #define wxID_MAINFRAME 1000
+ #define wxID_OPTIONSGENERATEBITCOINS 1001
+-#define wxID_MENUOPTIONSOPTIONS 1002
+-#define wxID_BUTTONSEND 1003
+-#define wxID_BUTTONRECEIVE 1004
+-#define wxID_TEXTCTRLADDRESS 1005
+-#define wxID_BUTTONNEW 1006
+-#define wxID_BUTTONCOPY 1007
+-#define wxID_TRANSACTIONFEE 1008
+-#define wxID_PROXYIP 1009
+-#define wxID_PROXYPORT 1010
+-#define wxID_TEXTCTRLPAYTO 1011
+-#define wxID_BUTTONPASTE 1012
+-#define wxID_BUTTONADDRESSBOOK 1013
+-#define wxID_TEXTCTRLAMOUNT 1014
+-#define wxID_CHOICETRANSFERTYPE 1015
+-#define wxID_LISTCTRL 1016
+-#define wxID_BUTTONRENAME 1017
+-#define wxID_PANELSENDING 1018
+-#define wxID_LISTCTRLSENDING 1019
+-#define wxID_PANELRECEIVING 1020
+-#define wxID_LISTCTRLRECEIVING 1021
+-#define wxID_BUTTONDELETE 1022
+-#define wxID_BUTTONEDIT 1023
+-#define wxID_TEXTCTRL 1024
++#define wxID_BUTTONSEND 1002
++#define wxID_BUTTONRECEIVE 1003
++#define wxID_TEXTCTRLADDRESS 1004
++#define wxID_BUTTONNEW 1005
++#define wxID_BUTTONCOPY 1006
++#define wxID_TRANSACTIONFEE 1007
++#define wxID_PROXYIP 1008
++#define wxID_PROXYPORT 1009
++#define wxID_TEXTCTRLPAYTO 1010
++#define wxID_BUTTONPASTE 1011
++#define wxID_BUTTONADDRESSBOOK 1012
++#define wxID_TEXTCTRLAMOUNT 1013
++#define wxID_CHOICETRANSFERTYPE 1014
++#define wxID_LISTCTRL 1015
++#define wxID_BUTTONRENAME 1016
++#define wxID_PANELSENDING 1017
++#define wxID_LISTCTRLSENDING 1018
++#define wxID_PANELRECEIVING 1019
++#define wxID_LISTCTRLRECEIVING 1020
++#define wxID_BUTTONDELETE 1021
++#define wxID_BUTTONEDIT 1022
++#define wxID_TEXTCTRL 1023
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CMainFrameBase</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -123,7 +123,7 @@
+                         &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                        &lt;property name=&quot;id&quot;&gt;wxID_EXIT&lt;/property&gt;
+                         &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                         &lt;property name=&quot;label&quot;&gt;E&amp;amp;xit&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;m_menuFileExit&lt;/property&gt;
+@@ -173,7 +173,7 @@
+                         &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_MENUOPTIONSOPTIONS&lt;/property&gt;
++                        &lt;property name=&quot;id&quot;&gt;wxID_PREFERENCES&lt;/property&gt;
+                         &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                         &lt;property name=&quot;label&quot;&gt;&amp;amp;Options...&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;m_menuOptionsOptions&lt;/property&gt;
+@@ -193,7 +193,7 @@
+                         &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                        &lt;property name=&quot;id&quot;&gt;wxID_ABOUT&lt;/property&gt;
+                         &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                         &lt;property name=&quot;label&quot;&gt;&amp;amp;About...&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;m_menuHelpAbout&lt;/property&gt;
+@@ -924,7 +924,7 @@
+                                             &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                                             &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -1047,7 +1047,7 @@
+                                             &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                                             &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -1170,7 +1170,7 @@
+                                             &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                                             &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -1293,7 +1293,7 @@
+                                             &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                                             &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -314,6 +314,12 @@ string FormatMoney(int64 n, bool fPlus)
+     return str;
+ }
+ 
++
++bool ParseMoney(const string&amp; str, int64&amp; nRet)
++{
++    return ParseMoney(str.c_str(), nRet);
++}
++
+ bool ParseMoney(const char* pszIn, int64&amp; nRet)
+ {
+     string strWhole;</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -133,6 +133,7 @@ void PrintException(std::exception* pex, const char* pszThread);
+ void LogException(std::exception* pex, const char* pszThread);
+ void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v);
+ string FormatMoney(int64 n, bool fPlus=false);
++bool ParseMoney(const string&amp; str, int64&amp; nRet);
+ bool ParseMoney(const char* pszIn, int64&amp; nRet);
+ vector&lt;unsigned char&gt; ParseHex(const char* psz);
+ vector&lt;unsigned char&gt; ParseHex(const std::string&amp; str);</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/966cca4/">← misc</a><a rel="next" href="../../commits/124baa4/">build-osx.txt build instructions and makefile.osx from… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

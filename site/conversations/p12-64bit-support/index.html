@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>64bit support – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 14 January 2010: I haven&#x27;t tried compiling 64-bit yet. 64-bit wouldn&#x27;t make it any faster, since it uses 64-bit numbers in only a few…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p12-64bit-support/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="64bit support – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 14 January 2010: I haven&#x27;t tried compiling 64-bit yet. 64-bit wouldn&#x27;t make it any faster, since it uses 64-bit numbers in only a few…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p12-64bit-support/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="64bit support – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 14 January 2010: I haven&#x27;t tried compiling 64-bit yet. 64-bit wouldn&#x27;t make it any faster, since it uses 64-bit numbers in only a few…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "64bit support", "url": "https://satoshimail.pages.dev/conversations/p12-64bit-support/", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-01-11T16:13:20Z", "text": "Can bitcoin be compiled to run on 64 bit systems yet? -m64 seems to break the compile. (Not trying to nag or anything). On a side node: I have noticed that the network is about 3x larger than normal now. I see more nodes! Smiley", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-01-14T20:17:20Z", "text": "I haven't tried compiling 64-bit yet. 64-bit wouldn't make it any faster, since it uses 64-bit numbers in only a few places and SHA-256 is a 32-bit algorithm, but it may be convenient for those running a 64-bit OS. If I get a chance I'll try -m64 and see what the problem is. You can run the 32-bit version on 64-bit Linux by installing ia32-libs. (sudo apt-get install ia32-libs) If we made a Debian package, it could automatically pull that in as a dependency."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-01-16T23:16:56Z", "text": "All modern computers are amd64/EM64T. It should be able to be compiled on either platform. It is a hassle to compile all of the dependancies in 32-bit mode just to run one program. I know the 32-bit/64-bit stuff is seamless on windows platforms but on *NIX platforms it is a major pain since they are usually either one or the other by default. Wink As a workaround I am in the process of compiling FreeBSD 32-bit jails (aka virtual server images) just for running bitcoin on our network. It should…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Sabunir"}, "datePublished": "2010-01-25T05:13:23Z", "text": "I second the request for 64-bit support, even if it wouldn't make the app run faster. I'm no expert, but I can't see any harm in it. On the other hand, it's a good way to embrace the future."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-01-29T00:42:49Z", "text": "I committed a fix for 64-bit compile and some fixes to support wxWidgets 2.9.0. There was one compile error in serialize.h with min(sizeof()) that I fixed for 64-bit. The rest of the 64-bit compile errors I was getting were in wxWidgets 2.8.9, so I started working on supporting wxWidgets 2.9.0. wxWidgets 2.9.0 is UTF-8. We've been using the ANSI version of wxWidgets 2.8.9 in anticipation of wxWidgets UTF-8 support. I compiled and ran on 64-bit Ubuntu 9.10 Karmic. I think the only bug left is…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "64bit support", "item": "https://satoshimail.pages.dev/conversations/p12-64bit-support/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p12">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">64bit support</span></div></nav>
+<main class="in">
+<h1>64bit support</h1>
+<p class="lead">BitcoinTalk forum · 5 messages · from 11 January 2010 · with Sabunir, Satoshi Nakamoto, The Madhatter</p>
+<p class="actions"><a class="btn" href="../../#t-p12">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/12/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-01-11T16:13:20Z">11 January 2010, 16:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg87#msg87" rel="nofollow noopener">original</a></span></header>
+<div class="t">Can bitcoin be compiled to run on 64 bit systems yet? -m64 seems to break the compile.
+
+(Not trying to nag or anything).
+
+On a side node: I have noticed that the network is about 3x larger than normal now. I see more nodes! Smiley</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-14T20:17:20Z">14 January 2010, 20:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg97#msg97" rel="nofollow noopener">original</a></span></header>
+<div class="t">I haven&#x27;t tried compiling 64-bit yet. 64-bit wouldn&#x27;t make it any faster, since it uses 64-bit numbers in only a few places and SHA-256 is a 32-bit algorithm, but it may be convenient for those running a 64-bit OS. If I get a chance I&#x27;ll try -m64 and see what the problem is.
+
+You can run the 32-bit version on 64-bit Linux by installing ia32-libs.  (sudo apt-get install ia32-libs)  If we made a Debian package, it could automatically pull that in as a dependency.</div></article><article class="msg" id="m2">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-01-16T23:16:56Z">16 January 2010, 23:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg103#msg103" rel="nofollow noopener">original</a></span></header>
+<div class="t">All modern computers are amd64/EM64T. It should be able to be compiled on either platform. It is a hassle to compile all of the dependancies in 32-bit mode just to run one program. I know the 32-bit/64-bit stuff is seamless on windows platforms but on *NIX platforms it is a major pain since they are usually either one or the other by default. Wink
+
+As a workaround I am in the process of compiling FreeBSD 32-bit jails (aka virtual server images) just for running bitcoin on our network. It should make it easier for me to deploy more nodes as they can simply be zipped up / scp&#x27;d / extracted / launched. After I have a working system image based on FreeBSD-8.0 I may post a link for download.
+
+Thanks and keep up the good work. I can&#x27;t wait to see how many exchangers are willing to trade BT. The stability of the exchangers and their longevity is everything. If the exchangers stick around big businesses may use this system to get around service fees / chargebacks / and the general faults caused by the credit card industry.
+
+Keep up the great work! Smiley</div></article><article class="msg" id="m3">
+<header><b>Sabunir</b><span class="muted"> · <time datetime="2010-01-25T05:13:23Z">25 January 2010, 05:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg127#msg127" rel="nofollow noopener">original</a></span></header>
+<div class="t">I second the request for 64-bit support, even if it wouldn&#x27;t make the app run faster. I&#x27;m no expert, but I can&#x27;t see any harm in it. On the other hand, it&#x27;s a good way to embrace the future.</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-29T00:42:49Z">29 January 2010, 00:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg174#msg174" rel="nofollow noopener">original</a></span></header>
+<div class="t">I committed a fix for 64-bit compile and some fixes to support wxWidgets 2.9.0.
+
+There was one compile error in serialize.h with min(sizeof()) that I fixed for 64-bit.  The rest of the 64-bit compile errors I was getting were in wxWidgets 2.8.9, so I started working on supporting wxWidgets 2.9.0.
+
+wxWidgets 2.9.0 is UTF-8.  We&#x27;ve been using the ANSI version of wxWidgets 2.8.9 in anticipation of wxWidgets UTF-8 support.
+
+I compiled and ran on 64-bit Ubuntu 9.10 Karmic.
+
+I think the only bug left is where the status number is mashed up.  I&#x27;m not sure why, I have to suspect it&#x27;s a UTF-8 thing, but no idea how that could happen.  Haven&#x27;t looked into it.
+
+build-unix.txt is updated and two makefiles on SVN:
+makefile.unix.wx2.8
+makefile.unix.wx2.9
+
+Unfortunately there&#x27;s still no debian package for either version of wxWidgets we use.  They only have the wchar (&quot;unicode&quot;) version of wxWidgets 2.8, which is a disaster because wchar wxString doesn&#x27;t convert to std::string.  We use either ANSI wxWidgets 2.8, or wxWidgets 2.9.  So you still have to get it and build it yourself.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p11-is-my-second-transaction-working-correctly-transfer-question/">← Is my second Transaction working correctly? +Transfer Question</a><a rel="next" href="../../conversations/p13-number-of-connections/">Number of connections? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

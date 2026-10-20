@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>efficiently sort transaction… (r184) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 November 2010: efficiently sort transaction dependencies in one pass. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/683bcb9/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="efficiently sort transaction… (r184) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 November 2010: efficiently sort transaction dependencies in one pass. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/683bcb9/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="efficiently sort transaction… (r184) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 November 2010: efficiently sort transaction dependencies in one pass. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "efficiently sort transaction dependencies in one pass", "url": "https://satoshimail.pages.dev/commits/683bcb9/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-11-19T20:22:46Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/683bcb9154422011ef01e8c5677bad2c4b323436"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "efficiently sort transaction…", "item": "https://satoshimail.pages.dev/commits/683bcb9/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c683bcb9154">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">efficiently sort transaction…</span></div></nav>
+<main class="in">
+<h1>efficiently sort transaction dependencies in one pass</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 19 November 2010 · SVN r184 · release v0.3.17 · 3 files, +97 −48</p>
+<p class="actions"><a class="btn" href="../../#t-c683bcb9154">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/683bcb9154422011ef01e8c5677bad2c4b323436" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -598,6 +598,8 @@ bool CTransaction::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMi
+             if (i != 0)
+                 return false;
+             ptxOld = mapNextTx[outpoint].ptx;
++            if (ptxOld-&gt;IsFinal())
++                return false;
+             if (!IsNewerThan(*ptxOld))
+                 return false;
+             for (int i = 0; i &lt; vin.size(); i++)
+@@ -3031,6 +3033,28 @@ extern unsigned int ScanHash_4WaySSE2(char* pmidstate, char* pblock, char* phash
+ 
+ 
+ 
++class COrphan
++{
++public:
++    CTransaction* ptx;
++    set&lt;uint256&gt; setDependsOn;
++    double dPriority;
++
++    COrphan(CTransaction* ptxIn)
++    {
++        ptx = ptxIn;
++        dPriority = 0;
++    }
++
++    void print() const
++    {
++        printf(&quot;COrphan(hash=%s, dPriority=%.1f)\n&quot;, ptx-&gt;GetHash().ToString().substr(0,10).c_str(), dPriority);
++        foreach(uint256 hash, setDependsOn)
++            printf(&quot;   setDependsOn %s\n&quot;, hash.ToString().substr(0,10).c_str());
++    }
++};
++
++
+ 
+ void BitcoinMiner()
+ {
+@@ -3098,6 +3122,8 @@ void BitcoinMiner()
+             CTxDB txdb(&quot;r&quot;);
+ 
+             // Priority order to process transactions
++            list&lt;COrphan&gt; vOrphan; // list memory doesn&#x27;t move
++            map&lt;uint256, vector&lt;COrphan*&gt; &gt; mapDependers;
+             multimap&lt;double, CTransaction*&gt; mapPriority;
+             for (map&lt;uint256, CTransaction&gt;::iterator mi = mapTransactions.begin(); mi != mapTransactions.end(); ++mi)
+             {
+@@ -3105,6 +3131,7 @@ void BitcoinMiner()
+                 if (tx.IsCoinBase() || !tx.IsFinal())
+                     continue;
+ 
++                COrphan* porphan = NULL;
+                 double dPriority = 0;
+                 foreach(const CTxIn&amp; txin, tx.vin)
+                 {
+@@ -3112,7 +3139,18 @@ void BitcoinMiner()
+                     CTransaction txPrev;
+                     CTxIndex txindex;
+                     if (!txPrev.ReadFromDisk(txdb, txin.prevout, txindex))
++                    {
++                        // Has to wait for dependencies
++                        if (!porphan)
++                        {
++                            // Use list for automatic deletion
++                            vOrphan.push_back(COrphan(&amp;tx));
++                            porphan = &amp;vOrphan.back();
++                        }
++                        mapDependers[txin.prevout.hash].push_back(porphan);
++                        porphan-&gt;setDependsOn.insert(txin.prevout.hash);
+                         continue;
++                    }
+                     int64 nValueIn = txPrev.vout[txin.prevout.n].nValue;
+ 
+                     // Read block header
+@@ -3138,55 +3176,66 @@ void BitcoinMiner()
+                 // Priority is sum(valuein * age) / txsize
+                 dPriority /= ::GetSerializeSize(tx, SER_NETWORK);
+ 
+-                mapPriority.insert(make_pair(-dPriority, &amp;(*mi).second));
++                if (porphan)
++                    porphan-&gt;dPriority = dPriority;
++                else
++                    mapPriority.insert(make_pair(-dPriority, &amp;(*mi).second));
+ 
+                 if (fDebug &amp;&amp; mapArgs.count(&quot;-printpriority&quot;))
+-                    printf(&quot;priority %-20.1f %s\n%s\n&quot;, dPriority, tx.GetHash().ToString().substr(0,10).c_str(), tx.ToString().c_str());
++                {
++                    printf(&quot;priority %-20.1f %s\n%s&quot;, dPriority, tx.GetHash().ToString().substr(0,10).c_str(), tx.ToString().c_str());
++                    if (porphan)
++                        porphan-&gt;print();
++                    printf(&quot;\n&quot;);
++                }
+             }
+ 
+             // Collect transactions into block
+             map&lt;uint256, CTxIndex&gt; mapTestPool;
+             uint64 nBlockSize = 1000;
+             int nBlockSigOps = 100;
+-            bool fFoundSomething = true;
+-            while (fFoundSomething)
++            while (!mapPriority.empty())
+             {
+-                fFoundSomething = false;
+-                for (multimap&lt;double, CTransaction*&gt;::iterator mi = mapPriority.begin(); mi != mapPriority.end();)
+-                {
+-                    CTransaction&amp; tx = *(*mi).second;
+-                    unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
+-                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE_GEN)
+-                    {
+-                        mapPriority.erase(mi++);
+-                        continue;
+-                    }
+-                    int nTxSigOps = tx.GetSigOpCount();
+-                    if (nBlockSigOps + nTxSigOps &gt;= MAX_BLOCK_SIGOPS)
+-                    {
+-                        mapPriority.erase(mi++);
+-                        continue;
+-                    }
++                // Take highest priority transaction off priority queue
++                CTransaction&amp; tx = *(*mapPriority.begin()).second;
++                mapPriority.erase(mapPriority.begin());
++
++                // Size limits
++                unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
++                if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE_GEN)
++                    continue;
++                int nTxSigOps = tx.GetSigOpCount();
++                if (nBlockSigOps + nTxSigOps &gt;= MAX_BLOCK_SIGOPS)
++                    continue;
+ 
+-                    // Transaction fee based on block size
+-                    int64 nMinFee = tx.GetMinFee(nBlockSize);
++                // Transaction fee based on block size
++                int64 nMinFee = tx.GetMinFee(nBlockSize);
+ 
+-                    // Connecting can fail due to dependency on other memory pool transactions
+-                    // that aren&#x27;t in the block yet, so keep trying in later passes
+-                    map&lt;uint256, CTxIndex&gt; mapTestPoolTmp(mapTestPool);
+-                    if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), pindexPrev, nFees, false, true, nMinFee))
++                // Connecting shouldn&#x27;t fail due to dependency on other memory pool transactions
++                // because we&#x27;re already processing them in order of dependency
++                map&lt;uint256, CTxIndex&gt; mapTestPoolTmp(mapTestPool);
++                if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), pindexPrev, nFees, false, true, nMinFee))
++                    continue;
++                swap(mapTestPool, mapTestPoolTmp);
++
++                // Added
++                pblock-&gt;vtx.push_back(tx);
++                nBlockSize += nTxSize;
++                nBlockSigOps += nTxSigOps;
++
++                // Add transactions that depend on this one to the priority queue
++                uint256 hash = tx.GetHash();
++                if (mapDependers.count(hash))
++                {
++                    foreach(COrphan* porphan, mapDependers[hash])
+                     {
+-                        mi++;
+-                        continue;
++                        if (!porphan-&gt;setDependsOn.empty())
++                        {
++                            porphan-&gt;setDependsOn.erase(hash);
++                            if (porphan-&gt;setDependsOn.empty())
++                                mapPriority.insert(make_pair(-porphan-&gt;dPriority, porphan-&gt;ptx));
++                        }
+                     }
+-                    swap(mapTestPool, mapTestPoolTmp);
+-
+-                    // Added
+-                    pblock-&gt;vtx.push_back(tx);
+-                    nBlockSize += nTxSize;
+-                    nBlockSigOps += nTxSigOps;
+-                    fFoundSomething = true;
+-                    mapPriority.erase(mi++);
+                 }
+             }
+         }</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -178,41 +178,41 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+     {
+         if (nHost == 1)
+         {
+-            addrConnect = CAddress(&quot;72.233.89.199:80&quot;); // www.whatismyip.com
++            addrConnect = CAddress(&quot;91.198.22.70:80&quot;); // checkip.dyndns.org
+ 
+             if (nLookup == 1)
+             {
+-                struct hostent* phostent = gethostbyname(&quot;www.whatismyip.com&quot;);
++                struct hostent* phostent = gethostbyname(&quot;checkip.dyndns.org&quot;);
+                 if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
+                     addrConnect = CAddress(*(u_long*)phostent-&gt;h_addr_list[0], htons(80));
+             }
+ 
+-            pszGet = &quot;GET /automation/n09230945.asp HTTP/1.1\r\n&quot;
+-                     &quot;Host: www.whatismyip.com\r\n&quot;
+-                     &quot;User-Agent: Bitcoin/1.0 (see www.bitcoin.org)\r\n&quot;
++            pszGet = &quot;GET / HTTP/1.1\r\n&quot;
++                     &quot;Host: checkip.dyndns.org\r\n&quot;
++                     &quot;User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)\r\n&quot;
+                      &quot;Connection: close\r\n&quot;
+                      &quot;\r\n&quot;;
+ 
+-            pszKeyword = NULL; // Returns just IP address
++            pszKeyword = &quot;Address:&quot;;
+         }
+         else if (nHost == 2)
+         {
+-            addrConnect = CAddress(&quot;91.198.22.70:80&quot;); // checkip.dyndns.org
++            addrConnect = CAddress(&quot;74.208.43.192:80&quot;); // www.showmyip.com
+ 
+             if (nLookup == 1)
+             {
+-                struct hostent* phostent = gethostbyname(&quot;checkip.dyndns.org&quot;);
++                struct hostent* phostent = gethostbyname(&quot;www.showmyip.com&quot;);
+                 if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
+                     addrConnect = CAddress(*(u_long*)phostent-&gt;h_addr_list[0], htons(80));
+             }
+ 
+-            pszGet = &quot;GET / HTTP/1.1\r\n&quot;
+-                     &quot;Host: checkip.dyndns.org\r\n&quot;
++            pszGet = &quot;GET /simple/ HTTP/1.1\r\n&quot;
++                     &quot;Host: www.showmyip.com\r\n&quot;
+                      &quot;User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)\r\n&quot;
+                      &quot;Connection: close\r\n&quot;
+                      &quot;\r\n&quot;;
+ 
+-            pszKeyword = &quot;Address:&quot;;
++            pszKeyword = NULL; // Returns just IP address
+         }
+ 
+         if (GetMyExternalIP2(addrConnect, pszGet, pszKeyword, ipRet))</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,7 +22,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31501;
++static const int VERSION = 31502;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/910bd45/">← -- version 0.3.15 release</a><a rel="next" href="../../commits/f35e21e/">require some minimal priority for free transactions to… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

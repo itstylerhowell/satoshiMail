@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>added boost tuples to serialize.h (r192) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 November 2010: added boost tuples to serialize.h. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/84d7c98/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="added boost tuples to serialize.h (r192) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 November 2010: added boost tuples to serialize.h. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/84d7c98/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="added boost tuples to serialize.h (r192) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 27 November 2010: added boost tuples to serialize.h. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added boost tuples to serialize.h", "url": "https://satoshimail.pages.dev/commits/84d7c98/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-11-27T23:12:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/84d7c981dc52cc738053f9ec48648ab6fbf9311b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "added boost tuples to serialize.h", "item": "https://satoshimail.pages.dev/commits/84d7c98/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c84d7c981dc">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">added boost tuples to serialize.h</span></div></nav>
+<main class="in">
+<h1>added boost tuples to serialize.h</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 27 November 2010 · SVN r192 · release v0.3.18 · 2 files, +81 −3</p>
+<p class="actions"><a class="btn" href="../../#t-c84d7c981dc">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/84d7c981dc52cc738053f9ec48648ab6fbf9311b" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -592,7 +592,7 @@ bool CWalletDB::WriteAccount(const string&amp; strAccount, const CAccount&amp; account)
+ 
+ bool CWalletDB::WriteAccountingEntry(const string&amp; strAccount, const CAccountingEntry&amp; acentry)
+ {
+-    return Write(make_pair(string(&quot;acentry&quot;), make_pair(strAccount, ++nAccountingEntryNumber)), acentry);
++    return Write(make_tuple(string(&quot;acentry&quot;), strAccount, ++nAccountingEntryNumber), acentry);
+ }
+ 
+ int64 CWalletDB::GetAccountCreditDebit(const string&amp; strAccount)
+@@ -608,7 +608,7 @@ int64 CWalletDB::GetAccountCreditDebit(const string&amp; strAccount)
+         // Read next record
+         CDataStream ssKey;
+         if (fFlags == DB_SET_RANGE)
+-            ssKey &lt;&lt; make_pair(string(&quot;acentry&quot;), make_pair(strAccount, uint64(0)));
++            ssKey &lt;&lt; make_tuple(string(&quot;acentry&quot;), strAccount, uint64(0));
+         CDataStream ssValue;
+         int ret = ReadAtCursor(pcursor, ssKey, ssValue, fFlags);
+         fFlags = DB_NEXT;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -7,6 +7,9 @@
+ #include &lt;map&gt;
+ #include &lt;set&gt;
+ #include &lt;boost/type_traits/is_fundamental.hpp&gt;
++#include &lt;boost/tuple/tuple.hpp&gt;
++#include &lt;boost/tuple/tuple_comparison.hpp&gt;
++#include &lt;boost/tuple/tuple_io.hpp&gt;
+ #if defined(_MSC_VER) || defined(__BORLANDC__)
+ typedef __int64  int64;
+ typedef unsigned __int64  uint64;
+@@ -22,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31700;
++static const int VERSION = 31701;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+@@ -338,6 +341,16 @@ template&lt;typename K, typename T&gt; unsigned int GetSerializeSize(const std::pair&lt;K
+ template&lt;typename Stream, typename K, typename T&gt; void Serialize(Stream&amp; os, const std::pair&lt;K, T&gt;&amp; item, int nType, int nVersion=VERSION);
+ template&lt;typename Stream, typename K, typename T&gt; void Unserialize(Stream&amp; is, std::pair&lt;K, T&gt;&amp; item, int nType, int nVersion=VERSION);
+ 
++// 3 tuple
++template&lt;typename T0, typename T1, typename T2&gt; unsigned int GetSerializeSize(const boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion=VERSION);
++template&lt;typename Stream, typename T0, typename T1, typename T2&gt; void Serialize(Stream&amp; os, const boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion=VERSION);
++template&lt;typename Stream, typename T0, typename T1, typename T2&gt; void Unserialize(Stream&amp; is, boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion=VERSION);
++
++// 4 tuple
++template&lt;typename T0, typename T1, typename T2, typename T3&gt; unsigned int GetSerializeSize(const boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion=VERSION);
++template&lt;typename Stream, typename T0, typename T1, typename T2, typename T3&gt; void Serialize(Stream&amp; os, const boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion=VERSION);
++template&lt;typename Stream, typename T0, typename T1, typename T2, typename T3&gt; void Unserialize(Stream&amp; is, boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion=VERSION);
++
+ // map
+ template&lt;typename K, typename T, typename Pred, typename A&gt; unsigned int GetSerializeSize(const std::map&lt;K, T, Pred, A&gt;&amp; m, int nType, int nVersion=VERSION);
+ template&lt;typename Stream, typename K, typename T, typename Pred, typename A&gt; void Serialize(Stream&amp; os, const std::map&lt;K, T, Pred, A&gt;&amp; m, int nType, int nVersion=VERSION);
+@@ -554,6 +567,71 @@ void Unserialize(Stream&amp; is, std::pair&lt;K, T&gt;&amp; item, int nType, int nVersion)
+ 
+ 
+ 
++//
++// 3 tuple
++//
++template&lt;typename T0, typename T1, typename T2&gt;
++unsigned int GetSerializeSize(const boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion)
++{
++    unsigned int nSize = 0;
++    nSize += GetSerializeSize(get&lt;0&gt;(item), nType, nVersion);
++    nSize += GetSerializeSize(get&lt;1&gt;(item), nType, nVersion);
++    nSize += GetSerializeSize(get&lt;2&gt;(item), nType, nVersion);
++    return nSize;
++}
++
++template&lt;typename Stream, typename T0, typename T1, typename T2&gt;
++void Serialize(Stream&amp; os, const boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion)
++{
++    Serialize(os, get&lt;0&gt;(item), nType, nVersion);
++    Serialize(os, get&lt;1&gt;(item), nType, nVersion);
++    Serialize(os, get&lt;2&gt;(item), nType, nVersion);
++}
++
++template&lt;typename Stream, typename T0, typename T1, typename T2&gt;
++void Unserialize(Stream&amp; is, boost::tuple&lt;T0, T1, T2&gt;&amp; item, int nType, int nVersion)
++{
++    Unserialize(is, get&lt;0&gt;(item), nType, nVersion);
++    Unserialize(is, get&lt;1&gt;(item), nType, nVersion);
++    Unserialize(is, get&lt;2&gt;(item), nType, nVersion);
++}
++
++
++
++//
++// 4 tuple
++//
++template&lt;typename T0, typename T1, typename T2, typename T3&gt;
++unsigned int GetSerializeSize(const boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion)
++{
++    unsigned int nSize = 0;
++    nSize += GetSerializeSize(get&lt;0&gt;(item), nType, nVersion);
++    nSize += GetSerializeSize(get&lt;1&gt;(item), nType, nVersion);
++    nSize += GetSerializeSize(get&lt;2&gt;(item), nType, nVersion);
++    nSize += GetSerializeSize(get&lt;3&gt;(item), nType, nVersion);
++    return nSize;
++}
++
++template&lt;typename Stream, typename T0, typename T1, typename T2, typename T3&gt;
++void Serialize(Stream&amp; os, const boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion)
++{
++    Serialize(os, get&lt;0&gt;(item), nType, nVersion);
++    Serialize(os, get&lt;1&gt;(item), nType, nVersion);
++    Serialize(os, get&lt;2&gt;(item), nType, nVersion);
++    Serialize(os, get&lt;3&gt;(item), nType, nVersion);
++}
++
++template&lt;typename Stream, typename T0, typename T1, typename T2, typename T3&gt;
++void Unserialize(Stream&amp; is, boost::tuple&lt;T0, T1, T2, T3&gt;&amp; item, int nType, int nVersion)
++{
++    Unserialize(is, get&lt;0&gt;(item), nType, nVersion);
++    Unserialize(is, get&lt;1&gt;(item), nType, nVersion);
++    Unserialize(is, get&lt;2&gt;(item), nType, nVersion);
++    Unserialize(is, get&lt;3&gt;(item), nType, nVersion);
++}
++
++
++
+ //
+ // map
+ //</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/24324d8/">← -- version 0.3.17 release</a><a rel="next" href="../../commits/f03304a/">preps for future client-only mode, jgarzik&#x27;s initial… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

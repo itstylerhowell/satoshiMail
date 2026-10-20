@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transaction Overload Solution – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 5 August 2010: I can&#x27;t think of a way to implement that. All the transaction fees would be additional transactions. What about the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p166-transaction-overload-solution/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Transaction Overload Solution – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 5 August 2010: I can&#x27;t think of a way to implement that. All the transaction fees would be additional transactions. What about the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p166-transaction-overload-solution/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Transaction Overload Solution – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 5 August 2010: I can&#x27;t think of a way to implement that. All the transaction fees would be additional transactions. What about the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Transaction Overload Solution", "url": "https://satoshimail.pages.dev/conversations/p166-transaction-overload-solution/", "author": {"@type": "Person", "name": "bytemaster"}, "datePublished": "2010-08-05T16:05:07Z", "text": "In another thread I posted the comment below, but I felt that it was an important enough flaw that it should be addressed asap before bitcoin is overrun with huge numbers of automated non-micro payments. The real issue is that even a simple legitimate automated payment negotiation system could overload bitcoin by introducing more transactions than the credit card system currently uses. The net result is that block sizes could become HUGE. In my use case you have a P2P system where they pay *anonymous users* for priority downloads. Assume you have a single \"torrent\" file with 100,000 people all seeding and downloading. That could easily generate 100,000 payments greater than 0.01 per minute. Now clearly, the program would only have to use BTC in the event that upload != download between two clients. But you never know what kind of crazy ideas people will eventually come up with. Such a system would be distributed and thus there would be no easy way to identify \"spam\" from legitimate usage. Even using my solution of transferring 1+ BTC at a time and giving change if the balance is greater than 0.01 could cause a transaction bloat writ large. I suspect that the \"cost\" of handing individual transactions may be low (.00001 BTC) but the cost of handling ALL of those transactions from millions of users using automated payment negotiation/bidding systems would quickly make it impossible to even listen for all incoming transactions. The only solution to this problem is to make broadcasting of a transaction \"non free\". Namely, if you want me to even *attempt* to include it you have to pay me whether or not I succeed in getting it in first. The net (no pun intended) result is that each client would need to pay other clients to whom they even send their transaction, not just the individual who gets it in a block. In this way the laws of economics take over and no one gets a free ride on the transaction broadcast system. The implication is that you may not even receive notice…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "bytemaster"}, "datePublished": "2010-08-05T16:14:00Z", "text": "The downside to a non \"broadcast\" system is that it makes it easier to double-spend and in fact your payment to generate would be a prime candidate for double spending. I am not sure that the system can stand such delays in the broadcast system. I suppose those worried about double spending would pay to have the transaction \"vetted\" by more nodes and those that can handle a loss would take the risk."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-05T17:38:21Z", "text": "I can't think of a way to implement that. All the transaction fees would be additional transactions. What about the transaction fees for the transaction fee's transaction?"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Transaction Overload Solution", "item": "https://satoshimail.pages.dev/conversations/p166-transaction-overload-solution/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p166">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Transaction Overload Solution</span></div></nav>
+<main class="in">
+<h1>Transaction Overload Solution</h1>
+<p class="lead">BitcoinTalk forum · 3 messages · from 5 August 2010 · with Satoshi Nakamoto, bytemaster</p>
+<p class="actions"><a class="btn" href="../../#t-p166">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/166/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-05T16:05:07Z">5 August 2010, 16:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=713.msg7688#msg7688" rel="nofollow noopener">original</a></span></header>
+<div class="t">In another thread I posted the comment below, but I felt that it was an important enough flaw that it should be addressed asap before bitcoin is overrun with huge numbers of automated non-micro payments.
+
+The real issue is that even a simple legitimate automated payment negotiation system could overload bitcoin by introducing more transactions than the credit card system currently uses.   The net result is that block sizes could become HUGE.
+
+In my use case you have a P2P system where they pay *anonymous users* for priority downloads.   Assume you have a single &quot;torrent&quot; file with 100,000 people all seeding and downloading.  That could easily generate 100,000 payments greater than 0.01 per minute.  Now clearly, the program would only have to use BTC in the event that upload != download between two clients.  But you never know what kind of crazy ideas people will eventually come up with.
+
+Such a system would be distributed and thus there would be no easy way to identify &quot;spam&quot; from legitimate usage.    Even using my solution of transferring 1+ BTC at a time and giving change if the balance is greater than 0.01 could cause a transaction bloat writ large.
+
+I suspect that the &quot;cost&quot; of handing individual transactions may be low (.00001 BTC) but the cost of handling ALL of those transactions from millions of users using automated payment negotiation/bidding systems would quickly make it impossible to even listen for all incoming transactions.  
+
+The only solution to this problem is to make broadcasting of a transaction &quot;non free&quot;.  Namely, if you want me to even *attempt* to include it you have to pay me whether or not I succeed in getting it in first.  The net (no pun intended) result is that each client would need to pay other clients to whom they even send their transaction, not just the individual who gets it in a block.   In this way the laws of economics take over and no one gets a free ride on the transaction broadcast system.
+
+The implication is that you may not even receive notice of payment until a node that you paid to receive your transaction and *attempt* to integrate it into a block manages to do so.  This means that you would not even see 0/unconfirmed and that a transaction must make it into a block before anyone that wasn&#x27;t paid to *attempt* to integrate it even knows it exists.   You are protected against people taking your payment and then not even attempting to integrate it because they must find away to get your payment to them integrated or they don&#x27;t even get paid and it would cost more for them to &quot;forward&quot; the generation transaction fee to another node than they could get by having the transaction go through.  
+
+This structure would encourage pay-to-ip systems because that make the receiver of the payment responsible for paying to get it integrated.   Either they run their own bitcoin generators *or* they pay to send the transaction to someone who is.  
+
+The &quot;winner take all&quot; transaction fee requires that I incur the cost for receiving and attempting to integrate transactions yet I would only get paid 1 time every couple of weeks if I was lucky and *if* my internet connection could handle receiving every transaction that occurred.  
+
+People should pay others to generate whether or not the generation was the first one to integrate your transaction into a block.    What are the technical challenges to implementing this. </div></article><article class="msg" id="m1">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-05T16:14:00Z">5 August 2010, 16:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=713.msg7690#msg7690" rel="nofollow noopener">original</a></span></header>
+<div class="t">The downside to a non &quot;broadcast&quot; system is that it makes it easier to double-spend and in fact your payment to generate would be a prime candidate for double spending. 
+
+I am not sure that the system can stand such delays in the broadcast system.  I suppose those worried about double spending would pay to have the transaction &quot;vetted&quot; by more nodes and those that can handle a loss would take the risk.   </div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-05T17:38:21Z">5 August 2010, 17:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=713.msg7706#msg7706" rel="nofollow noopener">original</a></span></header>
+<div class="t">I can&#x27;t think of a way to implement that.  All the transaction fees would be additional transactions.  What about the transaction fees for the transaction fee&#x27;s transaction?</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p165-bitcoind-transaction-to-ip-address/">← bitcoind transaction to ip address</a><a rel="next" href="../../conversations/p167-bitcoin-minting-is-thermodynamically-perverse/">Bitcoin minting is thermodynamically perverse →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

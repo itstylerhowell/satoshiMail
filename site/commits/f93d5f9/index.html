@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>automatically change displayed… (r81) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 June 2010: automatically change displayed address whenever it receives anything, added help and -? for daemon…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/f93d5f9/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="automatically change displayed… (r81) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 June 2010: automatically change displayed address whenever it receives anything, added help and -? for daemon…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/f93d5f9/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="automatically change displayed… (r81) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 10 June 2010: automatically change displayed address whenever it receives anything, added help and -? for daemon…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "automatically change displayed address whenever it receives anything, added help and -? for daemon command line rpc commands, only relay addr messages to 5 random nodes to save bandwidth, started setting wtx.fFromMe flag, trickle out tx inventory messages to protect privacy  -- version 0.2.10", "url": "https://satoshimail.pages.dev/commits/f93d5f9/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-10T23:10:30Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f93d5f9ffe1e12079e560a735111735924726a06"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "automatically change displayed address…", "item": "https://satoshimail.pages.dev/commits/f93d5f9/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cf93d5f9ffe">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">automatically change displayed address…</span></div></nav>
+<main class="in">
+<h1>automatically change displayed address whenever it receives anything, added help and -? for daemon command line rpc commands, only relay addr messages to 5 random nodes to save bandwidth, started setting wtx.fFromMe flag, trickle out tx inventory messages to protect privacy  -- version 0.2.10</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 10 June 2010 · SVN r81 · release v0.2.10 · 16 files, +267 −142</p>
+<p class="actions"><a class="btn" href="../../#t-cf93d5f9ffe">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/f93d5f9ffe1e12079e560a735111735924726a06" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -511,9 +511,9 @@ bool LoadAddresses()
+ // CWalletDB
+ //
+ 
+-bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
++bool CWalletDB::LoadWallet()
+ {
+-    vchDefaultKeyRet.clear();
++    vchDefaultKey.clear();
+     int nFileVersion = 0;
+ 
+     // Modify defaults
+@@ -587,7 +587,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+             }
+             else if (strType == &quot;defaultkey&quot;)
+             {
+-                ssValue &gt;&gt; vchDefaultKeyRet;
++                ssValue &gt;&gt; vchDefaultKey;
+             }
+             else if (strType == &quot;version&quot;)
+             {
+@@ -650,8 +650,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ bool LoadWallet(bool&amp; fFirstRunRet)
+ {
+     fFirstRunRet = false;
+-    vector&lt;unsigned char&gt; vchDefaultKey;
+-    if (!CWalletDB(&quot;cr+&quot;).LoadWallet(vchDefaultKey))
++    if (!CWalletDB(&quot;cr+&quot;).LoadWallet())
+         return false;
+     fFirstRunRet = vchDefaultKey.empty();
+ </code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -14,9 +14,11 @@ class CWalletTx;
+ 
+ extern map&lt;string, string&gt; mapAddressBook;
+ extern CCriticalSection cs_mapAddressBook;
++extern vector&lt;unsigned char&gt; vchDefaultKey;
+ extern bool fClient;
+ 
+ 
++
+ extern unsigned int nWalletDBUpdated;
+ extern DbEnv dbenv;
+ 
+@@ -373,6 +375,7 @@ public:
+ 
+     bool WriteDefaultKey(const vector&lt;unsigned char&gt;&amp; vchPubKey)
+     {
++        vchDefaultKey = vchPubKey;
+         nWalletDBUpdated++;
+         return Write(string(&quot;defaultkey&quot;), vchPubKey);
+     }
+@@ -390,7 +393,7 @@ public:
+         return Write(make_pair(string(&quot;setting&quot;), strKey), value);
+     }
+ 
+-    bool LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet);
++    bool LoadWallet();
+ };
+ 
+ bool LoadWallet(bool&amp; fFirstRunRet);</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -339,22 +339,27 @@ bool CMyApp::OnInit2()
+     if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+     {
+         wxString strUsage = string() +
+-            _(&quot;Usage: bitcoin [options]&quot;) + &quot;\t\t\t\t\t\t\n&quot; +
+-            _(&quot;Options:\n&quot;) +
+-            &quot;  -gen            \t\t  &quot; + _(&quot;Generate coins\n&quot;) +
+-            &quot;  -gen=0          \t\t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
+-            &quot;  -min            \t\t  &quot; + _(&quot;Start minimized\n&quot;) +
+-            &quot;  -datadir=&lt;dir&gt;  \t  &quot;   + _(&quot;Specify data directory\n&quot;) +
+-            &quot;  -proxy=&lt;ip:port&gt;\t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +
+-            &quot;  -addnode=&lt;ip&gt;   \t  &quot;   + _(&quot;Add a node to connect to\n&quot;) +
+-            &quot;  -connect=&lt;ip&gt;   \t  &quot;   + _(&quot;Connect only to the specified node\n&quot;) +
+-            &quot;  -?              \t\t  &quot; + _(&quot;This help message\n&quot;);
++          _(&quot;Usage:&quot;) + &quot;\t\t\t\t\t\t\t\t\t\t\n&quot; +
++            &quot;  bitcoin [options]       \t&quot; + &quot;\n&quot; +
++            &quot;  bitcoin [command]       \t&quot; + _(&quot;Send command to bitcoin running with -server or -daemon\n&quot;) +
++            &quot;  bitcoin [command] -?    \t&quot; + _(&quot;Get help for a command\n&quot;) +
++            &quot;  bitcoin help            \t&quot; + _(&quot;List commands\n&quot;) +
++          _(&quot;Options:\n&quot;) +
++            &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +
++            &quot;  -gen=0          \t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
++            &quot;  -min            \t  &quot; + _(&quot;Start minimized\n&quot;) +
++            &quot;  -datadir=&lt;dir&gt;  \t  &quot; + _(&quot;Specify data directory\n&quot;) +
++            &quot;  -proxy=&lt;ip:port&gt;\t  &quot; + _(&quot;Connect through socks4 proxy\n&quot;) +
++            &quot;  -addnode=&lt;ip&gt;   \t  &quot; + _(&quot;Add a node to connect to\n&quot;) +
++            &quot;  -connect=&lt;ip&gt;   \t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
++            &quot;  -server         \t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
++            &quot;  -daemon         \t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
++            &quot;  -?              \t  &quot; + _(&quot;This help message\n&quot;);
++
+ 
+         if (fWindows &amp;&amp; fGUI)
+         {
+-            // Remove spaces, the tabs make the columns line up in the message box
+-            for (int i = 0; i &lt; 50; i++)
+-                strUsage.Replace(&quot; \t&quot;, &quot;\t&quot;);
++            // Tabs make the columns line up in the message box
+             wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
+         }
+         else</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -159,7 +159,6 @@ bool Wait(int nSeconds)
+ void ThreadIRCSeed(void* parg)
+ {
+     printf(&quot;ThreadIRCSeed started\n&quot;);
+-    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+     int nErrorWait = 10;
+     int nRetryWait = 10;
+     bool fNameInUse = false;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -49,6 +49,8 @@ CCriticalSection cs_mapRequestCount;
+ map&lt;string, string&gt; mapAddressBook;
+ CCriticalSection cs_mapAddressBook;
+ 
++vector&lt;unsigned char&gt; vchDefaultKey;
++
+ // Settings
+ int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+@@ -142,6 +144,19 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
+             if (!wtx.WriteToDisk())
+                 return false;
+ 
++        // If default receiving address gets used, replace it with a new one
++        CScript scriptDefaultKey;
++        scriptDefaultKey.SetBitcoinAddress(vchDefaultKey);
++        foreach(const CTxOut&amp; txout, wtx.vout)
++        {
++            if (txout.scriptPubKey == scriptDefaultKey)
++            {
++                CWalletDB walletdb;
++                walletdb.WriteDefaultKey(GenerateNewKey());
++                walletdb.WriteName(PubKeyToAddress(vchDefaultKey), &quot;&quot;);
++            }
++        }
++
+         // Notify UI
+         vWalletUpdated.push_back(hash);
+     }
+@@ -1753,8 +1768,6 @@ bool ProcessMessages(CNode* pfrom)
+         {
+             // Rewind and wait for rest of message
+             ///// need a mechanism to give up waiting for overlong message size error
+-            if (fDebug)
+-                printf(&quot;message-break\n&quot;);
+             vRecv.insert(vRecv.begin(), vHeaderSave.begin(), vHeaderSave.end());
+             break;
+         }
+@@ -1922,19 +1935,26 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             if (fShutdown)
+                 return true;
+             addr.nTime = GetAdjustedTime() - 2 * 60 * 60;
+-            if (pfrom-&gt;fGetAddr)
++            if (pfrom-&gt;fGetAddr || vAddr.size() &gt; 10)
+                 addr.nTime -= 5 * 24 * 60 * 60;
+             AddAddress(addr, false);
+             pfrom-&gt;AddAddressKnown(addr);
+             if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
+             {
+-                // Put on lists to send to other nodes
++                // Relay to a limited number of other nodes
+                 CRITICAL_BLOCK(cs_vNodes)
++                {
++                    multimap&lt;int, CNode*&gt; mapMix;
+                     foreach(CNode* pnode, vNodes)
+-                        pnode-&gt;PushAddress(addr);
++                        mapMix.insert(make_pair(GetRand(INT_MAX), pnode));
++                    int nRelayNodes = 5;
++                    for (multimap&lt;int, CNode*&gt;::iterator mi = mapMix.begin(); mi != mapMix.end() &amp;&amp; nRelayNodes-- &gt; 0; ++mi)
++                        ((*mi).second)-&gt;PushAddress(addr);
++                }
+             }
+         }
+-        pfrom-&gt;fGetAddr = false;
++        if (vAddr.size() &lt; 1000)
++            pfrom-&gt;fGetAddr = false;
+     }
+ 
+ 
+@@ -2177,6 +2197,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         uint256 hashReply;
+         CWalletTx wtxNew;
+         vRecv &gt;&gt; hashReply &gt;&gt; wtxNew;
++        wtxNew.fFromMe = false;
+ 
+         // Broadcast
+         if (!wtxNew.AcceptWalletTransaction())
+@@ -2242,7 +2263,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+ 
+ 
+-bool SendMessages(CNode* pto)
++bool SendMessages(CNode* pto, bool fSendTrickle)
+ {
+     CRITICAL_BLOCK(cs_main)
+     {
+@@ -2273,15 +2294,6 @@ bool SendMessages(CNode* pto)
+             }
+         }
+ 
+-        // Delay tx inv messages to protect privacy,
+-        // trickle them out to a few nodes at a time.
+-        bool fSendTxInv = false;
+-        if (GetTimeMillis() &gt; pto-&gt;nNextSendTxInv)
+-        {
+-            pto-&gt;nNextSendTxInv = GetTimeMillis() + 3000 + GetRand(2000);
+-            fSendTxInv = true;
+-        }
+-
+         // Resend wallet transactions that haven&#x27;t gotten in a block yet
+         ResendWalletTransactions();
+ 
+@@ -2289,24 +2301,27 @@ bool SendMessages(CNode* pto)
+         //
+         // Message: addr
+         //
+-        vector&lt;CAddress&gt; vAddr;
+-        vAddr.reserve(pto-&gt;vAddrToSend.size());
+-        foreach(const CAddress&amp; addr, pto-&gt;vAddrToSend)
++        if (fSendTrickle)
+         {
+-            // returns true if wasn&#x27;t already contained in the set
+-            if (pto-&gt;setAddrKnown.insert(addr).second)
++            vector&lt;CAddress&gt; vAddr;
++            vAddr.reserve(pto-&gt;vAddrToSend.size());
++            foreach(const CAddress&amp; addr, pto-&gt;vAddrToSend)
+             {
+-                vAddr.push_back(addr);
+-                if (vAddr.size() &gt;= 1000)
++                // returns true if wasn&#x27;t already contained in the set
++                if (pto-&gt;setAddrKnown.insert(addr).second)
+                 {
+-                    pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
+-                    vAddr.clear();
++                    vAddr.push_back(addr);
++                    if (vAddr.size() &gt;= 1000)
++                    {
++                        pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
++                        vAddr.clear();
++                    }
+                 }
+             }
++            pto-&gt;vAddrToSend.clear();
++            if (!vAddr.empty())
++                pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
+         }
+-        pto-&gt;vAddrToSend.clear();
+-        if (!vAddr.empty())
+-            pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
+ 
+ 
+         //
+@@ -2320,11 +2335,40 @@ bool SendMessages(CNode* pto)
+             vInvWait.reserve(pto-&gt;vInventoryToSend.size());
+             foreach(const CInv&amp; inv, pto-&gt;vInventoryToSend)
+             {
+-                // delay txes
+-                if (!fSendTxInv &amp;&amp; inv.type == MSG_TX)
+-                {
+-                    vInvWait.push_back(inv);
++                if (pto-&gt;setInventoryKnown.count(inv))
+                     continue;
++
++                // trickle out tx inv to protect privacy
++                if (inv.type == MSG_TX &amp;&amp; !fSendTrickle)
++                {
++                    // 1/4 of tx invs blast to all immediately
++                    static uint256 hashSalt;
++                    if (hashSalt == 0)
++                        RAND_bytes((unsigned char*)&amp;hashSalt, sizeof(hashSalt));
++                    uint256 hashRand = (inv.hash ^ hashSalt);
++                    hashRand = Hash(BEGIN(hashRand), END(hashRand));
++                    bool fTrickleWait = ((hashRand &amp; 3) != 0);
++
++                    // always trickle our own transactions
++                    if (!fTrickleWait)
++                    {
++                        TRY_CRITICAL_BLOCK(cs_mapWallet)
++                        {
++                            map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(inv.hash);
++                            if (mi != mapWallet.end())
++                            {
++                                CWalletTx&amp; wtx = (*mi).second;
++                                if (wtx.fFromMe)
++                                    fTrickleWait = true;
++                            }
++                        }
++                    }
++
++                    if (fTrickleWait)
++                    {
++                        vInvWait.push_back(inv);
++                        continue;
++                    }
+                 }
+ 
+                 // returns true if wasn&#x27;t already contained in the set
+@@ -2852,6 +2896,7 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+             {
+                 wtxNew.vin.clear();
+                 wtxNew.vout.clear();
++                wtxNew.fFromMe = true;
+                 if (nValue &lt; 0)
+                     return false;
+                 int64 nValueOut = nValue;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -38,6 +38,7 @@ extern map&lt;uint256, int&gt; mapRequestCount;
+ extern CCriticalSection cs_mapRequestCount;
+ extern map&lt;string, string&gt; mapAddressBook;
+ extern CCriticalSection cs_mapAddressBook;
++extern vector&lt;unsigned char&gt; vchDefaultKey;
+ 
+ // Settings
+ extern int fGenerateBitcoins;
+@@ -66,7 +67,7 @@ bool LoadBlockIndex(bool fAllowNew=true);
+ void PrintBlockTree();
+ bool ProcessMessages(CNode* pfrom);
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+-bool SendMessages(CNode* pto);
++bool SendMessages(CNode* pto, bool fSendTrickle);
+ int64 GetBalance();
+ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
+ bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key);</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -1019,7 +1019,6 @@ void ThreadMessageHandler2(void* parg)
+     SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
+     while (!fShutdown)
+     {
+-        // Poll the connected nodes for messages
+         vector&lt;CNode*&gt; vNodesCopy;
+         CRITICAL_BLOCK(cs_vNodes)
+         {
+@@ -1027,6 +1026,11 @@ void ThreadMessageHandler2(void* parg)
+             foreach(CNode* pnode, vNodesCopy)
+                 pnode-&gt;AddRef();
+         }
++
++        // Poll the connected nodes for messages
++        CNode* pnodeTrickle = NULL;
++        if (!vNodesCopy.empty())
++            pnodeTrickle = vNodesCopy[GetRand(vNodesCopy.size())];
+         foreach(CNode* pnode, vNodesCopy)
+         {
+             // Receive messages
+@@ -1037,10 +1041,11 @@ void ThreadMessageHandler2(void* parg)
+ 
+             // Send messages
+             TRY_CRITICAL_BLOCK(pnode-&gt;cs_vSend)
+-                SendMessages(pnode);
++                SendMessages(pnode, pnode == pnodeTrickle);
+             if (fShutdown)
+                 return;
+         }
++
+         CRITICAL_BLOCK(cs_vNodes)
+         {
+             foreach(CNode* pnode, vNodesCopy)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -12,7 +12,7 @@ extern int nBestHeight;
+ 
+ 
+ 
+-static const unsigned short DEFAULT_PORT = htons(8333);
++#define DEFAULT_PORT    htons(8333)
+ static const unsigned int PUBLISH_HOPS = 5;
+ enum
+ {
+@@ -522,7 +522,6 @@ public:
+     vector&lt;CInv&gt; vInventoryToSend;
+     CCriticalSection cs_inventory;
+     multimap&lt;int64, CInv&gt; mapAskFor;
+-    int64 nNextSendTxInv;
+ 
+     // publish and subscription
+     vector&lt;char&gt; vfSubscribe;
+@@ -536,6 +535,12 @@ public:
+         vSend.SetVersion(0);
+         vRecv.SetType(SER_NETWORK);
+         vRecv.SetVersion(0);
++        // Version 0.2 obsoletes 20 Feb 2012
++        if (GetTime() &gt; 1329696000)
++        {
++            vSend.SetVersion(209);
++            vRecv.SetVersion(209);
++        }
+         nLastSend = 0;
+         nLastRecv = 0;
+         nLastSendEmpty = GetTime();
+@@ -556,7 +561,6 @@ public:
+         hashLastGetBlocksEnd = 0;
+         nStartingHeight = -1;
+         fGetAddr = false;
+-        nNextSendTxInv = 0;
+         vfSubscribe.assign(256, false);
+ 
+         // Push a version message</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -18,6 +18,8 @@ using boost::asio::ip::tcp;
+ using namespace json_spirit;
+ 
+ void ThreadRPCServer2(void* parg);
++typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
++extern map&lt;string, rpcfn_type&gt; mapCallTable;
+ 
+ 
+ 
+@@ -31,11 +33,40 @@ void ThreadRPCServer2(void* parg);
+ 
+ 
+ 
+-Value stop(const Array&amp; params)
++Value help(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;stop (no parameters)\n&quot;
++            &quot;help\n&quot;
++            &quot;List commands.&quot;);
++
++    string strRet;
++    for (map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.begin(); mi != mapCallTable.end(); ++mi)
++    {
++        try
++        {
++            Array params;
++            (*(*mi).second)(params, true);
++        }
++        catch (std::exception&amp; e)
++        {
++            // Help text is returned in an exception
++            string strHelp = string(e.what());
++            if (strHelp.find(&#x27;\n&#x27;) != -1)
++                strHelp = strHelp.substr(0, strHelp.find(&#x27;\n&#x27;));
++            strRet += strHelp + &quot;\n&quot;;
++        }
++    }
++    strRet = strRet.substr(0,strRet.size()-1);
++    return strRet;
++}
++
++
++Value stop(const Array&amp; params, bool fHelp)
++{
++    if (fHelp || params.size() != 0)
++        throw runtime_error(
++            &quot;stop\n&quot;
+             &quot;Stop bitcoin server.&quot;);
+ 
+     // Shutdown will take long enough that the response should get back
+@@ -44,33 +75,33 @@ Value stop(const Array&amp; params)
+ }
+ 
+ 
+-Value getblockcount(const Array&amp; params)
++Value getblockcount(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblockcount (no parameters)\n&quot;
++            &quot;getblockcount\n&quot;
+             &quot;Returns the number of blocks in the longest block chain.&quot;);
+ 
+     return nBestHeight + 1;
+ }
+ 
+ 
+-Value getblocknumber(const Array&amp; params)
++Value getblocknumber(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblocknumber (no parameters)\n&quot;
++            &quot;getblocknumber\n&quot;
+             &quot;Returns the block number of the latest block in the longest block chain.&quot;);
+ 
+     return nBestHeight;
+ }
+ 
+ 
+-Value getconnectioncount(const Array&amp; params)
++Value getconnectioncount(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getconnectioncount (no parameters)\n&quot;
++            &quot;getconnectioncount\n&quot;
+             &quot;Returns the number of connections to other nodes.&quot;);
+ 
+     return (int)vNodes.size();
+@@ -89,42 +120,42 @@ double GetDifficulty()
+     return dMinimum / dCurrently;
+ }
+ 
+-Value getdifficulty(const Array&amp; params)
++Value getdifficulty(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getdifficulty (no parameters)\n&quot;
++            &quot;getdifficulty\n&quot;
+             &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
+ 
+     return GetDifficulty();
+ }
+ 
+ 
+-Value getbalance(const Array&amp; params)
++Value getbalance(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getbalance (no parameters)\n&quot;
++            &quot;getbalance\n&quot;
+             &quot;Returns the server&#x27;s available balance.&quot;);
+ 
+     return ((double)GetBalance() / (double)COIN);
+ }
+ 
+ 
+-Value getgenerate(const Array&amp; params)
++Value getgenerate(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getgenerate (no parameters)\n&quot;
++            &quot;getgenerate\n&quot;
+             &quot;Returns true or false.&quot;);
+ 
+     return (bool)fGenerateBitcoins;
+ }
+ 
+ 
+-Value setgenerate(const Array&amp; params)
++Value setgenerate(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &lt; 1 || params.size() &gt; 2)
++    if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;setgenerate &lt;generate&gt; [genproclimit]\n&quot;
+             &quot;&lt;generate&gt; is true or false to turn generation on or off.\n&quot;
+@@ -148,11 +179,11 @@ Value setgenerate(const Array&amp; params)
+ }
+ 
+ 
+-Value getinfo(const Array&amp; params)
++Value getinfo(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 0)
++    if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getinfo (no parameters)&quot;);
++            &quot;getinfo&quot;);
+ 
+     Object obj;
+     obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
+@@ -166,9 +197,9 @@ Value getinfo(const Array&amp; params)
+ }
+ 
+ 
+-Value getnewaddress(const Array&amp; params)
++Value getnewaddress(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &gt; 1)
++    if (fHelp || params.size() &gt; 1)
+         throw runtime_error(
+             &quot;getnewaddress [label]\n&quot;
+             &quot;Returns a new bitcoin address for receiving payments.  &quot;
+@@ -188,9 +219,9 @@ Value getnewaddress(const Array&amp; params)
+ }
+ 
+ 
+-Value setlabel(const Array&amp; params)
++Value setlabel(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &lt; 1 || params.size() &gt; 2)
++    if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;setlabel &lt;bitcoinaddress&gt; &lt;label&gt;\n&quot;
+             &quot;Sets the label associated with the given address.&quot;);
+@@ -205,9 +236,9 @@ Value setlabel(const Array&amp; params)
+ }
+ 
+ 
+-Value getlabel(const Array&amp; params)
++Value getlabel(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 1)
++    if (fHelp || params.size() != 1)
+         throw runtime_error(
+             &quot;getlabel &lt;bitcoinaddress&gt;\n&quot;
+             &quot;Returns the label associated with the given address.&quot;);
+@@ -225,9 +256,9 @@ Value getlabel(const Array&amp; params)
+ }
+ 
+ 
+-Value getaddressesbylabel(const Array&amp; params)
++Value getaddressesbylabel(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() != 1)
++    if (fHelp || params.size() != 1)
+         throw runtime_error(
+             &quot;getaddressesbylabel &lt;label&gt;\n&quot;
+             &quot;Returns the list of addresses with the given label.&quot;);
+@@ -255,9 +286,9 @@ Value getaddressesbylabel(const Array&amp; params)
+ }
+ 
+ 
+-Value sendtoaddress(const Array&amp; params)
++Value sendtoaddress(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &lt; 2 || params.size() &gt; 4)
++    if (fHelp || params.size() &lt; 2 || params.size() &gt; 4)
+         throw runtime_error(
+             &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
+             &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;);
+@@ -283,9 +314,9 @@ Value sendtoaddress(const Array&amp; params)
+ }
+ 
+ 
+-Value listtransactions(const Array&amp; params)
++Value listtransactions(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &gt; 2)
++    if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;listtransactions [count=10] [includegenerated=false]\n&quot;
+             &quot;Returns up to [count] most recent transactions.&quot;);
+@@ -304,9 +335,9 @@ Value listtransactions(const Array&amp; params)
+ }
+ 
+ 
+-Value getreceivedbyaddress(const Array&amp; params)
++Value getreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &lt; 1 || params.size() &gt; 2)
++    if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;getreceivedbyaddress &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by &lt;bitcoinaddress&gt; in transactions with at least [minconf] confirmations.&quot;);
+@@ -345,9 +376,9 @@ Value getreceivedbyaddress(const Array&amp; params)
+ }
+ 
+ 
+-Value getreceivedbylabel(const Array&amp; params)
++Value getreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &lt; 1 || params.size() &gt; 2)
++    if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;getreceivedbylabel &lt;label&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by addresses with &lt;label&gt; in transactions with at least [minconf] confirmations.&quot;);
+@@ -508,9 +539,9 @@ Value ListReceived(const Array&amp; params, bool fByLabels)
+     return ret;
+ }
+ 
+-Value listreceivedbyaddress(const Array&amp; params)
++Value listreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &gt; 2)
++    if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;listreceivedbyaddress [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+@@ -524,9 +555,9 @@ Value listreceivedbyaddress(const Array&amp; params)
+     return ListReceived(params, false);
+ }
+ 
+-Value listreceivedbylabel(const Array&amp; params)
++Value listreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+-    if (params.size() &gt; 2)
++    if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+             &quot;listreceivedbylabel [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+@@ -555,9 +586,9 @@ Value listreceivedbylabel(const Array&amp; params)
+ // Call Table
+ //
+ 
+-typedef Value(*rpcfn_type)(const Array&amp; params);
+ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+ {
++    make_pair(&quot;help&quot;,                  &amp;help),
+     make_pair(&quot;stop&quot;,                  &amp;stop),
+     make_pair(&quot;getblockcount&quot;,         &amp;getblockcount),
+     make_pair(&quot;getblocknumber&quot;,        &amp;getblocknumber),
+@@ -760,7 +791,7 @@ void ThreadRPCServer2(void* parg)
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+                 if (mi == mapCallTable.end())
+                     throw runtime_error(&quot;Method not found.&quot;);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 209;
++static const int VERSION = 210;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1016,6 +1016,11 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ 
+     if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)
+         m_statusBar-&gt;SetStatusText(&quot;     ERROR: ThreadSocketHandler has stopped&quot;, 0);
++
++    // Update receiving address
++    string strDefaultAddress = PubKeyToAddress(vchDefaultKey);
++    if (m_textCtrlAddress-&gt;GetValue() != strDefaultAddress)
++        m_textCtrlAddress-&gt;SetValue(strDefaultAddress);
+ }
+ 
+ 
+@@ -2087,7 +2092,9 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+         }
+ 
+         // Send payment tx to seller, with response going to OnReply3 via event handler
+-        pnode-&gt;PushRequest(&quot;submitorder&quot;, wtx, SendingDialogOnReply3, this);
++        CWalletTx wtxSend = wtx;
++        wtxSend.fFromMe = false;
++        pnode-&gt;PushRequest(&quot;submitorder&quot;, wtxSend, SendingDialogOnReply3, this);
+ 
+         Status(_(&quot;Waiting for confirmation...&quot;));
+         MainFrameRepaint();</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -616,7 +616,7 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	
+ 	fgSizer1-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+-	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, _(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, _(&quot;Enter a Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) or IP address (e.g. 123.45.6.7)&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticTextInstructions-&gt;Wrap( -1 );
+ 	fgSizer1-&gt;Add( m_staticTextInstructions, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -275,7 +275,7 @@ class CSendDialogBase : public wxDialog
+ 		
+ 	
+ 	public:
+-		CSendDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;Send Coins&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 675,312 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
++		CSendDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;Send Coins&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 675,298 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+ 		~CSendDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uint256.h</code></summary><pre><code>@@ -388,7 +388,6 @@ typedef base_uint&lt;256&gt; base_uint256;
+ //
+ // uint160 and uint256 could be implemented as templates, but to keep
+ // compile errors and debugging cleaner, they&#x27;re copy and pasted.
+-// It&#x27;s safe to search and replace 160 with 256 and vice versa.
+ //
+ 
+ 
+@@ -405,6 +404,8 @@ public:
+ 
+     uint160()
+     {
++        for (int i = 0; i &lt; WIDTH; i++)
++            pn[i] = 0;
+     }
+ 
+     uint160(const basetype&amp; b)
+@@ -517,6 +518,8 @@ public:
+ 
+     uint256()
+     {
++        for (int i = 0; i &lt; WIDTH; i++)
++            pn[i] = 0;
+     }
+ 
+     uint256(const basetype&amp; b)</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
+         &lt;property name=&quot;relative_path&quot;&gt;1&lt;/property&gt;
+         &lt;property name=&quot;use_enum&quot;&gt;0&lt;/property&gt;
+         &lt;property name=&quot;use_microsoft_bom&quot;&gt;0&lt;/property&gt;
+-        &lt;object class=&quot;Frame&quot; expanded=&quot;1&quot;&gt;
++        &lt;object class=&quot;Frame&quot; expanded=&quot;0&quot;&gt;
+             &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_BTNFACE&lt;/property&gt;
+             &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -3317,7 +3317,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CSendDialogBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;675,312&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;675,298&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;Send Coins&lt;/property&gt;
+@@ -3408,7 +3408,7 @@
+                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                                &lt;property name=&quot;label&quot;&gt;Enter the recipient&amp;apos;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, &amp;#x0A;or Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&lt;/property&gt;
++                                &lt;property name=&quot;label&quot;&gt;Enter a Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) or IP address (e.g. 123.45.6.7)&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_staticTextInstructions&lt;/property&gt;</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -520,8 +520,13 @@ inline pthread_t CreateThread(void(*pfn)(void*), void* parg, bool fWantHandle=fa
+ 
+ inline void SetThreadPriority(int nPriority)
+ {
+-    // threads are processes on linux, so PRIO_PROCESS affects just the one thread
+-    setpriority(PRIO_PROCESS, getpid(), nPriority);
++    // It&#x27;s unclear if it&#x27;s even possible to change thread priorities on Linux,
++    // but we really and truly need it for the generation threads.
++#ifdef PRIO_THREAD
++    setpriority(PRIO_THREAD, 0, nPriority);
++#else
++    setpriority(PRIO_PROCESS, 0, nPriority);
++#endif
+ }
+ 
+ inline bool TerminateThread(pthread_t hthread, unsigned int nExitCode)</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2ca1758/">← Dutch translation by Xunie (93% complete)</a><a rel="next" href="../../commits/bed005b/">revert makefile.unix from -02 back to -00 to fix compile… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

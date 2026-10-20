@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fixed makefile.vc – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: fixed makefile.vc. 1 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/872d60f/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fixed makefile.vc – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: fixed makefile.vc. 1 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/872d60f/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fixed makefile.vc – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: fixed makefile.vc. 1 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed makefile.vc", "url": "https://satoshimail.pages.dev/commits/872d60f/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-30T17:31:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/872d60f6e4aa599a4821372c30a285f67f9faa77"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed makefile.vc", "item": "https://satoshimail.pages.dev/commits/872d60f/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c872d60f6e4">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fixed makefile.vc</span></div></nav>
+<main class="in">
+<h1>fixed makefile.vc</h1>
+<p class="lead">Commit by Satoshi Nakamoto (--author=Satoshi Nakamoto) on 30 July 2010 · release v0.3.6 · 1 files, +2 −2</p>
+<p class="actions"><a class="btn" href="../../#t-c872d60f6e4">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/872d60f6e4aa599a4821372c30a285f67f9faa77" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>makefile.vc</code></summary><pre><code>@@ -73,10 +73,10 @@ obj\ui.obj: $(HEADERS)
+ obj\uibase.obj: $(HEADERS)
+ 
+ cryptopp\obj\sha.obj: cryptopp\sha.cpp
+-    cl $(CFLAGS) /O2 /Fo$@ %s
++    cl $(CFLAGS) /O2 /DCRYPTOPP_DISABLE_ASM /Fo$@ %s
+ 
+ cryptopp\obj\cpu.obj: cryptopp\cpu.cpp
+-    cl $(CFLAGS) /O2 /Fo$@ %s
++    cl $(CFLAGS) /O2 /DCRYPTOPP_DISABLE_ASM /Fo$@ %s
+ 
+ obj\ui.res: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+     rc $(INCLUDEPATHS) $(DEFS) /Fo$@ %s</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/757f076/">← reverted makefile.unix wx-config -- version 0.3.6</a><a rel="next" href="../../commits/31ffe95/">fixed makefile.osx →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

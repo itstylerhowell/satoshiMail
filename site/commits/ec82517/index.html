@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fredrik Roubert: simplified… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: Fredrik Roubert: simplified makefile.unix with wx-config, misc. 4 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/ec82517/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Fredrik Roubert: simplified… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: Fredrik Roubert: simplified makefile.unix with wx-config, misc. 4 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/ec82517/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Fredrik Roubert: simplified… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: Fredrik Roubert: simplified makefile.unix with wx-config, misc. 4 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Fredrik Roubert: simplified makefile.unix with wx-config, misc", "url": "https://satoshimail.pages.dev/commits/ec82517/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-30T17:35:17Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/ec82517c8919f9cb7194511dc322a2575745e39e"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Fredrik Roubert: simplified…", "item": "https://satoshimail.pages.dev/commits/ec82517/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cec82517c89">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Fredrik Roubert: simplified…</span></div></nav>
+<main class="in">
+<h1>Fredrik Roubert: simplified makefile.unix with wx-config, misc</h1>
+<p class="lead">Commit by Satoshi Nakamoto (--author=Satoshi Nakamoto) on 30 July 2010 · release v0.3.6 · 4 files, +14 −24</p>
+<p class="actions"><a class="btn" href="../../#t-cec82517c89">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/ec82517c8919f9cb7194511dc322a2575745e39e" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -806,9 +806,9 @@ int64 CBlock::GetBlockValue(int64 nFees) const
+ 
+ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+ {
+-    const unsigned int nTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+-    const unsigned int nTargetSpacing = 10 * 60;
+-    const unsigned int nInterval = nTargetTimespan / nTargetSpacing;
++    const int64 nTargetTimespan = 14 * 24 * 60 * 60; // two weeks
++    const int64 nTargetSpacing = 10 * 60;
++    const int64 nInterval = nTargetTimespan / nTargetSpacing;
+ 
+     // Genesis block
+     if (pindexLast == NULL)
+@@ -825,8 +825,8 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+     assert(pindexFirst);
+ 
+     // Limit adjustment step
+-    unsigned int nActualTimespan = pindexLast-&gt;nTime - pindexFirst-&gt;nTime;
+-    printf(&quot;  nActualTimespan = %d  before bounds\n&quot;, nActualTimespan);
++    int64 nActualTimespan = (int64)pindexLast-&gt;nTime - (int64)pindexFirst-&gt;nTime;
++    printf(&quot;  nActualTimespan = %&quot;PRI64d&quot;  before bounds\n&quot;, nActualTimespan);
+     if (nActualTimespan &lt; nTargetTimespan/4)
+         nActualTimespan = nTargetTimespan/4;
+     if (nActualTimespan &gt; nTargetTimespan*4)
+@@ -843,7 +843,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+ 
+     /// debug print
+     printf(&quot;GetNextWorkRequired RETARGET\n&quot;);
+-    printf(&quot;nTargetTimespan = %d    nActualTimespan = %d\n&quot;, nTargetTimespan, nActualTimespan);
++    printf(&quot;nTargetTimespan = %&quot;PRI64d&quot;    nActualTimespan = %&quot;PRI64d&quot;\n&quot;, nTargetTimespan, nActualTimespan);
+     printf(&quot;Before: %08x  %s\n&quot;, pindexLast-&gt;nBits, CBigNum().SetCompact(pindexLast-&gt;nBits).getuint256().ToString().c_str());
+     printf(&quot;After:  %08x  %s\n&quot;, bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+ </code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -54,7 +54,7 @@ obj/%.o: %.cpp $(HEADERS)
+ 	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+-	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_X86_ASM_AVAILABLE -o $@ $&lt;
++	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_X86_ASM_AVAILABLE -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
+ 
+ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+ 	windres $(DEFS) $(INCLUDEPATHS) -o $@ -i $&lt;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,21 +3,12 @@
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-INCLUDEPATHS= \
+- -I&quot;/usr/include&quot; \
+- -I&quot;/usr/local/include/wx-2.9&quot; \
+- -I&quot;/usr/local/lib/wx/include/gtk2-unicode-debug-static-2.9&quot;
++WXLIBS=$(shell wx-config --debug=yes --libs --static)
++WXFLAGS=$(shell wx-config --debug=yes --cppflags)
+ 
+ LIBPATHS= \
+- -L&quot;/usr/lib&quot; \
+  -L&quot;/usr/local/lib&quot;
+ 
+-WXLIBS= \
+- -Wl,-Bstatic \
+-   -l wx_gtk2ud-2.9 \
+- -Wl,-Bdynamic \
+-   -l gtk-x11-2.0 -l SM
+-
+ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system \
+@@ -31,7 +22,7 @@ LIBS= \
+ 
+ DEFS=-D__WXGTK__ -DNOPCH
+ DEBUGFLAGS=-g -D__WXDEBUG__
+-CFLAGS=-O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
++CFLAGS=-O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
+     script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h noui.h init.h
+ 
+@@ -52,13 +43,13 @@ all: bitcoin
+ 
+ 
+ headers.h.gch: headers.h $(HEADERS)
+-	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
++	g++ -c $(CFLAGS) $(WXFLAGS) -DGUI -o $@ $&lt;
+ 
+ obj/%.o: %.cpp $(HEADERS) headers.h.gch
+-	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
++	g++ -c $(CFLAGS) $(WXFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+-	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
++	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
+ 
+ bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1763,8 +1763,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 
+ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ {
+-    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
+-    //m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
++    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
+ 
+     // Change (c) into UTF-8 or ANSI copyright symbol
+     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/31ffe95/">← fixed makefile.osx</a><a rel="next" href="../../commits/a75560d/">reverted makefile.unix wx-config -- version 0.3.6 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

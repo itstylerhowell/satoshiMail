@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>got rid of CheckForShutdown… (r33) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/300d460/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="got rid of CheckForShutdown… (r33) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/300d460/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="got rid of CheckForShutdown… (r33) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 November 2009: got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send MSG_NOSIGNAL, bind INADDR_ANY, works reliably on Linux now except if wxMessageBox is used in a thread other than the GUI thread", "url": "https://satoshimail.pages.dev/commits/300d460/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-06T05:50:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/300d4608f2504e3e4a02a13b6c6000b52c436975"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "got rid of CheckForShutdown, replaced…", "item": "https://satoshimail.pages.dev/commits/300d460/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c300d4608f2">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">got rid of CheckForShutdown, replaced…</span></div></nav>
+<main class="in">
+<h1>got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send MSG_NOSIGNAL, bind INADDR_ANY, works reliably on Linux now except if wxMessageBox is used in a thread other than the GUI thread</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 6 November 2009 · SVN r33 · release v0.2.0 · 12 files, +260 −235</p>
+<p class="actions"><a class="btn" href="../../#t-c300d4608f2">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/300d4608f2504e3e4a02a13b6c6000b52c436975" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -550,7 +550,7 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+                 //printf(&quot;LoadWallet  %s\n&quot;, wtx.GetHash().ToString().c_str());
+                 //printf(&quot; %12I64d  %s  %s  %s\n&quot;,
+                 //    wtx.vout[0].nValue,
+-                //    DateTimeStr(wtx.nTime).c_str(),
++                //    DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, wtx.nTime).c_str(),
+                 //    wtx.hashBlock.ToString().substr(0,14).c_str(),
+                 //    wtx.mapValue[&quot;message&quot;].c_str());
+             }</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -167,9 +167,12 @@ void ThreadIRCSeed(void* parg)
+     while (!fShutdown)
+     {
+         CAddress addrConnect(&quot;216.155.130.130:6667&quot;);
+-        struct hostent* phostent = gethostbyname(&quot;chat.freenode.net&quot;);
+-        if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
+-            addrConnect = CAddress(*(u_long*)phostent-&gt;h_addr_list[0], htons(6667));
++        if (!(fUseProxy &amp;&amp; addrProxy.port == htons(9050)))
++        {
++            struct hostent* phostent = gethostbyname(&quot;chat.freenode.net&quot;);
++            if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
++                addrConnect = CAddress(*(u_long*)phostent-&gt;h_addr_list[0], htons(6667));
++        }
+ 
+         SOCKET hSocket;
+         if (!ConnectSocket(addrConnect, hSocket))</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1361,15 +1361,24 @@ bool ScanMessageStart(Stream&amp; s)
+ 
+ bool CheckDiskSpace(int64 nAdditionalBytes)
+ {
+-    wxLongLong nFreeBytesAvailable = 0;
+-    if (!wxGetDiskSpace(GetDataDir(), NULL, &amp;nFreeBytesAvailable))
+-    {
+-        printf(&quot;ERROR: wxGetDiskSpace() failed\n&quot;);
++#ifdef __WXMSW__
++    uint64 nFreeBytesAvailable = 0;     // bytes available to caller
++    uint64 nTotalNumberOfBytes = 0;     // bytes on disk
++    uint64 nTotalNumberOfFreeBytes = 0; // free bytes on disk
++    if (!GetDiskFreeSpaceEx(GetDataDir().c_str(),
++            (PULARGE_INTEGER)&amp;nFreeBytesAvailable,
++            (PULARGE_INTEGER)&amp;nTotalNumberOfBytes,
++            (PULARGE_INTEGER)&amp;nTotalNumberOfFreeBytes))
++    {
++        printf(&quot;ERROR: GetDiskFreeSpaceEx() failed\n&quot;);
+         return true;
+     }
++#else
++    uint64 nFreeBytesAvailable = filesystem::space(GetDataDir()).available;
++#endif
+ 
+     // Check for 15MB because database could create another 10MB log file at any time
+-    if (nFreeBytesAvailable.GetValue() &lt; (int64)15000000 + nAdditionalBytes)
++    if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
+     {
+         fShutdown = true;
+         wxMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxICON_EXCLAMATION);
+@@ -1546,7 +1555,7 @@ void PrintBlockTree()
+             pindex-&gt;nFile,
+             pindex-&gt;nBlockPos,
+             block.GetHash().ToString().substr(0,14).c_str(),
+-            DateTimeStr(block.nTime).c_str(),
++            DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, block.nTime).c_str(),
+             block.vtx.size());
+ 
+         CRITICAL_BLOCK(cs_mapWallet)
+@@ -1673,20 +1682,24 @@ bool ProcessMessages(CNode* pfrom)
+         bool fRet = false;
+         try
+         {
+-            CheckForShutdown(2);
+             CRITICAL_BLOCK(cs_main)
+                 fRet = ProcessMessage(pfrom, strCommand, vMsg);
+-            CheckForShutdown(2);
++            if (fShutdown)
++                return true;
+         }
+-        catch (std::ios_base::failure&amp; e) {
++        catch (std::ios_base::failure&amp; e)
++        {
+             if (strstr(e.what(), &quot;CDataStream::read() : end of data&quot;))
+             {
+                 // Allow exceptions from underlength message on vRecv
+                 printf(&quot;ProcessMessage(%s, %d bytes) : Exception &#x27;%s&#x27; caught, normally caused by a message being shorter than its stated length\n&quot;, strCommand.c_str(), nMessageSize, e.what());
+             }
+             else
++            {
+                 PrintException(&amp;e, &quot;ProcessMessage()&quot;);
+-        } catch (std::exception&amp; e) {
++            }
++        }
++        catch (std::exception&amp; e) {
+             PrintException(&amp;e, &quot;ProcessMessage()&quot;);
+         } catch (...) {
+             PrintException(NULL, &quot;ProcessMessage()&quot;);
+@@ -2093,7 +2106,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+ bool SendMessages(CNode* pto)
+ {
+-    CheckForShutdown(2);
+     CRITICAL_BLOCK(cs_main)
+     {
+         // Don&#x27;t send anything until we get their version message
+@@ -2223,12 +2235,10 @@ void GenerateBitcoins(bool fGenerate)
+ 
+ void ThreadBitcoinMiner(void* parg)
+ {
+-    vnThreadsRunning[3]++;
+-    CheckForShutdown(3);
+     try
+     {
+-        bool fRet = BitcoinMiner();
+-        printf(&quot;BitcoinMiner returned %s\n&quot;, fRet ? &quot;true&quot; : &quot;false&quot;);
++        vnThreadsRunning[3]++;
++        BitcoinMiner();
+         vnThreadsRunning[3]--;
+     }
+     catch (std::exception&amp; e) {
+@@ -2238,6 +2248,8 @@ void ThreadBitcoinMiner(void* parg)
+         vnThreadsRunning[3]--;
+         PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
+     }
++
++    printf(&quot;ThreadBitcoinMiner exiting, %d threads remaining\n&quot;, vnThreadsRunning[3]);
+ }
+ 
+ int FormatHashBlocks(void* pbuffer, unsigned int len)
+@@ -2285,7 +2297,7 @@ void BlockSHA256(const void* pin, unsigned int nBlocks, void* pout)
+ }
+ 
+ 
+-bool BitcoinMiner()
++void BitcoinMiner()
+ {
+     printf(&quot;BitcoinMiner started\n&quot;);
+ 
+@@ -2296,11 +2308,13 @@ bool BitcoinMiner()
+     {
+         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
+         Sleep(50);
+-        CheckForShutdown(3);
++        if (fShutdown)
++            return;
+         while (vNodes.empty())
+         {
+             Sleep(1000);
+-            CheckForShutdown(3);
++            if (fShutdown)
++                return;
+         }
+ 
+         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
+@@ -2324,7 +2338,7 @@ bool BitcoinMiner()
+         //
+         auto_ptr&lt;CBlock&gt; pblock(new CBlock());
+         if (!pblock.get())
+-            return false;
++            return;
+ 
+         // Add our coinbase tx as first transaction
+         pblock-&gt;vtx.push_back(txNew);
+@@ -2433,7 +2447,7 @@ bool BitcoinMiner()
+                     {
+                         // Save key
+                         if (!AddKey(key))
+-                            return false;
++                            return;
+                         key.MakeNewKey();
+ 
+                         // Process this block the same as if we had received it from another node
+@@ -2450,7 +2464,12 @@ bool BitcoinMiner()
+             // Update nTime every few seconds
+             if ((++tmp.block.nNonce &amp; 0xffff) == 0)
+             {
+-                CheckForShutdown(3);
++                if (fShutdown)
++                    return;
++                if (!fGenerateBitcoins)
++                    return;
++                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
++                    return;
+                 if (tmp.block.nNonce == 0)
+                     break;
+                 if (pindexPrev != pindexBest)
+@@ -2459,16 +2478,10 @@ bool BitcoinMiner()
+                     break;
+                 if (vNodes.empty())
+                     break;
+-                if (!fGenerateBitcoins)
+-                    return true;
+-                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
+-                    return true;
+                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+             }
+         }
+     }
+-
+-    return true;
+ }
+ 
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -68,7 +68,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
+ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+-bool BitcoinMiner();
++void BitcoinMiner();
+ 
+ 
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -48,6 +48,10 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+     SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+     if (hSocket == INVALID_SOCKET)
+         return false;
++#if defined(__BSD__) || defined(__WXOSX__)
++    int set = 1;
++    setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));
++#endif
+ 
+     bool fRoutable = !(addrConnect.GetByte(3) == 10 || (addrConnect.GetByte(3) == 192 &amp;&amp; addrConnect.GetByte(2) == 168));
+     bool fProxy = (fUseProxy &amp;&amp; fRoutable);
+@@ -68,7 +72,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+         char* pszSocks4 = pszSocks4IP;
+         int nSize = sizeof(pszSocks4IP);
+ 
+-        int ret = send(hSocket, pszSocks4, nSize, 0);
++        int ret = send(hSocket, pszSocks4, nSize, MSG_NOSIGNAL);
+         if (ret != nSize)
+         {
+             closesocket(hSocket);
+@@ -100,7 +104,7 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+     if (!ConnectSocket(addrConnect, hSocket))
+         return error(&quot;GetMyExternalIP() : connection to %s failed&quot;, addrConnect.ToString().c_str());
+ 
+-    send(hSocket, pszGet, strlen(pszGet), 0);
++    send(hSocket, pszGet, strlen(pszGet), MSG_NOSIGNAL);
+ 
+     string strLine;
+     while (RecvLine(hSocket, strLine))
+@@ -124,7 +128,8 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+             if (strLine.find(&quot;&lt;&quot;))
+                 strLine = strLine.substr(0, strLine.find(&quot;&lt;&quot;));
+             strLine = strLine.substr(strspn(strLine.c_str(), &quot; \t\n\r&quot;));
+-            strLine = wxString(strLine).Trim();
++            while (strLine.size() &gt; 0 &amp;&amp; isspace(strLine[strLine.size()-1]))
++                strLine.resize(strLine.size()-1);
+             CAddress addr(strLine.c_str());
+             printf(&quot;GetMyExternalIP() received [%s] %s\n&quot;, strLine.c_str(), addr.ToString().c_str());
+             if (addr.ip == 0 || addr.ip == INADDR_NONE || !addr.IsRoutable())
+@@ -492,24 +497,26 @@ void ThreadSocketHandler(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadSocketHandler(parg));
+ 
+-    loop
++    try
+     {
+         vnThreadsRunning[0]++;
+-        CheckForShutdown(0);
+-        try
+-        {
+-            ThreadSocketHandler2(parg);
+-            vnThreadsRunning[0]--;
+-        }
+-        catch (std::exception&amp; e) {
+-            vnThreadsRunning[0]--;
+-            PrintException(&amp;e, &quot;ThreadSocketHandler()&quot;);
+-        } catch (...) {
+-            vnThreadsRunning[0]--;
+-            PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
+-        }
+-        Sleep(5000);
++        ThreadSocketHandler2(parg);
++        vnThreadsRunning[0]--;
+     }
++    catch (std::exception&amp; e) {
++        vnThreadsRunning[0]--;
++        PrintException(&amp;e, &quot;ThreadSocketHandler()&quot;);
++    } catch (...) {
++        vnThreadsRunning[0]--;
++        PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
++    }
++
++    foreach(CNode* pnode, vNodes)
++        closesocket(pnode-&gt;hSocket);
++    if (closesocket(hListenSocket) == SOCKET_ERROR)
++        printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
++
++    printf(&quot;ThreadSocketHandler exiting\n&quot;);
+ }
+ 
+ void ThreadSocketHandler2(void* parg)
+@@ -600,7 +607,8 @@ void ThreadSocketHandler2(void* parg)
+         vnThreadsRunning[0]--;
+         int nSelect = select(hSocketMax + 1, &amp;fdsetRecv, &amp;fdsetSend, NULL, &amp;timeout);
+         vnThreadsRunning[0]++;
+-        CheckForShutdown(0);
++        if (fShutdown)
++            return;
+         if (nSelect == SOCKET_ERROR)
+         {
+             int nErr = WSAGetLastError();
+@@ -659,7 +667,8 @@ void ThreadSocketHandler2(void* parg)
+             vNodesCopy = vNodes;
+         foreach(CNode* pnode, vNodesCopy)
+         {
+-            CheckForShutdown(0);
++            if (fShutdown)
++                return;
+             SOCKET hSocket = pnode-&gt;hSocket;
+ 
+             //
+@@ -708,7 +717,7 @@ void ThreadSocketHandler2(void* parg)
+                     CDataStream&amp; vSend = pnode-&gt;vSend;
+                     if (!vSend.empty())
+                     {
+-                        int nBytes = send(hSocket, &amp;vSend[0], vSend.size(), 0);
++                        int nBytes = send(hSocket, &amp;vSend[0], vSend.size(), MSG_NOSIGNAL);
+                         if (nBytes &gt; 0)
+                         {
+                             vSend.erase(vSend.begin(), vSend.begin() + nBytes);
+@@ -747,24 +756,21 @@ void ThreadOpenConnections(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadOpenConnections(parg));
+ 
+-    loop
++    try
+     {
+         vnThreadsRunning[1]++;
+-        CheckForShutdown(1);
+-        try
+-        {
+-            ThreadOpenConnections2(parg);
+-            vnThreadsRunning[1]--;
+-        }
+-        catch (std::exception&amp; e) {
+-            vnThreadsRunning[1]--;
+-            PrintException(&amp;e, &quot;ThreadOpenConnections()&quot;);
+-        } catch (...) {
+-            vnThreadsRunning[1]--;
+-            PrintException(NULL, &quot;ThreadOpenConnections()&quot;);
+-        }
+-        Sleep(5000);
++        ThreadOpenConnections2(parg);
++        vnThreadsRunning[1]--;
++    }
++    catch (std::exception&amp; e) {
++        vnThreadsRunning[1]--;
++        PrintException(&amp;e, &quot;ThreadOpenConnections()&quot;);
++    } catch (...) {
++        vnThreadsRunning[1]--;
++        PrintException(NULL, &quot;ThreadOpenConnections()&quot;);
+     }
++
++    printf(&quot;ThreadOpenConnections exiting\n&quot;);
+ }
+ 
+ void ThreadOpenConnections2(void* parg)
+@@ -778,7 +784,8 @@ void ThreadOpenConnections2(void* parg)
+         for (int i = 0; i &lt; 10; i++)
+         {
+             Sleep(1000);
+-            CheckForShutdown(1);
++            if (fShutdown)
++                return;
+         }
+     }
+ 
+@@ -792,7 +799,8 @@ void ThreadOpenConnections2(void* parg)
+             {
+                 OpenNetworkConnection(addr);
+                 Sleep(1000);
+-                CheckForShutdown(1);
++                if (fShutdown)
++                    return;
+             }
+         }
+     }
+@@ -806,11 +814,13 @@ void ThreadOpenConnections2(void* parg)
+         const int nMaxConnections = 15;
+         while (vNodes.size() &gt;= nMaxConnections || vNodes.size() &gt;= mapAddresses.size())
+         {
+-            CheckForShutdown(1);
++            if (fShutdown)
++                return;
+             Sleep(2000);
+         }
+         vnThreadsRunning[1]++;
+-        CheckForShutdown(1);
++        if (fShutdown)
++            return;
+ 
+         //
+         // Choose an address to connect to based on most recently seen
+@@ -869,14 +879,16 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
+     //
+     // Initiate outbound network connection
+     //
+-    CheckForShutdown(1);
++    if (fShutdown)
++        return false;
+     if (addrConnect.ip == addrLocalHost.ip || !addrConnect.IsIPv4() || FindNode(addrConnect.ip))
+         return false;
+ 
+     vnThreadsRunning[1]--;
+     CNode* pnode = ConnectNode(addrConnect);
+     vnThreadsRunning[1]++;
+-    CheckForShutdown(1);
++    if (fShutdown)
++        return false;
+     if (!pnode)
+         return false;
+     pnode-&gt;fNetworkNode = true;
+@@ -914,24 +926,21 @@ void ThreadMessageHandler(void* parg)
+ {
+     IMPLEMENT_RANDOMIZE_STACK(ThreadMessageHandler(parg));
+ 
+-    loop
++    try
+     {
+         vnThreadsRunning[2]++;
+-        CheckForShutdown(2);
+-        try
+-        {
+-            ThreadMessageHandler2(parg);
+-            vnThreadsRunning[2]--;
+-        }
+-        catch (std::exception&amp; e) {
+-            vnThreadsRunning[2]--;
+-            PrintException(&amp;e, &quot;ThreadMessageHandler()&quot;);
+-        } catch (...) {
+-            vnThreadsRunning[2]--;
+-            PrintException(NULL, &quot;ThreadMessageHandler()&quot;);
+-        }
+-        Sleep(5000);
++        ThreadMessageHandler2(parg);
++        vnThreadsRunning[2]--;
++    }
++    catch (std::exception&amp; e) {
++        vnThreadsRunning[2]--;
++        PrintException(&amp;e, &quot;ThreadMessageHandler()&quot;);
++    } catch (...) {
++        vnThreadsRunning[2]--;
++        PrintException(NULL, &quot;ThreadMessageHandler()&quot;);
+     }
++
++    printf(&quot;ThreadMessageHandler exiting\n&quot;);
+ }
+ 
+ void ThreadMessageHandler2(void* parg)
+@@ -951,10 +960,14 @@ void ThreadMessageHandler2(void* parg)
+             // Receive messages
+             TRY_CRITICAL_BLOCK(pnode-&gt;cs_vRecv)
+                 ProcessMessages(pnode);
++            if (fShutdown)
++                return;
+ 
+             // Send messages
+             TRY_CRITICAL_BLOCK(pnode-&gt;cs_vSend)
+                 SendMessages(pnode);
++            if (fShutdown)
++                return;
+ 
+             pnode-&gt;Release();
+         }
+@@ -963,7 +976,8 @@ void ThreadMessageHandler2(void* parg)
+         vnThreadsRunning[2]--;
+         Sleep(100);
+         vnThreadsRunning[2]++;
+-        CheckForShutdown(2);
++        if (fShutdown)
++            return;
+     }
+ }
+ 
+@@ -996,7 +1010,7 @@ bool StartNode(string&amp; strError)
+ 
+     // Get local host ip
+     char pszHostName[255];
+-    if (gethostname(pszHostName, 255) == SOCKET_ERROR)
++    if (gethostname(pszHostName, sizeof(pszHostName)) == SOCKET_ERROR)
+     {
+         strError = strprintf(&quot;Error: Unable to get IP address of this computer (gethostname returned error %d)&quot;, WSAGetLastError());
+         printf(&quot;%s\n&quot;, strError.c_str());
+@@ -1009,9 +1023,16 @@ bool StartNode(string&amp; strError)
+         printf(&quot;%s\n&quot;, strError.c_str());
+         return false;
+     }
+-    addrLocalHost = CAddress(*(long*)(phostent-&gt;h_addr_list[0]),
+-                             DEFAULT_PORT,
+-                             nLocalServices);
++
++    // Take the first IP that isn&#x27;t loopback 127.x.x.x
++    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
++        printf(&quot;host ip %d: %s\n&quot;, i, CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i]).ToStringIP().c_str());
++    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
++    {
++        addrLocalHost = CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i], DEFAULT_PORT, nLocalServices);
++        if (addrLocalHost.IsValid() &amp;&amp; addrLocalHost.GetByte(3) != 127)
++            break;
++    }
+     printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
+ 
+     // Create socket for listening for incoming connections
+@@ -1022,6 +1043,10 @@ bool StartNode(string&amp; strError)
+         printf(&quot;%s\n&quot;, strError.c_str());
+         return false;
+     }
++#if defined(__BSD__) || defined(__WXOSX__)
++    int set = 1;
++    setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -30,7 +30,6 @@ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
+ bool AnySubscribed(unsigned int nChannel);
+ bool StartNode(string&amp; strError=REF(string()));
+ bool StopNode();
+-void CheckForShutdown(int n);
+ 
+ 
+ 
+@@ -268,6 +267,7 @@ public:
+     struct sockaddr_in GetSockAddr() const
+     {
+         struct sockaddr_in sockaddr;
++        memset(&amp;sockaddr, 0, sizeof(sockaddr));
+         sockaddr.sin_family = AF_INET;
+         sockaddr.sin_addr.s_addr = ip;
+         sockaddr.sin_port = port;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -65,11 +65,13 @@ bool Is24HourTime()
+ 
+ string DateStr(int64 nTime)
+ {
++    // Can only be used safely here in the UI
+     return (string)wxDateTime((time_t)nTime).FormatDate();
+ }
+ 
+ string DateTimeStr(int64 nTime)
+ {
++    // Can only be used safely here in the UI
+     wxDateTime datetime((time_t)nTime);
+     if (Is24HourTime())
+         return (string)datetime.Format(&quot;%x %H:%M&quot;);
+@@ -283,6 +285,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     fRefreshListCtrl = false;
+     fRefreshListCtrlRunning = false;
+     fOnSetFocusAddress = false;
++    fRefresh = false;
+     m_choiceFilter-&gt;SetSelection(0);
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+@@ -350,7 +353,7 @@ void Shutdown(void* parg)
+         StopNode();
+         DBFlush(true);
+ 
+-        printf(&quot;Bitcoin exiting\n&quot;);
++        printf(&quot;Bitcoin exiting\n\n&quot;);
+         exit(0);
+     }
+ }
+@@ -391,6 +394,30 @@ void CMainFrame::OnListColBeginDrag(wxListEvent&amp; event)
+         event.Veto();
+ }
+ 
++int CMainFrame::GetSortIndex(const string&amp; strSort)
++{
++#ifdef __WXMSW__
++    return 0;
++#else
++    // The wx generic listctrl implementation used on GTK doesn&#x27;t sort,
++    // so we have to do it ourselves.  Remember, we sort in reverse order.
++    // In the wx generic implementation, they store the list of items
++    // in a vector, so indexed lookups are fast, but inserts are slower
++    // the closer they are to the top.
++    int low = 0;
++    int high = m_listCtrl-&gt;GetItemCount();
++    while (low &lt; high)
++    {
++        int mid = low + ((high - low) / 2);
++        if (strSort.compare(m_listCtrl-&gt;GetItemText(mid).c_str()) &gt;= 0)
++            high = mid;
++        else
++            low = mid + 1;
++    }
++    return low;
++#endif
++}
++
+ void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5, const wxString&amp; str6)
+ {
+     string str0 = strSort;
+@@ -407,7 +434,7 @@ void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSo
+     // fNew is for blind insert, only use if you&#x27;re sure it&#x27;s new
+     if (fNew || nIndex == -1)
+     {
+-        nIndex = m_listCtrl-&gt;InsertItem(0, str0);
++        nIndex = m_listCtrl-&gt;InsertItem(GetSortIndex(strSort), str0);
+     }
+     else
+     {
+@@ -415,7 +442,7 @@ void CMainFrame::InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSo
+         if (GetItemText(m_listCtrl, nIndex, 0) != str0)
+         {
+             m_listCtrl-&gt;DeleteItem(nIndex);
+-            nIndex = m_listCtrl-&gt;InsertItem(0, str0);
++            nIndex = m_listCtrl-&gt;InsertItem(GetSortIndex(strSort), str0);
+         }
+     }
+ 
+@@ -826,6 +853,11 @@ void CMainFrame::RefreshStatusColumn()
+ 
+ void CMainFrame::OnPaint(wxPaintEvent&amp; event)
+ {
++    if (fRefresh)
++    {
++        fRefresh = false;
++        Refresh();
++    }
+     event.Skip();
+ }
+ 
+@@ -846,7 +878,7 @@ void ThreadDelayedRepaint(void* parg)
+             {
+                 printf(&quot;DelayedRepaint\n&quot;);
+                 wxPaintEvent event;
+-                pframeMain-&gt;Refresh();
++                pframeMain-&gt;fRefresh = true;
+                 pframeMain-&gt;AddPendingEvent(event);
+             }
+         }
+@@ -871,7 +903,7 @@ void MainFrameRepaint()
+ 
+         printf(&quot;MainFrameRepaint\n&quot;);
+         wxPaintEvent event;
+-        pframeMain-&gt;Refresh();
++        pframeMain-&gt;fRefresh = true;
+         pframeMain-&gt;AddPendingEvent(event);
+     }
+ }
+@@ -907,7 +939,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+                 }
+                 vWalletUpdated.clear();
+                 if (m_listCtrl-&gt;GetItemCount() &amp;&amp; strTop != (string)m_listCtrl-&gt;GetItemText(0))
+-                    m_listCtrl-&gt;ScrollList(0, INT_MAX);
++                    m_listCtrl-&gt;ScrollList(0, INT_MIN/2);
+             }
+         }
+ 
+@@ -943,9 +975,10 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
+-#ifdef __WXMSW__
+-    m_listCtrl-&gt;OnPaint(event);
+-#endif
++    // Pass through to listctrl to actually do the paint, we&#x27;re just hooking the message
++    m_listCtrl-&gt;Disconnect(wxEVT_PAINT, (wxObjectEventFunction)NULL, NULL, this);
++    m_listCtrl-&gt;GetEventHandler()-&gt;ProcessEvent(event);
++    m_listCtrl-&gt;Connect(wxEVT_PAINT, wxPaintEventHandler(CMainFrame::OnPaintListCtrl), NULL, this);
+ }
+ 
+ 
+@@ -3331,7 +3364,11 @@ bool CMyApp::OnInit2()
+     g_isPainting = 10000;
+ #endif
+     wxImage::AddHandler(new wxPNGHandler);
++#ifdef __WXMSW__
+     SetAppName(&quot;Bitcoin&quot;);
++#else
++    SetAppName(&quot;bitcoin&quot;);
++#endif
+ 
+     ParseParameters(argc, argv);
+     if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+@@ -3355,7 +3392,10 @@ bool CMyApp::OnInit2()
+     // Limit to single instance per user
+     // Required to protect the database files if we&#x27;re going to keep deleting log.*
+     //
+-    wxString strMutexName = wxString(&quot;Bitcoin.&quot;) + getenv(&quot;HOMEPATH&quot;);
++#ifdef __WXMSW__
++    // todo: wxSingleInstanceChecker wasn&#x27;t working on Linux, never deleted its lock file
++    //  maybe should go by whether successfully bind port 8333 instead
++    wxString strMutexName = wxString(&quot;bitcoin_running.&quot;) + getenv(&quot;HOMEPATH&quot;);
+     for (int i = 0; i &lt; strMutexName.size(); i++)
+         if (!isalnum(strMutexName[i]))
+             strMutexName[i] = &#x27;.&#x27;;
+@@ -3367,7 +3407,6 @@ bool CMyApp::OnInit2()
+         loop
+         {
+             // TODO: find out how to do this in Linux, or replace with wxWidgets commands
+-#ifdef __WXMSW__
+             // Show the previous instance and exit
+             HWND hwndPrev = FindWindow(&quot;wxWindowClassNR&quot;, &quot;Bitcoin&quot;);
+             if (hwndPrev)
+@@ -3377,7 +3416,6 @@ bool CMyApp::OnInit2()
+                 SetForegroundWindow(hwndPrev);
+                 return false;
+             }
+-#endif
+ 
+             if (GetTime() &gt; nStart + 60)
+                 return false;
+@@ -3390,6 +3428,7 @@ bool CMyApp::OnInit2()
+                 break;
+         }
+     }
++#endif
+ 
+     //
+     // Parameters</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -32,7 +32,6 @@ extern int fMinimizeOnClose;
+ 
+ 
+ extern void HandleCtrlA(wxKeyEvent&amp; event);
+-extern string DateTimeStr(int64 nTime);
+ extern string FormatTxStatus(const CWalletTx&amp; wtx);
+ extern void CrossThreadCall(int nID, void* pdata);
+ extern void MainFrameRepaint();
+@@ -84,8 +83,10 @@ public:
+     bool fRefreshListCtrlRunning;
+     bool fOnSetFocusAddress;
+     unsigned int nListViewUpdated;
++    bool fRefresh;
+ 
+     void OnCrossThreadCall(wxCommandEvent&amp; event);
++    int GetSortIndex(const string&amp; strSort);
+     void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
+     bool DeleteLine(uint256 hashKey);
+     bool InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -84,7 +84,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_staticText32-&gt;Wrap( -1 );
+ 	bSizer85-&gt;Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
+ 	
+-	m_textCtrlAddress = new wxTextCtrl( this, wxID_TEXTCTRLADDRESS, wxEmptyString, wxDefaultPosition, wxSize( 250,-1 ), wxTE_READONLY );
++	m_textCtrlAddress = new wxTextCtrl( this, wxID_TEXTCTRLADDRESS, wxEmptyString, wxDefaultPosition, wxSize( 340,-1 ), wxTE_READONLY );
+ 	m_textCtrlAddress-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_MENU ) );
+ 	
+ 	bSizer85-&gt;Add( m_textCtrlAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+@@ -143,7 +143,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	wxBoxSizer* bSizer157;
+ 	bSizer157 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_listCtrl = new wxListCtrl( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxALWAYS_SHOW_SB );
++	m_listCtrl = new wxListCtrl( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
+ 	bSizer157-&gt;Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
+ 	
+ 	m_panel7-&gt;SetSizer( bSizer157 );
+@@ -343,7 +343,7 @@ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, con
+ 	wxBoxSizer* bSizer65;
+ 	bSizer65 = new wxBoxSizer( wxVERTICAL );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( 85,25 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer65-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	bSizer64-&gt;Add( bSizer65, 0, wxALIGN_RIGHT, 5 );
+@@ -520,17 +520,13 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	wxBoxSizer* bSizer58;
+ 	bSizer58 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( 85,25 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer58-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer58-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	m_buttonApply = new wxButton( this, wxID_APPLY, wxT(&quot;&amp;Apply&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonApply-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer58-&gt;Add( m_buttonApply, 0, wxALL, 5 );
+ 	
+ 	bSizer55-&gt;Add( bSizer58, 0, wxALIGN_RIGHT, 5 );
+@@ -622,7 +618,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	
+ 	bSizer61-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+-	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( 85,25 ), 0 );
++	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer61-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
+@@ -767,13 +763,10 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	
+ 	m_buttonSend = new wxButton( this, wxID_BUTTONSEND, wxT(&quot;&amp;Send&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	m_buttonSend-&gt;SetFont( wxFont( wxNORMAL_FONT-&gt;GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+-	m_buttonSend-&gt;SetMinSize( wxSize( 85,25 ) );
+ 	
+ 	bSizer23-&gt;Add( m_buttonSend, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer23-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer21-&gt;Add( bSizer23, 0, wxEXPAND, 5 );
+@@ -833,13 +826,10 @@ CSendingDialogBase::CSendingDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_ANY, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_buttonOK-&gt;Enable( false );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+ 	
+ 	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+@@ -887,28 +877,19 @@ CYourAddressDialogBase::CYourAddressDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer69-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonRename = new wxButton( this, wxID_BUTTONRENAME, wxT(&quot;&amp;Edit...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonRename-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonRename, 0, wxALL, 5 );
+ 	
+ 	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot;&amp;New Address...&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonNew-&gt;SetMinSize( wxSize( 110,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonNew, 0, wxALL, 5 );
+ 	
+ 	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot;&amp;Copy to Clipboard&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonCopy-&gt;SetMinSize( wxSize( 120,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonCopy, 0, wxALL, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	m_buttonCancel-&gt;Hide();
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+ 	
+ 	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+@@ -969,28 +950,18 @@ CAddressBookDialogBase::CAddressBookDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer69-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonEdit = new wxButton( this, wxID_BUTTONEDIT, wxT(&quot;&amp;Edit...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonEdit-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonEdit, 0, wxALL, 5 );
+ 	
+ 	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot;&amp;New Address...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonNew-&gt;SetMinSize( wxSize( 110,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonNew, 0, wxALL, 5 );
+ 	
+ 	m_buttonDelete = new wxButton( this, wxID_BUTTONDELETE, wxT(&quot;&amp;Delete&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonDelete-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonDelete, 0, wxALL, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+@@ -1389,18 +1360,12 @@ CEditProductDialogBase::CEditProductDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer26 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_BUTTONSEND, wxT(&quot;&amp;Send&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonPreview = new wxButton( this, wxID_BUTTONPREVIEW, wxT(&quot;&amp;Preview&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonPreview-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonPreview, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+@@ -1605,18 +1570,13 @@ CViewProductDialogBase::CViewProductDialogBase( wxWindow* parent, wxWindowID id,
+ 	
+ 	m_buttonBack = new wxButton( this, wxID_BUTTONBACK, wxT(&quot;&lt; &amp;Back  &quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_buttonBack-&gt;Enable( false );
+-	m_buttonBack-&gt;SetMinSize( wxSize( 85,25 ) );
+ 	
+ 	bSizer26-&gt;Add( m_buttonBack, 0, wxALL, 5 );
+ 	
+ 	m_buttonNext = new wxButton( this, wxID_BUTTONNEXT, wxT(&quot;  &amp;Next &gt;&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonNext-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonNext, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+@@ -1662,8 +1622,6 @@ CViewOrderDialogBase::CViewOrderDialogBase( wxWindow* parent, wxWindowID id, con
+ 	bSizer26 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer26-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+@@ -1720,13 +1678,9 @@ CEditReviewDialogBase::CEditReviewDialogBase( wxWindow* parent, wxWindowID id, c
+ 	bSizer113 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonSubmit = new wxButton( this, wxID_SUBMIT, wxT(&quot;&amp;Submit&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonSubmit-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer113-&gt;Add( m_buttonSubmit, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer113-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer112-&gt;Add( bSizer113, 0, wxALIGN_RIGHT, 5 );
+@@ -1951,13 +1905,9 @@ CGetTextFromUserDialogBase::CGetTextFromUserDialogBase( wxWindow* parent, wxWind
+ 	bSizer80-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	m_buttonOK-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer80-&gt;Add( m_buttonOK, 0, wxALL, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonCancel-&gt;SetMinSize( wxSize( 85,25 ) );
+-	
+ 	bSizer80-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
+ 	
+ 	bSizer79-&gt;Add( bSizer80, 0, wxEXPAND, 5 );</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
+             &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+             &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-            &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;1&quot;&gt;
++            &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;0&quot;&gt;
+                 &lt;property name=&quot;bg&quot;&gt;240,240,240&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+@@ -225,7 +225,7 @@
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+             &lt;/object&gt;
+-            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;1&quot;&gt;
++            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;0&quot;&gt;
+                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;bitmapsize&quot;&gt;20,20&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -439,7 +439,7 @@
+                                 &lt;property name=&quot;name&quot;&gt;m_textCtrlAddress&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;250,-1&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;340,-1&lt;/property&gt;
+                                 &lt;property name=&quot;style&quot;&gt;wxTE_READONLY&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -944,7 +944,7 @@
+                                             &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                            &lt;property name=&quot;window_style&quot;&gt;wxALWAYS_SHOW_SB&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
+                                             &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -1648,7 +1648,7 @@
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -3031,7 +3031,7 @@
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -3079,7 +3079,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -3131,7 +3131,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_APPLY&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Apply&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonApply&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -3493,7 +3493,7 @@
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -4485,7 +4485,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONSEND&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Send&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonSend&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -4537,7 +4537,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -4775,7 +4775,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;OK&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -4827,7 +4827,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5089,7 +5089,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONRENAME&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Edit...&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonRename&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5141,7 +5141,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONNEW&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;New Address...&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;110,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonNew&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5193,7 +5193,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONCOPY&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Copy to Clipboard&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;120,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCopy&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5245,7 +5245,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_OK&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;OK&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5297,7 +5297,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5559,7 +5559,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONEDIT&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Edit...&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonEdit&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5611,7 +5611,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONNEW&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;New Address...&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;110,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonNew&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5663,7 +5663,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONDELETE&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Delete&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonDelete&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5715,7 +5715,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_OK&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;OK&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -5767,7 +5767,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10225,7 +10225,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONSEND&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Send&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10277,7 +10277,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONPREVIEW&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Preview&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonPreview&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10329,7 +10329,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10798,7 +10798,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONBACK&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;lt; &amp;amp;Back  &lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonBack&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10850,7 +10850,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONNEXT&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;  &amp;amp;Next &amp;gt;&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonNext&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -10902,7 +10902,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -11087,7 +11087,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_OK&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;OK&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -11488,7 +11488,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_SUBMIT&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;&amp;amp;Submit&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonSubmit&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -11540,7 +11540,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCancel&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -12907,7 +12907,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_OK&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;OK&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;minimum_size&quot;&gt;85,25&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonOK&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+@@ -12959,7 +12959,7 @@
+                                 &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -96,12 +96,7 @@ void RandAddSeedPerfmon()
+         hash = 0;
+         memset(pdata, 0, nSize);
+ 
+-        time_t nTime;
+-        time(&amp;nTime);
+-        struct tm* ptmTime = gmtime(&amp;nTime);
+-        char pszTime[200];
+-        strftime(pszTime, sizeof(pszTime), &quot;%x %H:%M:%S&quot;, ptmTime);
+-        printf(&quot;%s RandAddSeed() %d bytes\n&quot;, pszTime, nSize);
++        printf(&quot;%s RandAddSeed() %d bytes\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str(), nSize);
+     }
+ #endif
+ }
+@@ -350,7 +345,9 @@ void FormatException(char* pszMessage, std::exception* pex, const char* pszThrea
+     pszModule[0] = &#x27;\0&#x27;;
+     GetModuleFileName(NULL, pszModule, sizeof(pszModule));
+ #else
+-    const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();
++    // might not be thread safe, uses wxString
++    //const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();
++    const char* pszModule = &quot;bitcoin&quot;;
+ #endif
+     if (pex)
+         snprintf(pszMessage, 1000,
+@@ -425,7 +422,6 @@ void GetDataDir(char* pszDir)
+         }
+         strlcpy(pszDir, pszCachedDir, MAX_PATH);
+     }
+-
+ }
+ 
+ string GetDataDir()</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -84,6 +84,10 @@ inline void SetThreadPriority(int nThread, int nPriority) { setpriority(PRIO_PRO
+ #define THREAD_PRIORITY_NORMAL          0
+ #define THREAD_PRIORITY_ABOVE_NORMAL    0
+ #endif
++#ifndef MSG_NOSIGNAL
++#define MSG_NOSIGNAL        0
++#endif
++
+ 
+ 
+ 
+@@ -379,6 +383,14 @@ inline int64 GetTimeMillis()
+     return wxGetLocalTimeMillis().GetValue();
+ }
+ 
++inline string DateTimeStrFormat(const char* pszFormat, int64 nTime)
++{
++    time_t n = nTime;
++    struct tm* ptmTime = gmtime(&amp;n);
++    char pszTime[200];
++    strftime(pszTime, sizeof(pszTime), pszFormat, ptmTime);
++    return pszTime;
++}
+ 
+ 
+ 
+@@ -400,7 +412,7 @@ inline void heapchk()
+     {                                                               \
+         static char nLoops;                                         \
+         if (nLoops &lt;= 0)                                            \
+-            nLoops = GetRand(50) + 1;                               \
++            nLoops = GetRand(20) + 1;                               \
+         if (nLoops-- &gt; 1)                                           \
+         {                                                           \
+             ThreadFn;                                               \</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e4c05d3/">← unix build merged in, bitmap resources from xpm instead of…</a><a rel="next" href="../../commits/8acda00/">UIThreadCall, ThreadSafeMessageBox →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

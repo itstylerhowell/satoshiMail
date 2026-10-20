@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bugfixes in SVN rev 130 – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 12 August 2010: Misc bugfixes in rev 130: fix -datadir with relative path autostart is now off by default except on windows fix…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p179-bugfixes-in-svn-rev-130/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bugfixes in SVN rev 130 – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 12 August 2010: Misc bugfixes in rev 130: fix -datadir with relative path autostart is now off by default except on windows fix…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p179-bugfixes-in-svn-rev-130/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bugfixes in SVN rev 130 – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 12 August 2010: Misc bugfixes in rev 130: fix -datadir with relative path autostart is now off by default except on windows fix…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Bugfixes in SVN rev 130", "url": "https://satoshimail.pages.dev/conversations/p179-bugfixes-in-svn-rev-130/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-12T21:20:31Z", "text": "Misc bugfixes in rev 130: fix -datadir with relative path autostart is now off by default except on windows fix occasional \"vector iterator not dereferencable\" assertion when compiled with msvc fix readlink compile warning on linux build use sys/param.h and BSD define instead of __BSD__ -paytxfee switch, e.g. -paytxfee=0.01", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-12T23:39:12Z", "text": "So, -paytxfee sets nTransactionFee. Can someone explain how nTransactionFee causes a client to behave? And more specifically, what happens when node A sets 1000.0 and all other nodes use 0.01?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "aceat64"}, "datePublished": "2010-08-13T02:42:16Z", "text": "From what I understand a node will not include transactions in it's blocks unless the transaction includes a fee that meets the node's requirements. So in the case of a node setting the fee to 1,000 it would likely never include any transactions in blocks it generates, which means it will miss out on any transaction fees other nodes would have gotten. There really isn't a reason to set a nodes requirements higher then the rest of the network since you are basically just pricing yourself out of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-13T03:15:23Z", "text": "No, that's not what it is. -paytxfee allows you to include a transaction fee with your transactions. If transaction confirmations become slow, you can get priority by using \"-paytxfee=0.01\". Any transactions you send would cost an extra 0.01. There's no reason to use more than 0.01. It's just there in case we need it. It probably won't be needed, and it can be explained more if we do."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Bugfixes in SVN rev 130", "item": "https://satoshimail.pages.dev/conversations/p179-bugfixes-in-svn-rev-130/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p179">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Bugfixes in SVN rev 130</span></div></nav>
+<main class="in">
+<h1>Bugfixes in SVN rev 130</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 12 August 2010 · with Satoshi Nakamoto, aceat64, jgarzik</p>
+<p class="actions"><a class="btn" href="../../#t-p179">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/179/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:20:31Z">12 August 2010, 21:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8920#msg8920" rel="nofollow noopener">original</a></span></header>
+<div class="t">Misc bugfixes in rev 130:
+
+fix -datadir with relative path
+autostart is now off by default except on windows
+fix occasional &quot;vector iterator not dereferencable&quot; assertion when compiled with msvc
+fix readlink compile warning on linux build
+use sys/param.h and BSD define instead of __BSD__
+-paytxfee switch, e.g. -paytxfee=0.01</div></article><article class="msg" id="m1">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-12T23:39:12Z">12 August 2010, 23:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8941#msg8941" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 12, 2010, 09:20:31 PM</div><div class="t">-paytxfee switch, e.g. -paytxfee=0.01</div></blockquote><div class="t">So, -paytxfee sets nTransactionFee.
+
+Can someone explain how nTransactionFee causes a client to behave?
+
+And more specifically, what happens when node A sets 1000.0 and all other nodes use 0.01?</div></article><article class="msg" id="m2">
+<header><b>aceat64</b><span class="muted"> · <time datetime="2010-08-13T02:42:16Z">13 August 2010, 02:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8957#msg8957" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 12, 2010, 11:39:12 PM</div><div class="t">&gt; Quote from: satoshi on August 12, 2010, 09:20:31 PM
+&gt; -paytxfee switch, e.g. -paytxfee=0.01
+
+So, -paytxfee sets nTransactionFee.
+
+Can someone explain how nTransactionFee causes a client to behave?
+
+And more specifically, what happens when node A sets 1000.0 and all other nodes use 0.01?</div></blockquote><div class="t">From what I understand a node will not include transactions in it&#x27;s blocks unless the transaction includes a fee that meets the node&#x27;s requirements. So in the case of a node setting the fee to 1,000 it would likely never include any transactions in blocks it generates, which means it will miss out on any transaction fees other nodes would have gotten. There really isn&#x27;t a reason to set a nodes requirements higher then the rest of the network since you are basically just pricing yourself out of the market.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T03:15:23Z">13 August 2010, 03:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8960#msg8960" rel="nofollow noopener">original</a></span></header>
+<div class="t">No, that&#x27;s not what it is.
+
+-paytxfee allows you to include a transaction fee with your transactions.  If transaction confirmations become slow, you can get priority by using &quot;-paytxfee=0.01&quot;.  Any transactions you send would cost an extra 0.01.  There&#x27;s no reason to use more than 0.01.
+
+It&#x27;s just there in case we need it.  It probably won&#x27;t be needed, and it can be explained more if we do.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p178-bsd-detection/">← BSD detection</a><a rel="next" href="../../conversations/p180-version-0-3-9-rc1-please-test/">Version 0.3.9 rc1, please test →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

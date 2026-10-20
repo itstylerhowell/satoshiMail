@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fix -datadir=./subdir relative… (r130) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/01cd2fd/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fix -datadir=./subdir relative… (r130) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/01cd2fd/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fix -datadir=./subdir relative… (r130) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional \"vector iterator not dereferencable\" assertion with msvc, fix readlink compile warning on linux build, use sys/param.h and BSD define instead of __BSD__, -paytxfee switch", "url": "https://satoshimail.pages.dev/commits/01cd2fd/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-12T21:13:43Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/01cd2fdaf3ac6071304ceb80fb7436ac02b1059e"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix -datadir=./subdir relative path…", "item": "https://satoshimail.pages.dev/commits/01cd2fd/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c01cd2fdaf3">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fix -datadir=./subdir relative path…</span></div></nav>
+<main class="in">
+<h1>fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional &quot;vector iterator not dereferencable&quot; assertion with msvc, fix readlink compile warning on linux build, use sys/param.h and BSD define instead of __BSD__, -paytxfee switch</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 12 August 2010 · SVN r130 · release v0.3.10 · 20 files, +132 −39</p>
+<p class="actions"><a class="btn" href="../../#t-c01cd2fdaf3">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/01cd2fdaf3ac6071304ceb80fb7436ac02b1059e" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -18,6 +18,14 @@
+ #define _WIN32_IE 0x0400
+ #define WIN32_LEAN_AND_MEAN 1
+ #define __STDC_LIMIT_MACROS // to enable UINT64_MAX from stdint.h
++#if (defined(__unix__) || defined(unix)) &amp;&amp; !defined(USG)
++#include &lt;sys/param.h&gt;  // to get BSD define
++#endif
++#ifdef __WXMAC_OSX__
++#ifndef BSD
++#define BSD 1
++#endif
++#endif
+ #ifdef GUI
+ #include &lt;wx/wx.h&gt;
+ #include &lt;wx/stdpaths.h&gt;
+@@ -25,12 +33,6 @@
+ #include &lt;wx/utils.h&gt;
+ #include &lt;wx/clipbrd.h&gt;
+ #include &lt;wx/taskbar.h&gt;
+-#else
+-#ifdef __WXMAC_OSX__
+-#define __WXMAC__ 1
+-#define __WXOSX__ 1
+-#define __BSD__ 1
+-#endif
+ #endif
+ #include &lt;openssl/buffer.h&gt;
+ #include &lt;openssl/ecdsa.h&gt;
+@@ -98,7 +100,7 @@
+ #include &lt;ifaddrs.h&gt;
+ #include &lt;fcntl.h&gt;
+ #endif
+-#ifdef __BSD__
++#ifdef BSD
+ #include &lt;netinet/in.h&gt;
+ #endif
+ </code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -137,7 +137,10 @@ bool AppInit2(int argc, char* argv[])
+     ParseParameters(argc, argv);
+ 
+     if (mapArgs.count(&quot;-datadir&quot;))
+-        strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
++    {
++        filesystem::path pathDataDir = filesystem::system_complete(mapArgs[&quot;-datadir&quot;]);
++        strlcpy(pszSetDataDir, pathDataDir.string().c_str(), sizeof(pszSetDataDir));
++    }
+ 
+     ReadConfigFile(mapArgs, mapMultiArgs); // Must be done after processing datadir
+ 
+@@ -363,6 +366,15 @@ bool AppInit2(int argc, char* argv[])
+         }
+     }
+ 
++    if (mapArgs.count(&quot;-paytxfee&quot;))
++    {
++        if (!ParseMoney(mapArgs[&quot;-paytxfee&quot;], nTransactionFee))
++        {
++            wxMessageBox(_(&quot;Invalid amount for -paytxfee=&lt;amount&gt;&quot;), &quot;Bitcoin&quot;);
++            return false;
++        }
++    }
++
+     //
+     // Create the main window and start the node
+     //
+@@ -382,7 +394,7 @@ bool AppInit2(int argc, char* argv[])
+     if (mapArgs.count(&quot;-server&quot;) || fDaemon)
+         CreateThread(ThreadRPCServer, NULL);
+ 
+-#ifdef GUI
++#if defined(__WXMSW__) &amp;&amp; defined(GUI)
+     if (fFirstRun)
+         SetStartOnSystemStartup(true);
+ #endif</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;Von: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;Von: Unbekannt, Empfangen durch: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Empfangen durch: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -328,6 +328,14 @@ msgstr &quot;Version 0.%d.%d Beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Wird als \&quot;Von: Unbekannt\&quot; erscheinen&quot;
+ 
++#: ../../../ui.cpp:1681
++msgid &quot;n/a&quot;
++msgstr &quot;Unbekannt&quot;
++
++#: ../../../ui.cpp:1681
++msgid &quot;Unknown&quot;
++msgstr &quot;Unbekannt&quot;
++
+ #: ../../../ui.cpp:1682
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;Beim überweisen an eine Bitcoin-Adresse kann keine Nachricht angegeben werden.&quot;</code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -210,8 +210,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;De: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;De: desconocido, Recibido con: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Recibido con: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -357,6 +357,14 @@ msgstr &quot;version %d.%d.%d beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Aparecera como \&quot;De: Desconocido\&quot;&quot;
+ 
++#: ../../../ui.cpp:1696
++msgid &quot;n/a&quot;
++msgstr &quot;Desconocido&quot;
++
++#: ../../../ui.cpp:1696
++msgid &quot;Unknown&quot;
++msgstr &quot;Desconocido&quot;
++
+ #: ../../../ui.cpp:1697
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;No se ha podido incluir un mensaje mientras se enviaba la direccion Bitcoin&quot;</code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -210,8 +210,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;De: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;De: Inconnu, reçu depuis: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Reçu depuis: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -358,6 +358,14 @@ msgstr &quot;version %d.%d.%d beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Apparaîtra ainsi \&quot;De: Inconnu\&quot;&quot;
+ 
++#: ../../../ui.cpp:1681
++msgid &quot;n/a&quot;
++msgstr &quot;Inconnu&quot;
++
++#: ../../../ui.cpp:1681
++msgid &quot;Unknown&quot;
++msgstr &quot;Inconnu&quot;
++
+ #: ../../../ui.cpp:1697
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;Impossible d&#x27;inclure un message lors d&#x27;un envoi à une adresse Bitcoin&quot;</code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;Da: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;Da: sconosciuto, Ricevuto con: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Ricevuto con: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -326,6 +326,14 @@ msgstr &quot;versione 0.%d.%d beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Apparirà come \&quot;Da: Sconosciuto\&quot;&quot;
+ 
++#: ../../../ui.cpp:1681
++msgid &quot;n/a&quot;
++msgstr &quot;Sconosciuto&quot;
++
++#: ../../../ui.cpp:1681
++msgid &quot;Unknown&quot;
++msgstr &quot;Sconosciuto&quot;
++
+ #: ../../../ui.cpp:1682
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;Non si può includere un messaggio quando si invia attraverso l&#x27;indirizzo Bitcoin&quot;</code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;Van: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;Van: onbekend, Ontvangen met: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Ontvangen met: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -327,6 +327,14 @@ msgstr &quot;versie 0.%d.%d beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Word vertoont als \&quot;Van: Onbekend\&quot;&quot;
+ 
++#: ../../../ui.cpp:1681
++msgid &quot;n/a&quot;
++msgstr &quot;Onbekend&quot;
++
++#: ../../../ui.cpp:1681
++msgid &quot;Unknown&quot;
++msgstr &quot;Onbekend&quot;
++
+ #: ../../../ui.cpp:1682
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;Kan geen mededeling versturen bij gebruik van Bitcoin adressen&quot;</code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
+ msgstr &quot;Remetente: &quot;
+ 
+ #: ../../../ui.cpp:634
+-msgid &quot;From: unknown, Received with: &quot;
+-msgstr &quot;Remetente: desconhecido, Recebido por: &quot;
++msgid &quot;Received with: &quot;
++msgstr &quot;Recebido por: &quot;
+ 
+ #: ../../../ui.cpp:676
+ msgid &quot;Payment to yourself&quot;
+@@ -326,6 +326,14 @@ msgstr &quot;versão 0.%d.%d beta&quot;
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+ msgstr &quot;Irá aparecer como \&quot;De: Desconhecido\&quot;&quot;
+ 
++#: ../../../ui.cpp:1681
++msgid &quot;n/a&quot;
++msgstr &quot;Desconhecido&quot;
++
++#: ../../../ui.cpp:1681
++msgid &quot;Unknown&quot;
++msgstr &quot;Desconhecido&quot;
++
+ #: ../../../ui.cpp:1682
+ msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
+ msgstr &quot;Não é possível incluir uma mensagem ao enviar para um endereço Bitcoin&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2224,7 +2224,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         // This includes all nodes that are currently online,
+         // since they rebroadcast an addr every 24 hours
+         pfrom-&gt;vAddrToSend.clear();
+-        int64 nSince = GetAdjustedTime() - 24 * 60 * 60; // in the last 24 hours
++        int64 nSince = GetAdjustedTime() - 12 * 60 * 60; // in the last 12 hours
+         CRITICAL_BLOCK(cs_mapAddresses)
+         {
+             unsigned int nSize = mapAddresses.size();</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -66,7 +66,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+     SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+     if (hSocket == INVALID_SOCKET)
+         return false;
+-#if defined(__BSD__) || defined(__WXMAC_OSX__)
++#ifdef BSD
+     int set = 1;
+     setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));
+ #endif
+@@ -808,6 +808,7 @@ void ThreadSocketHandler2(void* parg)
+ 
+ unsigned int pnSeed[] =
+ {
++    // 2010/06
+     0x35218252, 0x9c9c9618, 0xda6bacad, 0xb9aca862, 0x97c235c6,
+     0x146f9562, 0xb67b9e4b, 0x87cf4bc0, 0xb83945d0, 0x984333ad,
+     0xbbeec555, 0x6f0eb440, 0xe0005318, 0x7797e460, 0xddc60fcc,
+@@ -818,6 +819,31 @@ unsigned int pnSeed[] =
+     0xdd3462d0, 0x4e4d1448, 0x171df645, 0x84ee1155,
+     0x248ac445, 0x0e634444, 0x0ded1b63, 0x30c01e60,
+     0xa2b9a094, 0x29e4fd43, 0x9ce61b4c, 0xdae09744,
++
++    // 2010/08
++    0x5ae6bf43, 0x460be257, 0x7245c0cf, 0x4e0f028d, 0x26501760, 0x38643255, 0x67094f4f, 0x480449b8,
++    0x16545143, 0x1f082e5a, 0xaa428018, 0xe411e793, 0x14c1f862, 0x2726105b, 0x9b33ea50, 0xeeef86ca,
++    0xe3210d44, 0x0dca8b63, 0x3f9dfb18, 0x860340ad, 0xf33ba17a, 0x9018375c, 0x1de4e353, 0x0fa52dcb,
++    0x89c4555b, 0x109cf37b, 0x28c55b40, 0x04c801ae, 0x275c1e80, 0x6f7f745d, 0x7a2a5653, 0xa28e26d8,
++    0xa4e65db2, 0x99a06580, 0xf253ba44, 0x82cf6ab8, 0x859c2e8e, 0xf71a815d, 0xc18f1454, 0x71c8a943,
++    0x90d24e18, 0x311789b2, 0x74aba645, 0xde0bbfc3, 0xad724fad, 0xbf1ae15e, 0xbaa6fb54, 0x06e4d145,
++    0x51528645, 0x72120cd4, 0xd4cfd145, 0x0a7afed8, 0x9b9a5fad, 0x9e9ff45e, 0x10128355, 0xd44e8646,
++    0x04a07b47, 0x5fc9d547, 0xe0491e45, 0xbac21b41, 0x7aa31bae, 0x10483c5f, 0x94a23055, 0x73d9dc47,
++    0x1a99c247, 0x822fe847, 0x7e57ba48, 0xb19ea843, 0xa60621b2, 0x778cf163, 0x125c6556, 0xf94ba44f,
++    0xa61a0948, 0x6c839e4b, 0x29af5348, 0x68d84845, 0x752b95c3, 0xcf0d4663, 0x08e11e56, 0x75109550,
++    0x5f24b94c, 0x42426d4d, 0xfbbc0a4c, 0x70a9a246, 0xda7837cb, 0xae2a986d, 0xe283c358, 0x0c7ca954,
++    0x8e9bde59, 0x61521760, 0x6884444c, 0xa194e548, 0x9b8809cc, 0x16e96a8f, 0x956ff859, 0xfad5e555,
++    0x0ea70c80, 0x5b4ce26d, 0x7984444c, 0x1080d24a, 0x22a686cf, 0x6bf8c2ad, 0xb0f7485f, 0x06b66e56,
++    0x668373bc, 0x75506279, 0x3868694e, 0x12a5954b, 0x3a8b62d1, 0xb74fcbad, 0xa7dc3360, 0xc070b359,
++    0xa2b87242, 0xc45cab7c, 0x69882050, 0x14a5464b, 0x386acad5, 0x80b85db2, 0x1f78a062, 0xc608c55b,
++    0x4257d543, 0x7636ad80, 0x4432d655, 0xb2114d4b, 0x32639bd9, 0xadd75db2, 0x9be5a362, 0x6831bc5e,
++    0xf7f77046, 0x8f35ba81, 0x09bb4e59, 0xd0fb6b4e, 0xc5daa445, 0x9c611618, 0x355dcc62, 0xf2cf435e,
++    0x31e72c46, 0xdd8a43ad, 0x171f9c5b, 0xb4c2e355, 0xbe8af945, 0x613d3942, 0xe6f9e863, 0x7a3d855f,
++    0xa66adc47, 0x261089b2, 0x5a27105b, 0x6c28105b, 0xdd247946, 0xe6c3a445, 0x43a1ec63, 0x99b4dd5f,
++    0xb6834347, 0x5e9649bc, 0xf9dd545d, 0x6ae4c15b, 0xa5318a47, 0x7984ec47, 0x93a73b63, 0x0c60195f,
++    0xa5c85e4b, 0xa0a36dc2, 0x0739a95e, 0x3d44c15b, 0xfb940f4b, 0xd67c9148, 0x614f9876, 0x0a241c5f,
++    0xad9da74c, 0x4459abc8, 0x12e71b5f, 0x1c534a5d, 0x8ff5fc50, 0x2ca8864b, 0xd894fd80, 0x82ab3160,
++    0x390d804e, 0x2cf310cc, 0x680dad80, 0x691be15e, 0x5a8f4652, 0xaad0784d, 0x0d2431ad,
+ };
+ 
+ 
+@@ -1179,7 +1205,7 @@ bool BindListenPort(string&amp; strError)
+         return false;
+     }
+ 
+-#if defined(__BSD__) || defined(__WXMAC_OSX__)
++#ifdef BSD
+     // Different way of disabling SIGPIPE on BSD
+     setsockopt(hListenSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;nOne, sizeof(int));
+ #endif</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -974,8 +974,8 @@ void ThreadRPCServer2(void* parg)
+                 printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
+ 
+                 // Observe lockdown
+-                if (IsLockdown() &amp;&amp; strMethod != &quot;help&quot; &amp;&amp; strMethod != &quot;stop&quot; &amp;&amp; strMethod != &quot;getgenerate&quot; &amp;&amp; strMethod != &quot;setgenerate&quot;)
+-                    throw runtime_error(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade.&quot;);
++                if (IsLockdown() &amp;&amp; !mapArgs.count(&quot;-overridesafety&quot;) &amp;&amp; strMethod != &quot;help&quot; &amp;&amp; strMethod != &quot;stop&quot; &amp;&amp; strMethod != &quot;getgenerate&quot; &amp;&amp; strMethod != &quot;setgenerate&quot;)
++                    throw runtime_error(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.&quot;);
+ 
+                 // Execute
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 308;
+-static const char* pszSubVer = &quot;.3&quot;;
++static const char* pszSubVer = &quot;.4&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -515,7 +515,7 @@ string SingleLine(const string&amp; strIn)
+ {
+     string strOut;
+     bool fOneSpace = false;
+-    foreach(int c, strIn)
++    foreach(unsigned char c, strIn)
+     {
+         if (isspace(c))
+         {
+@@ -640,7 +640,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                         {
+                             //strDescription += _(&quot;Received payment to &quot;);
+                             //strDescription += _(&quot;Received with address &quot;);
+-                            strDescription += _(&quot;From: unknown, Received with: &quot;);
++                            strDescription += _(&quot;Received with: &quot;);
+                             string strAddress = PubKeyToAddress(vchPubKey);
+                             map&lt;string, string&gt;::iterator mi = mapAddressBook.find(strAddress);
+                             if (mi != mapAddressBook.end() &amp;&amp; !(*mi).second.empty())
+@@ -1559,6 +1559,11 @@ void SetStartOnSystemStartup(bool fAutoStart)
+     }
+     else
+     {
++        char pszExePath[MAX_PATH+1];
++        memset(pszExePath, 0, sizeof(pszExePath));
++        if (readlink(&quot;/proc/self/exe&quot;, pszExePath, sizeof(pszExePath)-1) == -1)
++            return;
++
+         boost::filesystem::create_directories(GetAutostartDir());
+ 
+         boost::filesystem::ofstream optionFile(GetAutostartFilePath(), ios_base::out|ios_base::trunc);
+@@ -1568,9 +1573,6 @@ void SetStartOnSystemStartup(bool fAutoStart)
+             return;
+         }
+         // Write a bitcoin.desktop file to the autostart directory:
+-        char pszExePath[MAX_PATH+1];
+-        memset(pszExePath, 0, sizeof(pszExePath));
+-        readlink(&quot;/proc/self/exe&quot;, pszExePath, sizeof(pszExePath)-1);
+         optionFile &lt;&lt; &quot;[Desktop Entry]\n&quot;;
+         optionFile &lt;&lt; &quot;Type=Application\n&quot;;
+         optionFile &lt;&lt; &quot;Name=Bitcoin\n&quot;;
+@@ -1858,7 +1860,7 @@ void CSendDialog::OnTextAddress(wxCommandEvent&amp; event)
+     {
+         strFromSave    = m_textCtrlFrom-&gt;GetValue();
+         strMessageSave = m_textCtrlMessage-&gt;GetValue();
+-        m_textCtrlFrom-&gt;SetValue(_(&quot;Will appear as \&quot;From: Unknown\&quot;&quot;));
++        m_textCtrlFrom-&gt;SetValue(_(&quot;n/a&quot;));
+         m_textCtrlMessage-&gt;SetValue(_(&quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;));
+     }
+     else if (fEnable &amp;&amp; !fEnabledPrev)</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -430,8 +430,9 @@ inline void heapchk()
+ template&lt;typename T1&gt;
+ inline uint256 Hash(const T1 pbegin, const T1 pend)
+ {
++    static unsigned char pblank[1];
+     uint256 hash1;
+-    SHA256((unsigned char*)&amp;pbegin[0], (pend - pbegin) * sizeof(pbegin[0]), (unsigned char*)&amp;hash1);
++    SHA256((pbegin == pend ? pblank : (unsigned char*)&amp;pbegin[0]), (pend - pbegin) * sizeof(pbegin[0]), (unsigned char*)&amp;hash1);
+     uint256 hash2;
+     SHA256((unsigned char*)&amp;hash1, sizeof(hash1), (unsigned char*)&amp;hash2);
+     return hash2;
+@@ -441,11 +442,12 @@ template&lt;typename T1, typename T2&gt;
+ inline uint256 Hash(const T1 p1begin, const T1 p1end,
+                     const T2 p2begin, const T2 p2end)
+ {
++    static unsigned char pblank[1];
+     uint256 hash1;
+     SHA256_CTX ctx;
+     SHA256_Init(&amp;ctx);
+-    SHA256_Update(&amp;ctx, (unsigned char*)&amp;p1begin[0], (p1end - p1begin) * sizeof(p1begin[0]));
+-    SHA256_Update(&amp;ctx, (unsigned char*)&amp;p2begin[0], (p2end - p2begin) * sizeof(p2begin[0]));
++    SHA256_Update(&amp;ctx, (p1begin == p1end ? pblank : (unsigned char*)&amp;p1begin[0]), (p1end - p1begin) * sizeof(p1begin[0]));
++    SHA256_Update(&amp;ctx, (p2begin == p2end ? pblank : (unsigned char*)&amp;p2begin[0]), (p2end - p2begin) * sizeof(p2begin[0]));
+     SHA256_Final((unsigned char*)&amp;hash1, &amp;ctx);
+     uint256 hash2;
+     SHA256((unsigned char*)&amp;hash1, sizeof(hash1), (unsigned char*)&amp;hash2);
+@@ -457,12 +459,13 @@ inline uint256 Hash(const T1 p1begin, const T1 p1end,
+                     const T2 p2begin, const T2 p2end,
+                     const T3 p3begin, const T3 p3end)
+ {
++    static unsigned char pblank[1];
+     uint256 hash1;
+     SHA256_CTX ctx;
+     SHA256_Init(&amp;ctx);
+-    SHA256_Update(&amp;ctx, (unsigned char*)&amp;p1begin[0], (p1end - p1begin) * sizeof(p1begin[0]));
+-    SHA256_Update(&amp;ctx, (unsigned char*)&amp;p2begin[0], (p2end - p2begin) * sizeof(p2begin[0]));
+-    SHA256_Update(&amp;ctx, (unsigned char*)&amp;p3begin[0], (p3end - p3begin) * sizeof(p3begin[0]));
++    SHA256_Update(&amp;ctx, (p1begin == p1end ? pblank : (unsigned char*)&amp;p1begin[0]), (p1end - p1begin) * sizeof(p1begin[0]));
++    SHA256_Update(&amp;ctx, (p2begin == p2end ? pblank : (unsigned char*)&amp;p2begin[0]), (p2end - p2begin) * sizeof(p2begin[0]));
++    SHA256_Update(&amp;ctx, (p3begin == p3end ? pblank : (unsigned char*)&amp;p3begin[0]), (p3end - p3begin) * sizeof(p3begin[0]));
+     SHA256_Final((unsigned char*)&amp;hash1, &amp;ctx);
+     uint256 hash2;
+     SHA256((unsigned char*)&amp;hash1, sizeof(hash1), (unsigned char*)&amp;hash2);</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/819adff/">← fix build, thanks jgarzik</a><a rel="next" href="../../commits/7f71fd1/">fix -datadir=./subdir relative path, autostart off by… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

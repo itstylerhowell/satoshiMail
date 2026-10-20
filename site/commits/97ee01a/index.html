@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>added some DoS limits, removed… (r199) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 December 2010: added some DoS limits, removed safe mode. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/97ee01a/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="added some DoS limits, removed… (r199) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 December 2010: added some DoS limits, removed safe mode. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/97ee01a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="added some DoS limits, removed… (r199) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 December 2010: added some DoS limits, removed safe mode. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added some DoS limits, removed safe mode", "url": "https://satoshimail.pages.dev/commits/97ee01a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-12-12T18:20:36Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/97ee01ad898b0699c2319a1283313881ef4ba430"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "added some DoS limits, removed safe mode", "item": "https://satoshimail.pages.dev/commits/97ee01a/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c97ee01ad89">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">added some DoS limits, removed safe mode</span></div></nav>
+<main class="in">
+<h1>added some DoS limits, removed safe mode</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 12 December 2010 · SVN r199 · release v0.3.19 · 3 files, +37 −40</p>
+<p class="actions"><a class="btn" href="../../#t-c97ee01ad89">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/97ee01ad898b0699c2319a1283313881ef4ba430" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -571,10 +571,15 @@ bool CTransaction::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMi
+     if ((int64)nLockTime &gt; INT_MAX)
+         return error(&quot;AcceptToMemoryPool() : not accepting nLockTime beyond 2038 yet&quot;);
+ 
+-    // Rather not work on nonstandard transactions
+-    if (!IsStandard() || GetSigOpCount() &gt; 2 || ::GetSerializeSize(*this, SER_NETWORK) &lt; 100)
++    // Safety limits
++    unsigned int nSize = ::GetSerializeSize(*this, SER_NETWORK);
++    if (GetSigOpCount() &gt; 2 || nSize &lt; 100)
+         return error(&quot;AcceptToMemoryPool() : nonstandard transaction&quot;);
+ 
++    // Rather not work on nonstandard transactions
++    if (!IsStandard())
++        return error(&quot;AcceptToMemoryPool() : nonstandard transaction type&quot;);
++
+     // Do we already have it?
+     uint256 hash = GetHash();
+     CRITICAL_BLOCK(cs_mapTransactions)
+@@ -612,14 +617,36 @@ bool CTransaction::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMi
+         }
+     }
+ 
+-    // Check against previous transactions
+-    map&lt;uint256, CTxIndex&gt; mapUnused;
+-    int64 nFees = 0;
+-    if (fCheckInputs &amp;&amp; !ConnectInputs(txdb, mapUnused, CDiskTxPos(1,1,1), pindexBest, nFees, false, false))
++    if (fCheckInputs)
+     {
+-        if (pfMissingInputs)
+-            *pfMissingInputs = true;
+-        return error(&quot;AcceptToMemoryPool() : ConnectInputs failed %s&quot;, hash.ToString().substr(0,10).c_str());
++        // Check against previous transactions
++        map&lt;uint256, CTxIndex&gt; mapUnused;
++        int64 nFees = 0;
++        if (!ConnectInputs(txdb, mapUnused, CDiskTxPos(1,1,1), pindexBest, nFees, false, false))
++        {
++            if (pfMissingInputs)
++                *pfMissingInputs = true;
++            return error(&quot;AcceptToMemoryPool() : ConnectInputs failed %s&quot;, hash.ToString().substr(0,10).c_str());
++        }
++
++        // Don&#x27;t accept it if it can&#x27;t get into a block
++        if (nFees &lt; GetMinFee(1000))
++            return error(&quot;AcceptToMemoryPool() : not enough fees&quot;);
++
++        // Limit free transactions per 10 minutes
++        if (nFees &lt; CENT &amp;&amp; GetBoolArg(&quot;-limitfreerelay&quot;))
++        {
++            static int64 nNextReset;
++            static int64 nFreeCount;
++            if (GetTime() &gt; nNextReset)
++            {
++                nNextReset = GetTime() + 10 * 60;
++                nFreeCount = 0;
++            }
++            if (nFreeCount &gt; 150000 &amp;&amp; !IsFromMe())
++                return error(&quot;AcceptToMemoryPool() : free transaction rejected by rate limiter&quot;);
++            nFreeCount += nSize;
++        }
+     }
+ 
+     // Store transaction in memory</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -1178,31 +1178,6 @@ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+ };
+ map&lt;string, rpcfn_type&gt; mapCallTable(pCallTable, pCallTable + sizeof(pCallTable)/sizeof(pCallTable[0]));
+ 
+-string pAllowInSafeMode[] =
+-{
+-    &quot;help&quot;,
+-    &quot;stop&quot;,
+-    &quot;getblockcount&quot;,
+-    &quot;getblocknumber&quot;,
+-    &quot;getconnectioncount&quot;,
+-    &quot;getdifficulty&quot;,
+-    &quot;getgenerate&quot;,
+-    &quot;setgenerate&quot;,
+-    &quot;gethashespersec&quot;,
+-    &quot;getinfo&quot;,
+-    &quot;getnewaddress&quot;,
+-    &quot;getaccountaddress&quot;,
+-    &quot;setlabel&quot;,
+-    &quot;getaccount&quot;,
+-    &quot;getlabel&quot;, // deprecated
+-    &quot;getaddressesbyaccount&quot;,
+-    &quot;getaddressesbylabel&quot;, // deprecated
+-    &quot;backupwallet&quot;,
+-    &quot;validateaddress&quot;,
+-    &quot;getwork&quot;,
+-};
+-set&lt;string&gt; setAllowInSafeMode(pAllowInSafeMode, pAllowInSafeMode + sizeof(pAllowInSafeMode)/sizeof(pAllowInSafeMode[0]));
+-
+ 
+ 
+ 
+@@ -1640,11 +1615,6 @@ void ThreadRPCServer2(void* parg)
+             if (mi == mapCallTable.end())
+                 throw JSONRPCError(-32601, &quot;Method not found&quot;);
+ 
+-            // Observe safe mode
+-            string strWarning = GetWarnings(&quot;rpc&quot;);
+-            if (strWarning != &quot;&quot; &amp;&amp; !GetBoolArg(&quot;-disablesafemode&quot;) &amp;&amp; !setAllowInSafeMode.count(strMethod))
+-                throw JSONRPCError(-2, string(&quot;Safe mode: &quot;) + strWarning);
+-
+             try
+             {
+                 // Execute</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -25,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31800;
++static const int VERSION = 31801;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8220180/">← -- version 0.3.18 release</a><a rel="next" href="../../commits/986b5e2/">correction →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

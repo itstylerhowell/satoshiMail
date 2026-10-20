@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>block index checking on load, extra… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 August 2010: block index checking on load, extra redundant checks, misc refactoring. 5 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/7a37c90/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="block index checking on load, extra… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 August 2010: block index checking on load, extra redundant checks, misc refactoring. 5 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/7a37c90/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="block index checking on load, extra… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 August 2010: block index checking on load, extra redundant checks, misc refactoring. 5 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "block index checking on load, extra redundant checks, misc refactoring", "url": "https://satoshimail.pages.dev/commits/7a37c90/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-28T00:49:30Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/7a37c906a1c712fe1dbfddc0723d132fdb95f75f"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "block index checking on load, extra…", "item": "https://satoshimail.pages.dev/commits/7a37c90/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c7a37c906a1">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">block index checking on load, extra…</span></div></nav>
+<main class="in">
+<h1>block index checking on load, extra redundant checks, misc refactoring</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 28 August 2010 · release v0.3.11_notexact · 5 files, +126 −62</p>
+<p class="actions"><a class="btn" href="../../#t-c7a37c906a1">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/7a37c906a1c712fe1dbfddc0723d132fdb95f75f" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -419,6 +419,9 @@ bool CTxDB::LoadBlockIndex()
+             // Watch for genesis block
+             if (pindexGenesisBlock == NULL &amp;&amp; diskindex.GetBlockHash() == hashGenesisBlock)
+                 pindexGenesisBlock = pindexNew;
++
++            if (!pindexNew-&gt;CheckIndex())
++                return error(&quot;LoadBlockIndex() : CheckIndex failed at %d&quot;, pindexNew-&gt;nHeight);
+         }
+         else
+         {
+@@ -454,7 +457,7 @@ bool CTxDB::LoadBlockIndex()
+     pindexBest = mapBlockIndex[hashBestChain];
+     nBestHeight = pindexBest-&gt;nHeight;
+     bnBestChainWork = pindexBest-&gt;bnChainWork;
+-    printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
++    printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,20).c_str(), nBestHeight);
+ 
+     // Load bnBestInvalidWork, OK if it doesn&#x27;t exist
+     ReadBestInvalidWork(bnBestInvalidWork);
+@@ -463,6 +466,8 @@ bool CTxDB::LoadBlockIndex()
+     CBlockIndex* pindexFork = NULL;
+     for (CBlockIndex* pindex = pindexBest; pindex &amp;&amp; pindex-&gt;pprev; pindex = pindex-&gt;pprev)
+     {
++        if (pindex-&gt;nHeight &lt; 74000 &amp;&amp; !mapArgs.count(&quot;-checkblocks&quot;))
++            break;
+         CBlock block;
+         if (!block.ReadFromDisk(pindex))
+             return error(&quot;LoadBlockIndex() : block.ReadFromDisk failed&quot;);
+@@ -629,8 +634,8 @@ bool CWalletDB::LoadWallet()
+                 //printf(&quot;LoadWallet  %s\n&quot;, wtx.GetHash().ToString().c_str());
+                 //printf(&quot; %12I64d  %s  %s  %s\n&quot;,
+                 //    wtx.vout[0].nValue,
+-                //    DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, wtx.nTime).c_str(),
+-                //    wtx.hashBlock.ToString().substr(0,16).c_str(),
++                //    DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, wtx.GetBlockTime()).c_str(),
++                //    wtx.hashBlock.ToString().substr(0,20).c_str(),
+                 //    wtx.mapValue[&quot;message&quot;].c_str());
+             }
+             else if (strType == &quot;key&quot; || strType == &quot;wkey&quot;)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -500,8 +500,8 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+         return error(&quot;AcceptTransaction() : CheckTransaction failed&quot;);
+ 
+     // To help v0.1.5 clients who would see it as a negative number
+-    if (nLockTime &gt; INT_MAX)
+-        return error(&quot;AcceptTransaction() : not accepting nLockTime beyond 2038&quot;);
++    if ((int64)nLockTime &gt; INT_MAX)
++        return error(&quot;AcceptTransaction() : not accepting nLockTime beyond 2038 yet&quot;);
+ 
+     // Do we already have it?
+     uint256 hash = GetHash();
+@@ -519,6 +519,9 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+         COutPoint outpoint = vin[i].prevout;
+         if (mapNextTx.count(outpoint))
+         {
++            // Disable replacement feature for now
++            return false;
++
+             // Allow replacing with a newer version of the same transaction
+             if (i != 0)
+                 return false;
+@@ -550,8 +553,8 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     {
+         if (ptxOld)
+         {
+-            printf(&quot;mapTransaction.erase(%s) replacing with new version\n&quot;, ptxOld-&gt;GetHash().ToString().c_str());
+-            mapTransactions.erase(ptxOld-&gt;GetHash());
++            printf(&quot;AcceptTransaction() : replacing tx %s with new version\n&quot;, ptxOld-&gt;GetHash().ToString().c_str());
++            ptxOld-&gt;RemoveFromMemoryPool();
+         }
+         AddToMemoryPool();
+     }
+@@ -748,6 +751,12 @@ void ResendWalletTransactions()
+     if (fFirst)
+         return;
+ 
++    // Only do it if there&#x27;s been a new block since last time
++    static int64 nLastTime;
++    if (nTimeBestReceived &lt; nLastTime)
++        return;
++    nLastTime = GetTime();
++
+     // Rebroadcast any of our txes that aren&#x27;t in a block yet
+     printf(&quot;ResendWalletTransactions()\n&quot;);
+     CTxDB txdb(&quot;r&quot;);
+@@ -785,9 +794,13 @@ void ResendWalletTransactions()
+ // CBlock and CBlockIndex
+ //
+ 
+-bool CBlock::ReadFromDisk(const CBlockIndex* pblockindex, bool fReadTransactions)
++bool CBlock::ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions)
+ {
+-    return ReadFromDisk(pblockindex-&gt;nFile, pblockindex-&gt;nBlockPos, fReadTransactions);
++    if (!ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos, fReadTransactions))
++        return false;
++    if (GetHash() != pindex-&gt;GetBlockHash())
++        return error(&quot;CBlock::ReadFromDisk() : GetHash() doesn&#x27;t match index&quot;);
++    return true;
+ }
+ 
+ uint256 GetOrphanRoot(const CBlock* pblock)
+@@ -829,7 +842,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+     assert(pindexFirst);
+ 
+     // Limit adjustment step
+-    int64 nActualTimespan = (int64)pindexLast-&gt;nTime - (int64)pindexFirst-&gt;nTime;
++    int64 nActualTimespan = pindexLast-&gt;GetBlockTime() - pindexFirst-&gt;GetBlockTime();
+     printf(&quot;  nActualTimespan = %&quot;PRI64d&quot;  before bounds\n&quot;, nActualTimespan);
+     if (nActualTimespan &lt; nTargetTimespan/4)
+         nActualTimespan = nTargetTimespan/4;
+@@ -854,6 +867,22 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+     return bnNew.GetCompact();
+ }
+ 
++bool CheckProofOfWork(uint256 hash, unsigned int nBits)
++{
++    CBigNum bnTarget;
++    bnTarget.SetCompact(nBits);
++
++    // Check range
++    if (bnTarget &lt;= 0 || bnTarget &gt; bnProofOfWorkLimit)
++        return error(&quot;CheckProofOfWork() : nBits below minimum work&quot;);
++
++    // Check proof of work matches claimed amount
++    if (hash &gt; bnTarget.getuint256())
++        return error(&quot;CheckProofOfWork() : hash doesn&#x27;t match nBits&quot;);
++
++    return true;
++}
++
+ bool IsInitialBlockDownload()
+ {
+     if (pindexBest == NULL)
+@@ -866,7 +895,7 @@ bool IsInitialBlockDownload()
+         nLastUpdate = GetTime();
+     }
+     return (GetTime() - nLastUpdate &lt; 10 &amp;&amp;
+-            pindexBest-&gt;nTime &lt; GetTime() - 24 * 60 * 60);
++            pindexBest-&gt;GetBlockTime() &lt; GetTime() - 24 * 60 * 60);
+ }
+ 
+ bool IsLockdown()
+@@ -884,8 +913,8 @@ void Lockdown(CBlockIndex* pindexNew)
+         CTxDB().WriteBestInvalidWork(bnBestInvalidWork);
+         MainFrameRepaint();
+     }
+-    printf(&quot;Lockdown: invalid block=%s  height=%d  work=%s\n&quot;, pindexNew-&gt;GetBlockHash().ToString().substr(0,22).c_str(), pindexNew-&gt;nHeight, pindexNew-&gt;bnChainWork.ToString().c_str());
+-    printf(&quot;Lockdown:  current best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
++    printf(&quot;Lockdown: invalid block=%s  height=%d  work=%s\n&quot;, pindexNew-&gt;GetBlockHash().ToString().substr(0,20).c_str(), pindexNew-&gt;nHeight, pindexNew-&gt;bnChainWork.ToString().c_str());
++    printf(&quot;Lockdown:  current best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,20).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
+     printf(&quot;Lockdown: IsLockdown()=%d\n&quot;, (IsLockdown() ? 1 : 0));
+     if (IsLockdown())
+         printf(&quot;Lockdown: WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.\n&quot;);
+@@ -1008,14 +1037,13 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+             nValueIn += txPrev.vout[prevout.n].nValue;
+ 
+             // Check for negative or overflow input values
+-            if (txPrev.vout[prevout.n].nValue &lt; 0)
+-                return error(&quot;ConnectInputs() : txin.nValue negative&quot;);
+-            if (txPrev.vout[prevout.n].nValue &gt; MAX_MONEY)
+-                return error(&quot;ConnectInputs() : txin.nValue too high&quot;);
+-            if (nValueIn &gt; MAX_MONEY)
+-                return error(&quot;ConnectInputs() : txin total too high&quot;);
++            if (!MoneyRange(txPrev.vout[prevout.n].nValue) || !MoneyRange(nValueIn))
++                return error(&quot;ConnectInputs() : txin values out of range&quot;);
+         }
+ 
++        if (nValueIn &lt; GetValueOut())
++            return error(&quot;ConnectInputs() : %s value in &lt; value out&quot;, GetHash().ToString().substr(0,6).c_str());
++
+         // Tally transaction fees
+         int64 nTxFee = nValueIn - GetValueOut();
+         if (nTxFee &lt; 0)
+@@ -1180,7 +1208,7 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     foreach(CBlockIndex* pindex, vDisconnect)
+     {
+         CBlock block;
+-        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos))
++        if (!block.ReadFromDisk(pindex))
+             return error(&quot;Reorganize() : ReadFromDisk for disconnect failed&quot;);
+         if (!block.DisconnectBlock(txdb, pindex))
+             return error(&quot;Reorganize() : DisconnectBlock failed&quot;);
+@@ -1197,7 +1225,7 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     {
+         CBlockIndex* pindex = vConnect[i];
+         CBlock block;
+-        if (!block.ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos))
++        if (!block.ReadFromDisk(pindex))
+             return error(&quot;Reorganize() : ReadFromDisk for connect failed&quot;);
+         if (!block.ConnectBlock(txdb, pindex))
+         {
+@@ -1283,7 +1311,7 @@ bool CBlock::SetBestChain(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     bnBestChainWork = pindexNew-&gt;bnChainWork;
+     nTimeBestReceived = GetTime();
+     nTransactionsUpdated++;
+-    printf(&quot;SetBestChain: new best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
++    printf(&quot;SetBestChain: new best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,20).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
+ 
+     return true;
+ }
+@@ -1294,7 +1322,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+     // Check for duplicate
+     uint256 hash = GetHash();
+     if (mapBlockIndex.count(hash))
+-        return error(&quot;AddToBlockIndex() : %s already exists&quot;, hash.ToString().substr(0,16).c_str());
++        return error(&quot;AddToBlockIndex() : %s already exists&quot;, hash.ToString().substr(0,20).c_str());
+ 
+     // Construct new block index object
+     CBlockIndex* pindexNew = new CBlockIndex(nFile, nBlockPos, *this);
+@@ -1346,7 +1374,7 @@ bool CBlock::CheckBlock() const
+         return error(&quot;CheckBlock() : size limits failed&quot;);
+ 
+     // Check timestamp
+-    if (nTime &gt; GetAdjustedTime() + 2 * 60 * 60)
++    if (GetBlockTime() &gt; GetAdjustedTime() + 2 * 60 * 60)
+         return error(&quot;CheckBlock() : block timestamp too far in the future&quot;);
+ 
+     // First transaction must be coinbase, the rest must not be
+@@ -1362,10 +1390,8 @@ bool CBlock::CheckBlock() const
+             return error(&quot;CheckBlock() : CheckTransaction failed&quot;);
+ 
+     // Check proof of work matches claimed amount
+-    if (CBigNum().SetCompact(nBits) &gt; bnProofOfWorkLimit)
+-        return error(&quot;CheckBlock() : nBits below minimum work&quot;);
+-    if (GetHash() &gt; CBigNum().SetCompact(nBits).getuint256())
+-        return error(&quot;CheckBlock() : hash doesn&#x27;t match nBits&quot;);
++    if (!CheckProofOfWork(GetHash(), nBits))
++        return error(&quot;CheckBlock() : proof of work failed&quot;);
+ 
+     // Check merkleroot
+     if (hashMerkleRoot != BuildMerkleTree())
+@@ -1388,12 +1414,12 @@ bool CBlock::AcceptBlock()
+     CBlockIndex* pindexPrev = (*mi).second;
+ 
+     // Check timestamp against prev
+-    if (nTime &lt;= pindexPrev-&gt;GetMedianTimePast())
++    if (GetBlockTime() &lt;= pindexPrev-&gt;GetMedianTimePast())
+         return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);
+ 
+     // Check that all transactions are finalized
+     foreach(const CTransaction&amp; tx, vtx)
+-        if (!tx.IsFinal(pindexPrev-&gt;nHeight+1, nTime))
++        if (!tx.IsFinal(pindexPrev-&gt;nHeight+1, GetBlockTime()))
+             return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+     // Check proof of work
+@@ -1442,9 +1468,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
+     // Check for duplicate
+     uint256 hash = pblock-&gt;GetHash();
+     if (mapBlockIndex.count(hash))
+-        return error(&quot;ProcessBlock() : already have block %d %s&quot;, mapBlockIndex[hash]-&gt;nHeight, hash.ToString().substr(0,16).c_str());
++        return error(&quot;ProcessBlock() : already have block %d %s&quot;, mapBlockIndex[hash]-&gt;nHeight, hash.ToString().substr(0,20).c_str());
+     if (mapOrphanBlocks.count(hash))
+-        return error(&quot;ProcessBlock() : already have block (orphan) %s&quot;, hash.ToString().substr(0,16).c_str());
++        return error(&quot;ProcessBlock() : already have block (orphan) %s&quot;, hash.ToString().substr(0,20).c_str());
+ 
+     // Preliminary checks
+     if (!pblock-&gt;CheckBlock())
+@@ -1456,7 +1482,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
+     // If don&#x27;t already have its previous block, shunt it off to holding area until we get it
+     if (!mapBlockIndex.count(pblock-&gt;hashPrevBlock))
+     {
+-        printf(&quot;ProcessBlock: ORPHAN BLOCK, prev=%s\n&quot;, pblock-&gt;hashPrevBlock.ToString().substr(0,16).c_str());
++        printf(&quot;ProcessBlock: ORPHAN BLOCK, prev=%s\n&quot;, pblock-&gt;hashPrevBlock.ToString().substr(0,20).c_str());
+         mapOrphanBlocks.insert(make_pair(hash, pblock));
+         mapOrphanBlocksByPrev.insert(make_pair(pblock-&gt;hashPrevBlock, pblock));
+ 
+@@ -1731,8 +1757,8 @@ void PrintBlockTree()
+             pindex-&gt;nHeight,
+             pindex-&gt;nFile,
+             pindex-&gt;nBlockPos,
+-            block.GetHash().ToString().substr(0,16).c_str(),
+-            DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, block.nTime).c_str(),
++            block.GetHash().ToString().substr(0,20).c_str(),
++            DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, block.GetBlockTime()).c_str(),
+             block.vtx.size());
+ 
+         CRITICAL_BLOCK(cs_mapWallet)
+@@ -2157,12 +2183,12 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         if (pindex)
+             pindex = pindex-&gt;pnext;
+         int nLimit = 500 + locator.GetDistanceBack();
+-        printf(&quot;getblocks %d to %s limit %d\n&quot;, (pindex ? pindex-&gt;nHeight : -1), hashStop.ToString().substr(0,16).c_str(), nLimit);
++        printf(&quot;getblocks %d to %s limit %d\n&quot;, (pindex ? pindex-&gt;nHeight : -1), hashStop.ToString().substr(0,20).c_str(), nLimit);
+         for (; pindex; pindex = pindex-&gt;pnext)
+         {
+             if (pindex-&gt;GetBlockHash() == hashStop)
+             {
+-                printf(&quot;  getblocks stopping at %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,16).c_str());
++                printf(&quot;  getblocks stopping at %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,20).c_str());
+                 break;
+             }
+             pfrom-&gt;PushInventory(CInv(MSG_BLOCK, pindex-&gt;GetBlockHash()));
+@@ -2170,7 +2196,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             {
+                 // When this block is requested, we&#x27;ll send an inv that&#x27;ll make them
+                 // getblocks the next batch of inventory.
+-                printf(&quot;  getblocks stopping at limit %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,16).c_str());
++                printf(&quot;  getblocks stopping at limit %d %s\n&quot;, pindex-&gt;nHeight, pindex-&gt;GetBlockHash().ToString().substr(0,20).c_str());
+                 pfrom-&gt;hashContinue = pindex-&gt;GetBlockHash();
+                 break;
+             }
+@@ -2237,7 +2263,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vRecv &gt;&gt; *pblock;
+ 
+         //// debug print
+-        printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,16).c_str());
++        printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,20).c_str());
+         // pblock-&gt;print();
+ 
+         CInv inv(MSG_BLOCK, pblock-&gt;GetHash());</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -19,8 +19,8 @@ static const unsigned int MAX_BLOCK_SIZE = 1000000;
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
+ static const int64 MAX_MONEY = 21000000 * COIN;
++inline bool MoneyRange(int64 nValue) { return (nValue &gt;= 0 &amp;&amp; nValue &lt;= MAX_MONEY); }
+ static const int COINBASE_MATURITY = 100;
+-
+ static const CBigNum bnProofOfWorkLimit(~uint256(0) &gt;&gt; 32);
+ 
+ 
+@@ -83,6 +83,7 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();
++bool CheckProofOfWork(uint256 hash, unsigned int nBits);
+ bool IsInitialBlockDownload();
+ bool IsLockdown();
+ 
+@@ -338,6 +339,8 @@ public:
+ 
+     int64 GetCredit() const
+     {
++        if (!MoneyRange(nValue))
++            throw runtime_error(&quot;CTxOut::GetCredit() : value out of range&quot;);
+         if (IsMine())
+             return nValue;
+         return 0;
+@@ -424,7 +427,7 @@ public:
+             nBlockHeight = nBestHeight;
+         if (nBlockTime == 0)
+             nBlockTime = GetAdjustedTime();
+-        if (nLockTime &lt; (nLockTime &lt; 500000000 ? nBlockHeight : nBlockTime))
++        if ((int64)nLockTime &lt; (nLockTime &lt; 500000000 ? (int64)nBlockHeight : nBlockTime))
+             return true;
+         foreach(const CTxIn&amp; txin, vin)
+             if (!txin.IsFinal())
+@@ -481,8 +484,8 @@ public:
+             if (txout.nValue &gt; MAX_MONEY)
+                 return error(&quot;CTransaction::CheckTransaction() : txout.nValue too high&quot;);
+             nValueOut += txout.nValue;
+-            if (nValueOut &gt; MAX_MONEY)
+-                return error(&quot;CTransaction::CheckTransaction() : txout total too high&quot;);
++            if (!MoneyRange(nValueOut))
++                return error(&quot;CTransaction::CheckTransaction() : txout total out of range&quot;);
+         }
+ 
+         if (IsCoinBase())
+@@ -512,7 +515,11 @@ public:
+     {
+         int64 nDebit = 0;
+         foreach(const CTxIn&amp; txin, vin)
++        {
+             nDebit += txin.GetDebit();
++            if (!MoneyRange(nDebit))
++                throw runtime_error(&quot;CTransaction::GetDebit() : value out of range&quot;);
++        }
+         return nDebit;
+     }
+ 
+@@ -520,7 +527,11 @@ public:
+     {
+         int64 nCredit = 0;
+         foreach(const CTxOut&amp; txout, vout)
++        {
+             nCredit += txout.GetCredit();
++            if (!MoneyRange(nCredit))
++                throw runtime_error(&quot;CTransaction::GetCredit() : value out of range&quot;);
++        }
+         return nCredit;
+     }
+ 
+@@ -529,9 +540,9 @@ public:
+         int64 nValueOut = 0;
+         foreach(const CTxOut&amp; txout, vout)
+         {
+-            if (txout.nValue &lt; 0)
+-                throw runtime_error(&quot;CTransaction::GetValueOut() : negative value&quot;);
+             nValueOut += txout.nValue;
++            if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
++                throw runtime_error(&quot;CTransaction::GetValueOut() : value out of range&quot;);
+         }
+         return nValueOut;
+     }
+@@ -930,6 +941,11 @@ public:
+         return Hash(BEGIN(nVersion), END(nNonce));
+     }
+ 
++    int64 GetBlockTime() const
++    {
++        return (int64)nTime;
++    }
++
+ 
+     uint256 BuildMerkleTree() const
+     {
+@@ -1030,10 +1046,8 @@ public:
+         filein &gt;&gt; *this;
+ 
+         // Check the header
+-        if (CBigNum().SetCompact(nBits) &gt; bnProofOfWorkLimit)
+-            return error(&quot;CBlock::ReadFromDisk() : nBits errors in block header&quot;);
+-        if (GetHash() &gt; CBigNum().SetCompact(nBits).getuint256())
+-            return error(&quot;CBlock::ReadFromDisk() : GetHash() errors in block header&quot;);
++        if (!CheckProofOfWork(GetHash(), nBits))
++            return error(&quot;CBlock::ReadFromDisk() : errors in block header&quot;);
+ 
+         return true;
+     }
+@@ -1043,9 +1057,9 @@ public:
+     void print() const
+     {
+         printf(&quot;CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%d)\n&quot;,
+-            GetHash().ToString().substr(0,16).c_str(),
++            GetHash().ToString().substr(0,20).c_str(),
+             nVersion,
+-            hashPrevBlock.ToString().substr(0,16).c_str(),
++            hashPrevBlock.ToString().substr(0,20).c_str(),
+             hashMerkleRoot.ToString().substr(0,6).c_str(),
+             nTime, nBits, nNonce,
+             vtx.size());
+@@ -1064,7 +1078,7 @@ public:
+     int64 GetBlockValue(int nHeight, int64 nFees) const;
+     bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+-    bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
++    bool ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions=true);
+     bool SetBestChain(CTxDB&amp; txdb, CBlockIndex* pindexNew);
+     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos);
+     bool CheckBlock() const;
+@@ -1142,8 +1156,15 @@ public:
+         return *phashBlock;
+     }
+ 
++    int64 GetBlockTime() const
++    {
++        return (int64)nTime;
++    }
++
+     CBigNum GetBlockWork() const
+     {
++        if (CBigNum().SetCompact(nBits) &lt;= 0)
++            return 0;
+         return (CBigNum(1)&lt;&lt;256) / (CBigNum().SetCompact(nBits)+1);
+     }
+ 
+@@ -1152,6 +1173,11 @@ public:
+         return (pnext || this == pindexBest);
+     }
+ 
++    bool CheckIndex() const
++    {
++        return CheckProofOfWork(GetBlockHash(), nBits);
++    }
++
+     bool EraseBlockFromDisk()
+     {
+         // Open history file
+@@ -1171,13 +1197,13 @@ public:
+ 
+     int64 GetMedianTimePast() const
+     {
+-        unsigned int pmedian[nMedianTimeSpan];
+-        unsigned int* pbegin = &amp;pmedian[nMedianTimeSpan];
+-        unsigned int* pend = &amp;pmedian[nMedianTimeSpan];
++        int64 pmedian[nMedianTimeSpan];
++        int64* pbegin = &amp;pmedian[nMedianTimeSpan];
++        int64* pend = &amp;pmedian[nMedianTimeSpan];
+ 
+         const CBlockIndex* pindex = this;
+         for (int i = 0; i &lt; nMedianTimeSpan &amp;&amp; pindex; i++, pindex = pindex-&gt;pprev)
+-            *(--pbegin) = pindex-&gt;nTime;
++            *(--pbegin) = pindex-&gt;GetBlockTime();
+ 
+         sort(pbegin, pend);
+         return pbegin[(pend - pbegin)/2];
+@@ -1189,7 +1215,7 @@ public:
+         for (int i = 0; i &lt; nMedianTimeSpan/2; i++)
+         {
+             if (!pindex-&gt;pnext)
+-                return nTime;
++                return GetBlockTime();
+             pindex = pindex-&gt;pnext;
+         }
+         return pindex-&gt;GetMedianTimePast();
+@@ -1202,7 +1228,7 @@ public:
+         return strprintf(&quot;CBlockIndex(nprev=%08x, pnext=%08x, nFile=%d, nBlockPos=%-6d nHeight=%d, merkle=%s, hashBlock=%s)&quot;,
+             pprev, pnext, nFile, nBlockPos, nHeight,
+             hashMerkleRoot.ToString().substr(0,6).c_str(),
+-            GetBlockHash().ToString().substr(0,16).c_str());
++            GetBlockHash().ToString().substr(0,20).c_str());
+     }
+ 
+     void print() const
+@@ -1272,8 +1298,8 @@ public:
+         str += CBlockIndex::ToString();
+         str += strprintf(&quot;\n                hashBlock=%s, hashPrev=%s, hashNext=%s)&quot;,
+             GetBlockHash().ToString().c_str(),
+-            hashPrev.ToString().substr(0,16).c_str(),
+-            hashNext.ToString().substr(0,16).c_str());
++            hashPrev.ToString().substr(0,20).c_str(),
++            hashNext.ToString().substr(0,20).c_str());
+         return str;
+     }
+ </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -424,7 +424,7 @@ public:
+ 
+     string ToString() const
+     {
+-        return strprintf(&quot;%s %s&quot;, GetCommand(), hash.ToString().substr(0,16).c_str());
++        return strprintf(&quot;%s %s&quot;, GetCommand(), hash.ToString().substr(0,20).c_str());
+     }
+ 
+     void print() const</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 310;
+-static const char* pszSubVer = &quot;.3&quot;;
++static const char* pszSubVer = &quot;.4&quot;;
+ 
+ 
+ 
+@@ -81,6 +81,13 @@ enum
+ 
+ #define READWRITE(obj)      (nSerSize += ::SerReadWrite(s, (obj), nType, nVersion, ser_action))
+ 
++#define READWRITEVER(obj)       \
++    do {                        \
++        READWRITE((obj));       \
++        if ((obj) == 10300)     \
++            (obj) = 300;        \
++    } while (false)
++
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/5b72160/">← added -testsafemode switch -- version 0.3.11 release</a><a rel="next" href="../../commits/c545563/">warning message if clock is too far off →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

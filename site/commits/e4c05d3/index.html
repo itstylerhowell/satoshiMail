@@ -1,0 +1,1529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>unix build merged in, bitmap… (r32) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 November 2009: unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e4c05d3/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="unix build merged in, bitmap… (r32) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 November 2009: unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e4c05d3/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="unix build merged in, bitmap… (r32) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 November 2009: unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection of addrs by time last seen for faster connect", "url": "https://satoshimail.pages.dev/commits/e4c05d3/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-05T04:41:36Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e4c05d31778a85014b2a52e2f20753b38dfbf950"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "unix build merged in, bitmap resources…", "item": "https://satoshimail.pages.dev/commits/e4c05d3/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce4c05d3177">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">unix build merged in, bitmap resources…</span></div></nav>
+<main class="in">
+<h1>unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection of addrs by time last seen for faster connect</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 5 November 2009 · SVN r32 · release v0.2.0 · 23 files, +2,184 −301</p>
+<p class="actions"><a class="btn" href="../../#t-ce4c05d3177">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e4c05d31778a85014b2a52e2f20753b38dfbf950" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -0,0 +1,73 @@
++Bitcoin v0.2.0 BETA
++
++Copyright (c) 2009 Satoshi Nakamoto
++Distributed under the MIT/X11 software license, see the accompanying
++file license.txt or http://www.opensource.org/licenses/mit-license.php.
++This product includes software developed by the OpenSSL Project for use in
++the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
++cryptographic software written by Eric Young (eay@cryptsoft.com).
++
++
++UNIX BUILD NOTES
++
++
++Dependencies
++------------
++apt-get install build-essential
++apt-get install libgtk2.0-dev
++apt-get install libssl-dev
++
++Libraries you need to obtain separately and build:
++              default path   download
++wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
++Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
++Boost          \boost         http://www.boost.org/users/download/
++
++Their licenses:
++wxWidgets      LGPL 2.1 with very liberal exceptions
++Berkeley DB    New BSD license with additional requirement that linked software must be free open source
++Boost          MIT-like license
++
++Versions used in this release:
++GCC          4.3.3
++OpenSSL      0.9.8k
++wxWidgets    2.8.9
++Berkeley DB  4.7.25.NC
++Boost        1.40.0
++
++
++Notes
++-----
++The UI layout is edited with wxFormBuilder.  Open the project file
++uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
++classes that do the rote work of constructing all the UI elements.
++
++The release is built with GCC and then &quot;strip bitcoin&quot; to strip the debug
++symbols, which reduces the executable size by about 90%.
++
++
++wxWidgets
++---------
++cd /usr/local/wxWidgets-2.8.9
++mkdir buildgtk
++cd buildgtk
++../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
++make
++su
++make install
++ldconfig
++
++
++Berkeley DB
++-----------
++cd /usr/local/db-4.7.25.NC/build_unix
++../dist/configure --enable-cxx
++make
++
++
++Boost
++-----
++cd /usr/local/boost_1_40_0
++su
++./bootstrap.sh
++./bjam install</code></pre></details><details><summary><code>build.txt</code></summary><pre><code>@@ -1,88 +0,0 @@
+-BitCoin v0.1.6 BETA
+-
+-Copyright (c) 2009 Satoshi Nakamoto
+-Distributed under the MIT/X11 software license, see the accompanying
+-file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-This product includes software developed by the OpenSSL Project for use in
+-the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
+-cryptographic software written by Eric Young (eay@cryptsoft.com).
+-
+-
+-Compilers Supported
+--------------------
+-MinGW GCC (v3.4.5)
+-Microsoft Visual C++ 6.0 SP6
+-
+-
+-Dependencies
+-------------
+-Libraries you need to obtain separately to build:
+-
+-              default path   download
+-wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
+-                                or prebuilt: http://wxpack.sourceforge.net
+-OpenSSL        \openssl       http://www.openssl.org/source/
+-Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+-Boost          \boost         http://www.boost.org/users/download/
+-
+-Their licenses:
+-wxWidgets      LGPL 2.1 with very liberal exceptions
+-OpenSSL        Old BSD license with the problematic advertising requirement
+-Berkeley DB    New BSD license with additional requirement that linked software must be free open source
+-Boost          MIT-like license
+-
+-
+-Notes
+------
+-The UI layout is edited with wxFormBuilder.  Open the project file
+-uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
+-classes that do the rote work of constructing all the UI elements.
+-
+-The release is built with GCC and then &quot;strip bitcoin.exe&quot; to strip the debug
+-symbols, which reduces the executable size by about 90%.
+-
+-
+-OpenSSL
+--------
+-Bitcoin does not use any encryption.  If you want to do a no-everything
+-build of OpenSSL to exclude encryption routines, a few patches are required.
+-(OpenSSL v0.9.8h)
+-
+-Edit engines\e_gmp.c and put this #ifndef around #include &lt;openssl/rsa.h&gt;
+-  #ifndef OPENSSL_NO_RSA
+-  #include &lt;openssl/rsa.h&gt;
+-  #endif
+-
+-Add this to crypto\err\err_all.c before the ERR_load_crypto_strings line:
+-  void ERR_load_RSA_strings(void) { }
+-
+-Edit ms\mingw32.bat and replace the Configure line&#x27;s parameters with this
+-no-everything list.  You have to put this in the batch file because batch
+-files can&#x27;t take more than 9 command line parameters.
+-  perl Configure mingw threads no-rc2 no-rc4 no-rc5 no-idea no-des no-bf no-cast no-aes no-camellia no-seed no-rsa no-dh
+-
+-Also REM out the following line in ms\mingw32.bat.  The build fails after it&#x27;s
+-already finished building libeay32, which is all we care about, but the
+-failure aborts the script before it runs dllwrap to generate libeay32.dll.
+-  REM  if errorlevel 1 goto end
+-
+-Build
+-  ms\mingw32.bat
+-
+-If you want to use it with MSVC, generate the .lib file
+-  lib /machine:i386 /def:ms\libeay32.def /out:out\libeay32.lib
+-
+-
+-Berkeley DB
+------------
+-Using MinGW and MSYS:
+-cd \db\build_unix
+-sh ../dist/configure --enable-mingw --enable-cxx
+-make
+-
+-
+-Boost
+------
+-If you have trouble compiling Boost with Microsoft Visual C++ 6.0, try going
+-back to Boost version 1.35.  It looks like they may be starting to reduce
+-support for MSVC 6.0.</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -62,9 +62,9 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+             if (fShutdown)
+                 return;
+             string strDataDir = GetDataDir();
+-            string strLogDir = strDataDir + &quot;\\database&quot;;
++            string strLogDir = strDataDir + &quot;/database&quot;;
+             _mkdir(strLogDir.c_str());
+-            string strErrorFile = strDataDir + &quot;\\db.log&quot;;
++            string strErrorFile = strDataDir + &quot;/db.log&quot;;
+             printf(&quot;dbenv.open strLogDir=%s strErrorFile=%s\n&quot;, strLogDir.c_str(), strErrorFile.c_str());
+ 
+             dbenv.set_lg_dir(strLogDir.c_str());
+@@ -411,7 +411,6 @@ bool CAddrDB::WriteAddress(const CAddress&amp; addr)
+ 
+ bool CAddrDB::LoadAddresses()
+ {
+-    CRITICAL_BLOCK(cs_mapIRCAddresses)
+     CRITICAL_BLOCK(cs_mapAddresses)
+     {
+         // Load user provided addresses
+@@ -425,10 +424,7 @@ bool CAddrDB::LoadAddresses()
+                 {
+                     CAddress addr(psz, NODE_NETWORK);
+                     if (addr.IsValid())
+-                    {
+                         AddAddress(*this, addr);
+-                        mapIRCAddresses.insert(make_pair(addr.GetKey(), addr));
+-                    }
+                 }
+             }
+             catch (...) { }
+@@ -678,7 +674,7 @@ void ThreadFlushWalletDB(void* parg)
+                     if (nRefCount == 0 &amp;&amp; !fShutdown)
+                     {
+                         // Flush wallet.dat so it&#x27;s self contained
+-                        nLastFlushed == nWalletDBUpdated;
++                        nLastFlushed = nWalletDBUpdated;
+                         int64 nStart = GetTimeMillis();
+                         dbenv.txn_checkpoint(0, 0, 0);
+                         dbenv.lsn_reset(strFile.c_str(), 0);</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -17,16 +17,18 @@
+ #endif
+ #define _WIN32_IE 0x0400
+ #define WIN32_LEAN_AND_MEAN 1
++#define __STDC_LIMIT_MACROS // to enable UINT64_MAX from stdint.h
+ #include &lt;wx/wx.h&gt;
+ #include &lt;wx/clipbrd.h&gt;
+ #include &lt;wx/snglinst.h&gt;
+ #include &lt;wx/taskbar.h&gt;
+ #include &lt;wx/stdpaths.h&gt;
++#include &lt;wx/utils.h&gt;
+ #include &lt;openssl/ecdsa.h&gt;
+ #include &lt;openssl/evp.h&gt;
+ #include &lt;openssl/rand.h&gt;
+ #include &lt;openssl/sha.h&gt;
+-#include &lt;openssl/ripemd.h&gt;
++#include &lt;openssl/ripemd.h&gt;
+ #include &lt;stdio.h&gt;
+ #include &lt;stdlib.h&gt;
+ #include &lt;math.h&gt;
+@@ -50,22 +52,28 @@
+ #include &lt;boost/tuple/tuple.hpp&gt;
+ #include &lt;boost/tuple/tuple_comparison.hpp&gt;
+ #include &lt;boost/tuple/tuple_io.hpp&gt;
+-#include &lt;boost/array.hpp&gt;
+-
++#include &lt;boost/array.hpp&gt;
++
+ #ifdef __WXMSW__
+ #include &lt;windows.h&gt;
+ #include &lt;winsock2.h&gt;
+-#include &lt;mswsock.h&gt;
++#include &lt;mswsock.h&gt;
+ #include &lt;shlobj.h&gt;
+-#include &lt;shlwapi.h&gt;
+-#include &lt;io.h&gt;
+-#include &lt;process.h&gt;
+-#else
++#include &lt;shlwapi.h&gt;
++#include &lt;io.h&gt;
++#include &lt;process.h&gt;
++#else
+ #include &lt;sys/time.h&gt;
++#include &lt;sys/resource.h&gt;
+ #include &lt;sys/socket.h&gt;
+-#include &lt;arpa/inet.h&gt;
+-#include &lt;unistd.h&gt;
+-#endif
++#include &lt;arpa/inet.h&gt;
++#include &lt;netdb.h&gt;
++#include &lt;unistd.h&gt;
++#include &lt;errno.h&gt;
++#include &lt;boost/filesystem.hpp&gt;
++#include &lt;boost/thread/thread.hpp&gt;
++#include &lt;boost/algorithm/string.hpp&gt;
++#endif
+ 
+ #pragma hdrstop
+ using namespace std;
+@@ -88,3 +96,11 @@ using namespace boost;
+ #include &quot;market.h&quot;
+ #include &quot;uibase.h&quot;
+ #include &quot;ui.h&quot;
++
++#include &quot;xpm/addressbook16.xpm&quot;
++#include &quot;xpm/addressbook20.xpm&quot;
++#include &quot;xpm/bitcoin.xpm&quot;
++#include &quot;xpm/check.xpm&quot;
++#include &quot;xpm/send16.xpm&quot;
++#include &quot;xpm/send16noshadow.xpm&quot;
++#include &quot;xpm/send20.xpm&quot;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -4,10 +4,7 @@
+ 
+ #include &quot;headers.h&quot;
+ 
+-
+-map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapIRCAddresses;
+-CCriticalSection cs_mapIRCAddresses;
+-
++int nGotIRCAddresses = 0;
+ 
+ 
+ 
+@@ -259,16 +256,7 @@ void ThreadIRCSeed(void* parg)
+                     CAddrDB addrdb;
+                     if (AddAddress(addrdb, addr))
+                         printf(&quot;IRC got new address\n&quot;);
+-                    else
+-                    {
+-                        // make it try connecting again
+-                        CRITICAL_BLOCK(cs_mapAddresses)
+-                            if (mapAddresses.count(addr.GetKey()))
+-                                mapAddresses[addr.GetKey()].nLastFailed = 0;
+-                    }
+-
+-                    CRITICAL_BLOCK(cs_mapIRCAddresses)
+-                        mapIRCAddresses.insert(make_pair(addr.GetKey(), addr));
++                    nGotIRCAddresses++;
+                 }
+                 else
+                 {</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -4,7 +4,5 @@
+ 
+ extern bool RecvLine(SOCKET hSocket, string&amp; strLine);
+ extern void ThreadIRCSeed(void* parg);
+-extern bool fRestartIRCSeed;
+ 
+-extern map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapIRCAddresses;
+-extern CCriticalSection cs_mapIRCAddresses;
++extern int nGotIRCAddresses;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -100,13 +100,10 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
+         if (fInsertedNew)
+             wtx.nTimeReceived = GetAdjustedTime();
+ 
+-        //// debug print
+-        printf(&quot;AddToWallet %s  %s\n&quot;, wtxIn.GetHash().ToString().substr(0,6).c_str(), fInsertedNew ? &quot;new&quot; : &quot;update&quot;);
+-
++        bool fUpdated = false;
+         if (!fInsertedNew)
+         {
+             // Merge
+-            bool fUpdated = false;
+             if (wtxIn.hashBlock != 0 &amp;&amp; wtxIn.hashBlock != wtx.hashBlock)
+             {
+                 wtx.hashBlock = wtxIn.hashBlock;
+@@ -128,13 +125,15 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
+                 wtx.fSpent = wtxIn.fSpent;
+                 fUpdated = true;
+             }
+-            if (!fUpdated)
+-                return true;
+         }
+ 
++        //// debug print
++        printf(&quot;AddToWallet %s  %s%s\n&quot;, wtxIn.GetHash().ToString().substr(0,6).c_str(), (fInsertedNew ? &quot;new&quot; : &quot;&quot;), (fUpdated ? &quot;update&quot; : &quot;&quot;));
++
+         // Write to disk
+-        if (!wtx.WriteToDisk())
+-            return false;
++        if (fInsertedNew || fUpdated)
++            if (!wtx.WriteToDisk())
++                return false;
+ 
+         // Notify UI
+         vWalletUpdated.push_back(hash);
+@@ -820,7 +819,7 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+             }
+ 
+             if (prevout.n &gt;= txPrev.vout.size() || prevout.n &gt;= txindex.vSpent.size())
+-                return error(&quot;ConnectInputs() : %s prevout.n out of range %d %d %d&quot;, GetHash().ToString().substr(0,6).c_str(), prevout.n, txPrev.vout.size(), txindex.vSpent.size());
++                return error(&quot;ConnectInputs() : %s prevout.n out of range %d %d %d prev tx %s\n%s&quot;, GetHash().ToString().substr(0,6).c_str(), prevout.n, txPrev.vout.size(), txindex.vSpent.size(), prevout.hash.ToString().substr(0,6).c_str(), txPrev.ToString().c_str());
+ 
+             // If prev is coinbase, check that it&#x27;s matured
+             if (txPrev.IsCoinBase())
+@@ -1217,7 +1216,7 @@ bool CBlock::AcceptBlock()
+     if (nTime &lt;= pindexPrev-&gt;GetMedianTimePast())
+         return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);
+ 
+-    // Check that all transactions are finalized (starting around 30 Nov 2009)
++    // Check that all transactions are finalized (starting around Dec 2009)
+     if (nBestHeight &gt; 31000) // 25620 + 5320
+         foreach(const CTransaction&amp; tx, vtx)
+             if (!tx.IsFinal(nTime))
+@@ -1384,7 +1383,7 @@ FILE* OpenBlockFile(unsigned int nFile, unsigned int nBlockPos, const char* pszM
+ {
+     if (nFile == -1)
+         return NULL;
+-    FILE* file = fopen(strprintf(&quot;%s\\blk%04d.dat&quot;, GetDataDir().c_str(), nFile).c_str(), pszMode);
++    FILE* file = fopen(strprintf(&quot;%s/blk%04d.dat&quot;, GetDataDir().c_str(), nFile).c_str(), pszMode);
+     if (!file)
+         return NULL;
+     if (nBlockPos != 0 &amp;&amp; !strchr(pszMode, &#x27;a&#x27;) &amp;&amp; !strchr(pszMode, &#x27;w&#x27;))
+@@ -1718,6 +1717,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+ 
+ 
++
+     if (strCommand == &quot;version&quot;)
+     {
+         // Each connection can only send one version message
+@@ -1765,6 +1765,10 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+         pfrom-&gt;fSuccessfullyConnected = true;
+ 
++        // Update the last seen time
++        if (pfrom-&gt;fNetworkNode)
++            AddressCurrentlyConnected(pfrom-&gt;addr);
++
+         printf(&quot;version message: version %d\n&quot;, pfrom-&gt;nVersion);
+     }
+ 
+@@ -1781,23 +1785,16 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vector&lt;CAddress&gt; vAddr;
+         vRecv &gt;&gt; vAddr;
+ 
+-        // Clear addrknown lists periodically to allow refresh broadcasts
+-        static int64 nLastClearedAddrKnown;
+-        if (nLastClearedAddrKnown &lt; GetAdjustedTime() - 24 * 60 * 60)
+-        {
+-            nLastClearedAddrKnown = GetAdjustedTime();
+-            CRITICAL_BLOCK(cs_vNodes)
+-                foreach(CNode* pnode, vNodes)
+-                    pnode-&gt;setAddrKnown.clear();
+-        }
+-
+         // Store the new addresses
+         CAddrDB addrdb;
+-        foreach(const CAddress&amp; addr, vAddr)
++        foreach(CAddress&amp; addr, vAddr)
+         {
+             if (fShutdown)
+                 return true;
+-            AddAddress(addrdb, addr);
++            addr.nTime = GetAdjustedTime();
++            if (pfrom-&gt;fGetAddr)
++                addr.nTime -= 5 * 24 * 60 * 60;
++            AddAddress(addrdb, addr, false);
+             pfrom-&gt;AddAddressKnown(addr);
+             if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
+             {
+@@ -1816,6 +1813,10 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vector&lt;CInv&gt; vInv;
+         vRecv &gt;&gt; vInv;
+ 
++        // Update the last seen time for this node&#x27;s address
++        if (pfrom-&gt;fNetworkNode)
++            AddressCurrentlyConnected(pfrom-&gt;addr);
++
+         CTxDB txdb(&quot;r&quot;);
+         foreach(const CInv&amp; inv, vInv)
+         {
+@@ -2099,6 +2100,25 @@ bool SendMessages(CNode* pto)
+         if (pto-&gt;nVersion == 0)
+             return true;
+ 
++        // Address refresh broadcast
++        static int64 nLastRebroadcast;
++        if (nLastRebroadcast &lt; GetTime() - 24 * 60 * 60) // every 24 hours
++        {
++            nLastRebroadcast = GetTime();
++            CRITICAL_BLOCK(cs_vNodes)
++            {
++                foreach(CNode* pnode, vNodes)
++                {
++                    // Periodically clear setAddrKnown to allow refresh broadcasts
++                    pnode-&gt;setAddrKnown.clear();
++
++                    // Rebroadcast our address
++                    if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
++                        pnode-&gt;PushAddress(addrLocalHost);
++                }
++            }
++        }
++
+ 
+         //
+         // Message: addr
+@@ -2187,7 +2207,7 @@ void GenerateBitcoins(bool fGenerate)
+     }
+     if (fGenerateBitcoins)
+     {
+-        int nProcessors = atoi(getenv(&quot;NUMBER_OF_PROCESSORS&quot;));
++        int nProcessors = wxThread::GetCPUCount();
+         printf(&quot;%d processors\n&quot;, nProcessors);
+         if (nProcessors &lt; 1)
+             nProcessors = 1;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -968,6 +968,14 @@ public:
+             return error(&quot;CBlock::WriteToDisk() : ftell failed&quot;);
+         fileout &lt;&lt; *this;
+ 
++        // Flush stdio buffers and commit to disk before returning
++        fflush(fileout);
++#ifdef __WXMSW__
++        _commit(_fileno(fileout));
++#else
++        fsync(fileno(fileout));
++#endif
++
+         return true;
+     }
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -0,0 +1,86 @@
++# Copyright (c) 2009 Satoshi Nakamoto
++# Distributed under the MIT/X11 software license, see the accompanying
++# file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++
++ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
++ifneq &quot;$(BUILD)&quot; &quot;release&quot;
++BUILD=debug
++endif
++endif
++ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
++D=d
++DEBUGFLAGS=-g -D__WXDEBUG__
++endif
++
++
++
++INCLUDEPATHS=-I&quot;/usr/include&quot; \
++             -I&quot;/usr/local/boost_1_40_0&quot; \
++             -I&quot;/usr/local/db-4.7.25.NC/build_unix&quot; \
++             -I&quot;/usr/local/include/wx-2.8&quot; \
++             -I&quot;/usr/local/lib/wx/include/gtk2-ansi-debug-static-2.8&quot;
++
++LIBPATHS=-L&quot;/usr/lib&quot; \
++         -L&quot;/usr/local/lib&quot; \
++         -L&quot;/usr/local/db-4.7.25.NC/build_unix&quot;
++
++LIBS= \
++ -Wl,-Bstatic -l boost_thread -l boost_system -l boost_filesystem -Wl,-Bdynamic \
++ -Wl,-Bstatic -l db_cxx -l wx_gtk2$(D)-2.8 -Wl,-Bdynamic \
++ -l crypto \
++ -l gtk-x11-2.0 -l gthread-2.0 -l SM
++WXDEFS=-D__WXGTK__ -DNOPCH
++CFLAGS=-O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++
++
++
++all: bitcoin
++
++
++headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/util.o: util.cpp		    $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/script.o: script.cpp	    $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/db.o: db.cpp		    $(HEADERS) market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/net.o: net.cpp		    $(HEADERS) net.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/main.o: main.cpp		    $(HEADERS) net.h market.h sha.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/market.o: market.cpp	    $(HEADERS) market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/ui.o: ui.cpp		    $(HEADERS) net.h uibase.h ui.h market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/uibase.o: uibase.cpp	    uibase.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/sha.o: sha.cpp		    sha.h
++	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
++
++obj/irc.o:  irc.cpp		    $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++
++
++
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++	obj/ui.o obj/uibase.o obj/sha.o obj/irc.o 
++
++bitcoin: headers.h.gch $(OBJS)
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
++
++clean:
++	-rm obj/*
++	-rm headers.h.gch</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -3,7 +3,6 @@
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ #include &quot;headers.h&quot;
+-#include &lt;winsock2.h&gt;
+ 
+ void ThreadMessageHandler2(void* parg);
+ void ThreadSocketHandler2(void* parg);
+@@ -201,12 +200,14 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ 
+ 
+ 
+-bool AddAddress(CAddrDB&amp; addrdb, const CAddress&amp; addr)
++bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline)
+ {
+     if (!addr.IsRoutable())
+         return false;
+     if (addr.ip == addrLocalHost.ip)
+         return false;
++    if (fCurrentlyOnline)
++        addr.nTime = GetAdjustedTime();
+     CRITICAL_BLOCK(cs_mapAddresses)
+     {
+         map&lt;vector&lt;unsigned char&gt;, CAddress&gt;::iterator it = mapAddresses.find(addr.GetKey());
+@@ -219,24 +220,47 @@ bool AddAddress(CAddrDB&amp; addrdb, const CAddress&amp; addr)
+         }
+         else
+         {
++            bool fUpdated = false;
+             CAddress&amp; addrFound = (*it).second;
+             if ((addrFound.nServices | addr.nServices) != addrFound.nServices)
+             {
+                 // Services have been added
+                 addrFound.nServices |= addr.nServices;
+-                addrdb.WriteAddress(addrFound);
+-                return true;
++                fUpdated = true;
++            }
++            int64 nUpdateInterval = (fCurrentlyOnline ? 60 * 60 : 24 * 60 * 60);
++            if (addrFound.nTime &lt; addr.nTime - nUpdateInterval)
++            {
++                // Periodically update most recently seen time
++                addrFound.nTime = addr.nTime;
++                fUpdated = true;
+             }
+-            else if (addrFound.nTime &lt; GetAdjustedTime() - 24 * 60 * 60)
++            if (fUpdated)
++                addrdb.WriteAddress(addrFound);
++        }
++    }
++    return false;
++}
++
++void AddressCurrentlyConnected(const CAddress&amp; addr)
++{
++    CRITICAL_BLOCK(cs_mapAddresses)
++    {
++        // Only if it&#x27;s been published already
++        map&lt;vector&lt;unsigned char&gt;, CAddress&gt;::iterator it = mapAddresses.find(addr.GetKey());
++        if (it != mapAddresses.end())
++        {
++            CAddress&amp; addrFound = (*it).second;
++            int64 nUpdateInterval = 60 * 60;
++            if (addrFound.nTime &lt; GetAdjustedTime() - nUpdateInterval)
+             {
+                 // Periodically update most recently seen time
+                 addrFound.nTime = GetAdjustedTime();
++                CAddrDB addrdb;
+                 addrdb.WriteAddress(addrFound);
+-                return false;
+             }
+         }
+     }
+-    return false;
+ }
+ 
+ 
+@@ -398,9 +422,14 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+         printf(&quot;connected %s\n&quot;, addrConnect.ToStringLog().c_str());
+ 
+         // Set to nonblocking
+-        u_long nOne = 1;
++#ifdef __WXMSW__
++		u_long nOne = 1;
+         if (ioctlsocket(hSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)
+             printf(&quot;ConnectSocket() : ioctlsocket nonblocking setting failed, error %d\n&quot;, WSAGetLastError());
++#else
++        if (fcntl(hSocket, F_SETFL, O_NONBLOCK) == SOCKET_ERROR)
++            printf(&quot;ConnectSocket() : fcntl nonblocking setting failed, error %d\n&quot;, errno);
++#endif
+ 
+         // Add node
+         CNode* pnode = new CNode(hSocket, addrConnect, false);
+@@ -418,7 +447,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+     else
+     {
+         CRITICAL_BLOCK(cs_mapAddresses)
+-            mapAddresses[addrConnect.GetKey()].nLastFailed = GetTime();
++            mapAddresses[addrConnect.GetKey()].nLastFailed = GetAdjustedTime();
+         return NULL;
+     }
+ }
+@@ -432,7 +461,7 @@ void CNode::DoDisconnect()
+     // If outbound and never got version message, mark address as failed
+     if (!fInbound &amp;&amp; !fSuccessfullyConnected)
+         CRITICAL_BLOCK(cs_mapAddresses)
+-            mapAddresses[addr.GetKey()].nLastFailed = GetTime();
++            mapAddresses[addr.GetKey()].nLastFailed = GetAdjustedTime();
+ 
+     // All of a nodes broadcasts and subscriptions are automatically torn down
+     // when it goes down, so a node has to stay up to keep its broadcast going.
+@@ -549,8 +578,8 @@ void ThreadSocketHandler2(void* parg)
+         timeout.tv_sec  = 0;
+         timeout.tv_usec = 50000; // frequency to poll pnode-&gt;vSend
+ 
+-        struct fd_set fdsetRecv;
+-        struct fd_set fdsetSend;
++        fd_set fdsetRecv;
++        fd_set fdsetSend;
+         FD_ZERO(&amp;fdsetRecv);
+         FD_ZERO(&amp;fdsetSend);
+         SOCKET hSocketMax = 0;
+@@ -599,7 +628,11 @@ void ThreadSocketHandler2(void* parg)
+         if (FD_ISSET(hListenSocket, &amp;fdsetRecv))
+         {
+             struct sockaddr_in sockaddr;
++#ifdef __WXMSW__
+             int len = sizeof(sockaddr);
++#else
++            socklen_t len = sizeof(sockaddr);
++#endif
+             SOCKET hSocket = accept(hListenSocket, (struct sockaddr*)&amp;sockaddr, &amp;len);
+             CAddress addr(sockaddr);
+             if (hSocket == INVALID_SOCKET)
+@@ -765,14 +798,12 @@ void ThreadOpenConnections2(void* parg)
+     }
+ 
+     // Initiate network connections
+-    int nTry = 0;
+-    bool fIRCOnly = false;
+-    const int nMaxConnections = 15;
+     loop
+     {
+         // Wait
+         vnThreadsRunning[1]--;
+         Sleep(500);
++        const int nMaxConnections = 15;
+         while (vNodes.size() &gt;= nMaxConnections || vNodes.size() &gt;= mapAddresses.size())
+         {
+             CheckForShutdown(1);
+@@ -781,93 +812,55 @@ void ThreadOpenConnections2(void* parg)
+         vnThreadsRunning[1]++;
+         CheckForShutdown(1);
+ 
+-
+         //
+-        // The IP selection process is designed to limit vulnerability to address flooding.
+-        // Any class C (a.b.c.?) has an equal chance of being chosen, then an IP is
+-        // chosen within the class C.  An attacker may be able to allocate many IPs, but
+-        // they would normally be concentrated in blocks of class C&#x27;s.  They can hog the
+-        // attention within their class C, but not the whole IP address space overall.
+-        // A lone node in a class C will get as much attention as someone holding all 255
+-        // IPs in another class C.
++        // Choose an address to connect to based on most recently seen
+         //
++        CAddress addrConnect;
++        int64 nBestTime = 0;
++        int64 nDelay = ((60 * 60) &lt;&lt; vNodes.size());
++        if (vNodes.size() &gt;= 3)
++            nDelay *= 4;
++        if (nGotIRCAddresses &gt; 0)
++            nDelay *= 100;
++
++        // Do this here so we don&#x27;t have to critsect vNodes inside mapAddresses critsect
++        set&lt;unsigned int&gt; setConnected;
++        CRITICAL_BLOCK(cs_vNodes)
++            foreach(CNode* pnode, vNodes)
++                setConnected.insert(pnode-&gt;addr.ip);
+ 
+-        // Every other try is with IRC addresses only
+-        fIRCOnly = !fIRCOnly;
+-        if (mapIRCAddresses.empty())
+-            fIRCOnly = false;
+-        else if (nTry++ &lt; 30 &amp;&amp; vNodes.size() &lt; nMaxConnections/2)
+-            fIRCOnly = true;
+-
+-        // Make a list of unique class C&#x27;s
+-        unsigned char pchIPCMask[4] = { 0xff, 0xff, 0xff, 0x00 };
+-        unsigned int nIPCMask = *(unsigned int*)pchIPCMask;
+-        vector&lt;unsigned int&gt; vIPC;
+-        CRITICAL_BLOCK(cs_mapIRCAddresses)
+         CRITICAL_BLOCK(cs_mapAddresses)
+         {
+-            vIPC.reserve(mapAddresses.size());
+-            unsigned int nPrev = 0;
+             foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+             {
+                 const CAddress&amp; addr = item.second;
+-                if (!addr.IsIPv4())
+-                    continue;
+-                if (fIRCOnly &amp;&amp; !mapIRCAddresses.count(item.first))
++                if (!addr.IsIPv4() || !addr.IsValid() || setConnected.count(addr.ip))
+                     continue;
+ 
+-                // Taking advantage of mapAddresses being in sorted order,
+-                // with IPs of the same class C grouped together.
+-                unsigned int ipC = addr.ip &amp; nIPCMask;
+-                if (ipC != nPrev)
+-                    vIPC.push_back(nPrev = ipC);
+-            }
+-        }
+-        if (vIPC.empty())
+-            continue;
+-
+-        // Choose a random class C
+-        unsigned int ipC = vIPC[GetRand(vIPC.size())];
++                // Limit retry frequency
++                if (GetAdjustedTime() &lt; addr.nLastFailed + nDelay)
++                    continue;
+ 
+-        // Organize all addresses in the class C by IP
+-        map&lt;unsigned int, vector&lt;CAddress&gt; &gt; mapIP;
+-        CRITICAL_BLOCK(cs_mapIRCAddresses)
+-        CRITICAL_BLOCK(cs_mapAddresses)
+-        {
+-            int64 nDelay = ((30 * 60) &lt;&lt; vNodes.size());
+-            if (!fIRCOnly)
+-            {
+-                nDelay *= 2;
+-                if (vNodes.size() &gt;= 3)
+-                    nDelay *= 4;
+-                if (!mapIRCAddresses.empty())
+-                    nDelay *= 100;
+-            }
++                // Try again only after all addresses had a first attempt
++                int64 nTime = addr.nTime;
++                if (addr.nLastFailed &gt; addr.nTime)
++                    nTime -= 365 * 24 * 60 * 60;
+ 
+-            for (map&lt;vector&lt;unsigned char&gt;, CAddress&gt;::iterator mi = mapAddresses.lower_bound(CAddress(ipC, 0).GetKey());
+-                 mi != mapAddresses.upper_bound(CAddress(ipC | ~nIPCMask, 0xffff).GetKey());
+-                 ++mi)
+-            {
+-                const CAddress&amp; addr = (*mi).second;
+-                if (fIRCOnly &amp;&amp; !mapIRCAddresses.count((*mi).first))
+-                    continue;
++                // Randomize the order a little, putting the standard port first
++                nTime += GetRand(1 * 60 * 60);
++                if (addr.port != DEFAULT_PORT)
++                    nTime -= 1 * 60 * 60;
+ 
+-                int64 nRandomizer = (addr.nLastFailed * addr.ip * 7777U) % 20000;
+-                if (GetTime() - addr.nLastFailed &gt; nDelay * nRandomizer / 10000)
+-                    mapIP[addr.ip].push_back(addr);
++                if (nTime &gt; nBestTime)
++                {
++                    nBestTime = nTime;
++                    addrConnect = addr;
++                }
+             }
+         }
+-        if (mapIP.empty())
+-            continue;
+-
+-        // Choose a random IP in the class C
+-        map&lt;unsigned int, vector&lt;CAddress&gt; &gt;::iterator mi = mapIP.begin();
+-        advance(mi, GetRand(mapIP.size()));
+ 
+-        // Once we&#x27;ve chosen an IP, we&#x27;ll try every given port before moving on
+-        foreach(const CAddress&amp; addrConnect, (*mi).second)
+-            if (OpenNetworkConnection(addrConnect))
+-                break;
++        if (addrConnect.IsValid())
++            OpenNetworkConnection(addrConnect);
+     }
+ }
+ 
+@@ -989,6 +982,7 @@ bool StartNode(string&amp; strError)
+         pnodeLocalHost = new CNode(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
+     strError = &quot;&quot;;
+ 
++#ifdef __WXMSW__
+     // Sockets startup
+     WSADATA wsadata;
+     int ret = WSAStartup(MAKEWORD(2,2), &amp;wsadata);
+@@ -998,6 +992,7 @@ bool StartNode(string&amp; strError)
+         printf(&quot;%s\n&quot;, strError.c_str());
+         return false;
+     }
++#endif
+ 
+     // Get local host ip
+     char pszHostName[255];
+@@ -1029,10 +1024,14 @@ bool StartNode(string&amp; strError)
+     }
+ 
+     // Set to nonblocking, incoming connections will also inherit this
++#ifdef __WXMSW__
+     u_long nOne = 1;
+     if (ioctlsocket(hListenSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -22,7 +22,8 @@ enum
+ 
+ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
+ bool GetMyExternalIP(unsigned int&amp; ipRet);
+-bool AddAddress(CAddrDB&amp; addrdb, const CAddress&amp; addr);
++bool AddAddress(CAddrDB&amp; addrdb, CAddress addr, bool fCurrentlyOnline=true);
++void AddressCurrentlyConnected(const CAddress&amp; addr);
+ CNode* FindNode(unsigned int ip);
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -260,7 +260,8 @@ void AddPendingReplyEvent3(void* pevthandler, CDataStream&amp; vRecv)
+ CDataStream GetStreamFromEvent(const wxCommandEvent&amp; event)
+ {
+     wxString strData = event.GetString();
+-    return CDataStream(strData.begin(), strData.begin() + event.GetInt(), SER_NETWORK);
++    const char* pszBegin = strData.c_str();
++    return CDataStream(pszBegin, pszBegin + event.GetInt(), SER_NETWORK);
+ }
+ 
+ 
+@@ -288,20 +289,6 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     SetIcon(wxICON(bitcoin));
+     ptaskbaricon = new CMyTaskBarIcon();
+ 
+-    // Init toolbar with transparency masked bitmaps
+-    m_toolBar-&gt;ClearTools();
+-
+-    //// shouldn&#x27;t have to do mask separately anymore, bitmap alpha support added in wx 2.8.9,
+-    wxBitmap bmpSend(wxT(&quot;send20&quot;), wxBITMAP_TYPE_RESOURCE);
+-    bmpSend.SetMask(new wxMask(wxBitmap(wxT(&quot;send20mask&quot;), wxBITMAP_TYPE_RESOURCE)));
+-    m_toolBar-&gt;AddTool(wxID_BUTTONSEND, wxT(&quot;&amp;Send Coins&quot;), bmpSend, wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+-
+-    wxBitmap bmpAddressBook(wxT(&quot;addressbook20&quot;), wxBITMAP_TYPE_RESOURCE);
+-    bmpAddressBook.SetMask(new wxMask(wxBitmap(wxT(&quot;addressbook20mask&quot;), wxBITMAP_TYPE_RESOURCE)));
+-    m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, wxT(&quot;&amp;Address Book&quot;), bmpAddressBook, wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+-
+-    m_toolBar-&gt;Realize();
+-
+     // Init column headers
+     int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
+     if (!strstr(DateTimeStr(1229413914).c_str(), &quot;2008&quot;))
+@@ -909,15 +896,17 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+         {
+             TRY_CRITICAL_BLOCK(cs_mapWallet)
+             {
+-                bool fInserted = false;
++                string strTop;
++                if (m_listCtrl-&gt;GetItemCount())
++                    strTop = (string)m_listCtrl-&gt;GetItemText(0);
+                 foreach(uint256 hash, vWalletUpdated)
+                 {
+                     map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(hash);
+                     if (mi != mapWallet.end())
+-                        fInserted |= InsertTransaction((*mi).second, false);
++                        InsertTransaction((*mi).second, false);
+                 }
+                 vWalletUpdated.clear();
+-                if (fInserted)
++                if (m_listCtrl-&gt;GetItemCount() &amp;&amp; strTop != (string)m_listCtrl-&gt;GetItemText(0))
+                     m_listCtrl-&gt;ScrollList(0, INT_MAX);
+             }
+         }
+@@ -954,7 +943,9 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
++#ifdef __WXMSW__
+     m_listCtrl-&gt;OnPaint(event);
++#endif
+ }
+ 
+ 
+@@ -1407,7 +1398,7 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     m_checkBoxLimitProcessors-&gt;SetValue(fLimitProcessors);
+     m_spinCtrlLimitProcessors-&gt;Enable(fLimitProcessors);
+     m_spinCtrlLimitProcessors-&gt;SetValue(nLimitProcessors);
+-    int nProcessors = atoi(getenv(&quot;NUMBER_OF_PROCESSORS&quot;));
++    int nProcessors = wxThread::GetCPUCount();
+     if (nProcessors &lt; 1)
+         nProcessors = 999;
+     m_spinCtrlLimitProcessors-&gt;SetRange(1, nProcessors);
+@@ -1549,17 +1540,11 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+         walletdb.WriteSetting(&quot;fMinimizeOnClose&quot;, fMinimizeOnClose);
+     }
+ 
+-    if (fUseProxy != m_checkBoxUseProxy-&gt;GetValue())
+-    {
+-        fUseProxy = m_checkBoxUseProxy-&gt;GetValue();
+-        walletdb.WriteSetting(&quot;fUseProxy&quot;, fUseProxy);
+-    }
++    fUseProxy = m_checkBoxUseProxy-&gt;GetValue();
++    walletdb.WriteSetting(&quot;fUseProxy&quot;, fUseProxy);
+ 
+-    if (addrProxy != GetProxyAddr())
+-    {
+-        addrProxy = GetProxyAddr();
+-        walletdb.WriteSetting(&quot;addrProxy&quot;, addrProxy);
+-    }
++    addrProxy = GetProxyAddr();
++    walletdb.WriteSetting(&quot;addrProxy&quot;, addrProxy);
+ }
+ 
+ 
+@@ -1608,10 +1593,8 @@ CSendDialog::CSendDialog(wxWindow* parent, const wxString&amp; strAddress) : CSendDi
+     //// todo: should add a display of your balance for convenience
+ 
+     // Set Icon
+-    wxBitmap bmpSend(wxT(&quot;send16&quot;), wxBITMAP_TYPE_RESOURCE);
+-    bmpSend.SetMask(new wxMask(wxBitmap(wxT(&quot;send16masknoshadow&quot;), wxBITMAP_TYPE_RESOURCE)));
+     wxIcon iconSend;
+-    iconSend.CopyFromBitmap(bmpSend);
++    iconSend.CopyFromBitmap(wxBitmap(send16noshadow_xpm));
+     SetIcon(iconSend);
+ 
+     wxCommandEvent event;
+@@ -2231,10 +2214,8 @@ CAddressBookDialog::CAddressBookDialog(wxWindow* parent, const wxString&amp; strInit
+     m_listCtrl-&gt;SetFocus();
+ 
+     // Set Icon
+-    wxBitmap bmpAddressBook(wxT(&quot;addressbook16&quot;), wxBITMAP_TYPE_RESOURCE);
+-    bmpAddressBook.SetMask(new wxMask(wxBitmap(wxT(&quot;addressbook16mask&quot;), wxBITMAP_TYPE_RESOURCE)));
+     wxIcon iconAddressBook;
+-    iconAddressBook.CopyFromBitmap(bmpAddressBook);
++    iconAddressBook.CopyFromBitmap(wxBitmap(addressbook16_xpm));
+     SetIcon(iconAddressBook);
+ 
+     // Fill listctrl with address book data
+@@ -3345,7 +3326,7 @@ bool CMyApp::OnInit2()
+     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+     _CrtSetReportFile(_CRT_WARN, CreateFile(&quot;NUL&quot;, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0));
+ #endif
+-#ifdef __WXDEBUG__
++#if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__)
+     // Disable malfunctioning wxWidgets debug assertion
+     g_isPainting = 10000;
+ #endif
+@@ -3362,8 +3343,7 @@ bool CMyApp::OnInit2()
+             &quot;  -gen=0\t\t  Don&#x27;t generate coins\n&quot;
+             &quot;  -min\t\t  Start minimized\n&quot;
+             &quot;  -datadir=&lt;dir&gt;\t  Specify data directory\n&quot;
+-            &quot;  -proxy=&lt;ip:port&gt;\t  Connect through socks4 proxy,\n&quot;
+-            &quot;  \t\t     e.g. -proxy=127.0.0.1:9050 to use TOR\n&quot;
++            &quot;  -proxy=&lt;ip:port&gt;\t  Connect through socks4 proxy\n&quot;
+             &quot;  -addnode=&lt;ip&gt;\t  Add a node to connect to\n&quot;
+             &quot;  -connect=&lt;ip&gt;\t  Connect only to the specified node\n&quot;
+             &quot;  -?\t\t  This help message\n&quot;;
+@@ -3386,6 +3366,8 @@ bool CMyApp::OnInit2()
+         unsigned int nStart = GetTime();
+         loop
+         {
++            // TODO: find out how to do this in Linux, or replace with wxWidgets commands
++#ifdef __WXMSW__
+             // Show the previous instance and exit
+             HWND hwndPrev = FindWindow(&quot;wxWindowClassNR&quot;, &quot;Bitcoin&quot;);
+             if (hwndPrev)
+@@ -3395,6 +3377,7 @@ bool CMyApp::OnInit2()
+                 SetForegroundWindow(hwndPrev);
+                 return false;
+             }
++#endif
+ 
+             if (GetTime() &gt; nStart + 60)
+                 return false;
+@@ -3421,7 +3404,7 @@ bool CMyApp::OnInit2()
+         fPrintToDebugger = true;
+ 
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d, Windows version %08x\n&quot;, VERSION, GetVersion());
++    printf(&quot;Bitcoin version %d, OS version %s\n&quot;, VERSION, wxGetOsDescription().mb_str());
+ 
+     if (mapArgs.count(&quot;-dropmessages&quot;))
+     {
+@@ -3493,12 +3476,36 @@ bool CMyApp::OnInit2()
+         return false;
+     }
+ 
++    if (mapArgs.count(&quot;-printblock&quot;))
++    {
++        string strMatch = mapArgs[&quot;-printblock&quot;];
++        int nFound = 0;
++        for (map&lt;uint256, CBlockIndex*&gt;::iterator mi = mapBlockIndex.begin(); mi != mapBlockIndex.end(); ++mi)
++        {
++            uint256 hash = (*mi).first;
++            if (strncmp(hash.ToString().c_str(), strMatch.c_str(), strMatch.size()) == 0)
++            {
++                CBlockIndex* pindex = (*mi).second;
++                CBlock block;
++                block.ReadFromDisk(pindex, true);
++                block.BuildMerkleTree();
++                block.print();
++                printf(&quot;\n&quot;);
++                nFound++;
++            }
++        }
++        if (nFound == 0)
++            printf(&quot;No blocks matching %s were found\n&quot;, strMatch.c_str());
++        OnExit();
++        return false;
++    }
++
+     if (mapArgs.count(&quot;-gen&quot;))
+     {
+         if (mapArgs[&quot;-gen&quot;].empty())
+             fGenerateBitcoins = true;
+         else
+-            fGenerateBitcoins = atoi(mapArgs[&quot;-gen&quot;].c_str());
++            fGenerateBitcoins = (atoi(mapArgs[&quot;-gen&quot;].c_str()) != 0);
+     }
+ 
+     if (mapArgs.count(&quot;-proxy&quot;))
+@@ -3511,9 +3518,6 @@ bool CMyApp::OnInit2()
+             OnExit();
+             return false;
+         }
+-        CWalletDB walletdb;
+-        walletdb.WriteSetting(&quot;fUseProxy&quot;, fUseProxy);
+-        walletdb.WriteSetting(&quot;addrProxy&quot;, addrProxy);
+     }
+ 
+     if (mapArgs.count(&quot;-addnode&quot;))
+@@ -3522,6 +3526,7 @@ bool CMyApp::OnInit2()
+         foreach(string strAddr, mapMultiArgs[&quot;-addnode&quot;])
+         {
+             CAddress addr(strAddr, NODE_NETWORK);
++            addr.nTime = 0; // so it won&#x27;t relay unless successfully connected
+             if (addr.IsValid())
+                 AddAddress(addrdb, addr);
+         }
+@@ -3559,7 +3564,11 @@ bool CMyApp::OnInit2()
+     //
+     // Tests
+     //
++#ifdef __WXMSW__
+     if (argc &gt;= 2 &amp;&amp; stricmp(argv[1], &quot;-send&quot;) == 0)
++#else
++    if (argc &gt;= 2 &amp;&amp; strcmp(argv[1], &quot;-send&quot;) == 0)
++#endif
+     {
+         int64 nValue = 1;
+         if (argc &gt;= 3)
+@@ -3646,7 +3655,8 @@ void CMyApp::OnFatalException()
+ 
+ 
+ 
+-typedef WINSHELLAPI BOOL WINAPI (*PSHGETSPECIALFOLDERPATHA)(HWND hwndOwner, LPSTR lpszPath, int nFolder, BOOL fCreate);
++#ifdef __WXMSW__
++typedef WINSHELLAPI BOOL (WINAPI *PSHGETSPECIALFOLDERPATHA)(HWND hwndOwner, LPSTR lpszPath, int nFolder, BOOL fCreate);
+ 
+ string MyGetSpecialFolderPath(int nFolder, bool fCreate)
+ {
+@@ -3737,7 +3747,10 @@ void SetStartOnSystemStartup(bool fAutoStart)
+         CoUninitialize();
+     }
+ }
+-
++#else
++bool GetStartOnSystemStartup() { return false; }
++void SetStartOnSystemStartup(bool fAutoStart) { }
++#endif
+ 
+ 
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -7,6 +7,10 @@
+ 
+ #include &quot;uibase.h&quot;
+ 
++#include &quot;xpm/addressbook20.xpm&quot;
++#include &quot;xpm/check.xpm&quot;
++#include &quot;xpm/send20.xpm&quot;
++
+ ///////////////////////////////////////////////////////////////////////////
+ 
+ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxFrame( parent, id, title, pos, size, style )
+@@ -60,8 +64,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_toolBar-&gt;SetToolSeparation( 1 );
+ 	m_toolBar-&gt;SetFont( wxFont( wxNORMAL_FONT-&gt;GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+ 	
+-	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, wxT(&quot;&amp;Send Coins&quot;), wxBitmap( wxT(&quot;send20&quot;), wxBITMAP_TYPE_RESOURCE ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+-	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, wxT(&quot;&amp;Address Book&quot;), wxBitmap( wxT(&quot;addressbook20&quot;), wxBITMAP_TYPE_RESOURCE ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, wxT(&quot;&amp;Send Coins&quot;), wxBitmap( send20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, wxT(&quot;&amp;Address Book&quot;), wxBitmap( addressbook20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+ 	m_toolBar-&gt;Realize();
+ 	
+ 	m_statusBar = this-&gt;CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
+@@ -666,7 +670,7 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	
+ 	bSizer47-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+-	m_bitmapCheckMark = new wxStaticBitmap( this, wxID_ANY, wxICON( check ), wxDefaultPosition, wxSize( 16,16 ), 0 );
++	m_bitmapCheckMark = new wxStaticBitmap( this, wxID_ANY, wxBitmap( check_xpm ), wxDefaultPosition, wxSize( 16,16 ), 0 );
+ 	bSizer47-&gt;Add( m_bitmapCheckMark, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	m_staticText36 = new wxStaticText( this, wxID_ANY, wxT(&quot;Pay &amp;To:&quot;), wxDefaultPosition, wxSize( -1,-1 ), wxALIGN_RIGHT );</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+             &lt;/object&gt;
+-            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;0&quot;&gt;
++            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;1&quot;&gt;
+                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;bitmapsize&quot;&gt;20,20&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -273,7 +273,7 @@
+                 &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                 &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                 &lt;object class=&quot;tool&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;bitmap&quot;&gt;send20; Load From Resource&lt;/property&gt;
++                    &lt;property name=&quot;bitmap&quot;&gt;xpm/send20.xpm; Load From File&lt;/property&gt;
+                     &lt;property name=&quot;id&quot;&gt;wxID_BUTTONSEND&lt;/property&gt;
+                     &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                     &lt;property name=&quot;label&quot;&gt;&amp;amp;Send Coins&lt;/property&gt;
+@@ -287,7 +287,7 @@
+                     &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                 &lt;/object&gt;
+                 &lt;object class=&quot;tool&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;bitmap&quot;&gt;addressbook20; Load From Resource&lt;/property&gt;
++                    &lt;property name=&quot;bitmap&quot;&gt;xpm/addressbook20.xpm; Load From File&lt;/property&gt;
+                     &lt;property name=&quot;id&quot;&gt;wxID_BUTTONRECEIVE&lt;/property&gt;
+                     &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+                     &lt;property name=&quot;label&quot;&gt;&amp;amp;Address Book&lt;/property&gt;
+@@ -1685,7 +1685,7 @@
+                 &lt;/object&gt;
+             &lt;/object&gt;
+         &lt;/object&gt;
+-        &lt;object class=&quot;Dialog&quot; expanded=&quot;1&quot;&gt;
++        &lt;object class=&quot;Dialog&quot; expanded=&quot;0&quot;&gt;
+             &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -3699,7 +3699,7 @@
+                                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                                     &lt;object class=&quot;wxStaticBitmap&quot; expanded=&quot;1&quot;&gt;
+                                         &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;bitmap&quot;&gt;check; Load From Icon Resource [-1; -1]&lt;/property&gt;
++                                        &lt;property name=&quot;bitmap&quot;&gt;xpm/check.xpm; Load From File&lt;/property&gt;
+                                         &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -38,8 +38,10 @@ public:
+             ppmutexOpenSSL[i] = new wxMutex();
+         CRYPTO_set_locking_callback(locking_callback);
+ 
++#ifdef __WXMSW__
+         // Seed random number generator with screen scrape and other hardware sources
+         RAND_screen();
++#endif
+ 
+         // Seed random number generator with performance counter
+         RandAddSeed();
+@@ -325,8 +327,8 @@ void ParseParameters(int argc, char* argv[])
+             pszValue = strchr(psz, &#x27;=&#x27;);
+             *pszValue++ = &#x27;\0&#x27;;
+         }
+-        strlwr(psz);
+         #ifdef __WXMSW__
++        _strlwr(psz);
+         if (psz[0] == &#x27;/&#x27;)
+             psz[0] = &#x27;-&#x27;;
+         #endif
+@@ -343,9 +345,13 @@ void ParseParameters(int argc, char* argv[])
+ 
+ void FormatException(char* pszMessage, std::exception* pex, const char* pszThread)
+ {
++#ifdef __WXMSW__
+     char pszModule[MAX_PATH];
+     pszModule[0] = &#x27;\0&#x27;;
+     GetModuleFileName(NULL, pszModule, sizeof(pszModule));
++#else
++    const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();
++#endif
+     if (pex)
+         snprintf(pszMessage, 1000,
+             &quot;EXCEPTION: %s       \n%s       \n%s in %s       \n&quot;, typeid(*pex).name(), pex-&gt;what(), pszModule, pszThread);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -55,9 +55,34 @@ inline T&amp; REF(const T&amp; val)
+ }
+ 
+ #ifndef __WXMSW__
+-#define closesocket(s)  close(s)
+-#define INVALID_SOCKET  (SOCKET)(~0)
++#define _UI64_MAX           UINT64_MAX
++#define _I64_MAX            INT64_MAX
++#define WSAGetLastError()   errno
++#define WSAEWOULDBLOCK      EWOULDBLOCK
++#define WSAEMSGSIZE         EMSGSIZE
++#define WSAEINTR            EINTR
++#define WSAEINPROGRESS      EINPROGRESS
++#define WSAEADDRINUSE       EADDRINUSE
++#define closesocket(s)      close(s)
++#define INVALID_SOCKET      (SOCKET)(~0)
++#define SOCKET_ERROR        -1
+ typedef u_int SOCKET;
++#define _vsnprintf(a,b,c,d) vsnprintf(a,b,c,d)
++#define strlwr(psz)         to_lower(psz)
++#define _strlwr(psz)        to_lower(psz)
++#define _mkdir(psz)         filesystem::create_directory(psz)
++#define MAX_PATH            1024
++#define Sleep(n)            wxMilliSleep(n)
++#define Beep(n1,n2)         (0)
++inline int _beginthread(void(*pfn)(void*), unsigned nStack, void* parg) { thread(bind(pfn, parg)); return 0; }
++inline void _endthread() { pthread_exit(NULL); }
++inline int GetCurrentThread() { return 0; }
++// threads are processes on linux, so setpriority affects just the one thread
++inline void SetThreadPriority(int nThread, int nPriority) { setpriority(PRIO_PROCESS, getpid(), nPriority); }
++#define THREAD_PRIORITY_LOWEST          PRIO_MIN
++#define THREAD_PRIORITY_BELOW_NORMAL    2
++#define THREAD_PRIORITY_NORMAL          0
++#define THREAD_PRIORITY_ABOVE_NORMAL    0
+ #endif
+ 
+ 
+@@ -120,7 +145,7 @@ public:
+ protected:
+     wxMutex mutex;
+ public:
+-    explicit CCriticalSection() { }
++    explicit CCriticalSection() : mutex(wxMUTEX_RECURSIVE) { }
+     ~CCriticalSection() { }
+     void Enter() { mutex.Lock(); }
+     void Leave() { mutex.Unlock(); }
+@@ -183,7 +208,7 @@ inline int OutputDebugStringF(const char* pszFormat, ...)
+         // print to debug.log
+         char pszFile[MAX_PATH+100];
+         GetDataDir(pszFile);
+-        strlcat(pszFile, &quot;\\debug.log&quot;, sizeof(pszFile));
++        strlcat(pszFile, &quot;/debug.log&quot;, sizeof(pszFile));
+         FILE* fileout = fopen(pszFile, &quot;a&quot;);
+         if (fileout)
+         {
+@@ -354,13 +379,6 @@ inline int64 GetTimeMillis()
+     return wxGetLocalTimeMillis().GetValue();
+ }
+ 
+-#ifndef __WXMSW__
+-inline void Sleep(unsigned int nMilliseconds)
+-{
+-    wxMilliSleep(nMilliseconds);
+-}
+-#endif
+-
+ 
+ 
+ </code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -0,0 +1,278 @@
++/* XPM */
++static char * addressbook16_xpm[] = {
++/* columns rows colors chars-per-pixel */
++&quot;16 16 256 2&quot;,
++&quot;   c #FFFFFF&quot;,
++&quot;.  c #F7FFFF&quot;,
++&quot;X  c #F7F7FF&quot;,
++&quot;o  c #EFF7FF&quot;,
++&quot;O  c #E6EFF7&quot;,
++&quot;+  c #E6E6F7&quot;,
++&quot;@  c #CEE6F7&quot;,
++&quot;#  c #DEDEEF&quot;,
++&quot;$  c #D6DEEF&quot;,
++&quot;%  c #D6DEE6&quot;,
++&quot;&amp;  c #CEDEF7&quot;,
++&quot;*  c #CEDEEF&quot;,
++&quot;=  c #EFF708&quot;,
++&quot;-  c #C5DEF7&quot;,
++&quot;;  c #CED6EF&quot;,
++&quot;:  c None&quot;,
++&quot;&gt;  c #C5D6E6&quot;,
++&quot;,  c #BDD6F7&quot;,
++&quot;&lt;  c #BDD6EF&quot;,
++&quot;1  c #D6CECE&quot;,
++&quot;2  c #BDCEE6&quot;,
++&quot;3  c #BDC5E6&quot;,
++&quot;4  c #B5C5DE&quot;,
++&quot;5  c #BDD631&quot;,
++&quot;6  c #ADBDDE&quot;,
++&quot;7  c #B5B5BD&quot;,
++&quot;8  c #A5B5D6&quot;,
++&quot;9  c #00FFFF&quot;,
++&quot;0  c #9CB5CE&quot;,
++&quot;q  c #9CADD6&quot;,
++&quot;w  c #94A5D6&quot;,
++&quot;e  c #8CA5D6&quot;,
++&quot;r  c #8CA5CE&quot;,
++&quot;t  c #8CA5C5&quot;,
++&quot;y  c #849CC5&quot;,
++&quot;u  c #7B9CD6&quot;,
++&quot;i  c #7B9CCE&quot;,
++&quot;p  c #31BDCE&quot;,
++&quot;a  c #6B9CD6&quot;,
++&quot;s  c #00F708&quot;,
++&quot;d  c #8494AD&quot;,
++&quot;f  c #7B94B5&quot;,
++&quot;g  c #6B94D6&quot;,
++&quot;h  c #6B9C84&quot;,
++&quot;j  c #7B8CAD&quot;,
++&quot;k  c #738CAD&quot;,
++&quot;l  c #638CC5&quot;,
++&quot;z  c #10CE42&quot;,
++&quot;x  c #638CBD&quot;,
++&quot;c  c #7B849C&quot;,
++&quot;v  c #73849C&quot;,
++&quot;b  c #6B84A5&quot;,
++&quot;n  c #7B7BA5&quot;,
++&quot;m  c #6B849C&quot;,
++&quot;M  c #7B8C42&quot;,
++&quot;N  c #5A84C5&quot;,
++&quot;B  c #29AD6B&quot;,
++&quot;V  c #F74A4A&quot;,
++&quot;C  c #6384A5&quot;,
++&quot;Z  c #5284C5&quot;,
++&quot;A  c #637BA5&quot;,
++&quot;S  c #637B9C&quot;,
++&quot;D  c #9C637B&quot;,
++&quot;F  c #6B7B5A&quot;,
++&quot;G  c #637394&quot;,
++&quot;H  c #52739C&quot;,
++&quot;J  c #5A7384&quot;,
++&quot;K  c #526B94&quot;,
++&quot;L  c #426B94&quot;,
++&quot;P  c #52638C&quot;,
++&quot;I  c #426B7B&quot;,
++&quot;U  c #5A5A8C&quot;,
++&quot;Y  c #524A7B&quot;,
++&quot;T  c #425273&quot;,
++&quot;R  c #21636B&quot;,
++&quot;E  c #106394&quot;,
++&quot;W  c #106B52&quot;,
++&quot;Q  c #3A4273&quot;,
++&quot;!  c #31426B&quot;,
++&quot;~  c #523163&quot;,
++&quot;^  c #29426B&quot;,
++&quot;/  c #293A63&quot;,
++&quot;(  c #213A63&quot;,
++&quot;)  c #193A63&quot;,
++&quot;_  c #193163&quot;,
++&quot;`  c #19315A&quot;,
++&quot;&#x27;  c #212963&quot;,
++&quot;]  c #10315A&quot;,
++&quot;[  c #082952&quot;,
++&quot;{  c #FFCC33&quot;,
++&quot;}  c #33FF33&quot;,
++&quot;|  c #66FF33&quot;,
++&quot; . c #99FF33&quot;,
++&quot;.. c #CCFF33&quot;,
++&quot;X. c #FFFF33&quot;,
++&quot;o. c #000066&quot;,
++&quot;O. c #330066&quot;,
++&quot;+. c #660066&quot;,
++&quot;@. c #990066&quot;,
++&quot;#. c #CC0066&quot;,
++&quot;$. c #FF0066&quot;,
++&quot;%. c #003366&quot;,
++&quot;&amp;. c #333366&quot;,
++&quot;*. c #663366&quot;,
++&quot;=. c #993366&quot;,
++&quot;-. c #CC3366&quot;,
++&quot;;. c #FF3366&quot;,
++&quot;:. c #006666&quot;,
++&quot;&gt;. c #336666&quot;,
++&quot;,. c #666666&quot;,
++&quot;&lt;. c #996666&quot;,
++&quot;1. c #CC6666&quot;,
++&quot;2. c #009966&quot;,
++&quot;3. c #339966&quot;,
++&quot;4. c #669966&quot;,
++&quot;5. c #999966&quot;,
++&quot;6. c #CC9966&quot;,
++&quot;7. c #FF9966&quot;,
++&quot;8. c #00CC66&quot;,
++&quot;9. c #33CC66&quot;,
++&quot;0. c #99CC66&quot;,
++&quot;q. c #CCCC66&quot;,
++&quot;w. c #FFCC66&quot;,
++&quot;e. c #00FF66&quot;,
++&quot;r. c #33FF66&quot;,
++&quot;t. c #99FF66&quot;,
++&quot;y. c #CCFF66&quot;,
++&quot;u. c #FF00CC&quot;,
++&quot;i. c #CC00FF&quot;,
++&quot;p. c #009999&quot;,
++&quot;a. c #993399&quot;,
++&quot;s. c #990099&quot;,
++&quot;d. c #CC0099&quot;,
++&quot;f. c #000099&quot;,
++&quot;g. c #333399&quot;,
++&quot;h. c #660099&quot;,
++&quot;j. c #CC3399&quot;,
++&quot;k. c #FF0099&quot;,
++&quot;l. c #006699&quot;,
++&quot;z. c #336699&quot;,
++&quot;x. c #663399&quot;,
++&quot;c. c #996699&quot;,
++&quot;v. c #CC6699&quot;,
++&quot;b. c #FF3399&quot;,
++&quot;n. c #339999&quot;,
++&quot;m. c #669999&quot;,
++&quot;M. c #999999&quot;,
++&quot;N. c #CC9999&quot;,
++&quot;B. c #FF9999&quot;,
++&quot;V. c #00CC99&quot;,
++&quot;C. c #33CC99&quot;,
++&quot;Z. c #66CC66&quot;,
++&quot;A. c #99CC99&quot;,
++&quot;S. c #CCCC99&quot;,
++&quot;D. c #FFCC99&quot;,
++&quot;F. c #00FF99&quot;,
++&quot;G. c #33FF99&quot;,
++&quot;H. c #66CC99&quot;,
++&quot;J. c #99FF99&quot;,
++&quot;K. c #CCFF99&quot;,
++&quot;L. c #FFFF99&quot;,
++&quot;P. c #0000CC&quot;,
++&quot;I. c #330099&quot;,
++&quot;U. c #6600CC&quot;,
++&quot;Y. c #9900CC&quot;,
++&quot;T. c #CC00CC&quot;,
++&quot;R. c #003399&quot;,
++&quot;E. c #3333CC&quot;,
++&quot;W. c #6633CC&quot;,
++&quot;Q. c #9933CC&quot;,
++&quot;!. c #CC33CC&quot;,
++&quot;~. c #FF33CC&quot;,
++&quot;^. c #0066CC&quot;,
++&quot;/. c #3366CC&quot;,
++&quot;(. c #666699&quot;,
++&quot;). c #9966CC&quot;,
++&quot;_. c #CC66CC&quot;,
++&quot;`. c #FF6699&quot;,
++&quot;&#x27;. c #0099CC&quot;,
++&quot;]. c #3399CC&quot;,
++&quot;[. c #6699CC&quot;,
++&quot;{. c #9999CC&quot;,</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/bitcoin.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b7362c0/">← renamed build.txt to build-msw.txt</a><a rel="next" href="../../commits/300d460/">got rid of CheckForShutdown, replaced some thread-unsafe… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

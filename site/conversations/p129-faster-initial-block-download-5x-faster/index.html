@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Faster initial block download (5x faster) – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 23 July 2010: By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster.…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p129-faster-initial-block-download-5x-faster/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Faster initial block download (5x faster) – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 23 July 2010: By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster.…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p129-faster-initial-block-download-5x-faster/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Faster initial block download (5x faster) – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 July 2010: By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster.…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Faster initial block download (5x faster)", "url": "https://satoshimail.pages.dev/conversations/p129-faster-initial-block-download-5x-faster/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-23T18:24:56Z", "text": "By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster. It downloads in about 30 minutes. The database default had it writing each block to disk synchronously, which is not necessary. I changed the settings to let it cache the changes in memory and write them out in a batch. Blocks are still written transactionally, so either the complete change occurs or none of it does, in either case the data is left in a valid state. I only enabled this change during the initial block download. When you come within 2000 blocks of the latest block, these changes turn off and it slows down to the old way. I built a test build if you'd like to start using it: http://www.bitcoin.org/download/bitcoin-0.3.2.5-win32.zip http://www.bitcoin.org/download/bitcoin-0.3.2.5-linux.tar.gz These binaries also include Gavin Andresen's JSON-RPC HTTP authentication feature and the other important security improvements from 0.3.2. I've been running a test over the last 24 hours that kills and restarts it randomly every 2-60 seconds (poor thing) while it's trying to do an initial block download and it's been fine. There are no changes to the way it handles wallet.dat. This change is only for blk*.dat and the non-critical addr.dat. You can always delete blk*.dat if it gets screwed up and let it re-download.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-23T18:27:50Z", "text": "Are these for use with the test network you have setup or the current public network?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "NewLibertyStandard"}, "datePublished": "2010-07-23T18:42:25Z", "text": "This is for the regular network. The test network doesn't have enough blocks to test it effectively. From what I can tell, satoshi's builds are always for the live network unless he specifies otherwise."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-23T18:50:05Z", "text": "Awesome, got some extra slow machines to wipe/test with then. Will be curious to see what it does on faster machines as well. Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-23T19:01:50Z", "text": "So far, awesome increase for the Windows client. Doing about 500 blocks / second using a private node. After the timer is done, I'll try it on a wild node out on the Internet to see if the speed is just as good."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-23T19:32:58Z", "text": "The first part of the 70k downloaded in about 20 minutes, the rest of the remaining 2000 blocks in about 7 minutes, so only 27 minutes from 0 to 100%, very nice! Is there a safety reason to stop within the last 2000 blocks or can it be tweaked to stop at remaining 500 blocks for example? In case anyone was curious, average download speed was around 3 Mbps for each burst of download."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-23T20:04:26Z", "text": "Blocks download just as fast in the wild (about 3 Mbps), so a big thumbs up, this will certainly get new users up and running much quicker."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-23T20:13:27Z", "text": "Not really. I'll change it to 1000 next time."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Faster initial block download (5x faster)", "item": "https://satoshimail.pages.dev/conversations/p129-faster-initial-block-download-5x-faster/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p129">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Faster initial block download (5x faster)</span></div></nav>
+<main class="in">
+<h1>Faster initial block download (5x faster)</h1>
+<p class="lead">BitcoinTalk forum · 8 messages · from 23 July 2010 · with NewLibertyStandard, Satoshi Nakamoto, knightmb</p>
+<p class="actions"><a class="btn" href="../../#t-p129">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/129/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T18:24:56Z">23 July 2010, 18:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5349#msg5349" rel="nofollow noopener">original</a></span></header>
+<div class="t">By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster.  It downloads in about 30 minutes.
+
+The database default had it writing each block to disk synchronously, which is not necessary.  I changed the settings to let it cache the changes in memory and write them out in a batch.  Blocks are still written transactionally, so either the complete change occurs or none of it does, in either case the data is left in a valid state.
+
+I only enabled this change during the initial block download.  When you come within 2000 blocks of the latest block, these changes turn off and it slows down to the old way.
+
+I built a test build if you&#x27;d like to start using it:
+
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.2.5-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.2.5-win32.zip</a>
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.2.5-linux.tar.gz" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.2.5-linux.tar.gz</a>
+
+These binaries also include Gavin Andresen&#x27;s JSON-RPC HTTP authentication feature and the other important security improvements from 0.3.2.
+
+I&#x27;ve been running a test over the last 24 hours that kills and restarts it randomly every 2-60 seconds (poor thing) while it&#x27;s trying to do an initial block download and it&#x27;s been fine.
+
+There are no changes to the way it handles wallet.dat.  This change is only for blk*.dat and the non-critical addr.dat.  You can always delete blk*.dat if it gets screwed up and let it re-download.</div></article><article class="msg" id="m1">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-23T18:27:50Z">23 July 2010, 18:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5350#msg5350" rel="nofollow noopener">original</a></span></header>
+<div class="t">Are these for use with the test network you have setup or the current public network?</div></article><article class="msg" id="m2">
+<header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-07-23T18:42:25Z">23 July 2010, 18:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5353#msg5353" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 23, 2010, 06:27:50 PM</div><div class="t">Are these for use with the test network you have setup or the current public network?</div></blockquote><div class="t">This is for the regular network. The test network doesn&#x27;t have enough blocks to test it effectively. From what I can tell, satoshi&#x27;s builds are always for the live network unless he specifies otherwise.</div></article><article class="msg" id="m3">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-23T18:50:05Z">23 July 2010, 18:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5356#msg5356" rel="nofollow noopener">original</a></span></header>
+<div class="t">Awesome, got some extra slow machines to wipe/test with then. Will be curious to see what it does on faster machines as well.  Smiley</div></article><article class="msg" id="m4">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-23T19:01:50Z">23 July 2010, 19:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5359#msg5359" rel="nofollow noopener">original</a></span></header>
+<div class="t">So far, awesome increase for the Windows client. Doing about 500 blocks / second using a private node. After the timer is done, I&#x27;ll try it on a wild node out on the Internet to see if the speed is just as good.</div></article><article class="msg" id="m5">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-23T19:32:58Z">23 July 2010, 19:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5369#msg5369" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on July 23, 2010, 06:24:56 PM</div><div class="t">By making some adjustments to the database settings, I was able to make the initial block download about 5 times faster.  It downloads in about 30 minutes.
+
+The database default had it writing each block to disk synchronously, which is not necessary.  I changed the settings to let it cache the changes in memory and write them out in a batch.  Blocks are still written transactionally, so either the complete change occurs or none of it does, in either case the data is left in a valid state.
+
+I only enabled this change during the initial block download.  When you come within 2000 blocks of the latest block, these changes turn off and it slows down to the old way.</div></blockquote><div class="t">The first part of the 70k downloaded in about 20 minutes, the rest of the remaining 2000 blocks in about 7 minutes, so only 27 minutes from 0 to 100%, very nice! Is there a safety reason to stop within the last 2000 blocks or can it be tweaked to stop at remaining 500 blocks for example?
+
+In case anyone was curious, average download speed was around 3 Mbps for each burst of download.</div></article><article class="msg" id="m6">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-23T20:04:26Z">23 July 2010, 20:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5376#msg5376" rel="nofollow noopener">original</a></span></header>
+<div class="t">Blocks download just as fast in the wild (about 3 Mbps), so a big thumbs up, this will certainly get new users up and running much quicker.</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-23T20:13:27Z">23 July 2010, 20:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=550.msg5378#msg5378" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on July 23, 2010, 07:32:58 PM</div><div class="t">Is there a safety reason to stop within the last 2000 blocks or can it be tweaked to stop at remaining 500 blocks for example?</div></blockquote><div class="t">Not really.  I&#x27;ll change it to 1000 next time.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/new-liberty-standard/">New Liberty Standard</a> <span class="muted">Pseudonymous early user who published a bitcoin exchange rate.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p128-bitcoind-not-responding-to-rpc/">← bitcoind not responding to RPC</a><a rel="next" href="../../conversations/p130-reading-writing-blocks-and-flatdata/">Reading/Writing Blocks and FLATDATA →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

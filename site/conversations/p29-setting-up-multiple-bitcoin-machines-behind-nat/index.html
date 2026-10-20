@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Setting up multiple bitcoin machines behind NAT – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 16 February 2010: Right now there isn&#x27;t a port number setting to do that. It&#x27;s a feature yet to be implemented. You can only set up…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p29-setting-up-multiple-bitcoin-machines-behind-nat/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Setting up multiple bitcoin machines behind NAT – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 16 February 2010: Right now there isn&#x27;t a port number setting to do that. It&#x27;s a feature yet to be implemented. You can only set up…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p29-setting-up-multiple-bitcoin-machines-behind-nat/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Setting up multiple bitcoin machines behind NAT – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 16 February 2010: Right now there isn&#x27;t a port number setting to do that. It&#x27;s a feature yet to be implemented. You can only set up…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Setting up multiple bitcoin machines behind NAT", "url": "https://satoshimail.pages.dev/conversations/p29-setting-up-multiple-bitcoin-machines-behind-nat/", "author": {"@type": "Person", "name": "foobar"}, "datePublished": "2010-02-16T00:35:25Z", "text": "Hello, well the title says it all. I want to set up multiple bitcoin machines behind NAT. For this it reason would be nice, if one could choose an other port than 8333, which I guess would have other nice side effects. Maybe someone uses this port for something else or maybe it isn't possible to set up port forwarding to this port for one reason or another. Or is there an other way one should go? Greetings, foobar", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-16T01:34:56Z", "text": "Right now there isn't a port number setting to do that. It's a feature yet to be implemented. You can only set up your NAT to port-forward to one of the computers. (I said something earlier about NAT port translation, but that wouldn't work, other nodes wouldn't know to connect to that port) If you want, as a small optimization, you could run the rest of your computers as: bitcoin -connect=<the IP of the first computer> so they get all their network communication from the first computer and…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Xunie"}, "datePublished": "2010-04-08T20:06:37Z", "text": "So, if I somehow I forwarded port router:8333 to bitcoinhost1:8333 and router:8334 to bitcoinhost2:8333, we get undefined behavior? Because that seems like trivial to me, to keep track of port numbers in any p2p app."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-05-16T23:56:03Z", "text": "At the moment, it always assumes the incoming port is 8333, so it would tell other bitcoin nodes to connect to router:8333 even if you're redirecting from another port number. I'm not in a big hurry to fix this because I can't think of any benefit to having more than one incoming connection port. If you're providing one incoming port, then you've done your bit to help the network. Having two incoming ports to the same person doesn't help redundancy. If you have many computers, then using the…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Setting up multiple bitcoin machines behind NAT", "item": "https://satoshimail.pages.dev/conversations/p29-setting-up-multiple-bitcoin-machines-behind-nat/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p29">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Setting up multiple bitcoin machines behind NAT</span></div></nav>
+<main class="in">
+<h1>Setting up multiple bitcoin machines behind NAT</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 16 February 2010 · with Satoshi Nakamoto, Xunie, foobar</p>
+<p class="actions"><a class="btn" href="../../#t-p29">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/29/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>foobar</b><span class="muted"> · <time datetime="2010-02-16T00:35:25Z">16 February 2010, 00:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg359#msg359" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hello,
+
+well the title says it all. I want to set up multiple bitcoin machines behind NAT.
+For this it reason would be nice, if one could choose an other port than 8333, which I guess would have other nice side effects. Maybe someone uses this port for something else or maybe it isn&#x27;t possible to set up port forwarding to this port for one reason or another.
+
+Or is there an other way one should go?
+
+Greetings,
+foobar</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-16T01:34:56Z">16 February 2010, 01:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg360#msg360" rel="nofollow noopener">original</a></span></header>
+<div class="t">Right now there isn&#x27;t a port number setting to do that.  It&#x27;s a feature yet to be implemented.  You can only set up your NAT to port-forward to one of the computers.  (I said something earlier about NAT port translation, but that wouldn&#x27;t work, other nodes wouldn&#x27;t know to connect to that port)
+
+If you want, as a small optimization, you could run the rest of your computers as:
+bitcoin -connect=&lt;the IP of the first computer&gt;
+
+so they get all their network communication from the first computer and don&#x27;t all connect over the net individually for the same information.  This saves bandwidth, although it doesn&#x27;t use much bandwidth to begin with, so it wouldn&#x27;t really matter unless you had tons of computers.
+
+For redundancy in case the first computer goes down, you could have two that connect out and the rest connect to both of them.  The first two are run normally, the rest are run like:
+bitcoin -connect=&lt;IP1&gt; -connect=&lt;IP2&gt;</div></article><article class="msg" id="m2">
+<header><b>Xunie</b><span class="muted"> · <time datetime="2010-04-08T20:06:37Z">8 April 2010, 20:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg877#msg877" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on February 16, 2010, 01:34:56 AM</div><div class="t">Right now there isn&#x27;t a port number setting to do that.  It&#x27;s a feature yet to be implemented.</div></blockquote><div class="t">So, if I somehow I forwarded port router:8333 to bitcoinhost1:8333 and router:8334 to bitcoinhost2:8333, we get undefined behavior?
+Because that seems like trivial to me, to keep track of port numbers in any p2p app.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-05-16T23:56:03Z">16 May 2010, 23:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg1135#msg1135" rel="nofollow noopener">original</a></span></header>
+<div class="t">At the moment, it always assumes the incoming port is 8333, so it would tell other bitcoin nodes to connect to router:8333 even if you&#x27;re redirecting from another port number.
+
+I&#x27;m not in a big hurry to fix this because I can&#x27;t think of any benefit to having more than one incoming connection port.  If you&#x27;re providing one incoming port, then you&#x27;ve done your bit to help the network.  Having two incoming ports to the same person doesn&#x27;t help redundancy.
+
+If you have many computers, then using the -connect switch on most of them to connect locally makes more sense.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p28-deb-package/">← DEB Package?</a><a rel="next" href="../../conversations/p30-uri-scheme-for-bitcoin/">URI-scheme for bitcoin →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SMF php code – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 3 October 2010: I noticed my custom captcha stuff is gone. I guess it got lost in an upgrade? What are we doing for captcha now? If we…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x90-smf-php-code/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="SMF php code – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 3 October 2010: I noticed my custom captcha stuff is gone. I guess it got lost in an upgrade? What are we doing for captcha now? If we…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x90-smf-php-code/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="SMF php code – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 3 October 2010: I noticed my custom captcha stuff is gone. I guess it got lost in an upgrade? What are we doing for captcha now? If we…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "SMF php code", "url": "https://satoshimail.pages.dev/conversations/x90-smf-php-code/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2010-10-03T20:27:29Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-10-03T20:27:29Z", "text": "I noticed my custom captcha stuff is gone. I guess it got lost in an upgrade? What are we doing for captcha now? If we only have default captcha, we'd be getting flooded with spam accounts. Do I need to re-integrate the custom captcha stuff or do we have another solution now?"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2010-10-04T15:41:50Z", "text": "Sorry, I didn't notice your custom code when updating. Re-integration is a good idea if it's not too much work. I've removed hundreds of spam accounts by making a search for old accounts that have a webpage url and 0 posts."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-10-04T19:05:26Z", "text": "I reuploaded the changes. For future reference, the files in Sources with customisations are: Register.php PersonalMessage.php ManageRegistration.php Subs.php Let me know whenever you do an upgrade so I can make sure all my changes survived. Hopefully the 1.1.x line is mature and updates are infrequent. We shouldn't upgrade to 2.0. I made a ton of customisations that wouldn't be compatible, and I kind of prefer the look of 1.1 over 2.0 anyway. The captcha url has mycode=4 added to it, and the…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "SMF php code", "item": "https://satoshimail.pages.dev/conversations/x90-smf-php-code/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x90">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">SMF php code</span></div></nav>
+<main class="in">
+<h1>SMF php code</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 3 messages · from 3 October 2010 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x90">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2010-10-03T20:27:29Z">3 October 2010, 20:27 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-235" rel="nofollow noopener">original</a></span></header>
+<div class="t">I noticed my custom captcha stuff is gone.  I guess it got lost in an
+upgrade?  What are we doing for captcha now?  If we only have default
+captcha, we&#x27;d be getting flooded with spam accounts.  Do I need to
+re-integrate the custom captcha stuff or do we have another solution now?</div></article><article class="msg" id="m1">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2010-10-04T15:41:50Z">4 October 2010, 15:41 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-236" rel="nofollow noopener">original</a></span></header>
+<div class="t">Sorry, I didn&#x27;t notice your custom code when updating. Re-integration
+is a good idea if it&#x27;s not too much work. I&#x27;ve removed hundreds of
+spam accounts by making a search for old accounts that have a webpage
+url and 0 posts.</div><blockquote><div class="t">I noticed my custom captcha stuff is gone.  I guess it got lost in an
+upgrade?  What are we doing for captcha now?  If we only have default
+captcha, we&#x27;d be getting flooded with spam accounts.  Do I need to
+re-integrate the custom captcha stuff or do we have another solution
+now?</div></blockquote></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2010-10-04T19:05:26Z">4 October 2010, 19:05 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-237" rel="nofollow noopener">original</a></span></header>
+<div class="t">I reuploaded the changes.  For future reference, the files in Sources
+with customisations are:
+Register.php
+PersonalMessage.php
+ManageRegistration.php
+Subs.php
+
+Let me know whenever you do an upgrade so I can make sure all my changes
+survived.
+
+Hopefully the 1.1.x line is mature and updates are infrequent.  We
+shouldn&#x27;t upgrade to 2.0.  I made a ton of customisations that wouldn&#x27;t
+be compatible, and I kind of prefer the look of 1.1 over 2.0 anyway.
+
+The captcha url has mycode=4 added to it, and the register page has
+extra hidden mycode=2 through 5 images so any automated thing wouldn&#x27;t
+know which one to pick.  Everything that uses captcha has to have that
+mycode=4 thing added.  Something in sending personal messages also uses
+captcha.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Sorry, I didn&#x27;t notice your custom code when updating. Re-integration is
+a good idea if it&#x27;s not too much work. I&#x27;ve removed hundreds of spam
+accounts by making a search for old accounts that have a webpage url and
+0 posts.
+
+&gt; I noticed my custom captcha stuff is gone.  I guess it got lost in an
+&gt; upgrade?  What are we doing for captcha now?  If we only have default
+&gt; captcha, we&#x27;d be getting flooded with spam accounts.  Do I need to
+&gt; re-integrate the custom captcha stuff or do we have another solution
+&gt; now?</div></blockquote></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x89-bookkeeping/">← Bookkeeping</a><a rel="next" href="../../conversations/x91-fwd-bitcoin-org-is-down/">[Fwd: Bitcoin.org is down] →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

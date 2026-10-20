@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>reverted makefile.unix wx-config --… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/a75560d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="reverted makefile.unix wx-config --… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/a75560d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="reverted makefile.unix wx-config --… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 30 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reverted makefile.unix wx-config -- version 0.3.6", "url": "https://satoshimail.pages.dev/commits/a75560d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-30T17:36:06Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a75560d828464c3f1138f52cf247e956fc8f937d"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "reverted makefile.unix wx-config --…", "item": "https://satoshimail.pages.dev/commits/a75560d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ca75560d828">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">reverted makefile.unix wx-config --…</span></div></nav>
+<main class="in">
+<h1>reverted makefile.unix wx-config -- version 0.3.6</h1>
+<p class="lead">Commit by Satoshi Nakamoto (--author=Satoshi Nakamoto) on 30 July 2010 · release v0.3.6 · 6 files, +718 −655</p>
+<p class="actions"><a class="btn" href="../../#t-ca75560d828">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/a75560d828464c3f1138f52cf247e956fc8f937d" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>bignum.h</code></summary><pre><code>@@ -401,7 +401,8 @@ public:
+ 
+     CBigNum&amp; operator&gt;&gt;=(unsigned int shift)
+     {
+-        // Note: BN_rshift segfaults on 64-bit ubuntu 9.10 if 2^shift is greater than the number
++        // Note: BN_rshift segfaults on 64-bit ubuntu 9.10 if 2^shift is greater than the number,
++        //       tested OK on 64-bit ubuntu 10.4
+         if (!BN_rshift(this, this, shift))
+             throw bignum_error(&quot;CBigNum:operator&gt;&gt;= : BN_rshift failed&quot;);
+         return *this;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,12 +3,21 @@
+ # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+ 
+-WXLIBS=$(shell wx-config --debug=yes --libs --static)
+-WXFLAGS=$(shell wx-config --debug=yes --cppflags)
++INCLUDEPATHS= \
++ -I&quot;/usr/include&quot; \
++ -I&quot;/usr/local/include/wx-2.9&quot; \
++ -I&quot;/usr/local/lib/wx/include/gtk2-unicode-debug-static-2.9&quot;
+ 
+ LIBPATHS= \
++ -L&quot;/usr/lib&quot; \
+  -L&quot;/usr/local/lib&quot;
+ 
++WXLIBS= \
++ -Wl,-Bstatic \
++   -l wx_gtk2ud-2.9 \
++ -Wl,-Bdynamic \
++   -l gtk-x11-2.0 -l SM
++
+ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system \
+@@ -22,7 +31,7 @@ LIBS= \
+ 
+ DEFS=-D__WXGTK__ -DNOPCH
+ DEBUGFLAGS=-g -D__WXDEBUG__
+-CFLAGS=-O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS)
++CFLAGS=-O2 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+ HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h \
+     script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h noui.h init.h
+ 
+@@ -43,10 +52,10 @@ all: bitcoin
+ 
+ 
+ headers.h.gch: headers.h $(HEADERS)
+-	g++ -c $(CFLAGS) $(WXFLAGS) -DGUI -o $@ $&lt;
++	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ obj/%.o: %.cpp $(HEADERS) headers.h.gch
+-	g++ -c $(CFLAGS) $(WXFLAGS) -DGUI -o $@ $&lt;
++	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
+ 
+ cryptopp/obj/%.o: cryptopp/%.cpp
+ 	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,6 +16,7 @@ static const CBigNum bnZero(0);
+ static const CBigNum bnOne(1);
+ static const CBigNum bnFalse(0);
+ static const CBigNum bnTrue(1);
++static const size_t nMaxNumSize = 258;
+ 
+ 
+ bool CastToBool(const valtype&amp; vch)
+@@ -53,752 +54,779 @@ bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nI
+     vector&lt;valtype&gt; altstack;
+     if (pvStackRet)
+         pvStackRet-&gt;clear();
++    if (script.size() &gt; 20000)
++        return false;
+ 
+ 
+-    while (pc &lt; pend)
++    try
+     {
+-        bool fExec = !count(vfExec.begin(), vfExec.end(), false);
+-
+-        //
+-        // Read instruction
+-        //
+-        opcodetype opcode;
+-        valtype vchPushValue;
+-        if (!script.GetOp(pc, opcode, vchPushValue))
+-            return false;
+-
+-        if (fExec &amp;&amp; opcode &lt;= OP_PUSHDATA4)
+-            stack.push_back(vchPushValue);
+-        else if (fExec || (OP_IF &lt;= opcode &amp;&amp; opcode &lt;= OP_ENDIF))
+-        switch (opcode)
++        while (pc &lt; pend)
+         {
+-            //
+-            // Push value
+-            //
+-            case OP_1NEGATE:
+-            case OP_1:
+-            case OP_2:
+-            case OP_3:
+-            case OP_4:
+-            case OP_5:
+-            case OP_6:
+-            case OP_7:
+-            case OP_8:
+-            case OP_9:
+-            case OP_10:
+-            case OP_11:
+-            case OP_12:
+-            case OP_13:
+-            case OP_14:
+-            case OP_15:
+-            case OP_16:
+-            {
+-                // ( -- value)
+-                CBigNum bn((int)opcode - (int)(OP_1 - 1));
+-                stack.push_back(bn.getvch());
+-            }
+-            break;
+-
++            bool fExec = !count(vfExec.begin(), vfExec.end(), false);
+ 
+             //
+-            // Control
++            // Read instruction
+             //
+-            case OP_NOP:
+-            break;
+-
+-            case OP_VER:
+-            {
+-                CBigNum bn(VERSION);
+-                stack.push_back(bn.getvch());
+-            }
+-            break;
++            opcodetype opcode;
++            valtype vchPushValue;
++            if (!script.GetOp(pc, opcode, vchPushValue))
++                return false;
++            if (vchPushValue.size() &gt; 5000)
++                return false;
+ 
+-            case OP_IF:
+-            case OP_NOTIF:
+-            case OP_VERIF:
+-            case OP_VERNOTIF:
++            if (fExec &amp;&amp; opcode &lt;= OP_PUSHDATA4)
++                stack.push_back(vchPushValue);
++            else if (fExec || (OP_IF &lt;= opcode &amp;&amp; opcode &lt;= OP_ENDIF))
++            switch (opcode)
+             {
+-                // &lt;expression&gt; if [statements] [else [statements]] endif
+-                bool fValue = false;
+-                if (fExec)
++                //
++                // Push value
++                //
++                case OP_1NEGATE:
++                case OP_1:
++                case OP_2:
++                case OP_3:
++                case OP_4:
++                case OP_5:
++                case OP_6:
++                case OP_7:
++                case OP_8:
++                case OP_9:
++                case OP_10:
++                case OP_11:
++                case OP_12:
++                case OP_13:
++                case OP_14:
++                case OP_15:
++                case OP_16:
+                 {
+-                    if (stack.size() &lt; 1)
+-                        return false;
+-                    valtype&amp; vch = stacktop(-1);
+-                    if (opcode == OP_VERIF || opcode == OP_VERNOTIF)
+-                        fValue = (CBigNum(VERSION) &gt;= CBigNum(vch));
+-                    else
+-                        fValue = CastToBool(vch);
+-                    if (opcode == OP_NOTIF || opcode == OP_VERNOTIF)
+-                        fValue = !fValue;
+-                    stack.pop_back();
++                    // ( -- value)
++                    CBigNum bn((int)opcode - (int)(OP_1 - 1));
++                    stack.push_back(bn.getvch());
+                 }
+-                vfExec.push_back(fValue);
+-            }
+-            break;
+-
+-            case OP_ELSE:
+-            {
+-                if (vfExec.empty())
+-                    return false;
+-                vfExec.back() = !vfExec.back();
+-            }
+-            break;
+-
+-            case OP_ENDIF:
+-            {
+-                if (vfExec.empty())
+-                    return false;
+-                vfExec.pop_back();
+-            }
+-            break;
+-
+-            case OP_VERIFY:
+-            {
+-                // (true -- ) or
+-                // (false -- false) and return
+-                if (stack.size() &lt; 1)
+-                    return false;
+-                bool fValue = CastToBool(stacktop(-1));
+-                if (fValue)
+-                    stack.pop_back();
+-                else
+-                    pc = pend;
+-            }
+-            break;
+-
+-            case OP_RETURN:
+-            {
+-                pc = pend;
+-            }
+-            break;
++                break;
+ 
+ 
+-            //
+-            // Stack ops
+-            //
+-            case OP_TOALTSTACK:
+-            {
+-                if (stack.size() &lt; 1)
+-                    return false;
+-                altstack.push_back(stacktop(-1));
+-                stack.pop_back();
+-            }
+-            break;
++                //
++                // Control
++                //
++                case OP_NOP:
++                case OP_NOP1: case OP_NOP2: case OP_NOP3: case OP_NOP4: case OP_NOP5:
++                case OP_NOP6: case OP_NOP7: case OP_NOP8: case OP_NOP9: case OP_NOP10:
++                break;
+ 
+-            case OP_FROMALTSTACK:
+-            {
+-                if (altstack.size() &lt; 1)
++                case OP_VER:
++                case OP_VERIF:
++                case OP_VERNOTIF:
++                {
+                     return false;
+-                stack.push_back(altstacktop(-1));
+-                altstack.pop_back();
+-            }
+-            break;
++                }
++                break;
+ 
+-            case OP_2DROP:
+-            {
+-                // (x1 x2 -- )
+-                stack.pop_back();
+-                stack.pop_back();
+-            }
+-            break;
++                case OP_IF:
++                case OP_NOTIF:
++                {
++                    // &lt;expression&gt; if [statements] [else [statements]] endif
++                    bool fValue = false;
++                    if (fExec)
++                    {
++                        if (stack.size() &lt; 1)
++                            return false;
++                        valtype&amp; vch = stacktop(-1);
++                        fValue = CastToBool(vch);
++                        if (opcode == OP_NOTIF)
++                            fValue = !fValue;
++                        stack.pop_back();
++                    }
++                    vfExec.push_back(fValue);
++                }
++                break;
+ 
+-            case OP_2DUP:
+-            {
+-                // (x1 x2 -- x1 x2 x1 x2)
+-                if (stack.size() &lt; 2)
+-                    return false;
+-                valtype vch1 = stacktop(-2);
+-                valtype vch2 = stacktop(-1);
+-                stack.push_back(vch1);
+-                stack.push_back(vch2);
+-            }
+-            break;
++                case OP_ELSE:
++                {
++                    if (vfExec.empty())
++                        return false;
++                    vfExec.back() = !vfExec.back();
++                }
++                break;
+ 
+-            case OP_3DUP:
+-            {
+-                // (x1 x2 x3 -- x1 x2 x3 x1 x2 x3)
+-                if (stack.size() &lt; 3)
+-                    return false;
+-                valtype vch1 = stacktop(-3);
+-                valtype vch2 = stacktop(-2);
+-                valtype vch3 = stacktop(-1);
+-                stack.push_back(vch1);
+-                stack.push_back(vch2);
+-                stack.push_back(vch3);
+-            }
+-            break;
++                case OP_ENDIF:
++                {
++                    if (vfExec.empty())
++                        return false;
++                    vfExec.pop_back();
++                }
++                break;
+ 
+-            case OP_2OVER:
+-            {
+-                // (x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2)
+-                if (stack.size() &lt; 4)
+-                    return false;
+-                valtype vch1 = stacktop(-4);
+-                valtype vch2 = stacktop(-3);
+-                stack.push_back(vch1);
+-                stack.push_back(vch2);
+-            }
+-            break;
++                case OP_VERIFY:
++                {
++                    // (true -- ) or
++                    // (false -- false) and return
++                    if (stack.size() &lt; 1)
++                        return false;
++                    bool fValue = CastToBool(stacktop(-1));
++                    if (fValue)
++                        stack.pop_back();
++                    else
++                        return false;
++                }
++                break;
+ 
+-            case OP_2ROT:
+-            {</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -136,6 +136,20 @@ enum opcodetype
+     OP_CHECKMULTISIG,
+     OP_CHECKMULTISIGVERIFY,
+ 
++    // expansion
++    OP_NOP1,
++    OP_NOP2,
++    OP_NOP3,
++    OP_NOP4,
++    OP_NOP5,
++    OP_NOP6,
++    OP_NOP7,
++    OP_NOP8,
++    OP_NOP9,
++    OP_NOP10,
++
++
++
+ 
+     // multi-byte opcodes
+     OP_SINGLEBYTE_END = 0xF0,
+@@ -276,6 +290,18 @@ inline const char* GetOpName(opcodetype opcode)
+     case OP_CHECKMULTISIG          : return &quot;OP_CHECKMULTISIG&quot;;
+     case OP_CHECKMULTISIGVERIFY    : return &quot;OP_CHECKMULTISIGVERIFY&quot;;
+ 
++    // expanson
++    case OP_NOP1                   : return &quot;OP_NOP1&quot;;
++    case OP_NOP2                   : return &quot;OP_NOP2&quot;;
++    case OP_NOP3                   : return &quot;OP_NOP3&quot;;
++    case OP_NOP4                   : return &quot;OP_NOP4&quot;;
++    case OP_NOP5                   : return &quot;OP_NOP5&quot;;
++    case OP_NOP6                   : return &quot;OP_NOP6&quot;;
++    case OP_NOP7                   : return &quot;OP_NOP7&quot;;
++    case OP_NOP8                   : return &quot;OP_NOP8&quot;;
++    case OP_NOP9                   : return &quot;OP_NOP9&quot;;
++    case OP_NOP10                  : return &quot;OP_NOP10&quot;;
++
+ 
+ 
+     // multi-byte opcodes
+@@ -285,7 +311,6 @@ inline const char* GetOpName(opcodetype opcode)
+     case OP_PUBKEYHASH             : return &quot;OP_PUBKEYHASH&quot;;
+ 
+ 
+-
+     case OP_INVALIDOPCODE          : return &quot;OP_INVALIDOPCODE&quot;;
+     default:
+         return &quot;UNKNOWN_OPCODE&quot;;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 304;
+-static const char* pszSubVer = &quot;.0&quot;;
++static const int VERSION = 306;
++static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.3
++!define VERSION 0.3.6
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.3-win32-setup.exe
++OutFile bitcoin-0.3.6-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.3.0
++VIProductVersion 0.3.6.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/ec82517/">← Fredrik Roubert: simplified makefile.unix with wx-config…</a><a rel="next" href="../../commits/01bed18/">simplified makefile.unix, updated build-unix.txt… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

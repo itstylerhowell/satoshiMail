@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin open source implementation of P2P… (Feb 2009) – Satoshi Nakamoto #e17</title>
+<meta name="description" content="Satoshi Nakamoto, 11 February 2009: I&#x27;ve developed a new open source P2P e-cash system called Bitcoin. It&#x27;s completely decentralized, with no central…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/e17-p2p-research-bitcoin-open-source-implementation-of-p2p-curre/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Bitcoin open source implementation of P2P… (Feb 2009) – Satoshi Nakamoto #e17">
+<meta property="og:description" content="Satoshi Nakamoto, 11 February 2009: I&#x27;ve developed a new open source P2P e-cash system called Bitcoin. It&#x27;s completely decentralized, with no central…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/e17-p2p-research-bitcoin-open-source-implementation-of-p2p-curre/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Bitcoin open source implementation of P2P… (Feb 2009) – Satoshi Nakamoto #e17">
+<meta name="twitter:description" content="Satoshi Nakamoto, 11 February 2009: I&#x27;ve developed a new open source P2P e-cash system called Bitcoin. It&#x27;s completely decentralized, with no central…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "[p2p-research] Bitcoin open source implementation of P2P currency", "url": "https://satoshimail.pages.dev/conversations/e17-p2p-research-bitcoin-open-source-implementation-of-p2p-curre/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-02-11T22:37:54Z", "text": "I've developed a new open source P2P e-cash system called Bitcoin. It's completely decentralized, with no central server or trusted parties, because everything is based on crypto proof instead of trust. Give it a try, or take a look at the screenshots and design paper: Download Bitcoin v0.1 at http://www.bitcoin.org The root problem with conventional currency is all the trust that's required to make it work. The central bank must be trusted not to debase the currency, but the history of fiat currencies is full of breaches of that trust. Banks must be trusted to hold our money and transfer it electronically, but they lend it out in waves of credit bubbles with barely a fraction in reserve. We have to trust them with our privacy, trust them not to let identity thieves drain our accounts. Their massive overhead costs make micropayments impossible. A generation ago, multi-user time-sharing computer systems had a similar problem. Before strong encryption, users had to rely on password protection to secure their files, placing trust in the system administrator to keep their information private. Privacy could always be overridden by the admin based on his judgment call weighing the principle of privacy against other concerns, or at the behest of his superiors. Then strong encryption became available to the masses, and trust was no longer required. Data could be secured in a way that was physically impossible for others to access, no matter for what reason, no matter how good the excuse, no matter what. It's time we had the same thing for money. With e-currency based on cryptographic proof, without the need to trust a third party middleman, money can be secure and transactions effortless. One of the fundamental building blocks for such a system is digital signatures. A digital coin contains the public key of its owner. To transfer it, the owner signs the coin together with the public key of the next owner. Anyone can check the signatures to verify the chain of ownership.…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Michel Bauwens"}, "datePublished": "2009-02-12T02:15:30Z", "text": "Thanks for sharing this initiative, I hope some of our more expert members will intervene. I have an extra request if possible, our pages on Japanese initiatives, I'm assuming that is where you are based, though I could of course be wrong, are still very undeveloped, so I'm wondering if you could not add a few of the important open/free and commons oriented initiatives that you know about, including your own. See http://p2pfoundation.net/Japan Michel -- The P2P Foundation researches, documents…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Martien van Steenbergen"}, "datePublished": "2009-02-12T07:47:53Z", "text": "Very interesting. Is this akin to David Chaum's anonymous digital money? His concept makes sure money is anonymous unless it is compromised, i.e. the same money spent more than once. As soon as it's compromised, the ‘counterfeiter’ is immediately publicly exposed. Also, in bitcoin, is there a limited supply of money (that must be managed)? Or is money created exaclty at the moment of transaction? Succes en plezier, Martien."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-02-12T19:08:24Z", "text": "It's similar in that it uses digital signatures for coins, but different in the approach to privacy and preventing double-spending. The recipient of a Bitcoin payment is able to check whether it is the first spend or not, and second-spends are not accepted. There isn't an off-line mode where double-spenders are caught and shamed after the fact, because that would require participants to have identities. To protect privacy, key pairs are used only once, with a new one for every transaction. The…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Martien van Steenbergen"}, "datePublished": "2009-02-12T20:08:03Z", "text": "Thanks for clearing this up. IC. Yes, that's really great. Reminds me of: AardRock » Wizard Rabbit Treasurer; and AardRock » Pekunio Would love to also see support for not having to supply and managing money. Would make it easier and cheaper to maintain and results in have sufficient money, always and everywhere. No scarcity, no abundance, exactly the right amount all times, self-organizing. Are you familiar with Ripple? Is bitcoin also available as a protocol spec (facilitating differen…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-02-13T02:38:20Z", "text": "That's do-able. It can be programmed to follow any set of rules. I see Bitcoin as a foundation and first step if you want to implement programmable P2P social currencies like Marc's ideas and others discussed here. First you need normal, basic P2P currency working. Once that is established and proven out, dynamic smart money is an easy next step. I love the idea of virtual, non-geographic communities experimenting with new economic paradigms. Indeed, it is much like Pekunio in the concept of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Michel Bauwens"}, "datePublished": "2009-02-13T06:19:18Z", "text": "Hi Satoshi, how operational is your project? how soon do you think people will be able to use it in real life? Michel -- The P2P Foundation researches, documents and promotes peer to peer alternatives. Wiki and Encyclopedia, at http://p2pfoundation.net; Blog, at http://blog.p2pfoundation.net; Newsletter, at http://integralvisioning.org/index.php?topic=p2p Basic essay at http://www.ctheory.net/articles.aspx?id=499; interview at…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-02-13T18:36:45Z", "text": "It's fully operational and the network is growing. If you try the software, e-mail me your Bitcoin address and I'll send you a few coins. We just need to spread the word and keep getting more people interested. I'll forward the release introduction in the next message. Satoshi http://www.bitcoin.org"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "P2P Research list", "item": "https://satoshimail.pages.dev/conversations/p2p-research/"}, {"@type": "ListItem", "position": 4, "name": "[p2p-research] Bitcoin open source…", "item": "https://satoshimail.pages.dev/conversations/e17-p2p-research-bitcoin-open-source-implementation-of-p2p-curre/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-e17">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/p2p-research/">P2P Research list</a> <span aria-hidden="true">›</span> <span aria-current="page">[p2p-research] Bitcoin open source…</span></div></nav>
+<main class="in">
+<h1>[p2p-research] Bitcoin open source implementation of P2P currency</h1>
+<p class="lead">P2P Research list · 8 messages · from 11 February 2009 · with Martien van Steenbergen, Michel Bauwens, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-e17">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/emails/p2p-research/threads/17/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-02-11T22:37:54Z">11 February 2009, 22:37 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001347.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve developed a new open source P2P e-cash system called Bitcoin.  It&#x27;s
+completely decentralized, with no central server or trusted parties,
+because everything is based on crypto proof instead of trust.  Give it a
+try, or take a look at the screenshots and design paper:
+
+Download Bitcoin v0.1 at <a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a>
+
+The root problem with conventional currency is all the trust that&#x27;s
+required to make it work.  The central bank must be trusted not to
+debase the currency, but the history of fiat currencies is full of
+breaches of that trust.  Banks must be trusted to hold our money and
+transfer it electronically, but they lend it out in waves of credit
+bubbles with barely a fraction in reserve.  We have to trust them with
+our privacy, trust them not to let identity thieves drain our accounts.
+  Their massive overhead costs make micropayments impossible.
+
+A generation ago, multi-user time-sharing computer systems had a similar
+problem.  Before strong encryption, users had to rely on password
+protection to secure their files, placing trust in the system
+administrator to keep their information private.  Privacy could always
+be overridden by the admin based on his judgment call weighing the
+principle of privacy against other concerns, or at the behest of his
+superiors.  Then strong encryption became available to the masses, and
+trust was no longer required.  Data could be secured in a way that was
+physically impossible for others to access, no matter for what reason,
+no matter how good the excuse, no matter what.
+
+It&#x27;s time we had the same thing for money.  With e-currency based on
+cryptographic proof, without the need to trust a third party middleman,
+money can be secure and transactions effortless.
+
+One of the fundamental building blocks for such a system is digital
+signatures.  A digital coin contains the public key of its owner.  To
+transfer it, the owner signs the coin together with the public key of
+the next owner.  Anyone can check the signatures to verify the chain of
+ownership.  It works well to secure ownership, but leaves one big
+problem unsolved: double-spending.  Any owner could try to re-spend an
+already spent coin by signing it again to another owner.  The usual
+solution is for a trusted company with a central database to check for
+double-spending, but that just gets back to the trust model.  In its
+central position, the company can override the users, and the fees
+needed to support the company make micropayments impractical.
+
+Bitcoin&#x27;s solution is to use a peer-to-peer network to check for
+double-spending.  In a nutshell, the network works like a distributed
+timestamp server, stamping the first transaction to spend a coin.  It
+takes advantage of the nature of information being easy to spread but
+hard to stifle.  For details on how it works, see the design paper at
+<a href="http://www.bitcoin.org/bitcoin.pdf" rel="nofollow noopener">http://www.bitcoin.org/bitcoin.pdf</a>
+
+The result is a distributed system with no single point of failure.
+Users hold the crypto keys to their own money and transact directly with
+each other, with the help of the P2P network to check for double-spending.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div></article><article class="msg" id="m1">
+<header><b>Michel Bauwens</b><span class="muted"> · <time datetime="2009-02-12T02:15:30Z">12 February 2009, 02:15 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001348.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for sharing this initiative, I hope some of our more expert members
+will intervene.
+
+I have an extra request if possible, our pages on Japanese initiatives, I&#x27;m
+assuming that is where you are based, though I could of course be wrong, are
+still very undeveloped, so I&#x27;m wondering if you could not add a few of the
+important open/free and commons oriented initiatives that you know about,
+including your own.
+
+See <a href="http://p2pfoundation.net/Japan" rel="nofollow noopener">http://p2pfoundation.net/Japan</a>
+
+Michel</div><blockquote><div class=qh>On Thu, Feb 12, 2009 at 5:30 AM, Satoshi Nakamoto &lt;satoshin at gmx.com&gt; wrote:</div><div class="t">I&#x27;ve developed a new open source P2P e-cash system called Bitcoin.  It&#x27;s
+completely decentralized, with no central server or trusted parties, because
+everything is based on crypto proof instead of trust.  Give it a try, or
+take a look at the screenshots and design paper:
+
+Download Bitcoin v0.1 at <a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a>
+
+The root problem with conventional currency is all the trust that&#x27;s
+required to make it work.  The central bank must be trusted not to debase
+the currency, but the history of fiat currencies is full of breaches of that
+trust.  Banks must be trusted to hold our money and transfer it
+electronically, but they lend it out in waves of credit bubbles with barely
+a fraction in reserve.  We have to trust them with our privacy, trust them
+not to let identity thieves drain our accounts.  Their massive overhead
+costs make micropayments impossible.
+
+A generation ago, multi-user time-sharing computer systems had a similar
+problem.  Before strong encryption, users had to rely on password protection
+to secure their files, placing trust in the system administrator to keep
+their information private.  Privacy could always be overridden by the admin
+based on his judgment call weighing the principle of privacy against other
+concerns, or at the behest of his superiors.  Then strong encryption became
+available to the masses, and trust was no longer required.  Data could be
+secured in a way that was physically impossible for others to access, no
+matter for what reason, no matter how good the excuse, no matter what.
+
+It&#x27;s time we had the same thing for money.  With e-currency based on
+cryptographic proof, without the need to trust a third party middleman,
+money can be secure and transactions effortless.
+
+One of the fundamental building blocks for such a system is digital
+signatures.  A digital coin contains the public key of its owner.  To
+transfer it, the owner signs the coin together with the public key of the
+next owner.  Anyone can check the signatures to verify the chain of
+ownership.  It works well to secure ownership, but leaves one big problem
+unsolved: double-spending.  Any owner could try to re-spend an already spent
+coin by signing it again to another owner.  The usual solution is for a
+trusted company with a central database to check for double-spending, but
+that just gets back to the trust model.  In its central position, the
+company can override the users, and the fees needed to support the company
+make micropayments impractical.
+
+Bitcoin&#x27;s solution is to use a peer-to-peer network to check for
+double-spending.  In a nutshell, the network works like a distributed
+timestamp server, stamping the first transaction to spend a coin.  It takes
+advantage of the nature of information being easy to spread but hard to
+stifle.  For details on how it works, see the design paper at
+<a href="http://www.bitcoin.org/bitcoin.pdf" rel="nofollow noopener">http://www.bitcoin.org/bitcoin.pdf</a>
+
+The result is a distributed system with no single point of failure. Users
+hold the crypto keys to their own money and transact directly with each
+other, with the help of the P2P network to check for double-spending.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a>
+
+_______________________________________________
+p2presearch mailing list
+p2presearch at listcultures.org
+<a href="http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org" rel="nofollow noopener">http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org</a></div></blockquote><div class="t">--
+The P2P Foundation researches, documents and promotes peer to peer
+alternatives.
+
+Wiki and Encyclopedia, at <a href="http://p2pfoundation.net;" rel="nofollow noopener">http://p2pfoundation.net;</a> Blog, at
+<a href="http://blog.p2pfoundation.net;" rel="nofollow noopener">http://blog.p2pfoundation.net;</a> Newsletter, at
+<a href="http://integralvisioning.org/index.php?topic=p2p" rel="nofollow noopener">http://integralvisioning.org/index.php?topic=p2p</a>
+
+Basic essay at <a href="http://www.ctheory.net/articles.aspx?id=499;" rel="nofollow noopener">http://www.ctheory.net/articles.aspx?id=499;</a> interview at
+<a href="http://poynder.blogspot.com/2006/09/p2p-very-core-of-world-to-come.html" rel="nofollow noopener">http://poynder.blogspot.com/2006/09/p2p-very-core-of-world-to-come.html</a>
+BEST VIDEO ON P2P:
+<a href="http://video.google.com.au/videoplay?docid=4549818267592301968" rel="nofollow noopener">http://video.google.com.au/videoplay?docid=4549818267592301968</a>&amp;hl=en-AU
+
+KEEP UP TO DATE through our Delicious tags at <a href="http://del.icio.us/mbauwens" rel="nofollow noopener">http://del.icio.us/mbauwens</a>
+
+The work of the P2P Foundation is supported by SHIFTN,
+<a href="http://www.shiftn.com/" rel="nofollow noopener">http://www.shiftn.com/</a></div><div class="t small">An HTML attachment was scrubbed...
+URL: &lt;<a href="http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090212/41b802b7/attachment-0001.html" rel="nofollow noopener">http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090212/41b802b7/attachment-0001.html</a>&gt;</div></article><article class="msg" id="m2">
+<header><b>Martien van Steenbergen</b><span class="muted"> · <time datetime="2009-02-12T07:47:53Z">12 February 2009, 07:47 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001355.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">Very interesting. Is this akin to David Chaum&#x27;s anonymous digital
+money? His concept makes sure money is anonymous unless it is
+compromised, i.e. the same money spent more than once. As soon as it&#x27;s
+compromised, the ‘counterfeiter’ is immediately publicly exposed.
+
+Also, in bitcoin, is there a limited supply of money (that must be
+managed)? Or is money created exaclty at the moment of transaction?
+
+Succes en plezier,
+
+Martien.</div><blockquote><div class=qh>On 11 Feb 2009, at 23:30 , Satoshi Nakamoto wrote:</div><div class="t">I&#x27;ve developed a new open source P2P e-cash system called Bitcoin.
+It&#x27;s completely decentralized, with no central server or trusted
+parties, because everything is based on crypto proof instead of
+trust.  Give it a try, or take a look at the screenshots and design
+paper:
+
+Download Bitcoin v0.1 at <a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a>
+
+The root problem with conventional currency is all the trust that&#x27;s
+required to make it work.  The central bank must be trusted not to
+debase the currency, but the history of fiat currencies is full of
+breaches of that trust.  Banks must be trusted to hold our money and
+transfer it electronically, but they lend it out in waves of credit
+bubbles with barely a fraction in reserve.  We have to trust them
+with our privacy, trust them not to let identity thieves drain our
+accounts.  Their massive overhead costs make micropayments impossible.
+
+A generation ago, multi-user time-sharing computer systems had a
+similar problem.  Before strong encryption, users had to rely on
+password protection to secure their files, placing trust in the
+system administrator to keep their information private.  Privacy
+could always be overridden by the admin based on his judgment call
+weighing the principle of privacy against other concerns, or at the
+behest of his superiors.  Then strong encryption became available to
+the masses, and trust was no longer required.  Data could be secured
+in a way that was physically impossible for others to access, no
+matter for what reason, no matter how good the excuse, no matter what.
+
+It&#x27;s time we had the same thing for money.  With e-currency based on
+cryptographic proof, without the need to trust a third party
+middleman, money can be secure and transactions effortless.
+
+One of the fundamental building blocks for such a system is digital
+signatures.  A digital coin contains the public key of its owner.
+To transfer it, the owner signs the coin together with the public
+key of the next owner.  Anyone can check the signatures to verify
+the chain of ownership.  It works well to secure ownership, but
+leaves one big problem unsolved: double-spending.  Any owner could
+try to re-spend an already spent coin by signing it again to another
+owner.  The usual solution is for a trusted company with a central
+database to check for double-spending, but that just gets back to
+the trust model.  In its central position, the company can override
+the users, and the fees needed to support the company make
+micropayments impractical.
+
+Bitcoin&#x27;s solution is to use a peer-to-peer network to check for
+double-spending.  In a nutshell, the network works like a
+distributed timestamp server, stamping the first transaction to
+spend a coin.  It takes advantage of the nature of information being
+easy to spread but hard to stifle.  For details on how it works, see
+the design paper at <a href="http://www.bitcoin.org/bitcoin.pdf" rel="nofollow noopener">http://www.bitcoin.org/bitcoin.pdf</a>
+
+The result is a distributed system with no single point of failure.
+Users hold the crypto keys to their own money and transact directly
+with each other, with the help of the P2P network to check for
+double-spending.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a>
+
+_______________________________________________
+p2presearch mailing list
+p2presearch at listcultures.org
+<a href="http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org" rel="nofollow noopener">http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org</a></div></blockquote></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-02-12T19:08:24Z">12 February 2009, 19:08 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001356.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Martien van Steenbergen wrote:</div><div class="t">Very interesting. Is this akin to David Chaum&#x27;s anonymous digital money?
+His concept makes sure money is anonymous unless it is compromised, i.e.
+the same money spent more than once. As soon as it&#x27;s compromised, the
+‘counterfeiter’ is immediately publicly exposed.</div></blockquote><div class="t">It&#x27;s similar in that it uses digital signatures for coins, but different
+in the approach to privacy and preventing double-spending.  The
+recipient of a Bitcoin payment is able to check whether it is the first
+spend or not, and second-spends are not accepted.  There isn&#x27;t an
+off-line mode where double-spenders are caught and shamed after the
+fact, because that would require participants to have identities.
+
+To protect privacy, key pairs are used only once, with a new one for
+every transaction.  The owner of a coin is just whoever has its private key.
+
+Of course, the biggest difference is the lack of a central server.  That
+was the Achilles heel of Chaumian systems; when the central company shut
+down, so did the currency.</div><blockquote><div class="t">Also, in bitcoin, is there a limited supply of money (that must be
+managed)? Or is money created exaclty at the moment of transaction?</div></blockquote><div class="t">There is a limited supply of money.  Circulation will be 21,000,000
+coins.  Transactions only transfer ownership.
+
+Thank you for your questions,
+
+Satoshi
+
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div></article><article class="msg" id="m4">
+<header><b>Martien van Steenbergen</b><span class="muted"> · <time datetime="2009-02-12T20:08:03Z">12 February 2009, 20:08 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001357.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On 12 Feb 2009, at 20:01 , Satoshi Nakamoto wrote:</div><div class="t">Martien van Steenbergen wrote:
+&gt; Very interesting. Is this akin to David Chaum&#x27;s anonymous digital
+&gt; money? His concept makes sure money is anonymous unless it is
+&gt; compromised, i.e. the same money spent more than once. As soon as
+&gt; it&#x27;s compromised, the ‘counterfeiter’ is immediately publicly
+&gt; exposed.
+
+It&#x27;s similar in that it uses digital signatures for coins, but
+different in the approach to privacy and preventing double-
+spending.  The recipient of a Bitcoin payment is able to check
+whether it is the first spend or not, and second-spends are not
+accepted.  There isn&#x27;t an off-line mode where double-spenders are
+caught and shamed after the fact, because that would require
+participants to have identities.</div></blockquote><div class="t">Thanks for clearing this up.</div><blockquote><div class="t">To protect privacy, key pairs are used only once, with a new one for
+every transaction.  The owner of a coin is just whoever has its
+private key.</div></blockquote><div class="t">IC.</div><blockquote><div class="t">Of course, the biggest difference is the lack of a central server.
+That was the Achilles heel of Chaumian systems; when the central
+company shut down, so did the currency.</div></blockquote><div class="t">Yes, that&#x27;s really great. Reminds me of:
+
+AardRock » Wizard Rabbit Treasurer; and
+AardRock » Pekunio</div><blockquote><div class="t">&gt; Also, in bitcoin, is there a limited supply of money (that must be
+&gt; managed)? Or is money created exaclty at the moment of transaction?
+
+There is a limited supply of money.  Circulation will be 21,000,000
+coins.  Transactions only transfer ownership.</div></blockquote><div class="t">Would love to also see support for not having to supply and managing
+money. Would make it easier and cheaper to maintain and results in
+have sufficient money, always and everywhere. No scarcity, no
+abundance, exactly the right amount all times, self-organizing.
+
+Are you familiar with Ripple?
+
+Is bitcoin also available as a protocol spec (facilitating differen
+language bindings and implementations; unite on specs, compete on
+implementation).
+
+Succes en plezier,
+
+Martien.</div><div class="t small">An HTML attachment was scrubbed...
+URL: &lt;<a href="http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090212/9c83bdd1/attachment.html" rel="nofollow noopener">http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090212/9c83bdd1/attachment.html</a>&gt;</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-02-13T02:38:20Z">13 February 2009, 02:38 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001362.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Martien van Steenbergen wrote:</div><div class="t">Would love to also see support for not having to supply and
+managing  money. Would make it easier and cheaper to maintain
+and results in have sufficient money, always and everywhere.
+No scarcity, no abundance, exactly the right amount all times,
+self-organizing.</div></blockquote><div class="t">That&#x27;s do-able.  It can be programmed to follow any set of rules.
+
+I see Bitcoin as a foundation and first step if you want to implement
+programmable P2P social currencies like Marc&#x27;s ideas and others
+discussed here.  First you need normal, basic P2P currency working.
+Once that is established and proven out, dynamic smart money is an easy
+next step.
+
+I love the idea of virtual, non-geographic communities experimenting
+with new economic paradigms.</div><blockquote><div class="t">Reminds me of:
+
+    * AardRock » Wizard Rabbit Treasurer
+      &lt;<a href="http://wiki.aardrock.com/Wizard_Rabbit_Treasurer" rel="nofollow noopener">http://wiki.aardrock.com/Wizard_Rabbit_Treasurer</a>&gt;; and
+    * AardRock » Pekunio &lt;<a href="http://wiki.aardrock.com/Pekunio" rel="nofollow noopener">http://wiki.aardrock.com/Pekunio</a>&gt;</div></blockquote><div class="t">Indeed, it is much like Pekunio in the concept of spraying redundant
+copies of every transaction to a number of peers on the network, but the
+implementation is not a reputation network like Wizard Rabbit Treasurer.
+  In fact, Bitcoin does not use reputation at all.  It sees the network
+as just a big crowd and doesn&#x27;t much care who it talks to or who tells
+it something, as long as at least one of them relays the information
+being broadcast around the network.  It doesn&#x27;t care because there&#x27;s no
+way to lie to it.  Either you tell it crypto proof of something, or it
+ignores you.</div><blockquote><div class="t">Are you familiar with Ripple?</div></blockquote><div class="t">As trust systems go, Ripple is unique in spreading trust around rather
+than concentrating it.</div><blockquote><div class="t">Is bitcoin also available as a protocol spec (facilitating differen
+language bindings and implementations; unite on specs, compete on
+implementation).</div></blockquote><div class="t">It would be best to refer to the C++ source code.  I plan to implement
+interfaces for using the software to send and receive transactions from
+any language, so server side code can easily use it for web based
+e-commerce sites.
+
+Satoshi</div></article><article class="msg" id="m6">
+<header><b>Michel Bauwens</b><span class="muted"> · <time datetime="2009-02-13T06:19:18Z">13 February 2009, 06:19 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001366.html" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hi Satoshi,
+
+how operational is your project? how soon do you think people will be able
+to use it in real life?
+
+Michel</div><blockquote><div class=qh>On Fri, Feb 13, 2009 at 9:31 AM, Satoshi Nakamoto &lt;satoshin at gmx.com&gt; wrote:</div><div class="t">Martien van Steenbergen wrote:
+&gt; Would love to also see support for not having to supply and
+&gt; managing  money. Would make it easier and cheaper to maintain
+&gt; and results in have sufficient money, always and everywhere.
+&gt; No scarcity, no abundance, exactly the right amount all times,
+&gt; self-organizing.
+
+That&#x27;s do-able.  It can be programmed to follow any set of rules.
+
+I see Bitcoin as a foundation and first step if you want to implement
+programmable P2P social currencies like Marc&#x27;s ideas and others discussed
+here.  First you need normal, basic P2P currency working. Once that is
+established and proven out, dynamic smart money is an easy next step.
+
+I love the idea of virtual, non-geographic communities experimenting with
+new economic paradigms.
+
+ Reminds me of:
+&gt;
+&gt;    * AardRock » Wizard Rabbit Treasurer
+&gt;      &lt;<a href="http://wiki.aardrock.com/Wizard_Rabbit_Treasurer" rel="nofollow noopener">http://wiki.aardrock.com/Wizard_Rabbit_Treasurer</a>&gt;; and
+&gt;    * AardRock » Pekunio &lt;<a href="http://wiki.aardrock.com/Pekunio" rel="nofollow noopener">http://wiki.aardrock.com/Pekunio</a>&gt;
+&gt;
+
+Indeed, it is much like Pekunio in the concept of spraying redundant copies
+of every transaction to a number of peers on the network, but the
+implementation is not a reputation network like Wizard Rabbit Treasurer.  In
+fact, Bitcoin does not use reputation at all.  It sees the network as just a
+big crowd and doesn&#x27;t much care who it talks to or who tells it something,
+as long as at least one of them relays the information being broadcast
+around the network.  It doesn&#x27;t care because there&#x27;s no way to lie to it.
+ Either you tell it crypto proof of something, or it ignores you.
+
+ Are you familiar with Ripple?
+&gt;
+
+As trust systems go, Ripple is unique in spreading trust around rather than
+concentrating it.
+
+ Is bitcoin also available as a protocol spec (facilitating differen
+&gt; language bindings and implementations; unite on specs, compete on
+&gt; implementation).
+&gt;
+
+It would be best to refer to the C++ source code.  I plan to implement
+interfaces for using the software to send and receive transactions from any
+language, so server side code can easily use it for web based e-commerce
+sites.
+
+Satoshi
+
+_______________________________________________
+p2presearch mailing list
+p2presearch at listcultures.org
+<a href="http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org" rel="nofollow noopener">http://listcultures.org/mailman/listinfo/p2presearch_listcultures.org</a></div></blockquote><div class="t">--
+The P2P Foundation researches, documents and promotes peer to peer
+alternatives.
+
+Wiki and Encyclopedia, at <a href="http://p2pfoundation.net;" rel="nofollow noopener">http://p2pfoundation.net;</a> Blog, at
+<a href="http://blog.p2pfoundation.net;" rel="nofollow noopener">http://blog.p2pfoundation.net;</a> Newsletter, at
+<a href="http://integralvisioning.org/index.php?topic=p2p" rel="nofollow noopener">http://integralvisioning.org/index.php?topic=p2p</a>
+
+Basic essay at <a href="http://www.ctheory.net/articles.aspx?id=499;" rel="nofollow noopener">http://www.ctheory.net/articles.aspx?id=499;</a> interview at
+<a href="http://poynder.blogspot.com/2006/09/p2p-very-core-of-world-to-come.html" rel="nofollow noopener">http://poynder.blogspot.com/2006/09/p2p-very-core-of-world-to-come.html</a>
+BEST VIDEO ON P2P:
+<a href="http://video.google.com.au/videoplay?docid=4549818267592301968" rel="nofollow noopener">http://video.google.com.au/videoplay?docid=4549818267592301968</a>&amp;hl=en-AU
+
+KEEP UP TO DATE through our Delicious tags at <a href="http://del.icio.us/mbauwens" rel="nofollow noopener">http://del.icio.us/mbauwens</a>
+
+The work of the P2P Foundation is supported by SHIFTN,
+<a href="http://www.shiftn.com/" rel="nofollow noopener">http://www.shiftn.com/</a></div><div class="t small">An HTML attachment was scrubbed...
+URL: &lt;<a href="http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090213/148aa6a5/attachment.html" rel="nofollow noopener">http://listcultures.org/pipermail/p2presearch_listcultures.org/attachments/20090213/148aa6a5/attachment.html</a>&gt;</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-02-13T18:36:45Z">13 February 2009, 18:36 UTC</time> · <a href="https://diyhpl.us/~bryan/irc/bitcoin-satoshi/p2presearch-again/p2pfoundation.net/backups/p2p_research-archives/2009-February/001370.html" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Michel Bauwens wrote:</div><div class="t">how operational is your project? how soon do you think people will be
+able to use it in real life?</div></blockquote><div class="t">It&#x27;s fully operational and the network is growing.  If you try the
+software, e-mail me your Bitcoin address and I&#x27;ll send you a few coins.
+
+We just need to spread the word and keep getting more people interested.
+
+I&#x27;ll forward the release introduction in the next message.
+
+Satoshi
+
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/p2p-foundation/">P2P Foundation</a> <span class="muted">The forum where Satoshi described Bitcoin for a general audience in February 2009.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><span></span><a rel="next" href="../../conversations/e18-p2p-research-bitcoin-p2p-e-currency-v0-1-released/">[p2p-research] Bitcoin P2P e-currency v0.1 released →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

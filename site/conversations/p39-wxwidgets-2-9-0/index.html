@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>wxWidgets 2.9.0 – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 27 February 2010: In the Windows world, &quot;unicode&quot; means UTF-16 (wchar). 2.8 has two build variations, ANSI and UTF-16 (unicode). The…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p39-wxwidgets-2-9-0/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="wxWidgets 2.9.0 – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 27 February 2010: In the Windows world, &quot;unicode&quot; means UTF-16 (wchar). 2.8 has two build variations, ANSI and UTF-16 (unicode). The…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p39-wxwidgets-2-9-0/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="wxWidgets 2.9.0 – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 27 February 2010: In the Windows world, &quot;unicode&quot; means UTF-16 (wchar). 2.8 has two build variations, ANSI and UTF-16 (unicode). The…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "wxWidgets 2.9.0", "url": "https://satoshimail.pages.dev/conversations/p39-wxwidgets-2-9-0/", "author": {"@type": "Person", "name": "Cdecker"}, "datePublished": "2010-02-27T17:09:59Z", "text": "I'm currently trying to get BitCoin to compile on the openSuse Build Service, which would allow us to create a wide range of precompiled packages for a variety of distros but I'm continually running into problems. The most important of them is the wxWidgets 2.9.0 requirement which is incredibly hard to provide, and the source of many of the problems described on the Forum. Why is it so important to have a 2.9.0? Looking through the source of 2.8.10 it appears that unicode is possible with that version too. Regards, cdecker", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-27T21:22:53Z", "text": "In the Windows world, \"unicode\" means UTF-16 (wchar). 2.8 has two build variations, ANSI and UTF-16 (unicode). The UTF-16 version is the \"unicode\" version provided in the Debian package. I believe 2.8 and its UTF-16 build labelled simply \"unicode\" has been the source of build problems described in the forum. We were previously using 2.8 ANSI in anticipation of getting to UTF-8 without going through UTF-16 hell. We cannot compile with UTF-16. 2.9 has only one version, UTF-8. On Windows, we set…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "wxWidgets 2.9.0", "item": "https://satoshimail.pages.dev/conversations/p39-wxwidgets-2-9-0/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p39">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">wxWidgets 2.9.0</span></div></nav>
+<main class="in">
+<h1>wxWidgets 2.9.0</h1>
+<p class="lead">BitcoinTalk forum · 2 messages · from 27 February 2010 · with Cdecker, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-p39">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/39/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-02-27T17:09:59Z">27 February 2010, 17:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=65.msg569#msg569" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m currently trying to get BitCoin to compile on the openSuse Build Service, which would allow us to create a wide range of precompiled packages for a variety of distros but I&#x27;m continually running into problems. The most important of them is the wxWidgets 2.9.0 requirement which is incredibly hard to provide, and the source of many of the problems described on the Forum. Why is it so important to have a 2.9.0? Looking through the source of 2.8.10 it appears that unicode is possible with that version too.
+
+Regards,
+cdecker</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-27T21:22:53Z">27 February 2010, 21:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=65.msg571#msg571" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Cdecker on February 27, 2010, 05:09:59 PM</div><div class="t">Looking through the source of 2.8.10 it appears that unicode is possible with that version too.</div></blockquote><div class="t">In the Windows world, &quot;unicode&quot; means UTF-16 (wchar).
+
+2.8 has two build variations, ANSI and UTF-16 (unicode).  The UTF-16 version is the &quot;unicode&quot; version provided in the Debian package.  I believe 2.8 and its UTF-16 build labelled simply &quot;unicode&quot; has been the source of build problems described in the forum.  We were previously using 2.8 ANSI in anticipation of getting to UTF-8 without going through UTF-16 hell.  We cannot compile with UTF-16.
+
+2.9 has only one version, UTF-8.  On Windows, we set the codepage to UTF-8, so on all platforms our code is UTF-8 and wxWidgets interfaces with us in UTF-8.  On Linux I assume the codepage is already UTF-8.  By standardizing on 2.9 we avoid the multi-build confusion of 2.8, and we need 2.9 for UTF-8 internationalization.
+
+Make sure you read build-unix.txt and configure wxWidgets using the configure parameters given.
+
+Curious, why is it incredibly hard to provide wxWidgets 2.9.0?  If you mean for users, that&#x27;s why we static link it.
+
+It&#x27;s unfortunate that we require so many big dependencies, but we need them all.  At least on Debian/Ubuntu, all but wxWidgets are available as packages.  Eventually they&#x27;ll provide a 2.9 package.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p38-new-icon-logo/">← New icon/logo</a><a rel="next" href="../../conversations/p40-money-transfer-regulations/">Money Transfer Regulations →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

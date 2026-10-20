@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>increase block size limit – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 3 October 2010: +1 theymos. Don&#x27;t use this patch, it&#x27;ll make you incompatible with the network, to your own detriment. We can phase in…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p233-patch-increase-block-size-limit/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="increase block size limit – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 3 October 2010: +1 theymos. Don&#x27;t use this patch, it&#x27;ll make you incompatible with the network, to your own detriment. We can phase in…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p233-patch-increase-block-size-limit/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="increase block size limit – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 3 October 2010: +1 theymos. Don&#x27;t use this patch, it&#x27;ll make you incompatible with the network, to your own detriment. We can phase in…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "[PATCH] increase block size limit", "url": "https://satoshimail.pages.dev/conversations/p233-patch-increase-block-size-limit/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-10-03T20:13:42Z", "text": "We should be able to at least match Paypal's average transaction rate... diff --git a/main.h b/main.h index c5a0127..c92592a 100644 --- a/main.h +++ b/main.h @@ -14,7 +14,10 @@ class CBlockIndex; class CWalletTx; class CKeyItem; -static const unsigned int MAX_BLOCK_SIZE = 1000000; +static const unsigned int TX_PER_MINUTE = 1400; +static const unsigned int TX_AVG_SIZE_GUESS = 256; +static const unsigned int MAX_BLOCK_SIZE = + TX_PER_MINUTE * TX_AVG_SIZE_GUESS * 10 * 2; static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2; static const int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50; static const int64 COIN = 100000000; URL: http://yyz.us/bitcoin/patch.bitcoin-block-sz-limit", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-10-03T20:28:39Z", "text": "Applying this patch will make you incompatible with other Bitcoin clients."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-10-03T21:07:28Z", "text": "+1 theymos. Don't use this patch, it'll make you incompatible with the network, to your own detriment. We can phase in a change later if we get closer to needing it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-10-03T21:38:46Z", "text": "IMO it's a marketing thing. It's tough to get people to buy into a system, if the network is technically incapable of supporting high transaction rates."}, {"@type": "Comment", "author": {"@type": "Person", "name": "FreeMoney"}, "datePublished": "2010-10-04T07:39:35Z", "text": "Satoshi just said it can be changed, so technically the network is capable."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-10-04T08:10:01Z", "text": "It is also an incompatible change, as you see....."}, {"@type": "Comment", "author": {"@type": "Person", "name": "martin"}, "datePublished": "2010-10-04T11:50:35Z", "text": "No, it's incompatible if just a few people change their behaviour. To roll out a change to the network you need to get most of the clients understanding both the old and the new protocol, and then when you have a majority you turn on the new protocol."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-10-04T18:33:55Z", "text": "You just described a whole-network upgrade. I'd call that an incompatible change Smiley The effort to raise the transaction rate limit is the same as the effort to change the fundamental nature of bitcoins: convince the vast majority to upgrade."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-10-04T19:48:40Z", "text": "It can be phased in, like: if (blocknumber > 115000) maxblocksize = largerlimit It can start being in versions way ahead, so by the time it reaches that block number and goes into effect, the older versions that don't have it are already obsolete. When we're near the cutoff block number, I can put an alert to old versions to make sure they know they have to upgrade."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "[PATCH] increase block size limit", "item": "https://satoshimail.pages.dev/conversations/p233-patch-increase-block-size-limit/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p233">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">[PATCH] increase block size limit</span></div></nav>
+<main class="in">
+<h1>[PATCH] increase block size limit</h1>
+<p class="lead">BitcoinTalk forum · 9 messages · from 3 October 2010 · with FreeMoney, Satoshi Nakamoto, jgarzik, martin, theymos</p>
+<p class="actions"><a class="btn" href="../../#t-p233">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/233/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-10-03T20:13:42Z">3 October 2010, 20:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15121#msg15121" rel="nofollow noopener">original</a></span></header>
+<div class="t">We should be able to at least match Paypal&#x27;s average transaction rate...</div><pre><code>diff --git a/main.h b/main.h
+index c5a0127..c92592a 100644
+--- a/main.h
++++ b/main.h
+@@ -14,7 +14,10 @@ class CBlockIndex;
+ class CWalletTx;
+ class CKeyItem;
+ 
+-static const unsigned int MAX_BLOCK_SIZE = 1000000;
++static const unsigned int TX_PER_MINUTE = 1400;
++static const unsigned int TX_AVG_SIZE_GUESS = 256;
++static const unsigned int MAX_BLOCK_SIZE =
++ TX_PER_MINUTE * TX_AVG_SIZE_GUESS * 10 * 2;
+ static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
+ static const int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+ static const int64 COIN = 100000000;</code></pre><div class="t">URL: <a href="http://yyz.us/bitcoin/patch.bitcoin-block-sz-limit" rel="nofollow noopener">http://yyz.us/bitcoin/patch.bitcoin-block-sz-limit</a></div></article><article class="msg" id="m1">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-10-03T20:28:39Z">3 October 2010, 20:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15126#msg15126" rel="nofollow noopener">original</a></span></header>
+<div class="t">Applying this patch will make you incompatible with other Bitcoin clients.</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T21:07:28Z">3 October 2010, 21:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15139#msg15139" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: theymos on October 03, 2010, 08:28:39 PM</div><div class="t">Applying this patch will make you incompatible with other Bitcoin clients.</div></blockquote><div class="t">+1 theymos.  Don&#x27;t use this patch, it&#x27;ll make you incompatible with the network, to your own detriment.
+
+We can phase in a change later if we get closer to needing it.</div></article><article class="msg" id="m3">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-10-03T21:38:46Z">3 October 2010, 21:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15145#msg15145" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on October 03, 2010, 09:07:28 PM</div><div class="t">We can phase in a change later if we get closer to needing it.</div></blockquote><div class="t">IMO it&#x27;s a marketing thing.  It&#x27;s tough to get people to buy into a system, if the network is technically incapable of supporting high transaction rates.</div></article><article class="msg" id="m4">
+<header><b>FreeMoney</b><span class="muted"> · <time datetime="2010-10-04T07:39:35Z">4 October 2010, 07:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15207#msg15207" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on October 03, 2010, 09:38:46 PM</div><div class="t">&gt; Quote from: satoshi on October 03, 2010, 09:07:28 PM
+&gt; We can phase in a change later if we get closer to needing it.
+
+IMO it&#x27;s a marketing thing.  It&#x27;s tough to get people to buy into a system, if the network is technically incapable of supporting high transaction rates.</div></blockquote><div class="t">Satoshi just said it can be changed, so technically the network is capable.</div></article><article class="msg" id="m5">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-10-04T08:10:01Z">4 October 2010, 08:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15215#msg15215" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: FreeMoney on October 04, 2010, 07:39:35 AM</div><div class="t">&gt; Quote from: jgarzik on October 03, 2010, 09:38:46 PM
+&gt; &gt; Quote from: satoshi on October 03, 2010, 09:07:28 PM
+&gt; &gt; We can phase in a change later if we get closer to needing it.
+&gt;
+&gt; IMO it&#x27;s a marketing thing.  It&#x27;s tough to get people to buy into a system, if the network is technically incapable of supporting high transaction rates.
+
+Satoshi just said it can be changed, so technically the network is capable.</div></blockquote><div class="t">It is also an incompatible change, as you see.....</div></article><article class="msg" id="m6">
+<header><b>martin</b><span class="muted"> · <time datetime="2010-10-04T11:50:35Z">4 October 2010, 11:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15268#msg15268" rel="nofollow noopener">original</a></span></header>
+<div class="t">No, it&#x27;s incompatible if just a few people change their behaviour. To roll out a change to the network you need to get most of the clients understanding both the old and the new protocol, and then when you have a majority you turn on the new protocol.</div></article><article class="msg" id="m7">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-10-04T18:33:55Z">4 October 2010, 18:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15342#msg15342" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: martin on October 04, 2010, 11:50:35 AM</div><div class="t">No, it&#x27;s incompatible if just a few people change their behaviour. To roll out a change to the network you need to get most of the clients understanding both the old and the new protocol, and then when you have a majority you turn on the new protocol.</div></blockquote><div class="t">You just described a whole-network upgrade.  I&#x27;d call that an incompatible change Smiley
+
+The effort to raise the transaction rate limit is the same as the effort to change the fundamental nature of bitcoins:  convince the vast majority to upgrade.</div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-04T19:48:40Z">4 October 2010, 19:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15366#msg15366" rel="nofollow noopener">original</a></span></header>
+<div class="t">It can be phased in, like:
+
+if (blocknumber &gt; 115000)
+    maxblocksize = largerlimit
+
+It can start being in versions way ahead, so by the time it reaches that block number and goes into effect, the older versions that don&#x27;t have it are already obsolete.
+
+When we&#x27;re near the cutoff block number, I can put an alert to old versions to make sure they know they have to upgrade.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p232-python-opencl-bitcoin-miner/">← python OpenCL bitcoin miner</a><a rel="next" href="../../conversations/p234-tor-connections-not-working-reliably-many-seednodes-offline/">Tor connections not working reliably, many seednodes offline →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

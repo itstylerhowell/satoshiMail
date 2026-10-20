@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fix transaction fee bug in… (r42) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2009: fix transaction fee bug in CreateTransaction, higher size cutoff for free transactions in…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/107d9e2/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fix transaction fee bug in… (r42) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2009: fix transaction fee bug in CreateTransaction, higher size cutoff for free transactions in…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/107d9e2/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fix transaction fee bug in… (r42) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2009: fix transaction fee bug in CreateTransaction, higher size cutoff for free transactions in…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix transaction fee bug in CreateTransaction, higher size cutoff for free transactions in GetMinFee", "url": "https://satoshimail.pages.dev/commits/107d9e2/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-06T00:29:09Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/107d9e288df8207e83f4273a8dcd631412f89889"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix transaction fee bug in…", "item": "https://satoshimail.pages.dev/commits/107d9e2/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c107d9e288d">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fix transaction fee bug in…</span></div></nav>
+<main class="in">
+<h1>fix transaction fee bug in CreateTransaction, higher size cutoff for free transactions in GetMinFee</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 6 December 2009 · SVN r42 · release v0.2.0 · 3 files, +17 −14</p>
+<p class="actions"><a class="btn" href="../../#t-c107d9e288d">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/107d9e288df8207e83f4273a8dcd631412f89889" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -2479,10 +2479,8 @@ void BitcoinMiner()
+                     if (tx.IsCoinBase() || !tx.IsFinal())
+                         continue;
+ 
+-                    // Transaction fee requirements, mainly only needed for flood control
+-                    // Under 10K (about 80 inputs) is free for first 100 transactions
+-                    // Base rate is 0.01 per KB
+-                    int64 nMinFee = tx.GetMinFee(pblock-&gt;vtx.size() &lt; 100);
++                    // Transaction fee based on block size
++                    int64 nMinFee = tx.GetMinFee(nBlockSize);
+ 
+                     map&lt;uint256, CTxIndex&gt; mapTestPoolTmp(mapTestPool);
+                     if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), 0, nFees, false, true, nMinFee))
+@@ -2768,11 +2766,11 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                 if (nValue &lt; 0)
+                     return false;
+                 int64 nValueOut = nValue;
+-                nValue += nFee;
++                int64 nTotalValue = nValue + nFee;
+ 
+                 // Choose coins to use
+                 set&lt;CWalletTx*&gt; setCoins;
+-                if (!SelectCoins(nValue, setCoins))
++                if (!SelectCoins(nTotalValue, setCoins))
+                     return false;
+                 int64 nValueIn = 0;
+                 foreach(CWalletTx* pcoin, setCoins)
+@@ -2784,7 +2782,7 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                     wtxNew.vout.push_back(CTxOut(nValueOut, scriptPubKey));
+ 
+                 // Fill a vout back to self with any change
+-                if (nValueIn &gt; nValue)
++                if (nValueIn &gt; nTotalValue)
+                 {
+                     // New private key
+                     if (keyRet.IsNull())
+@@ -2793,7 +2791,7 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                     // Fill a vout to ourself
+                     CScript scriptPubKey;
+                     scriptPubKey &lt;&lt; keyRet.GetPubKey() &lt;&lt; OP_CHECKSIG;
+-                    wtxNew.vout.push_back(CTxOut(nValueIn - nValue, scriptPubKey));
++                    wtxNew.vout.push_back(CTxOut(nValueIn - nTotalValue, scriptPubKey));
+                 }
+ 
+                 // Fill a vout to the payee
+@@ -2814,9 +2812,9 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                             SignSignature(*pcoin, wtxNew, nIn++);
+ 
+                 // Check that enough fee is included
+-                if (nFee &lt; wtxNew.GetMinFee(true))
++                if (nFee &lt; wtxNew.GetMinFee())
+                 {
+-                    nFee = nFeeRequiredRet = wtxNew.GetMinFee(true);
++                    nFee = nFeeRequiredRet = wtxNew.GetMinFee();
+                     continue;
+                 }
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -512,14 +512,19 @@ public:
+         return nValueOut;
+     }
+ 
+-    int64 GetMinFee(bool fDiscount=false) const
++    int64 GetMinFee(unsigned int nBlockSize=1) const
+     {
+         // Base fee is 1 cent per kilobyte
+         unsigned int nBytes = ::GetSerializeSize(*this, SER_NETWORK);
+         int64 nMinFee = (1 + (int64)nBytes / 1000) * CENT;
+ 
+-        // First 100 transactions in a block are free
+-        if (fDiscount &amp;&amp; nBytes &lt; 10000)
++        // Transactions under 60K are free as long as block size is under 80K
++        // (about 27,000bc if made of 50bc inputs)
++        if (nBytes &lt; 60000 &amp;&amp; nBlockSize &lt; 80000)
++            nMinFee = 0;
++
++        // Transactions under 3K are free as long as block size is under 200K
++        if (nBytes &lt; 3000 &amp;&amp; nBlockSize &lt; 200000)
+             nMinFee = 0;
+ 
+         // To limit dust spam, require a 0.01 fee if any output is less than 0.01</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 106;
+-static const char* pszSubVer = &quot; linux-test9&quot;;
++static const char* pszSubVer = &quot; test10&quot;;
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/52f4cb4/">← minor fix to batched initial download in case requester…</a><a rel="next" href="../../commits/b075bbf/">misc →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

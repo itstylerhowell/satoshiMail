@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Remote RPC access – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 30 September 2010: It can be safe if you&#x27;re using it over your own LAN, like if you have multiple servers at a location that talk to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p226-remote-rpc-access/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Remote RPC access – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 30 September 2010: It can be safe if you&#x27;re using it over your own LAN, like if you have multiple servers at a location that talk to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p226-remote-rpc-access/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Remote RPC access – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 30 September 2010: It can be safe if you&#x27;re using it over your own LAN, like if you have multiple servers at a location that talk to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Remote RPC access", "url": "https://satoshimail.pages.dev/conversations/p226-remote-rpc-access/", "author": {"@type": "Person", "name": "Marko"}, "datePublished": "2010-09-27T16:50:25Z", "text": "Hello, I'm have a client that calls getinfo over the rpc interface. Everything works fine when host=localhost. However, when trying to get bitcoin at another host i cannot. I read the wiki and it says the interface only accepts requests from 127.0.0.1. Is this still the case? Is there a setting to override this? If not, i'm probably going to have to write a 'proxy' app that i would deploy to each machine running bitcoin. Would prefer not to do this Sad Thanks, Marko", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "doublec"}, "datePublished": "2010-09-28T00:51:22Z", "text": "This is still the case and I don't believe there is a setting to override it. It's hardcoded in the source. Instead of writing a 'proxy' app you can use SSH to tunnel. For example, if your bitcoin instance is running on 'example.com' and that machine is running an ssh server, you can tunnel to it from another machine with: ssh -N example.com -L 9481:localhost:9481 Now you can use the RPC interface on your local machine to port 9481 and it will be tunnelled over an encrypted SSH session to the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-09-28T00:55:29Z", "text": "Can you compile your own bitcoin? The latest svn has an option to allow binding to other interfaces, not just localhost. If not the next version (0.3.13) is supposed to have that."}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-09-28T00:58:54Z", "text": "There's an \"-rpcallowip=\" switch in SVN, which allows you to access RPC from the specified IP addresses. This is not safe from MITM attacks, however."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Marko"}, "datePublished": "2010-09-28T13:58:51Z", "text": "Hey all...Thanks for all the feedback The ssh method is great. However, all the machines are windows machines so i'd have to do an install on all of them. Better than writing a proxy app for sure though... I saw the entry from a few weeks ago about the -rpcallowip switch. I'll compile my own version if i have to. That said, i'd prefer to have an official release. Anyone have an idea when the next version would be posted? As far as the MITM attack possibility, this only presents a problem if…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-30T18:27:41Z", "text": "It can be safe if you're using it over your own LAN, like if you have multiple servers at a location that talk to each other. 0.3.13 RC1 is available for Windows: http://www.bitcoin.org/download/bitcoin-0.3.13-rc1-win32-setup.exe"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Remote RPC access", "item": "https://satoshimail.pages.dev/conversations/p226-remote-rpc-access/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p226">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Remote RPC access</span></div></nav>
+<main class="in">
+<h1>Remote RPC access</h1>
+<p class="lead">BitcoinTalk forum · 6 messages · from 27 September 2010 · with Marko, Satoshi Nakamoto, doublec, nelisky, theymos</p>
+<p class="actions"><a class="btn" href="../../#t-p226">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/226/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Marko</b><span class="muted"> · <time datetime="2010-09-27T16:50:25Z">27 September 2010, 16:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14263#msg14263" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hello,
+
+I&#x27;m have a client that calls getinfo over the rpc interface. Everything works fine when host=localhost.
+However, when trying to get bitcoin at another host i cannot.
+I read the wiki and it says the interface only accepts requests from 127.0.0.1. Is this still the case? Is there a setting to override this?
+
+If not, i&#x27;m probably going to have to write a &#x27;proxy&#x27; app that i would deploy to each machine running bitcoin. Would prefer not to do this Sad
+
+Thanks,
+Marko</div></article><article class="msg" id="m1">
+<header><b>doublec</b><span class="muted"> · <time datetime="2010-09-28T00:51:22Z">28 September 2010, 00:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14352#msg14352" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Marko on September 27, 2010, 04:50:25 PM</div><div class="t">I read the wiki and it says the interface only accepts requests from 127.0.0.1. Is this still the case? Is there a setting to override this?</div></blockquote><div class="t">This is still the case and I don&#x27;t believe there is a setting to override it. It&#x27;s hardcoded in the source. Instead of writing a &#x27;proxy&#x27; app you can use SSH to tunnel. For example, if your bitcoin instance is running on &#x27;example.com&#x27; and that machine is running an ssh server, you can tunnel to it from another machine with:
+
+ssh -N example.com -L  9481:localhost:9481
+
+Now you can use the RPC interface on your local machine to port 9481 and it will be tunnelled over an encrypted SSH session to the machine running the bitcoin RPC server.
+
+You want to encrypt the connection because the JSON-RPC password is sent in clear text (it&#x27;s actually base 64 encoded but basically it&#x27;s the equivalent of clear text).</div></article><article class="msg" id="m2">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-09-28T00:55:29Z">28 September 2010, 00:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14353#msg14353" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: doublec on September 28, 2010, 12:51:22 AM</div><div class="t">&gt; Quote from: Marko on September 27, 2010, 04:50:25 PM
+&gt; I read the wiki and it says the interface only accepts requests from 127.0.0.1. Is this still the case? Is there a setting to override this?
+
+This is still the case and I don&#x27;t believe there is a setting to override it. It&#x27;s hardcoded in the source. Instead of writing a &#x27;proxy&#x27; app you can use SSH to tunnel. For example, if your bitcoin instance is running on &#x27;example.com&#x27; and that machine is running an ssh server, you can tunnel to it from another machine with:
+
+ssh -N example.com -L  9481:localhost:9481
+
+Now you can use the RPC interface on your local machine to port 9481 and it will be tunnelled over an encrypted SSH session to the machine running the bitcoin RPC server.
+
+You want to encrypt the connection because the JSON-RPC password is sent in clear text (it&#x27;s actually base 64 encoded but basically it&#x27;s the equivalent of clear text).</div></blockquote><div class="t">Can you compile your own bitcoin? The latest svn has an option to allow binding to other interfaces, not just localhost. If not the next version (0.3.13) is supposed to have that.</div></article><article class="msg" id="m3">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-09-28T00:58:54Z">28 September 2010, 00:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14355#msg14355" rel="nofollow noopener">original</a></span></header>
+<div class="t">There&#x27;s an &quot;-rpcallowip=&quot; switch in SVN, which allows you to access RPC from the specified IP addresses. This is not safe from MITM attacks, however.</div></article><article class="msg" id="m4">
+<header><b>Marko</b><span class="muted"> · <time datetime="2010-09-28T13:58:51Z">28 September 2010, 13:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14395#msg14395" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hey all...Thanks for all the feedback
+
+The ssh method is great. However, all the machines are windows machines so i&#x27;d have to do an install on all of them. Better than writing a proxy app for sure though...
+
+I saw the entry from a few weeks ago about the -rpcallowip switch. I&#x27;ll compile my own version if i have to. That said, i&#x27;d prefer to have an official release. Anyone have an idea when the next version would be posted?
+
+As far as the MITM attack possibility, this only presents a problem if the network i&#x27;m exposing to is not trusted. Or is there some other effect i&#x27;m missing?</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-30T18:27:41Z">30 September 2010, 18:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1291.msg14736#msg14736" rel="nofollow noopener">original</a></span></header>
+<div class="t">It can be safe if you&#x27;re using it over your own LAN, like if you have multiple servers at a location that talk to each other.
+
+0.3.13 RC1 is available for Windows:
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.13-rc1-win32-setup.exe" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.13-rc1-win32-setup.exe</a></div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p225-how-to-make-a-distributed-bitcoin-escrow-service/">← How To Make a Distributed BitCoin Escrow Service</a><a rel="next" href="../../conversations/p227-i-broke-my-wallet-sends-never-confirm-now/">I broke my wallet, sends never confirm now. →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

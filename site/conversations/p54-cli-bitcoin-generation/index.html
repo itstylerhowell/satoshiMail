@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CLI bitcoin generation – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 26 May 2010: Yeah, that actually is what it is. getallreceived 0 should do what you want. (now it&#x27;s renamed to listreceivedbyaddress 0)…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p54-cli-bitcoin-generation/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="CLI bitcoin generation – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 26 May 2010: Yeah, that actually is what it is. getallreceived 0 should do what you want. (now it&#x27;s renamed to listreceivedbyaddress 0)…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p54-cli-bitcoin-generation/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="CLI bitcoin generation – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 26 May 2010: Yeah, that actually is what it is. getallreceived 0 should do what you want. (now it&#x27;s renamed to listreceivedbyaddress 0)…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "CLI bitcoin generation", "url": "https://satoshimail.pages.dev/conversations/p54-cli-bitcoin-generation/", "author": {"@type": "Person", "name": "molybdenum"}, "datePublished": "2010-05-22T18:44:20Z", "text": "So I'm poking around creating a simple web interface for simple bitcoin usage (something a little lighter and less stateful than a full-on wx/GTK GUI) and I haven't seen any way to see the status of generated blocks in progress of verification... I have seen my balance jump up by 50, but of course that doesn't show up in getallreceived. For a headless coin generation box, being able to see my status right away would be nice, or at least, being able to know if I have 30 blocks awaiting confirmation, or am still trying to get the first... if it's purely automated and just checking-and-forwarding the balance, that's not a problem though. Additionally, in the GUI client a transaction will appear as soon as it's seen, while getallreceived only shows a transaction after a block has gone by... yet the balance jumps up by the appropriate amount right away. I can imagine some poor nervous customer pacing back and forth worrying about his payment going through, when that wouldn't really be needed. While this *could* be used to cheat the system if a malicious machine managed to generate the winning block and exclude its own payment, but some instant indication that something was happening would be nice none the less even if it needed a \"don't accept transactions while the confirmations are still at 0\" warning tag... perhaps a separate function that included 0-confirmation transactions? An optional parameter to specify the minimum number of blocks after that transaction (getallreceived 1 for current behavior, or just getallreceived, getallreceived 5 for the paranoid, getallreceived 0 for instant confirms)?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-05-26T20:09:34Z", "text": "Yeah, that actually is what it is. getallreceived 0 should do what you want. (now it's renamed to listreceivedbyaddress 0) The default is 1 confirmation, but I think in reality most digital goods and services can be 0 confirmations. Like you say, if you need more than 0 confirmations, you could show two numbers, unconfirmed and available balance, so they immediately see their transaction went through. listreceivedbyaddress [minconf=1] [includeempty=false] [minconf] is the minimum number of…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "CLI bitcoin generation", "item": "https://satoshimail.pages.dev/conversations/p54-cli-bitcoin-generation/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p54">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">CLI bitcoin generation</span></div></nav>
+<main class="in">
+<h1>CLI bitcoin generation</h1>
+<p class="lead">BitcoinTalk forum · 2 messages · from 22 May 2010 · with Satoshi Nakamoto, molybdenum</p>
+<p class="actions"><a class="btn" href="../../#t-p54">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/54/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>molybdenum</b><span class="muted"> · <time datetime="2010-05-22T18:44:20Z">22 May 2010, 18:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=145.msg1194#msg1194" rel="nofollow noopener">original</a></span></header>
+<div class="t">So I&#x27;m poking around creating a simple web interface for simple bitcoin usage (something a little lighter and less stateful than a full-on wx/GTK GUI) and I haven&#x27;t seen any way to see the status of generated blocks in progress of verification... I have seen my balance jump up by 50, but of course that doesn&#x27;t show up in getallreceived.
+
+For a headless coin generation box, being able to see my status right away would be nice, or at least, being able to know if I have 30 blocks awaiting confirmation, or am still trying to get the first... if it&#x27;s purely automated and just checking-and-forwarding the balance, that&#x27;s not a problem though.
+
+Additionally, in the GUI client a transaction will appear as soon as it&#x27;s seen, while getallreceived only shows a transaction after a block has gone by... yet the balance jumps up by the appropriate amount right away.
+
+I can imagine some poor nervous customer pacing back and forth worrying about his payment going through, when that wouldn&#x27;t really be needed. While this *could* be used to cheat the system if a malicious machine managed to generate the winning block and exclude its own payment, but some instant indication that something was happening would be nice none the less even if it needed a &quot;don&#x27;t accept transactions while the confirmations are still at 0&quot; warning tag... perhaps a separate function that included 0-confirmation transactions? An optional parameter to specify the minimum number of blocks after that transaction (getallreceived 1 for current behavior, or just getallreceived, getallreceived 5 for the paranoid, getallreceived 0 for instant confirms)?</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-05-26T20:09:34Z">26 May 2010, 20:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=145.msg1256#msg1256" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: molybdenum on May 22, 2010, 06:44:20 PM</div><div class="t">An optional parameter to specify the minimum number of blocks after that transaction (getallreceived 1 for current behavior, or just getallreceived, getallreceived 5 for the paranoid, getallreceived 0 for instant confirms)?</div></blockquote><div class="t">Yeah, that actually is what it is.  getallreceived 0 should do what you want.  (now it&#x27;s renamed to listreceivedbyaddress 0)  The default is 1 confirmation, but I think in reality most digital goods and services can be 0 confirmations.  Like you say, if you need more than 0 confirmations, you could show two numbers, unconfirmed and available balance, so they immediately see their transaction went through.
+
+listreceivedbyaddress [minconf=1] [includeempty=false]
+[minconf] is the minimum number of confirmations before payments are included.
+[includeempty] whether to include addresses that haven&#x27;t received any payments.
+Returns an array of objects containing:
+  &quot;address&quot; : receiving address
+  &quot;label&quot; : the label of the receiving address
+  &quot;amount&quot; : total amount received by the address
+  &quot;confirmations&quot; : number of confirmations of the most recent transaction included
+
+or listreceivedbylabel if you&#x27;re labelling addresses with their username.
+
+So far I&#x27;ve concentrated on functions for web merchants, not so much on stuff for remote management of headless coin generators yet.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p53-odd-amount-of-generated-coins/">← Odd amount of generated coins</a><a rel="next" href="../../conversations/p55-bitcoin-in-ubuntu-10-04/">Bitcoin in Ubuntu 10.04 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

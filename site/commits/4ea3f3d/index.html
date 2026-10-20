@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log, pause gen…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/4ea3f3d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log, pause gen…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/4ea3f3d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log, pause gen…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "retry IRC if name in use, resize to fit ubuntu's giant default font, scroll debug.log, pause gen during initial block download", "url": "https://satoshimail.pages.dev/commits/4ea3f3d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-11T16:49:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4ea3f3da1a0c00ea74e85c31a22ea94d18bbdf06"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "retry IRC if name in use, resize to…", "item": "https://satoshimail.pages.dev/commits/4ea3f3d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c4ea3f3da1a">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">retry IRC if name in use, resize to…</span></div></nav>
+<main class="in">
+<h1>retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log, pause gen during initial block download</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 11 December 2009 · SVN r44 · release v0.2.0 · 13 files, +187 −89</p>
+<p class="actions"><a class="btn" href="../../#t-c4ea3f3da1a">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/4ea3f3da1a0c00ea74e85c31a22ea94d18bbdf06" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -9,7 +9,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ 
+ 
+ WINDOWS BUILD NOTES
+-
++===================
+ 
+ Compilers Supported
+ -------------------
+@@ -19,7 +19,7 @@ Microsoft Visual C++ 6.0 SP6
+ 
+ Dependencies
+ ------------
+-Libraries you need to obtain separately to build:
++Libraries you need to download separately and build:
+ 
+               default path   download
+ wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
+@@ -44,7 +44,7 @@ Boost        1.34.1
+ 
+ Notes
+ -----
+-The UI layout is edited with wxFormBuilder.  Open the project file
++The UI layout is edited with wxFormBuilder.  The project file is
+ uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
+ classes that do the rote work of constructing all the UI elements.
+ </code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -9,7 +9,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ 
+ 
+ UNIX BUILD NOTES
+-
++================
+ 
+ Dependencies
+ ------------
+@@ -20,11 +20,10 @@ apt-get install libdb4.7-dev
+ apt-get install libdb4.7++-dev
+ apt-get install libboost-dev
+ 
+-Libraries you need to obtain separately and build:
+-              default path   download
+-wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
++You need to download wxWidgets from http://www.wxwidgets.org/downloads/
++and build it yourself.
+ 
+-Licenses:
++Licenses of statically linked libraries:
+ wxWidgets      LGPL 2.1 with very liberal exceptions
+ Berkeley DB    New BSD license with additional requirement that linked software must be free open source
+ Boost          MIT-like license
+@@ -39,7 +38,7 @@ Boost        1.40.0
+ 
+ Notes
+ -----
+-The UI layout is edited with wxFormBuilder.  Open the project file
++The UI layout is edited with wxFormBuilder.  The project file is
+ uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
+ classes that do the rote work of constructing all the UI elements.
+ 
+@@ -61,7 +60,7 @@ ldconfig
+ 
+ Boost
+ -----
+-If you download and build Boost yourself
++If you want to build Boost yourself,
+ cd /usr/local/boost_1_40_0
+ su
+ ./bootstrap.sh</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -445,7 +445,7 @@ bool CAddrDB::LoadAddresses()
+     CRITICAL_BLOCK(cs_mapAddresses)
+     {
+         // Load user provided addresses
+-        CAutoFile filein = fopen(&quot;addr.txt&quot;, &quot;rt&quot;);
++        CAutoFile filein = fopen((GetDataDir() + &quot;/addr.txt&quot;).c_str(), &quot;rt&quot;);
+         if (filein)
+         {
+             try
+@@ -536,10 +536,11 @@ bool CReviewDB::WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews)
+ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ {
+     vchDefaultKeyRet.clear();
++    int nFileVersion = 0;
+ 
+     // Modify defaults
+ #ifndef __WXMSW__
+-    // Reports that tray icon can disappear on gnome, leaving no way to access the program
++    // Tray icon sometimes disappears on 9.10 karmic koala 64-bit, leaving no way to access the program
+     fMinimizeToTray = false;
+     fMinimizeOnClose = false;
+ #endif
+@@ -607,6 +608,10 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+             {
+                 ssValue &gt;&gt; vchDefaultKeyRet;
+             }
++            else if (strType == &quot;version&quot;)
++            {
++                ssValue &gt;&gt; nFileVersion;
++            }
+             else if (strType == &quot;setting&quot;)
+             {
+                 string strKey;
+@@ -649,6 +654,16 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+         WriteSetting(&quot;nTransactionFee&quot;, nTransactionFee);
+     }
+ 
++    // Upgrade
++    if (nFileVersion &lt; VERSION)
++    {
++        // Get rid of old debug.log file in current directory
++        if (nFileVersion &lt;= 105 &amp;&amp; !pszSetDataDir[0])
++            unlink(&quot;debug.log&quot;);
++
++        WriteVersion(VERSION);
++    }
++
+     return true;
+ }
+ 
+@@ -656,7 +671,7 @@ bool LoadWallet(bool&amp; fFirstRunRet)
+ {
+     fFirstRunRet = false;
+     vector&lt;unsigned char&gt; vchDefaultKey;
+-    if (!CWalletDB(&quot;cr&quot;).LoadWallet(vchDefaultKey))
++    if (!CWalletDB(&quot;cr+&quot;).LoadWallet(vchDefaultKey))
+         return false;
+     fFirstRunRet = vchDefaultKey.empty();
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -121,20 +121,20 @@ bool RecvLineIRC(SOCKET hSocket, string&amp; strLine)
+     }
+ }
+ 
+-bool RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const char* psz3=NULL)
++int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const char* psz3=NULL)
+ {
+     loop
+     {
+         string strLine;
+         if (!RecvLineIRC(hSocket, strLine))
+-            return false;
++            return 0;
+         printf(&quot;IRC %s\n&quot;, strLine.c_str());
+         if (psz1 &amp;&amp; strLine.find(psz1) != -1)
+-            return true;
++            return 1;
+         if (psz2 &amp;&amp; strLine.find(psz2) != -1)
+-            return true;
++            return 2;
+         if (psz3 &amp;&amp; strLine.find(psz3) != -1)
+-            return true;
++            return 3;
+     }
+ }
+ 
+@@ -159,6 +159,7 @@ void ThreadIRCSeed(void* parg)
+     SetThreadPriority(THREAD_PRIORITY_NORMAL);
+     int nErrorWait = 10;
+     int nRetryWait = 10;
++    bool fNameInUse = false;
+     bool fTOR = (fUseProxy &amp;&amp; addrProxy.port == htons(9050));
+ 
+     while (!fShutdown)
+@@ -194,7 +195,7 @@ void ThreadIRCSeed(void* parg)
+         }
+ 
+         string strMyName;
+-        if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
++        if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy &amp;&amp; !fNameInUse)
+             strMyName = EncodeAddress(addrLocalHost);
+         else
+             strMyName = strprintf(&quot;x%u&quot;, GetRand(1000000000));
+@@ -203,10 +204,18 @@ void ThreadIRCSeed(void* parg)
+         Send(hSocket, strprintf(&quot;NICK %s\r&quot;, strMyName.c_str()).c_str());
+         Send(hSocket, strprintf(&quot;USER %s 8 * : %s\r&quot;, strMyName.c_str(), strMyName.c_str()).c_str());
+ 
+-        if (!RecvUntil(hSocket, &quot; 004 &quot;))
++        int nRet = RecvUntil(hSocket, &quot; 004 &quot;, &quot; 433 &quot;);
++        if (nRet != 1)
+         {
+             closesocket(hSocket);
+             hSocket = INVALID_SOCKET;
++            if (nRet == 2)
++            {
++                printf(&quot;IRC name already in use\n&quot;);
++                fNameInUse = true;
++                Wait(10);
++                continue;
++            }
+             nErrorWait = nErrorWait * 11 / 10;
+             if (Wait(nErrorWait += 60))
+                 continue;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2530,7 +2530,7 @@ void BitcoinMiner()
+         //
+         // Search
+         //
+-        unsigned int nStart = GetTime();
++        int64 nStart = GetTime();
+         uint256 hashTarget = CBigNum().SetCompact(pblock-&gt;nBits).getuint256();
+         uint256 hash;
+         loop
+@@ -2582,14 +2582,27 @@ void BitcoinMiner()
+                     return;
+                 if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
+                     return;
+-                if (tmp.block.nNonce == 0)
++                if (vNodes.empty())
+                     break;
+-                if (pindexPrev != pindexBest)
++                if (tmp.block.nNonce == 0)
+                     break;
+                 if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
+                     break;
+-                if (vNodes.empty())
++                if (pindexPrev != pindexBest)
++                {
++                    // Pause generating during initial download
++                    if (GetTime() - nStart &lt; 20)
++                    {
++                        CBlockIndex* pindexTmp;
++                        do
++                        {
++                            pindexTmp = pindexBest;
++                            Sleep(10000);
++                        }
++                        while (pindexTmp != pindexBest);
++                    }
+                     break;
++                }
+                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+             }
+         }</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -10,8 +10,6 @@ endif
+ endif
+ ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+ D=d
+-# note: gcc 3.x profile doesn&#x27;t work
+-#DEBUGFLAGS=-O0 -g -pg -D__WXDEBUG__
+ DEBUGFLAGS=-g -D__WXDEBUG__
+ endif
+ 
+@@ -36,34 +34,34 @@ all: bitcoin.exe
+ headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/util.o: util.cpp		    $(HEADERS)
++obj/util.o: util.cpp                $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/script.o: script.cpp	    $(HEADERS)
++obj/script.o: script.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/db.o: db.cpp		    $(HEADERS) market.h
++obj/db.o: db.cpp                    $(HEADERS) market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/net.o: net.cpp		    $(HEADERS) net.h
++obj/net.o: net.cpp                  $(HEADERS) net.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/main.o: main.cpp		    $(HEADERS) net.h market.h sha.h
++obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp	    $(HEADERS) market.h
++obj/market.o: market.cpp            $(HEADERS) market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp		    $(HEADERS) net.h uibase.h ui.h market.h
++obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/uibase.o: uibase.cpp	    uibase.h
++obj/uibase.o: uibase.cpp            uibase.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/sha.o: sha.cpp		    sha.h
++obj/sha.o: sha.cpp                  sha.h
+ 	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+ 
+-obj/irc.o:  irc.cpp		    $(HEADERS)
++obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
+@@ -71,8 +69,8 @@ obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp
+ 
+ 
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o	 \
+-	obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
+ 
+ bitcoin.exe: headers.h.gch $(OBJS)
+ 	-kill /f bitcoin.exe</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -22,13 +22,16 @@ INCLUDEPATHS= \
+ 
+ LIBPATHS= \
+  -L&quot;/usr/lib&quot; \
+- -L&quot;/usr/local/lib&quot; \
++ -L&quot;/usr/local/lib&quot;
+ 
+ LIBS= \
+- -Wl,-Bstatic -l boost_system -l boost_filesystem -Wl,-Bdynamic \
+- -Wl,-Bstatic -l db_cxx -l wx_gtk2$(D)-2.8 -Wl,-Bdynamic \
+- -l crypto \
+- -l gtk-x11-2.0 -l gthread-2.0 -l SM
++ -Wl,-Bstatic \
++   -l boost_system -l boost_filesystem \
++   -l db_cxx \
++   -l wx_gtk2$(D)-2.8 \
++ -Wl,-Bdynamic \
++   -l crypto \
++   -l gtk-x11-2.0 -l gthread-2.0 -l SM
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+@@ -42,41 +45,41 @@ all: bitcoin
+ headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/util.o: util.cpp		    $(HEADERS)
++obj/util.o: util.cpp                $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/script.o: script.cpp	    $(HEADERS)
++obj/script.o: script.cpp            $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/db.o: db.cpp		    $(HEADERS) market.h
++obj/db.o: db.cpp                    $(HEADERS) market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/net.o: net.cpp		    $(HEADERS) net.h
++obj/net.o: net.cpp                  $(HEADERS) net.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/main.o: main.cpp		    $(HEADERS) net.h market.h sha.h
++obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp	    $(HEADERS) market.h
++obj/market.o: market.cpp            $(HEADERS) market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/ui.o: ui.cpp		    $(HEADERS) net.h uibase.h ui.h market.h
++obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/uibase.o: uibase.cpp	    uibase.h
++obj/uibase.o: uibase.cpp            uibase.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/sha.o: sha.cpp		    sha.h
++obj/sha.o: sha.cpp                  sha.h
+ 	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
+ 
+-obj/irc.o:  irc.cpp		    $(HEADERS)
++obj/irc.o: irc.cpp                  $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+ 
+ 
+ 
+ OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
+-	obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ uint64 nLocalServices = (fClient ? 0 : NODE_NETWORK);
+ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
+ CNode* pnodeLocalHost = NULL;
+ uint64 nLocalHostNonce = 0;
+-bool fShutdown = false;
+ array&lt;int, 10&gt; vnThreadsRunning;
+ SOCKET hListenSocket = INVALID_SOCKET;
+ int64 nThreadSocketHandlerHeartbeat = INT64_MAX;
+@@ -1324,3 +1323,27 @@ bool StopNode()
+ 
+     return true;
+ }
++
++class CNetCleanup
++{
++public:
++    CNetCleanup()
++    {
++    }
++    ~CNetCleanup()
++    {
++        // Close sockets
++        foreach(CNode* pnode, vNodes)
++            if (pnode-&gt;hSocket != INVALID_SOCKET)
++                closesocket(pnode-&gt;hSocket);
++        if (hListenSocket != INVALID_SOCKET)
++            if (closesocket(hListenSocket) == SOCKET_ERROR)
++                printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
++
++#ifdef __WXMSW__
++        // Shutdown Windows Sockets
++        WSACleanup();
++#endif
++    }
++}
++instance_of_cnetcleanup;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -454,7 +454,6 @@ extern uint64 nLocalServices;
+ extern CAddress addrLocalHost;
+ extern CNode* pnodeLocalHost;
+ extern uint64 nLocalHostNonce;
+-extern bool fShutdown;
+ extern array&lt;int, 10&gt; vnThreadsRunning;
+ extern SOCKET hListenSocket;
+ extern int64 nThreadSocketHandlerHeartbeat;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 106;
+-static const char* pszSubVer = &quot; test10&quot;;
++static const char* pszSubVer = &quot; test11&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -317,6 +317,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     fOnSetFocusAddress = false;
+     fRefresh = false;
+     m_choiceFilter-&gt;SetSelection(0);
++    double dResize = 1.0;
+ #ifdef __WXMSW__
+     SetIcon(wxICON(bitcoin));
+ #else
+@@ -330,6 +331,10 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_toolBar-&gt;AddTool(wxID_BUTTONSEND, &quot;Send Coins&quot;, wxBitmap(send20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+     m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, &quot;Address Book&quot;, wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+     m_toolBar-&gt;Realize();
++    // resize to fit ubuntu&#x27;s huge default font
++    dResize = 1.19;
++    SetSize(dResize * GetSize().GetWidth(), 1.1 * GetSize().GetHeight());
++    dResize = 1.20;
+ #endif
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+@@ -339,13 +344,13 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
+     if (!strstr(DateTimeStr(1229413914).c_str(), &quot;2008&quot;))
+         nDateWidth += 12;
+-    m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,             wxLIST_FORMAT_LEFT,     0);
+-    m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,             wxLIST_FORMAT_LEFT,     0);
+-    m_listCtrl-&gt;InsertColumn(2, &quot;Status&quot;,       wxLIST_FORMAT_LEFT,    90);
+-    m_listCtrl-&gt;InsertColumn(3, &quot;Date&quot;,         wxLIST_FORMAT_LEFT,   nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(4, &quot;Description&quot;,  wxLIST_FORMAT_LEFT,   409 - nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(5, &quot;Debit&quot;,        wxLIST_FORMAT_RIGHT,   79);
+-    m_listCtrl-&gt;InsertColumn(6, &quot;Credit&quot;,       wxLIST_FORMAT_RIGHT,   79);
++    m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
++    m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
++    m_listCtrl-&gt;InsertColumn(2, &quot;Status&quot;,       wxLIST_FORMAT_LEFT,  dResize * 90);
++    m_listCtrl-&gt;InsertColumn(3, &quot;Date&quot;,         wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
++    m_listCtrl-&gt;InsertColumn(4, &quot;Description&quot;,  wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
++    m_listCtrl-&gt;InsertColumn(5, &quot;Debit&quot;,        wxLIST_FORMAT_RIGHT, dResize * 79);
++    m_listCtrl-&gt;InsertColumn(6, &quot;Credit&quot;,       wxLIST_FORMAT_RIGHT, dResize * 79);
+ 
+     //m_listCtrlProductsSent-&gt;InsertColumn(0, &quot;Category&quot;,      wxLIST_FORMAT_LEFT,  100);
+     //m_listCtrlProductsSent-&gt;InsertColumn(1, &quot;Title&quot;,         wxLIST_FORMAT_LEFT,  100);
+@@ -367,6 +372,10 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ 
+     // Init status bar
+     int pnWidths[3] = { -100, 88, 290 };
++#ifndef __WXMSW__
++    pnWidths[1] = pnWidths[1] * 1.1 * dResize;
++    pnWidths[2] = pnWidths[2] * 1.1 * dResize;
++#endif
+     m_statusBar-&gt;SetFieldsCount(3, pnWidths);
+ 
+     // Fill your address text box
+@@ -1514,6 +1523,7 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     SelectPage(0);
+ #ifndef __WXMSW__
+     m_checkBoxMinimizeOnClose-&gt;SetLabel(&quot;&amp;Minimize on close&quot;);
++    m_checkBoxStartOnSystemStartup-&gt;Enable(false); // not implemented yet
+ #endif
+ 
+     // Init values
+@@ -1876,6 +1886,9 @@ CSendingDialog::CSendingDialog(wxWindow* parent, const CAddress&amp; addrIn, int64 n
+     fSuccess = false;
+     fUIDone = false;
+     fWorkDone = false;
++#ifndef __WXMSW__
++    SetSize(1.2 * GetSize().GetWidth(), 1.05 * GetSize().GetHeight());
++#endif
+ 
+     SetTitle(strprintf(&quot;Sending %s to %s&quot;, FormatMoney(nPrice).c_str(), wtx.mapValue[&quot;to&quot;].c_str()));
+     m_textCtrlStatus-&gt;SetValue(&quot;&quot;);
+@@ -3475,6 +3488,7 @@ bool CMyApp::OnInit2()
+     ParseParameters(argc, argv);
+     if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+     {
++#ifdef __WXMSW__
+         string strUsage =
+             &quot;Usage: bitcoin [options]\t\t\t\t\t\t\n&quot;
+             &quot;Options:\n&quot;
+@@ -3487,6 +3501,20 @@ bool CMyApp::OnInit2()
+             &quot;  -connect=&lt;ip&gt;\t  Connect only to the specified node\n&quot;
+             &quot;  -?\t\t  This help message\n&quot;;
+         wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
++#else
++        string strUsage =
++            &quot;Usage: bitcoin [options]\n&quot;
++            &quot;Options:\n&quot;
++            &quot;  -gen              Generate coins\n&quot;
++            &quot;  -gen=0            Don&#x27;t generate coins\n&quot;
++            &quot;  -min              Start minimized\n&quot;
++            &quot;  -datadir=&lt;dir&gt;    Specify data directory\n&quot;
++            &quot;  -proxy=&lt;ip:port&gt;  Connect through socks4 proxy\n&quot;
++            &quot;  -addnode=&lt;ip&gt;     Add a node to connect to\n&quot;
++            &quot;  -connect=&lt;ip&gt;     Connect only to the specified node\n&quot;
++            &quot;  -?                This help message\n&quot;;
++        fprintf(stderr, &quot;%s&quot;, strUsage.c_str());
++#endif
+         return false;
+     }
+ 
+@@ -3495,12 +3523,12 @@ bool CMyApp::OnInit2()
+ 
+     if (mapArgs.count(&quot;-debug&quot;))
+         fDebug = true;
+-    if (strstr(pszSubVer, &quot;test&quot;))
+-        fDebug = true;
+ 
+     if (mapArgs.count(&quot;-printtodebugger&quot;))
+         fPrintToDebugger = true;
+ 
++    if (!fDebug &amp;&amp; !pszSetDataDir[0])
++        ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+     printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, wxGetOsDescription().mb_str());
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -11,6 +11,7 @@ bool fDebug = false;
+ bool fPrintToDebugger = false;
+ bool fPrintToConsole = false;
+ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
++bool fShutdown = false;
+ 
+ 
+ 
+@@ -53,19 +54,6 @@ public:
+         for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+             delete ppmutexOpenSSL[i];
+         OPENSSL_free(ppmutexOpenSSL);
+-
+-        // Close sockets
+-        foreach(CNode* pnode, vNodes)
+-            if (pnode-&gt;hSocket != INVALID_SOCKET)
+-                closesocket(pnode-&gt;hSocket);
+-        if (hListenSocket != INVALID_SOCKET)
+-            if (closesocket(hListenSocket) == SOCKET_ERROR)
+-                printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
+-
+-#ifdef __WXMSW__
+-        // Shutdown Windows Sockets
+-        WSACleanup();
+-#endif
+     }
+ }
+ instance_of_cinit;
+@@ -416,16 +404,6 @@ void PrintException(std::exception* pex, const char* pszThread)
+ 
+ 
+ 
+-int GetFilesize(FILE* file)
+-{
+-    int nSavePos = ftell(file);
+-    int nFilesize = -1;
+-    if (fseek(file, 0, SEEK_END) == 0)
+-        nFilesize = ftell(file);
+-    fseek(file, nSavePos, SEEK_SET);
+-    return nFilesize;
+-}
+-
+ void GetDataDir(char* pszDir)
+ {
+     // pszDir must be at least MAX_PATH length.
+@@ -465,6 +443,37 @@ string GetDataDir()
+     return pszDir;
+ }
+ 
++int GetFilesize(FILE* file)
++{
++    int nSavePos = ftell(file);
++    int nFilesize = -1;
++    if (fseek(file, 0, SEEK_END) == 0)
++        nFilesize = ftell(file);
++    fseek(file, nSavePos, SEEK_SET);
++    return nFilesize;
++}
++
++void ShrinkDebugFile()
++{
++    // Scroll debug.log if it&#x27;s getting too big
++    string strFile = GetDataDir() + &quot;/debug.log&quot;;
++    FILE* file = fopen(strFile.c_str(), &quot;r&quot;);
++    if (file &amp;&amp; GetFilesize(file) &gt; 10 * 1000000)
++    {
++        // Restart the file with some of the end
++        char pch[200000];
++        fseek(file, -sizeof(pch), SEEK_END);
++        int nBytes = fread(pch, 1, sizeof(pch), file);
++        fclose(file);
++        if (file = fopen(strFile.c_str(), &quot;w&quot;))
++        {
++            fwrite(pch, 1, nBytes, file);
++            fclose(file);
++        }
++    }
++}
++
++
+ 
+ 
+ </code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -111,6 +111,7 @@ extern bool fDebug;
+ extern bool fPrintToDebugger;
+ extern bool fPrintToConsole;
+ extern char pszSetDataDir[MAX_PATH];
++extern bool fShutdown;
+ 
+ void RandAddSeed();
+ void RandAddSeedPerfmon();
+@@ -128,6 +129,7 @@ void ParseParameters(int argc, char* argv[]);
+ int GetFilesize(FILE* file);
+ void GetDataDir(char* pszDirRet);
+ string GetDataDir();
++void ShrinkDebugFile();
+ uint64 GetRand(uint64 nMax);
+ int64 GetTime();
+ int64 GetAdjustedTime();</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b075bbf/">← misc</a><a rel="next" href="../../commits/651d335/">misc →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

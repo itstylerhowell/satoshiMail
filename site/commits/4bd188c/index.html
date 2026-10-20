@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>misc changes (r131) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/4bd188c/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="misc changes (r131) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/4bd188c/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="misc changes (r131) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc changes", "url": "https://satoshimail.pages.dev/commits/4bd188c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T21:05:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4bd188c4383d6e614e18f79dc337fbabe8464c82"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc changes", "item": "https://satoshimail.pages.dev/commits/4bd188c/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c4bd188c438">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">misc changes</span></div></nav>
+<main class="in">
+<h1>misc changes</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 August 2010 · SVN r131 · release v0.3.10 · 8 files, +538 −52</p>
+<p class="actions"><a class="btn" href="../../#t-c4bd188c438">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/4bd188c4383d6e614e18f79dc337fbabe8464c82" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>init.cpp</code></summary><pre><code>@@ -373,6 +373,8 @@ bool AppInit2(int argc, char* argv[])
+             wxMessageBox(_(&quot;Invalid amount for -paytxfee=&lt;amount&gt;&quot;), &quot;Bitcoin&quot;);
+             return false;
+         }
++        if (nTransactionFee &gt; 1 * COIN)
++            wxMessageBox(_(&quot;Warning: -paytxfee is set very high.  This is the transaction fee you will pay if you send a transaction.&quot;), &quot;Bitcoin&quot;);
+     }
+ 
+     //</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -538,7 +538,7 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     // Check against previous transactions
+     map&lt;uint256, CTxIndex&gt; mapUnused;
+     int64 nFees = 0;
+-    if (fCheckInputs &amp;&amp; !ConnectInputs(txdb, mapUnused, CDiskTxPos(1,1,1), 0, nFees, false, false))
++    if (fCheckInputs &amp;&amp; !ConnectInputs(txdb, mapUnused, CDiskTxPos(1,1,1), pindexBest, nFees, false, false))
+     {
+         if (pfMissingInputs)
+             *pfMissingInputs = true;
+@@ -744,7 +744,7 @@ void ResendWalletTransactions()
+     if (GetTime() &lt; nNextTime)
+         return;
+     bool fFirst = (nNextTime == 0);
+-    nNextTime = GetTime() + GetRand(120 * 60);
++    nNextTime = GetTime() + GetRand(30 * 60);
+     if (fFirst)
+         return;
+ 
+@@ -760,7 +760,7 @@ void ResendWalletTransactions()
+             CWalletTx&amp; wtx = item.second;
+             // Don&#x27;t rebroadcast until it&#x27;s had plenty of time that
+             // it should have gotten in already by now.
+-            if (nTimeBestReceived - wtx.nTimeReceived &gt; 60 * 60)
++            if (nTimeBestReceived - (int64)wtx.nTimeReceived &gt; 5 * 60)
+                 mapSorted.insert(make_pair(wtx.nTimeReceived, &amp;wtx));
+         }
+         foreach(PAIRTYPE(const unsigned int, CWalletTx*)&amp; item, mapSorted)
+@@ -931,7 +931,8 @@ bool CTransaction::DisconnectInputs(CTxDB&amp; txdb)
+ }
+ 
+ 
+-bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx, int nHeight, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee)
++bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx,
++                                 CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee)
+ {
+     // Take over previous transactions&#x27; spent pointers
+     if (!IsCoinBase())
+@@ -983,9 +984,9 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+ 
+             // If prev is coinbase, check that it&#x27;s matured
+             if (txPrev.IsCoinBase())
+-                for (CBlockIndex* pindex = pindexBest; pindex &amp;&amp; nBestHeight - pindex-&gt;nHeight &lt; COINBASE_MATURITY-1; pindex = pindex-&gt;pprev)
++                for (CBlockIndex* pindex = pindexBlock; pindex &amp;&amp; pindexBlock-&gt;nHeight - pindex-&gt;nHeight &lt; COINBASE_MATURITY; pindex = pindex-&gt;pprev)
+                     if (pindex-&gt;nBlockPos == txindex.pos.nBlockPos &amp;&amp; pindex-&gt;nFile == txindex.pos.nFile)
+-                        return error(&quot;ConnectInputs() : tried to spend coinbase at depth %d&quot;, nBestHeight - pindex-&gt;nHeight);
++                        return error(&quot;ConnectInputs() : tried to spend coinbase at depth %d&quot;, pindexBlock-&gt;nHeight - pindex-&gt;nHeight);
+ 
+             // Verify signature
+             if (!VerifySignature(txPrev, *this, i))
+@@ -1019,7 +1020,7 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+     if (fBlock)
+     {
+         // Add transaction to disk index
+-        if (!txdb.AddTxIndex(*this, posThisTx, nHeight))
++        if (!txdb.AddTxIndex(*this, posThisTx, pindexBlock-&gt;nHeight))
+             return error(&quot;ConnectInputs() : AddTxPos failed&quot;);
+     }
+     else if (fMiner)
+@@ -1108,7 +1109,7 @@ bool CBlock::ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex)
+         CDiskTxPos posThisTx(pindex-&gt;nFile, pindex-&gt;nBlockPos, nTxPos);
+         nTxPos += ::GetSerializeSize(tx, SER_DISK);
+ 
+-        if (!tx.ConnectInputs(txdb, mapUnused, posThisTx, pindex-&gt;nHeight, nFees, true, false))
++        if (!tx.ConnectInputs(txdb, mapUnused, posThisTx, pindex, nFees, true, false))
+             return false;
+     }
+ 
+@@ -1379,14 +1380,12 @@ bool CBlock::AcceptBlock()
+         return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+ 
+     // Check that the block chain matches the known block chain up to a checkpoint
+-    if (pindexPrev-&gt;nHeight+1 == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 11111&quot;);
+-    if (pindexPrev-&gt;nHeight+1 == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 33333&quot;);
+-    if (pindexPrev-&gt;nHeight+1 == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 68555&quot;);
+-    if (pindexPrev-&gt;nHeight+1 == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at 70567&quot;);
++    if ((pindexPrev-&gt;nHeight+1 == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
++        (pindexPrev-&gt;nHeight+1 == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
++        (pindexPrev-&gt;nHeight+1 == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;)) ||
++        (pindexPrev-&gt;nHeight+1 == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;)) ||
++        (pindexPrev-&gt;nHeight+1 == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
++        return error(&quot;AcceptBlock() : rejected by checkpoint lockin&quot;);
+ 
+     // Write block to history file
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+@@ -2577,6 +2576,8 @@ inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
+     CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
+ }
+ 
++static const int NPAR = 32;
++extern void Double_BlockSHA256(const void* pin, void* pout, const void* pinit, unsigned int hash[8][NPAR], const void* init2);
+ 
+ 
+ 
+@@ -2658,7 +2659,7 @@ void BitcoinMiner()
+                     int64 nMinFee = tx.GetMinFee(nBlockSize);
+ 
+                     map&lt;uint256, CTxIndex&gt; mapTestPoolTmp(mapTestPool);
+-                    if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), 0, nFees, false, true, nMinFee))
++                    if (!tx.ConnectInputs(txdb, mapTestPoolTmp, CDiskTxPos(1,1,1), pindexPrev, nFees, false, true, nMinFee))
+                         continue;
+                     swap(mapTestPool, mapTestPoolTmp);
+ 
+@@ -2719,14 +2720,40 @@ void BitcoinMiner()
+         //
+         // Search
+         //
++        bool f4WaySSE2 = mapArgs.count(&quot;-4way&quot;);
+         int64 nStart = GetTime();
+         uint256 hashTarget = CBigNum().SetCompact(pblock-&gt;nBits).getuint256();
+         uint256 hashbuf[2];
+         uint256&amp; hash = *alignup&lt;16&gt;(hashbuf);
+         loop
+         {
+-            SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
+-            SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
++#ifdef FOURWAYSSE2
++            if (f4WaySSE2)
++            {
++                // tcatm&#x27;s 4-way SSE2 SHA-256
++                tmp.block.nNonce += NPAR;
++                unsigned int thashbuf[9][NPAR];
++                unsigned int (&amp;thash)[9][NPAR] = *alignup&lt;16&gt;(&amp;thashbuf);
++                Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
++                ((unsigned short*)&amp;hash)[14] = 0xffff;
++                for (int j = 0; j &lt; NPAR; j++)
++                {
++                    if (thash[7][j] == 0)
++                    {
++                        for (int i = 0; i &lt; sizeof(hash)/4; i++)
++                            ((unsigned int*)&amp;hash)[i] = thash[i][j];
++                        pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
++                    }
++                }
++            }
++            else
++#endif
++            {
++                // Crypto++ SHA-256
++                tmp.block.nNonce++;
++                SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
++                SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
++            }
+ 
+             if (((unsigned short*)&amp;hash)[14] == 0)
+             {
+@@ -2736,7 +2763,10 @@ void BitcoinMiner()
+ 
+                 if (hash &lt;= hashTarget)
+                 {
+-                    pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce);
++#ifdef FOURWAYSSE2
++                    if (!f4WaySSE2)
++#endif
++                        pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce);
+                     assert(hash == pblock-&gt;GetHash());
+ 
+                         //// debug print
+@@ -2775,7 +2805,7 @@ void BitcoinMiner()
+             // Update nTime every few seconds
+             const unsigned int nMask = 0xffff;
+             const int nHashesPerCycle = (nMask+1);
+-            if ((++tmp.block.nNonce &amp; nMask) == 0)
++            if ((tmp.block.nNonce &amp; nMask) == 0)
+             {
+                 // Meter hashes/sec
+                 static int nCycleCounter;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -613,7 +613,8 @@ public:
+ 
+ 
+     bool DisconnectInputs(CTxDB&amp; txdb);
+-    bool ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx, int nHeight, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
++    bool ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPool, CDiskTxPos posThisTx,
++                       CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
+     bool ClientConnectInputs();
+ 
+     bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,12 +16,30 @@ static const CBigNum bnZero(0);
+ static const CBigNum bnOne(1);
+ static const CBigNum bnFalse(0);
+ static const CBigNum bnTrue(1);
+-static const size_t nMaxNumSize = 258;
++static const size_t nMaxNumSize = 4;
+ 
+ 
++CBigNum CastToBigNum(const valtype&amp; vch)
++{
++    if (vch.size() &gt; nMaxNumSize)
++        throw runtime_error(&quot;CastToBigNum() : overflow&quot;);
++    // Get rid of extra leading zeros
++    return CBigNum(CBigNum(vch).getvch());
++}
++
+ bool CastToBool(const valtype&amp; vch)
+ {
+-    return (CBigNum(vch) != bnZero);
++    for (int i = 0; i &lt; vch.size(); i++)
++    {
++        if (vch[i] != 0)
++        {
++            // Can be negative zero
++            if (i == vch.size()-1 &amp;&amp; vch[i] == 0x80)
++                return false;
++            return true;
++        }
++    }
++    return false;
+ }
+ 
+ void MakeSameSize(valtype&amp; vch1, valtype&amp; vch2)
+@@ -68,11 +86,28 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+             valtype vchPushValue;
+             if (!script.GetOp(pc, opcode, vchPushValue))
+                 return false;
+-            if (vchPushValue.size() &gt; 5000)
++            if (vchPushValue.size() &gt; 520)
+                 return false;
+             if (opcode &gt; OP_16 &amp;&amp; nOpCount++ &gt; 200)
+                 return false;
+ 
++            if (opcode == OP_CAT ||
++                opcode == OP_SUBSTR ||
++                opcode == OP_LEFT ||
++                opcode == OP_RIGHT ||
++                opcode == OP_INVERT ||
++                opcode == OP_AND ||
++                opcode == OP_OR ||
++                opcode == OP_XOR ||
++                opcode == OP_2MUL ||
++                opcode == OP_2DIV ||
++                opcode == OP_MUL ||
++                opcode == OP_DIV ||
++                opcode == OP_MOD ||
++                opcode == OP_LSHIFT ||
++                opcode == OP_RSHIFT)
++                return false;
++
+             if (fExec &amp;&amp; opcode &lt;= OP_PUSHDATA4)
+                 stack.push_back(vchPushValue);
+             else if (fExec || (OP_IF &lt;= opcode &amp;&amp; opcode &lt;= OP_ENDIF))
+@@ -332,7 +367,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // (xn ... x2 x1 x0 n - ... x2 x1 x0 xn)
+                     if (stack.size() &lt; 2)
+                         return false;
+-                    int n = CBigNum(stacktop(-1)).getint();
++                    int n = CastToBigNum(stacktop(-1)).getint();
+                     stack.pop_back();
+                     if (n &lt; 0 || n &gt;= stack.size())
+                         return false;
+@@ -387,7 +422,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     valtype&amp; vch2 = stacktop(-1);
+                     vch1.insert(vch1.end(), vch2.begin(), vch2.end());
+                     stack.pop_back();
+-                    if (stacktop(-1).size() &gt; 5000)
++                    if (stacktop(-1).size() &gt; 520)
+                         return false;
+                 }
+                 break;
+@@ -398,8 +433,8 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; 3)
+                         return false;
+                     valtype&amp; vch = stacktop(-3);
+-                    int nBegin = CBigNum(stacktop(-2)).getint();
+-                    int nEnd = nBegin + CBigNum(stacktop(-1)).getint();
++                    int nBegin = CastToBigNum(stacktop(-2)).getint();
++                    int nEnd = nBegin + CastToBigNum(stacktop(-1)).getint();
+                     if (nBegin &lt; 0 || nEnd &lt; nBegin)
+                         return false;
+                     if (nBegin &gt; vch.size())
+@@ -420,7 +455,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; 2)
+                         return false;
+                     valtype&amp; vch = stacktop(-2);
+-                    int nSize = CBigNum(stacktop(-1)).getint();
++                    int nSize = CastToBigNum(stacktop(-1)).getint();
+                     if (nSize &lt; 0)
+                         return false;
+                     if (nSize &gt; vch.size())
+@@ -531,9 +566,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // (in -- out)
+                     if (stack.size() &lt; 1)
+                         return false;
+-                    if (stacktop(-1).size() &gt; nMaxNumSize)
+-                        return false;
+-                    CBigNum bn(stacktop(-1));
++                    CBigNum bn = CastToBigNum(stacktop(-1));
+                     switch (opcode)
+                     {
+                     case OP_1ADD:       bn += bnOne; break;
+@@ -572,11 +605,8 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // (x1 x2 -- out)
+                     if (stack.size() &lt; 2)
+                         return false;
+-                    if (stacktop(-2).size() &gt; nMaxNumSize ||
+-                        stacktop(-1).size() &gt; nMaxNumSize)
+-                        return false;
+-                    CBigNum bn1(stacktop(-2));
+-                    CBigNum bn2(stacktop(-1));
++                    CBigNum bn1 = CastToBigNum(stacktop(-2));
++                    CBigNum bn2 = CastToBigNum(stacktop(-1));
+                     CBigNum bn;
+                     switch (opcode)
+                     {
+@@ -646,13 +676,9 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // (x min max -- out)
+                     if (stack.size() &lt; 3)
+                         return false;
+-                    if (stacktop(-3).size() &gt; nMaxNumSize ||
+-                        stacktop(-2).size() &gt; nMaxNumSize ||
+-                        stacktop(-1).size() &gt; nMaxNumSize)
+-                        return false;
+-                    CBigNum bn1(stacktop(-3));
+-                    CBigNum bn2(stacktop(-2));
+-                    CBigNum bn3(stacktop(-1));
++                    CBigNum bn1 = CastToBigNum(stacktop(-3));
++                    CBigNum bn2 = CastToBigNum(stacktop(-2));
++                    CBigNum bn3 = CastToBigNum(stacktop(-1));
+                     bool fValue = (bn2 &lt;= bn1 &amp;&amp; bn1 &lt; bn3);
+                     stack.pop_back();
+                     stack.pop_back();
+@@ -748,7 +774,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; i)
+                         return false;
+ 
+-                    int nKeysCount = CBigNum(stacktop(-i)).getint();
++                    int nKeysCount = CastToBigNum(stacktop(-i)).getint();
+                     if (nKeysCount &lt; 0)
+                         return false;
+                     int ikey = ++i;
+@@ -756,7 +782,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; i)
+                         return false;
+ 
+-                    int nSigsCount = CBigNum(stacktop(-i)).getint();
++                    int nSigsCount = CastToBigNum(stacktop(-i)).getint();
+                     if (nSigsCount &lt; 0 || nSigsCount &gt; nKeysCount)
+                         return false;
+                     int isig = ++i;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 308;
+-static const char* pszSubVer = &quot;.4&quot;;
++static const int VERSION = 309;
++static const char* pszSubVer = &quot;.0&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.8
++!define VERSION 0.3.9
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.8-win32-setup.exe
++OutFile bitcoin-0.3.9-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.8.0
++VIProductVersion 0.3.9.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -0,0 +1,419 @@
++// Copyright (c) 2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++#include &lt;string.h&gt;
++#include &lt;assert.h&gt;
++
++#include &lt;xmmintrin.h&gt;
++#include &lt;stdint.h&gt;
++#include &lt;stdio.h&gt;
++
++#define NPAR 32
++
++static const unsigned int sha256_consts[] = {
++    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /*  0 */
++    0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
++    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, /*  8 */
++    0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
++    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, /* 16 */
++    0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
++    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, /* 24 */
++    0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
++    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, /* 32 */
++    0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
++    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, /* 40 */
++    0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
++    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, /* 48 */
++    0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
++    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, /* 56 */
++    0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
++};
++
++
++static inline __m128i Ch(const __m128i b, const __m128i c, const __m128i d) {
++    return (b &amp; c) ^ (~b &amp; d);
++}
++
++static inline __m128i Maj(const __m128i b, const __m128i c, const __m128i d) {
++    return (b &amp; c) ^ (b &amp; d) ^ (c &amp; d);
++}
++
++static inline __m128i ROTR(__m128i x, const int n) {
++    return _mm_srli_epi32(x, n) | _mm_slli_epi32(x, 32 - n);
++}
++
++static inline __m128i SHR(__m128i x, const int n) {
++    return _mm_srli_epi32(x, n);
++}
++
++/* SHA256 Functions */
++#define BIGSIGMA0_256(x)    (ROTR((x), 2) ^ ROTR((x), 13) ^ ROTR((x), 22))
++#define BIGSIGMA1_256(x)    (ROTR((x), 6) ^ ROTR((x), 11) ^ ROTR((x), 25))
++#define SIGMA0_256(x)       (ROTR((x), 7) ^ ROTR((x), 18) ^ SHR((x), 3))
++#define SIGMA1_256(x)       (ROTR((x), 17) ^ ROTR((x), 19) ^ SHR((x), 10))
++
++static inline unsigned int store32(const __m128i x, int i) {
++    union { unsigned int ret[4]; __m128i x; } box;
++    box.x = x;
++    return box.ret[i];
++}
++
++static inline void store_epi32(const __m128i x, unsigned int *x0, unsigned int *x1, unsigned int *x2, unsigned int *x3) {
++    union { unsigned int ret[4]; __m128i x; } box;
++    box.x = x;
++    *x0 = box.ret[3]; *x1 = box.ret[2]; *x2 = box.ret[1]; *x3 = box.ret[0];
++}
++
++#define add4(x0, x1, x2, x3) _mm_add_epi32(_mm_add_epi32(_mm_add_epi32(x0, x1), x2), x3)
++#define add5(x0, x1, x2, x3, x4) _mm_add_epi32(add4(x0, x1, x2, x3), x4)
++
++#define SHA256ROUND(a, b, c, d, e, f, g, h, i, w)                       \
++    T1 = add5(h, BIGSIGMA1_256(e), Ch(e, f, g), _mm_set1_epi32(sha256_consts[i]), w);   \
++d = _mm_add_epi32(d, T1);                                           \
++h = _mm_add_epi32(T1, _mm_add_epi32(BIGSIGMA0_256(a), Maj(a, b, c)));
++
++static inline void dumpreg(__m128i x, char *msg) {
++    union { unsigned int ret[4]; __m128i x; } box;
++    box.x = x ;
++    printf(&quot;%s %08x %08x %08x %08x\n&quot;, msg, box.ret[0], box.ret[1], box.ret[2], box.ret[3]);
++}
++
++#if 1
++#define dumpstate(i) printf(&quot;%s: %08x %08x %08x %08x %08x %08x %08x %08x %08x\n&quot;, \
++        __func__, store32(w0, i), store32(a, i), store32(b, i), store32(c, i), store32(d, i), store32(e, i), store32(f, i), store32(g, i), store32(h, i));
++#else
++#define dumpstate()
++#endif
++void Double_BlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[9][NPAR], const void *init)
++{
++    unsigned int* In = (unsigned int*)pin;
++    unsigned int* Pad = (unsigned int*)pad;
++    unsigned int* hPre = (unsigned int*)pre;
++    unsigned int* hInit = (unsigned int*)init;
++    unsigned int i, j, k;
++
++    /* vectors used in calculation */
++    __m128i w0, w1, w2, w3, w4, w5, w6, w7;
++    __m128i w8, w9, w10, w11, w12, w13, w14, w15;
++    __m128i T1;
++    __m128i a, b, c, d, e, f, g, h;
++    __m128i nonce;
++
++    /* nonce offset for vector */
++    __m128i offset = _mm_set_epi32(0x00000003, 0x00000002, 0x00000001, 0x00000000);
++
++
++    for(k = 0; k&lt;NPAR; k+=4) {
++        w0 = _mm_set1_epi32(In[0]);
++        w1 = _mm_set1_epi32(In[1]);
++        w2 = _mm_set1_epi32(In[2]);
++        //w3 = _mm_set1_epi32(In[3]); nonce will be later hacked into the hash
++        w4 = _mm_set1_epi32(In[4]);
++        w5 = _mm_set1_epi32(In[5]);
++        w6 = _mm_set1_epi32(In[6]);
++        w7 = _mm_set1_epi32(In[7]);
++        w8 = _mm_set1_epi32(In[8]);
++        w9 = _mm_set1_epi32(In[9]);
++        w10 = _mm_set1_epi32(In[10]);
++        w11 = _mm_set1_epi32(In[11]);
++        w12 = _mm_set1_epi32(In[12]);
++        w13 = _mm_set1_epi32(In[13]);
++        w14 = _mm_set1_epi32(In[14]);
++        w15 = _mm_set1_epi32(In[15]);
++
++        /* hack nonce into lowest byte of w3 */
++        nonce = _mm_set1_epi32(In[3]);
++        nonce = _mm_add_epi32(nonce, offset);
++        nonce = _mm_add_epi32(nonce, _mm_set1_epi32(k));
++        w3 = nonce;
++
++        a = _mm_set1_epi32(hPre[0]);
++        b = _mm_set1_epi32(hPre[1]);
++        c = _mm_set1_epi32(hPre[2]);
++        d = _mm_set1_epi32(hPre[3]);
++        e = _mm_set1_epi32(hPre[4]);
++        f = _mm_set1_epi32(hPre[5]);
++        g = _mm_set1_epi32(hPre[6]);
++        h = _mm_set1_epi32(hPre[7]);
++
++        SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 13, w13);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 14, w14);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 15, w15);
++
++        w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 16, w0);
++        w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 17, w1);
++        w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 18, w2);
++        w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 19, w3);
++        w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 20, w4);
++        w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 21, w5);
++        w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 22, w6);
++        w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 23, w7);
++        w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 24, w8);
++        w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 25, w9);
++        w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 26, w10);
++        w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 27, w11);
++        w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 28, w12);
++        w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 29, w13);
++        w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 30, w14);
++        w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 31, w15);
++
++        w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 32, w0);
++        w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 33, w1);
++        w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 34, w2);
++        w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 35, w3);
++        w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 36, w4);
++        w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 37, w5);
++        w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 38, w6);
++        w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 39, w7);
++        w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 40, w8);
++        w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 41, w9);
++        w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 42, w10);
++        w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 43, w11);
++        w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 44, w12);
++        w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 45, w13);
++        w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 46, w14);
++        w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 47, w15);
++
++        w0 = add4(SIGMA1_256(w14), w9, SIGMA0_256(w1), w0);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 48, w0);
++        w1 = add4(SIGMA1_256(w15), w10, SIGMA0_256(w2), w1);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 49, w1);
++        w2 = add4(SIGMA1_256(w0), w11, SIGMA0_256(w3), w2);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 50, w2);
++        w3 = add4(SIGMA1_256(w1), w12, SIGMA0_256(w4), w3);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 51, w3);
++        w4 = add4(SIGMA1_256(w2), w13, SIGMA0_256(w5), w4);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 52, w4);
++        w5 = add4(SIGMA1_256(w3), w14, SIGMA0_256(w6), w5);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 53, w5);
++        w6 = add4(SIGMA1_256(w4), w15, SIGMA0_256(w7), w6);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 54, w6);
++        w7 = add4(SIGMA1_256(w5), w0, SIGMA0_256(w8), w7);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 55, w7);
++        w8 = add4(SIGMA1_256(w6), w1, SIGMA0_256(w9), w8);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 56, w8);
++        w9 = add4(SIGMA1_256(w7), w2, SIGMA0_256(w10), w9);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 57, w9);
++        w10 = add4(SIGMA1_256(w8), w3, SIGMA0_256(w11), w10);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 58, w10);
++        w11 = add4(SIGMA1_256(w9), w4, SIGMA0_256(w12), w11);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 59, w11);
++        w12 = add4(SIGMA1_256(w10), w5, SIGMA0_256(w13), w12);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 60, w12);
++        w13 = add4(SIGMA1_256(w11), w6, SIGMA0_256(w14), w13);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 61, w13);
++        w14 = add4(SIGMA1_256(w12), w7, SIGMA0_256(w15), w14);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 62, w14);
++        w15 = add4(SIGMA1_256(w13), w8, SIGMA0_256(w0), w15);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 63, w15);
++
++#define store_load(x, i, dest) \
++        T1 = _mm_set1_epi32((hPre)[i]); \
++        dest = _mm_add_epi32(T1, x);
++
++        store_load(a, 0, w0);
++        store_load(b, 1, w1);
++        store_load(c, 2, w2);
++        store_load(d, 3, w3);
++        store_load(e, 4, w4);
++        store_load(f, 5, w5);
++        store_load(g, 6, w6);
++        store_load(h, 7, w7);
++
++        w8 = _mm_set1_epi32(Pad[8]);
++        w9 = _mm_set1_epi32(Pad[9]);
++        w10 = _mm_set1_epi32(Pad[10]);
++        w11 = _mm_set1_epi32(Pad[11]);
++        w12 = _mm_set1_epi32(Pad[12]);
++        w13 = _mm_set1_epi32(Pad[13]);
++        w14 = _mm_set1_epi32(Pad[14]);
++        w15 = _mm_set1_epi32(Pad[15]);
++
++        a = _mm_set1_epi32(hInit[0]);
++        b = _mm_set1_epi32(hInit[1]);
++        c = _mm_set1_epi32(hInit[2]);
++        d = _mm_set1_epi32(hInit[3]);
++        e = _mm_set1_epi32(hInit[4]);
++        f = _mm_set1_epi32(hInit[5]);
++        g = _mm_set1_epi32(hInit[6]);
++        h = _mm_set1_epi32(hInit[7]);
++
++        SHA256ROUND(a, b, c, d, e, f, g, h, 0, w0);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 1, w1);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 2, w2);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 3, w3);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 4, w4);
++        SHA256ROUND(d, e, f, g, h, a, b, c, 5, w5);
++        SHA256ROUND(c, d, e, f, g, h, a, b, 6, w6);
++        SHA256ROUND(b, c, d, e, f, g, h, a, 7, w7);
++        SHA256ROUND(a, b, c, d, e, f, g, h, 8, w8);
++        SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
++        SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
++        SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
++        SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -19,6 +19,14 @@ bool fCommandLine = false;
+ 
+ 
+ 
++// Workaround for &quot;multiple definition of `_tls_used&#x27;&quot;
++// http://svn.boost.org/trac/boost/ticket/4258
++extern &quot;C&quot; void tss_cleanup_implemented() { }
++
++
++
++
++
+ // Init openssl library multithreading support
+ static boost::interprocess::interprocess_mutex** ppmutexOpenSSL;
+ void locking_callback(int mode, int i, const char* file, int line)</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/7f71fd1/">← fix -datadir=./subdir relative path, autostart off by…</a><a rel="next" href="../../commits/d4c6b90/">fix for block 74638 overflow output transaction →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

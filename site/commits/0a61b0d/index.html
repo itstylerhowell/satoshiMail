@@ -1,0 +1,1539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>propset svn:eol-style native (r146) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 August 2010: propset svn:eol-style native. 65 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/0a61b0d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="propset svn:eol-style native (r146) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 August 2010: propset svn:eol-style native. 65 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/0a61b0d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="propset svn:eol-style native (r146) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 August 2010: propset svn:eol-style native. 65 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "propset svn:eol-style native", "url": "https://satoshimail.pages.dev/commits/0a61b0d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-29T16:58:15Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/0a61b0df1224a5470bcddab302bc199ca5a9e356"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "propset svn:eol-style native", "item": "https://satoshimail.pages.dev/commits/0a61b0d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c0a61b0df12">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">propset svn:eol-style native</span></div></nav>
+<main class="in">
+<h1>propset svn:eol-style native</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 29 August 2010 · SVN r146 · release v0.3.12 · 65 files, +31,004 −31,004</p>
+<p class="actions"><a class="btn" href="../../#t-c0a61b0df12">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/0a61b0df1224a5470bcddab302bc199ca5a9e356" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>base58.h</code></summary><pre><code>@@ -1,201 +1,201 @@
+-// Copyright (c) 2009-2010 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+-
+-//
+-// Why base-58 instead of standard base-64 encoding?
+-// - Don&#x27;t want 0OIl characters that look the same in some fonts and
+-//      could be used to create visually identical looking account numbers.
+-// - A string with non-alphanumeric characters is not as easily accepted as an account number.
+-// - E-mail usually won&#x27;t line-break if there&#x27;s no punctuation to break at.
+-// - Doubleclicking selects the whole number as one word if it&#x27;s all alphanumeric.
+-//
+-
+-
+-static const char* pszBase58 = &quot;123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz&quot;;
+-
+-
+-inline string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)
+-{
+-    CAutoBN_CTX pctx;
+-    CBigNum bn58 = 58;
+-    CBigNum bn0 = 0;
+-
+-    // Convert big endian data to little endian
+-    // Extra zero at the end make sure bignum will interpret as a positive number
+-    vector&lt;unsigned char&gt; vchTmp(pend-pbegin+1, 0);
+-    reverse_copy(pbegin, pend, vchTmp.begin());
+-
+-    // Convert little endian data to bignum
+-    CBigNum bn;
+-    bn.setvch(vchTmp);
+-
+-    // Convert bignum to string
+-    string str;
+-    str.reserve((pend - pbegin) * 138 / 100 + 1);
+-    CBigNum dv;
+-    CBigNum rem;
+-    while (bn &gt; bn0)
+-    {
+-        if (!BN_div(&amp;dv, &amp;rem, &amp;bn, &amp;bn58, pctx))
+-            throw bignum_error(&quot;EncodeBase58 : BN_div failed&quot;);
+-        bn = dv;
+-        unsigned int c = rem.getulong();
+-        str += pszBase58[c];
+-    }
+-
+-    // Leading zeroes encoded as base58 zeros
+-    for (const unsigned char* p = pbegin; p &lt; pend &amp;&amp; *p == 0; p++)
+-        str += pszBase58[0];
+-
+-    // Convert little endian string to big endian
+-    reverse(str.begin(), str.end());
+-    return str;
+-}
+-
+-inline string EncodeBase58(const vector&lt;unsigned char&gt;&amp; vch)
+-{
+-    return EncodeBase58(&amp;vch[0], &amp;vch[0] + vch.size());
+-}
+-
+-inline bool DecodeBase58(const char* psz, vector&lt;unsigned char&gt;&amp; vchRet)
+-{
+-    CAutoBN_CTX pctx;
+-    vchRet.clear();
+-    CBigNum bn58 = 58;
+-    CBigNum bn = 0;
+-    CBigNum bnChar;
+-    while (isspace(*psz))
+-        psz++;
+-
+-    // Convert big endian string to bignum
+-    for (const char* p = psz; *p; p++)
+-    {
+-        const char* p1 = strchr(pszBase58, *p);
+-        if (p1 == NULL)
+-        {
+-            while (isspace(*p))
+-                p++;
+-            if (*p != &#x27;\0&#x27;)
+-                return false;
+-            break;
+-        }
+-        bnChar.setulong(p1 - pszBase58);
+-        if (!BN_mul(&amp;bn, &amp;bn, &amp;bn58, pctx))
+-            throw bignum_error(&quot;DecodeBase58 : BN_mul failed&quot;);
+-        bn += bnChar;
+-    }
+-
+-    // Get bignum as little endian data
+-    vector&lt;unsigned char&gt; vchTmp = bn.getvch();
+-
+-    // Trim off sign byte if present
+-    if (vchTmp.size() &gt;= 2 &amp;&amp; vchTmp.end()[-1] == 0 &amp;&amp; vchTmp.end()[-2] &gt;= 0x80)
+-        vchTmp.erase(vchTmp.end()-1);
+-
+-    // Restore leading zeros
+-    int nLeadingZeros = 0;
+-    for (const char* p = psz; *p == pszBase58[0]; p++)
+-        nLeadingZeros++;
+-    vchRet.assign(nLeadingZeros + vchTmp.size(), 0);
+-
+-    // Convert little endian data to big endian
+-    reverse_copy(vchTmp.begin(), vchTmp.end(), vchRet.end() - vchTmp.size());
+-    return true;
+-}
+-
+-inline bool DecodeBase58(const string&amp; str, vector&lt;unsigned char&gt;&amp; vchRet)
+-{
+-    return DecodeBase58(str.c_str(), vchRet);
+-}
+-
+-
+-
+-
+-
+-inline string EncodeBase58Check(const vector&lt;unsigned char&gt;&amp; vchIn)
+-{
+-    // add 4-byte hash check to the end
+-    vector&lt;unsigned char&gt; vch(vchIn);
+-    uint256 hash = Hash(vch.begin(), vch.end());
+-    vch.insert(vch.end(), (unsigned char*)&amp;hash, (unsigned char*)&amp;hash + 4);
+-    return EncodeBase58(vch);
+-}
+-
+-inline bool DecodeBase58Check(const char* psz, vector&lt;unsigned char&gt;&amp; vchRet)
+-{
+-    if (!DecodeBase58(psz, vchRet))
+-        return false;
+-    if (vchRet.size() &lt; 4)
+-    {
+-        vchRet.clear();
+-        return false;
+-    }
+-    uint256 hash = Hash(vchRet.begin(), vchRet.end()-4);
+-    if (memcmp(&amp;hash, &amp;vchRet.end()[-4], 4) != 0)
+-    {
+-        vchRet.clear();
+-        return false;
+-    }
+-    vchRet.resize(vchRet.size()-4);
+-    return true;
+-}
+-
+-inline bool DecodeBase58Check(const string&amp; str, vector&lt;unsigned char&gt;&amp; vchRet)
+-{
+-    return DecodeBase58Check(str.c_str(), vchRet);
+-}
+-
+-
+-
+-
+-
+-
+-static const unsigned char ADDRESSVERSION = 0;
+-
+-inline string Hash160ToAddress(uint160 hash160)
+-{
+-    // add 1-byte version number to the front
+-    vector&lt;unsigned char&gt; vch(1, ADDRESSVERSION);
+-    vch.insert(vch.end(), UBEGIN(hash160), UEND(hash160));
+-    return EncodeBase58Check(vch);
+-}
+-
+-inline bool AddressToHash160(const char* psz, uint160&amp; hash160Ret)
+-{
+-    vector&lt;unsigned char&gt; vch;
+-    if (!DecodeBase58Check(psz, vch))
+-        return false;
+-    if (vch.empty())
+-        return false;
+-    unsigned char nVersion = vch[0];
+-    if (vch.size() != sizeof(hash160Ret) + 1)
+-        return false;
+-    memcpy(&amp;hash160Ret, &amp;vch[1], sizeof(hash160Ret));
+-    return (nVersion &lt;= ADDRESSVERSION);
+-}
+-
+-inline bool AddressToHash160(const string&amp; str, uint160&amp; hash160Ret)
+-{
+-    return AddressToHash160(str.c_str(), hash160Ret);
+-}
+-
+-inline bool IsValidBitcoinAddress(const char* psz)
+-{
+-    uint160 hash160;
+-    return AddressToHash160(psz, hash160);
+-}
+-
+-inline bool IsValidBitcoinAddress(const string&amp; str)
+-{
+-    return IsValidBitcoinAddress(str.c_str());
+-}
+-
+-
+-
+-
+-inline string PubKeyToAddress(const vector&lt;unsigned char&gt;&amp; vchPubKey)
+-{
+-    return Hash160ToAddress(Hash160(vchPubKey));
+-}
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++
++//
++// Why base-58 instead of standard base-64 encoding?
++// - Don&#x27;t want 0OIl characters that look the same in some fonts and
++//      could be used to create visually identical looking account numbers.
++// - A string with non-alphanumeric characters is not as easily accepted as an account number.
++// - E-mail usually won&#x27;t line-break if there&#x27;s no punctuation to break at.
++// - Doubleclicking selects the whole number as one word if it&#x27;s all alphanumeric.
++//
++
++
++static const char* pszBase58 = &quot;123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz&quot;;
++
++
++inline string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)
++{
++    CAutoBN_CTX pctx;
++    CBigNum bn58 = 58;
++    CBigNum bn0 = 0;
++
++    // Convert big endian data to little endian
++    // Extra zero at the end make sure bignum will interpret as a positive number
++    vector&lt;unsigned char&gt; vchTmp(pend-pbegin+1, 0);
++    reverse_copy(pbegin, pend, vchTmp.begin());
++
++    // Convert little endian data to bignum
++    CBigNum bn;
++    bn.setvch(vchTmp);
++
++    // Convert bignum to string
++    string str;
++    str.reserve((pend - pbegin) * 138 / 100 + 1);
++    CBigNum dv;
++    CBigNum rem;
++    while (bn &gt; bn0)
++    {
++        if (!BN_div(&amp;dv, &amp;rem, &amp;bn, &amp;bn58, pctx))
++            throw bignum_error(&quot;EncodeBase58 : BN_div failed&quot;);
++        bn = dv;
++        unsigned int c = rem.getulong();
++        str += pszBase58[c];
++    }
++
++    // Leading zeroes encoded as base58 zeros
++    for (const unsigned char* p = pbegin; p &lt; pend &amp;&amp; *p == 0; p++)
++        str += pszBase58[0];
++
++    // Convert little endian string to big endian
++    reverse(str.begin(), str.end());
++    return str;
++}
++
++inline string EncodeBase58(const vector&lt;unsigned char&gt;&amp; vch)
++{
++    return EncodeBase58(&amp;vch[0], &amp;vch[0] + vch.size());
++}
++
++inline bool DecodeBase58(const char* psz, vector&lt;unsigned char&gt;&amp; vchRet)
++{
++    CAutoBN_CTX pctx;
++    vchRet.clear();
++    CBigNum bn58 = 58;
++    CBigNum bn = 0;
++    CBigNum bnChar;
++    while (isspace(*psz))
++        psz++;
++
++    // Convert big endian string to bignum
++    for (const char* p = psz; *p; p++)
++    {
++        const char* p1 = strchr(pszBase58, *p);
++        if (p1 == NULL)
++        {
++            while (isspace(*p))
++                p++;
++            if (*p != &#x27;\0&#x27;)
++                return false;
++            break;
++        }
++        bnChar.setulong(p1 - pszBase58);
++        if (!BN_mul(&amp;bn, &amp;bn, &amp;bn58, pctx))
++            throw bignum_error(&quot;DecodeBase58 : BN_mul failed&quot;);
++        bn += bnChar;
++    }
++
++    // Get bignum as little endian data
++    vector&lt;unsigned char&gt; vchTmp = bn.getvch();
++
++    // Trim off sign byte if present
++    if (vchTmp.size() &gt;= 2 &amp;&amp; vchTmp.end()[-1] == 0 &amp;&amp; vchTmp.end()[-2] &gt;= 0x80)
++        vchTmp.erase(vchTmp.end()-1);
++
++    // Restore leading zeros
++    int nLeadingZeros = 0;</code></pre></details><details><summary><code>bignum.h</code></summary><pre><code>@@ -1,532 +1,532 @@
+-// Copyright (c) 2009-2010 Satoshi Nakamoto
+-// Distributed under the MIT/X11 software license, see the accompanying
+-// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-
+-#include &lt;stdexcept&gt;
+-#include &lt;vector&gt;
+-#include &lt;openssl/bn.h&gt;
+-
+-
+-
+-
+-
+-class bignum_error : public std::runtime_error
+-{
+-public:
+-    explicit bignum_error(const std::string&amp; str) : std::runtime_error(str) {}
+-};
+-
+-
+-
+-class CAutoBN_CTX
+-{
+-protected:
+-    BN_CTX* pctx;
+-    BN_CTX* operator=(BN_CTX* pnew) { return pctx = pnew; }
+-
+-public:
+-    CAutoBN_CTX()
+-    {
+-        pctx = BN_CTX_new();
+-        if (pctx == NULL)
+-            throw bignum_error(&quot;CAutoBN_CTX : BN_CTX_new() returned NULL&quot;);
+-    }
+-
+-    ~CAutoBN_CTX()
+-    {
+-        if (pctx != NULL)
+-            BN_CTX_free(pctx);
+-    }
+-
+-    operator BN_CTX*() { return pctx; }
+-    BN_CTX&amp; operator*() { return *pctx; }
+-    BN_CTX** operator&amp;() { return &amp;pctx; }
+-    bool operator!() { return (pctx == NULL); }
+-};
+-
+-
+-
+-class CBigNum : public BIGNUM
+-{
+-public:
+-    CBigNum()
+-    {
+-        BN_init(this);
+-    }
+-
+-    CBigNum(const CBigNum&amp; b)
+-    {
+-        BN_init(this);
+-        if (!BN_copy(this, &amp;b))
+-        {
+-            BN_clear_free(this);
+-            throw bignum_error(&quot;CBigNum::CBigNum(const CBigNum&amp;) : BN_copy failed&quot;);
+-        }
+-    }
+-
+-    CBigNum&amp; operator=(const CBigNum&amp; b)
+-    {
+-        if (!BN_copy(this, &amp;b))
+-            throw bignum_error(&quot;CBigNum::operator= : BN_copy failed&quot;);
+-        return (*this);
+-    }
+-
+-    ~CBigNum()
+-    {
+-        BN_clear_free(this);
+-    }
+-
+-    CBigNum(char n)             { BN_init(this); if (n &gt;= 0) setulong(n); else setint64(n); }
+-    CBigNum(short n)            { BN_init(this); if (n &gt;= 0) setulong(n); else setint64(n); }
+-    CBigNum(int n)              { BN_init(this); if (n &gt;= 0) setulong(n); else setint64(n); }
+-    CBigNum(long n)             { BN_init(this); if (n &gt;= 0) setulong(n); else setint64(n); }
+-    CBigNum(int64 n)            { BN_init(this); setint64(n); }
+-    CBigNum(unsigned char n)    { BN_init(this); setulong(n); }
+-    CBigNum(unsigned short n)   { BN_init(this); setulong(n); }
+-    CBigNum(unsigned int n)     { BN_init(this); setulong(n); }
+-    CBigNum(unsigned long n)    { BN_init(this); setulong(n); }
+-    CBigNum(uint64 n)           { BN_init(this); setuint64(n); }
+-    explicit CBigNum(uint256 n) { BN_init(this); setuint256(n); }
+-
+-    explicit CBigNum(const std::vector&lt;unsigned char&gt;&amp; vch)
+-    {
+-        BN_init(this);
+-        setvch(vch);
+-    }
+-
+-    void setulong(unsigned long n)
+-    {
+-        if (!BN_set_word(this, n))
+-            throw bignum_error(&quot;CBigNum conversion from unsigned long : BN_set_word failed&quot;);
+-    }
+-
+-    unsigned long getulong() const
+-    {
+-        return BN_get_word(this);
+-    }
+-
+-    unsigned int getuint() const
+-    {
+-        return BN_get_word(this);
+-    }
+-
+-    int getint() const
+-    {
+-        unsigned long n = BN_get_word(this);
+-        if (!BN_is_negative(this))
+-            return (n &gt; INT_MAX ? INT_MAX : n);
+-        else
+-            return (n &gt; INT_MAX ? INT_MIN : -(int)n);
+-    }
+-
+-    void setint64(int64 n)
+-    {
+-        unsigned char pch[sizeof(n) + 6];
+-        unsigned char* p = pch + 4;
+-        bool fNegative = false;
+-        if (n &lt; (int64)0)
+-        {
+-            n = -n;
+-            fNegative = true;
+-        }
+-        bool fLeadingZeroes = true;
+-        for (int i = 0; i &lt; 8; i++)
+-        {
+-            unsigned char c = (n &gt;&gt; 56) &amp; 0xff;
+-            n &lt;&lt;= 8;
+-            if (fLeadingZeroes)
+-            {
+-                if (c == 0)
+-                    continue;
+-                if (c &amp; 0x80)
+-                    *p++ = (fNegative ? 0x80 : 0);
+-                else if (fNegative)
+-                    c |= 0x80;
+-                fLeadingZeroes = false;
+-            }
+-            *p++ = c;
+-        }
+-        unsigned int nSize = p - (pch + 4);
+-        pch[0] = (nSize &gt;&gt; 24) &amp; 0xff;
+-        pch[1] = (nSize &gt;&gt; 16) &amp; 0xff;
+-        pch[2] = (nSize &gt;&gt; 8) &amp; 0xff;
+-        pch[3] = (nSize) &amp; 0xff;
+-        BN_mpi2bn(pch, p - pch, this);
+-    }
+-
+-    void setuint64(uint64 n)
+-    {
+-        unsigned char pch[sizeof(n) + 6];
+-        unsigned char* p = pch + 4;
+-        bool fLeadingZeroes = true;
+-        for (int i = 0; i &lt; 8; i++)
+-        {
+-            unsigned char c = (n &gt;&gt; 56) &amp; 0xff;
+-            n &lt;&lt;= 8;
+-            if (fLeadingZeroes)
+-            {
+-                if (c == 0)
+-                    continue;
+-                if (c &amp; 0x80)
+-                    *p++ = 0;
+-                fLeadingZeroes = false;
+-            }
+-            *p++ = c;
+-        }
+-        unsigned int nSize = p - (pch + 4);
+-        pch[0] = (nSize &gt;&gt; 24) &amp; 0xff;
+-        pch[1] = (nSize &gt;&gt; 16) &amp; 0xff;
+-        pch[2] = (nSize &gt;&gt; 8) &amp; 0xff;
+-        pch[3] = (nSize) &amp; 0xff;
+-        BN_mpi2bn(pch, p - pch, this);
+-    }
+-
+-    void setuint256(uint256 n)
+-    {
+-        unsigned char pch[sizeof(n) + 6];
+-        unsigned char* p = pch + 4;
+-        bool fLeadingZeroes = true;
+-        unsigned char* pbegin = (unsigned char*)&amp;n;
+-        unsigned char* psrc = pbegin + sizeof(n);
+-        while (psrc != pbegin)
+-        {
+-            unsigned char c = *(--psrc);
+-            if (fLeadingZeroes)
+-            {
+-                if (c == 0)
+-                    continue;
+-                if (c &amp; 0x80)
+-                    *p++ = 0;
+-                fLeadingZeroes = false;
+-            }
+-            *p++ = c;
+-        }
+-        unsigned int nSize = p - (pch + 4);
+-        pch[0] = (nSize &gt;&gt; 24) &amp; 0xff;
+-        pch[1] = (nSize &gt;&gt; 16) &amp; 0xff;
+-        pch[2] = (nSize &gt;&gt; 8) &amp; 0xff;
+-        pch[3] = (nSize &gt;&gt; 0) &amp; 0xff;
+-        BN_mpi2bn(pch, p - pch, this);
+-    }
+-
+-    uint256 getuint256()
+-    {
+-        unsigned int nSize = BN_bn2mpi(this, NULL);
+-        if (nSize &lt; 4)
+-            return 0;
+-        std::vector&lt;unsigned char&gt; vch(nSize);
+-        BN_bn2mpi(this, &amp;vch[0]);
+-        if (vch.size() &gt; 4)
+-            vch[4] &amp;= 0x7f;
+-        uint256 n = 0;
+-        for (int i = 0, j = vch.size()-1; i &lt; sizeof(n) &amp;&amp; j &gt;= 4; i++, j--)
+-            ((unsigned char*)&amp;n)[i] = vch[j];
+-        return n;
+-    }
+-
+-    void setvch(const std::vector&lt;unsigned char&gt;&amp; vch)
+-    {
+-        std::vector&lt;unsigned char&gt; vch2(vch.size() + 4);
+-        unsigned int nSize = vch.size();
+-        vch2[0] = (nSize &gt;&gt; 24) &amp; 0xff;
+-        vch2[1] = (nSize &gt;&gt; 16) &amp; 0xff;
+-        vch2[2] = (nSize &gt;&gt; 8) &amp; 0xff;
+-        vch2[3] = (nSize &gt;&gt; 0) &amp; 0xff;
+-        reverse_copy(vch.begin(), vch.end(), vch2.begin() + 4);
+-        BN_mpi2bn(&amp;vch2[0], vch2.size(), this);
+-    }
+-
+-    std::vector&lt;unsigned char&gt; getvch() const
+-    {
+-        unsigned int nSize = BN_bn2mpi(this, NULL);
+-        if (nSize &lt; 4)
+-            return std::vector&lt;unsigned char&gt;();
+-        std::vector&lt;unsigned char&gt; vch(nSize);
+-        BN_bn2mpi(this, &amp;vch[0]);
+-        vch.erase(vch.begin(), vch.begin() + 4);
+-        reverse(vch.begin(), vch.end());
+-        return vch;
+-    }
+-
+-    CBigNum&amp; SetCompact(unsigned int nCompact)
+-    {
+-        unsigned int nSize = nCompact &gt;&gt; 24;
+-        std::vector&lt;unsigned char&gt; vch(4 + nSize);
+-        vch[3] = nSize;
+-        if (nSize &gt;= 1) vch[4] = (nCompact &gt;&gt; 16) &amp; 0xff;
+-        if (nSize &gt;= 2) vch[5] = (nCompact &gt;&gt; 8) &amp; 0xff;
+-        if (nSize &gt;= 3) vch[6] = (nCompact &gt;&gt; 0) &amp; 0xff;
+-        BN_mpi2bn(&amp;vch[0], vch.size(), this);
+-        return *this;
+-    }
+-
+-    unsigned int GetCompact() const
+-    {
+-        unsigned int nSize = BN_bn2mpi(this, NULL);
+-        std::vector&lt;unsigned char&gt; vch(nSize);
+-        nSize -= 4;
+-        BN_bn2mpi(this, &amp;vch[0]);
+-        unsigned int nCompact = nSize &lt;&lt; 24;
+-        if (nSize &gt;= 1) nCompact |= (vch[4] &lt;&lt; 16);
+-        if (nSize &gt;= 2) nCompact |= (vch[5] &lt;&lt; 8);
+-        if (nSize &gt;= 3) nCompact |= (vch[6] &lt;&lt; 0);
+-        return nCompact;
+-    }
+-
+-    void SetHex(const std::string&amp; str)
+-    {
+-        // skip 0x
+-        const char* psz = str.c_str();
+-        while (isspace(*psz))
+-            psz++;
+-        bool fNegative = false;
+-        if (*psz == &#x27;-&#x27;)
+-        {
+-            fNegative = true;
+-            psz++;
+-        }
+-        if (psz[0] == &#x27;0&#x27; &amp;&amp; tolower(psz[1]) == &#x27;x&#x27;)
+-            psz += 2;
+-        while (isspace(*psz))
+-            psz++;
+-
+-        // hex string to bignum
+-        static char phexdigit[256] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,1,2,3,4,5,6,7,8,9,0,0,0,0,0,0, 0,0xa,0xb,0xc,0xd,0xe,0xf,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0xa,0xb,0xc,0xd,0xe,0xf,0,0,0,0,0,0,0,0,0 };
+-        *this = 0;
+-        while (isxdigit(*psz))
+-        {
+-            *this &lt;&lt;= 4;
+-            int n = phexdigit[*psz++];</code></pre></details><details><summary><code>build-msw.txt</code></summary><pre><code>@@ -1,114 +1,114 @@
+-Copyright (c) 2009-2010 Satoshi Nakamoto
+-Distributed under the MIT/X11 software license, see the accompanying
+-file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-This product includes software developed by the OpenSSL Project for use in
+-the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
+-cryptographic software written by Eric Young (eay@cryptsoft.com).
+-
+-
+-WINDOWS BUILD NOTES
+-===================
+-
+-Compilers Supported
+--------------------
+-MinGW GCC (recommended)
+-
+-MSVC 6.0 SP6: You&#x27;ll need Boost version 1.34 because they dropped support
+-for MSVC 6.0 after that.  However, they didn&#x27;t add Asio until 1.35.
+-You should still be able to build with MSVC 6.0 by adding Asio to 1.34 by
+-unpacking boost_asio_*.zip into the boost directory:
+-http://sourceforge.net/projects/asio/files/asio
+-
+-MSVC 8.0 (2005) SP1 has been tested.  Note: MSVC 7.0 and up have a habit of
+-linking to runtime DLLs that are not installed on XP by default.
+-
+-
+-Dependencies
+-------------
+-Libraries you need to download separately and build:
+-
+-             default path  download
+-wxWidgets-2.9  \wxwidgets   http://www.wxwidgets.org/downloads/
+-OpenSSL        \openssl     http://www.openssl.org/source/
+-Berkeley DB    \db          http://www.oracle.com/technology/software/products/berkeley-db/index.html
+-Boost          \boost       http://www.boost.org/users/download/
+-
+-Their licenses:
+-wxWidgets      LGPL 2.1 with very liberal exceptions
+-OpenSSL        Old BSD license with the problematic advertising requirement
+-Berkeley DB    New BSD license with additional requirement that linked software must be free open source
+-Boost          MIT-like license
+-
+-Versions used in this release:
+-MinGW GCC    3.4.5
+-wxWidgets    2.9.0
+-OpenSSL      0.9.8k
+-Berkeley DB  4.7.25.NC
+-Boost        1.42.1
+-
+-
+-Notes
+------
+-The UI layout is edited with wxFormBuilder.  The project file is
+-uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
+-classes that do the rote work of constructing all the UI elements.
+-
+-The release is built with GCC and then &quot;strip bitcoin.exe&quot; to strip the debug
+-symbols, which reduces the executable size by about 90%.
+-
+-
+-wxWidgets
+----------
+-cd \wxwidgets\build\msw
+-make -f makefile.gcc
+- or
+-nmake -f makefile.vc
+-
+-
+-OpenSSL
+--------
+-Bitcoin does not use any encryption.  If you want to do a no-everything
+-build of OpenSSL to exclude encryption routines, a few patches are required.
+-(instructions for OpenSSL v0.9.8k)
+-
+-Edit engines\e_gmp.c and engines\e_capi.c and add this #ifndef around
+-the openssl/rsa.h include:
+-  #ifndef OPENSSL_NO_RSA
+-  #include &lt;openssl/rsa.h&gt;
+-  #endif
+-
+-Edit ms\mingw32.bat and replace the Configure line&#x27;s parameters with this
+-no-everything list.  You have to put this in the batch file because batch
+-files can&#x27;t take more than nine command line parameters.
+-  perl Configure mingw threads no-rc2 no-rc4 no-rc5 no-idea no-des no-bf no-cast no-aes no-camellia no-seed no-rsa no-dh
+-
+-Also REM out the following line in ms\mingw32.bat after the mingw32-make
+-line.  The build fails after it&#x27;s already finished building libeay32, which
+-is all we care about, but the failure aborts the script before it runs
+-dllwrap to generate libeay32.dll.
+-  REM  if errorlevel 1 goto end
+-
+-Build
+-  cd \openssl
+-  ms\mingw32.bat
+-
+-If you want to use it with MSVC, generate the .lib file
+-  lib /machine:i386 /def:ms\libeay32.def /out:out\libeay32.lib
+-
+-
+-Berkeley DB
+------------
+-Using MinGW and MSYS:
+-cd \db\build_unix
+-sh ../dist/configure --enable-mingw --enable-cxx
+-make
+-
+-
+-Boost
+------
+-download bjam.exe from
+-http://sourceforge.net/project/showfiles.php?group_id=7586&amp;package_id=72941
+-cd \boost
+-bjam toolset=gcc --build-type=complete stage
+- or
+-bjam toolset=msvc --build-type=complete stage
++Copyright (c) 2009-2010 Satoshi Nakamoto
++Distributed under the MIT/X11 software license, see the accompanying
++file license.txt or http://www.opensource.org/licenses/mit-license.php.
++This product includes software developed by the OpenSSL Project for use in
++the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
++cryptographic software written by Eric Young (eay@cryptsoft.com).
++
++
++WINDOWS BUILD NOTES
++===================
++
++Compilers Supported
++-------------------
++MinGW GCC (recommended)
++
++MSVC 6.0 SP6: You&#x27;ll need Boost version 1.34 because they dropped support
++for MSVC 6.0 after that.  However, they didn&#x27;t add Asio until 1.35.
++You should still be able to build with MSVC 6.0 by adding Asio to 1.34 by
++unpacking boost_asio_*.zip into the boost directory:
++http://sourceforge.net/projects/asio/files/asio
++
++MSVC 8.0 (2005) SP1 has been tested.  Note: MSVC 7.0 and up have a habit of
++linking to runtime DLLs that are not installed on XP by default.
++
++
++Dependencies
++------------
++Libraries you need to download separately and build:
++
++             default path  download
++wxWidgets-2.9  \wxwidgets   http://www.wxwidgets.org/downloads/
++OpenSSL        \openssl     http://www.openssl.org/source/
++Berkeley DB    \db          http://www.oracle.com/technology/software/products/berkeley-db/index.html
++Boost          \boost       http://www.boost.org/users/download/
++
++Their licenses:
++wxWidgets      LGPL 2.1 with very liberal exceptions
++OpenSSL        Old BSD license with the problematic advertising requirement
++Berkeley DB    New BSD license with additional requirement that linked software must be free open source
++Boost          MIT-like license
++
++Versions used in this release:
++MinGW GCC    3.4.5
++wxWidgets    2.9.0
++OpenSSL      0.9.8k
++Berkeley DB  4.7.25.NC
++Boost        1.42.1
++
++
++Notes
++-----
++The UI layout is edited with wxFormBuilder.  The project file is
++uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
++classes that do the rote work of constructing all the UI elements.
++
++The release is built with GCC and then &quot;strip bitcoin.exe&quot; to strip the debug
++symbols, which reduces the executable size by about 90%.
++
++
++wxWidgets
++---------
++cd \wxwidgets\build\msw
++make -f makefile.gcc
++ or
++nmake -f makefile.vc
++
++
++OpenSSL
++-------
++Bitcoin does not use any encryption.  If you want to do a no-everything
++build of OpenSSL to exclude encryption routines, a few patches are required.
++(instructions for OpenSSL v0.9.8k)
++
++Edit engines\e_gmp.c and engines\e_capi.c and add this #ifndef around
++the openssl/rsa.h include:
++  #ifndef OPENSSL_NO_RSA
++  #include &lt;openssl/rsa.h&gt;
++  #endif
++
++Edit ms\mingw32.bat and replace the Configure line&#x27;s parameters with this
++no-everything list.  You have to put this in the batch file because batch
++files can&#x27;t take more than nine command line parameters.
++  perl Configure mingw threads no-rc2 no-rc4 no-rc5 no-idea no-des no-bf no-cast no-aes no-camellia no-seed no-rsa no-dh
++
++Also REM out the following line in ms\mingw32.bat after the mingw32-make
++line.  The build fails after it&#x27;s already finished building libeay32, which
++is all we care about, but the failure aborts the script before it runs
++dllwrap to generate libeay32.dll.
++  REM  if errorlevel 1 goto end
++
++Build
++  cd \openssl
++  ms\mingw32.bat
++
++If you want to use it with MSVC, generate the .lib file
++  lib /machine:i386 /def:ms\libeay32.def /out:out\libeay32.lib
++
++
++Berkeley DB
++-----------
++Using MinGW and MSYS:
++cd \db\build_unix
++sh ../dist/configure --enable-mingw --enable-cxx
++make
++
++
++Boost
++-----
++download bjam.exe from
++http://sourceforge.net/project/showfiles.php?group_id=7586&amp;package_id=72941
++cd \boost
++bjam toolset=gcc --build-type=complete stage
++ or
++bjam toolset=msvc --build-type=complete stage</code></pre></details><details><summary><code>build-osx.txt</code></summary><pre><code>@@ -1,217 +1,217 @@
+-Copyright (c) 2009-2010 Satoshi Nakamoto
+-Distributed under the MIT/X11 software license, see the accompanying
+-file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-This product includes software developed by the OpenSSL Project for use in
+-the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
+-cryptographic software written by Eric Young (eay@cryptsoft.com).
+-
+-
+-Mac OS X build instructions
+-Laszlo Hanyecz (solar@heliacal.net)
+-
+-
+-Tested on 10.5 and 10.6 intel.  PPC is not supported because it&#x27;s big-endian.
+-
+-All of the commands should be executed in Terminal.app.. it&#x27;s in
+-/Applications/Utilities
+-
+-You need to install XCode with all the options checked so that the compiler
+-and everything is available in /usr not just /Developer
+-I think it comes on the DVD but you can get the current version from
+-http://developer.apple.com
+-
+-
+-1.  Pick a directory to work inside.. something like ~/bitcoin works.  The
+-structure I use looks like this:
+-(~ is your home directory)
+-
+-~/bitcoin
+-~/bitcoin/trunk         # source code
+-~/bitcoin/deps          # dependencies.. like libraries and headers needed to compile
+-~/bitcoin/Bitcoin.app   # the application bundle where you can run the app
+-
+-Just execute: mkdir ~/bitcoin
+-This will create the top dir for you..
+-
+-WARNING: do not use the ~ notation with the configure scripts.. use the full
+-name of the directory, for example /Users/james/bitcoin/deps for a user named
+-&#x27;james&#x27;.  In my examples I am using &#x27;macosuser&#x27; so make sure you change that.
+-
+-2.  Check out the trunk version of the bitcoin code from subversion:
+-
+-cd ~/bitcoin
+-svn checkout https://bitcoin.svn.sourceforge.net/svnroot/bitcoin/trunk
+-
+-This will make ~/bitcoin/trunk for you with all the files from subversion. 
+-
+-3.  Get and build the dependencies
+-
+-
+-Boost
+------
+-
+-Download from http://www.boost.org/users/download/
+-I&#x27;m assuming it ended up in ~/Downloads..
+-
+-mkdir ~/bitcoin/deps
+-cd ~/bitcoin/deps
+-tar xvjf ~/Downloads/boost_1_42_0.tar.bz2
+-cd boost_1_42_0
+-./bootstrap.sh
+-./bjam architecture=combined address-model=32_64 macosx-version=10.6 macosx-version-min=10.5 link=static runtime-link=static --toolset=darwin --prefix=/Users/macosuser/bitcoin/deps install
+-
+-This part takes a while.. use your judgement and fix it if something doesn&#x27;t
+-build for some reason.
+-
+-Change the prefix to whatever your directory is (my username in this example
+-is macosuser).  I&#x27;m also running on 10.6 so i have macosx-version=10.6  change
+-to 10.5 if you&#x27;re using leopard.
+-
+-This is what my output looked like at the end:
+-...failed updating 2 targets...
+-...skipped 144 targets...
+-...updated 8074 targets...
+-
+-
+-OpenSSL
+--------
+-
+-Download from http://www.openssl.org/source/
+-
+-We would like to build this as a 32 bit/64 bit library so we actually build it
+-2 times and join it together here..  If you downloaded with safari it already
+-uncompressed it so it will just be a tar not a tar.gz
+-
+-cd ~/bitcoin/deps
+-tar xvf ~/Downloads/openssl-1.0.0.tar
+-mv openssl-1.0.0 openssl-1.0.0-i386
+-tar xvf ~/Downloads/openssl-1.0.0.tar
+-mv openssl-1.0.0 openssl-1.0.0-x86_64
+-# build i386 (32 bit intel) binary
+-cd openssl-1.0.0-i386
+-./Configure --prefix=/Users/macosuser/bitcoin/deps --openssldir=/Users/macosuser/deps/openssl darwin-i386-cc &amp;&amp; make
+-make install # only do this on one of the architectures, to install the headers
+-cd ..
+-# build x86_64 (64 bit intel) binary
+-cd openssl-1.0.0-x86_64
+-./Configure --prefix=/Users/macosuser/bitcoin/deps --openssldir=/Users/macosuser/deps/openssl darwin64-x86_64-cc &amp;&amp; make
+-cd ..
+-
+-# combine the libs
+-cd ~/bitcoin/deps
+-lipo -arch i386 openssl-1.0.0-i386/libcrypto.a -arch x86_64 openssl-1.0.0-x86_64/libcrypto.a -o lib/libcrypto.a -create
+-lipo -arch i386 openssl-1.0.0-i386/libssl.a -arch x86_64 openssl-1.0.0-x86_64/libssl.a -o lib/libssl.a -create
+-
+-Verify your binaries
+-
+-file lib/libcrypto.a
+-
+-output should look like this:
+-
+-ib/libcrypto.a: Mach-O universal binary with 2 architectures
+-lib/libcrypto.a (for architecture i386):	current ar archive random library
+-lib/libcrypto.a (for architecture x86_64):	current ar archive random library
+-
+-
+-Berkeley DB
+------------
+-
+-Download from http://freshmeat.net/projects/berkeleydb/
+-
+-cd ~/bitcoin/deps
+-tar xvf ~/Downloads/db-4.8.26.tar
+-cd db-4.8.26/build_unix
+-../dist/configure --prefix=/Users/macosuser/bitcoin/deps --enable-cxx &amp;&amp; make &amp;&amp; make install
+-
+-
+-wxWidgets
+----------
+-
+-This is the big one..
+-
+-Check it out from svn
+-
+-cd ~/bitcoin/deps
+-svn checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk wxWidgets-trunk
+-
+-This will make a wxWidgets-trunk directory in deps.
+-
+-Use this script snippet, change your prefix to whatever your dir is:
+-
+-PREFIX=~/bitcoin/deps
+-SRCDIR=&quot;$PREFIX/wxWidgets-trunk&quot;
+-BUILDDIR=&quot;$SRCDIR/macbuild&quot;
+-
+-cd &quot;$PREFIX&quot; &amp;&amp;
+-#svn checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk wxWidgets-trunk &amp;&amp;
+-cd &quot;$SRCDIR&quot; &amp;&amp;
+-
+-[ -f include/wx/hashmap.h.orig ] || cp include/wx/hashmap.h include/wx/hashmap.h.orig &amp;&amp;
+-sed &#x27;s/if wxUSE_STL/if 0 \&amp;\&amp; wxUSE_STL/g&#x27; &lt; include/wx/hashmap.h.orig &gt; include/wx/hashmap.h &amp;&amp;
+-
+-[ -f include/wx/hashset.h.orig ] || cp include/wx/hashset.h include/wx/hashset.h.orig &amp;&amp;
+-sed &#x27;s/if wxUSE_STL/if 0 \&amp;\&amp; wxUSE_STL/g&#x27; &lt; include/wx/hashset.h.orig &gt; include/wx/hashset.h &amp;&amp;
+-
+-
+-
+-rm -vrf &quot;$BUILDDIR&quot; &amp;&amp;
+-mkdir &quot;$BUILDDIR&quot; &amp;&amp;
+-cd &quot;$BUILDDIR&quot; &amp;&amp;
+-
+-../configure --prefix=&quot;$PREFIX&quot; \
+---with-osx_cocoa \
+---disable-shared \
+---disable-debug_flag \
+---with-macosx-version-min=10.5 \
+---enable-stl \
+---enable-utf8 \
+---enable-universal_binary \
+---with-libjpeg=builtin \
+---with-libpng=builtin \
+---with-regex=builtin \
+---with-libtiff=builtin \
+---with-zlib=builtin \
+---with-expat=builtin \
+---with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk &amp;&amp;
+-
+-
+-find . -name Makefile | 
+-while read i; do 
+-  echo $i; 
+-  sed &#x27;s/-arch i386/-arch i386 -arch x86_64/g&#x27; &lt; &quot;$i&quot; &gt; &quot;$i&quot;.new &amp;&amp; 
+-  mv &quot;$i&quot; &quot;$i&quot;.old &amp;&amp; 
+-  mv &quot;$i&quot;.new &quot;$i&quot;; 
+-done
+-
+-
+-
+-make &amp;&amp; 
+-make install
+-
+-
+-
+-Now you should be able to build bitcoin
+-
+-cd ~/bitcoin/trunk
+-make -f makefile.osx bitcoin
+-
+-Before you can run it, you need to create an application bundle for Mac OS.
+-Create the directories in terminal using mkdir and copy the files into place.
+-They are available at http://heliacal.net/~solar/bitcoin/mac-build/
+-You need the Info.plist and the .ins file.  The Contents/MacOS/bitcoin file is
+-the output of the build.
+-Your directory structure should look like this:
+-
+-Bitcoin.app
+-Bitcoin.app/Contents
+-Bitcoin.app/Contents/Info.plist
+-Bitcoin.app/Contents/MacOS
+-Bitcoin.app/Contents/MacOS/bitcoin
+-Bitcoin.app/Contents/Resources
+-Bitcoin.app/Contents/Resources/BitcoinAppIcon.icns
+-
+-To run it you can just click the Bitcoin.app in Finder, or just do open
+-~/bitcoin/Bitcoin.app
+-If you want to run it with arguments you can just run it without backgrounding
+-by specifying the full name in terminal:
+-~/bitcoin/Bitcoin.app/Contents/MacOS/bitcoin -addnode=192.75.207.66
++Copyright (c) 2009-2010 Satoshi Nakamoto
++Distributed under the MIT/X11 software license, see the accompanying
++file license.txt or http://www.opensource.org/licenses/mit-license.php.
++This product includes software developed by the OpenSSL Project for use in
++the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
++cryptographic software written by Eric Young (eay@cryptsoft.com).
++
++
++Mac OS X build instructions
++Laszlo Hanyecz (solar@heliacal.net)
++
++
++Tested on 10.5 and 10.6 intel.  PPC is not supported because it&#x27;s big-endian.
++
++All of the commands should be executed in Terminal.app.. it&#x27;s in
++/Applications/Utilities
++
++You need to install XCode with all the options checked so that the compiler
++and everything is available in /usr not just /Developer
++I think it comes on the DVD but you can get the current version from
++http://developer.apple.com
++
++
++1.  Pick a directory to work inside.. something like ~/bitcoin works.  The
++structure I use looks like this:
++(~ is your home directory)
++
++~/bitcoin
++~/bitcoin/trunk         # source code
++~/bitcoin/deps          # dependencies.. like libraries and headers needed to compile
++~/bitcoin/Bitcoin.app   # the application bundle where you can run the app
++
++Just execute: mkdir ~/bitcoin
++This will create the top dir for you..
++
++WARNING: do not use the ~ notation with the configure scripts.. use the full
++name of the directory, for example /Users/james/bitcoin/deps for a user named
++&#x27;james&#x27;.  In my examples I am using &#x27;macosuser&#x27; so make sure you change that.
++
++2.  Check out the trunk version of the bitcoin code from subversion:
++
++cd ~/bitcoin
++svn checkout https://bitcoin.svn.sourceforge.net/svnroot/bitcoin/trunk
++
++This will make ~/bitcoin/trunk for you with all the files from subversion. 
++
++3.  Get and build the dependencies
++
++
++Boost
++-----
++
++Download from http://www.boost.org/users/download/
++I&#x27;m assuming it ended up in ~/Downloads..
++
++mkdir ~/bitcoin/deps
++cd ~/bitcoin/deps
++tar xvjf ~/Downloads/boost_1_42_0.tar.bz2
++cd boost_1_42_0
++./bootstrap.sh
++./bjam architecture=combined address-model=32_64 macosx-version=10.6 macosx-version-min=10.5 link=static runtime-link=static --toolset=darwin --prefix=/Users/macosuser/bitcoin/deps install
++
++This part takes a while.. use your judgement and fix it if something doesn&#x27;t
++build for some reason.
++
++Change the prefix to whatever your directory is (my username in this example
++is macosuser).  I&#x27;m also running on 10.6 so i have macosx-version=10.6  change
++to 10.5 if you&#x27;re using leopard.
++
++This is what my output looked like at the end:
++...failed updating 2 targets...
++...skipped 144 targets...
++...updated 8074 targets...
++
++
++OpenSSL
++-------
++
++Download from http://www.openssl.org/source/
++
++We would like to build this as a 32 bit/64 bit library so we actually build it
++2 times and join it together here..  If you downloaded with safari it already</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -1,80 +1,80 @@
+-Copyright (c) 2009-2010 Satoshi Nakamoto
+-Distributed under the MIT/X11 software license, see the accompanying
+-file license.txt or http://www.opensource.org/licenses/mit-license.php.
+-This product includes software developed by the OpenSSL Project for use in
+-the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
+-cryptographic software written by Eric Young (eay@cryptsoft.com).
+-
+-
+-UNIX BUILD NOTES
+-================
+-
+-Dependencies
+-------------
+-sudo apt-get install build-essential
+-sudo apt-get install libgtk2.0-dev
+-sudo apt-get install libssl-dev
+-sudo apt-get install libdb4.7-dev
+-sudo apt-get install libdb4.7++-dev
+-Boost 1.40+: sudo apt-get install libboost-all-dev
+-or Boost 1.37: sudo apt-get install libboost1.37-dev
+-
+-If using Boost 1.37, append -mt to the boost libraries in the makefile.
+-
+-We&#x27;re now using wxWidgets 2.9, which uses UTF-8.  Don&#x27;t try 2.8, it won&#x27;t work.
+-
+-You need to download wxWidgets from http://www.wxwidgets.org/downloads/
+-and build it yourself.  See the build instructions and configure parameters
+-below.
+-
+-Licenses of statically linked libraries:
+-wxWidgets      LGPL 2.1 with very liberal exceptions
+-Berkeley DB    New BSD license with additional requirement that linked software must be free open source
+-Boost          MIT-like license
+-
+-Versions used in this release:
+-GCC          4.3.3
+-OpenSSL      0.9.8g
+-wxWidgets    2.9.0
+-Berkeley DB  4.7.25.NC
+-Boost        1.37
+-
+-
+-Notes
+------
+-The UI layout is edited with wxFormBuilder.  The project file is
+-uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
+-classes that do the rote work of constructing all the UI elements.
+-
+-The release is built with GCC and then &quot;strip bitcoin&quot; to strip the debug
+-symbols, which reduces the executable size by about 90%.
+-
+-
+-wxWidgets
+----------
+-cd /usr/local
+-tar -xzvf wxWidgets-2.9.0.tar.gz
+-cd wxWidgets-2.9.0
+-mkdir buildgtk
+-cd buildgtk
+-../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
+-make
+-sudo su
+-make install
+-ldconfig
+-
+-
+-Berkeley DB
+------------
+-You need Berkeley DB 4.7.  Don&#x27;t use 4.8, the database/log0000* files
+-are incompatible.  If you have to build Berkeley DB yourself:
+-../dist/configure --enable-cxx
+-make
+-
+-
+-Boost
+------
+-If you need to build Boost yourself:
+-sudo su
+-./bootstrap.sh
+-./bjam install
++Copyright (c) 2009-2010 Satoshi Nakamoto
++Distributed under the MIT/X11 software license, see the accompanying
++file license.txt or http://www.opensource.org/licenses/mit-license.php.
++This product includes software developed by the OpenSSL Project for use in
++the OpenSSL Toolkit (http://www.openssl.org/).  This product includes
++cryptographic software written by Eric Young (eay@cryptsoft.com).
++
++
++UNIX BUILD NOTES
++================
++
++Dependencies
++------------
++sudo apt-get install build-essential
++sudo apt-get install libgtk2.0-dev
++sudo apt-get install libssl-dev
++sudo apt-get install libdb4.7-dev
++sudo apt-get install libdb4.7++-dev
++Boost 1.40+: sudo apt-get install libboost-all-dev
++or Boost 1.37: sudo apt-get install libboost1.37-dev
++
++If using Boost 1.37, append -mt to the boost libraries in the makefile.
++
++We&#x27;re now using wxWidgets 2.9, which uses UTF-8.  Don&#x27;t try 2.8, it won&#x27;t work.
++
++You need to download wxWidgets from http://www.wxwidgets.org/downloads/
++and build it yourself.  See the build instructions and configure parameters
++below.
++
++Licenses of statically linked libraries:
++wxWidgets      LGPL 2.1 with very liberal exceptions
++Berkeley DB    New BSD license with additional requirement that linked software must be free open source
++Boost          MIT-like license
++
++Versions used in this release:
++GCC          4.3.3
++OpenSSL      0.9.8g
++wxWidgets    2.9.0
++Berkeley DB  4.7.25.NC
++Boost        1.37
++
++
++Notes
++-----
++The UI layout is edited with wxFormBuilder.  The project file is
++uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
++classes that do the rote work of constructing all the UI elements.
++
++The release is built with GCC and then &quot;strip bitcoin&quot; to strip the debug
++symbols, which reduces the executable size by about 90%.
++
++
++wxWidgets
++---------
++cd /usr/local
++tar -xzvf wxWidgets-2.9.0.tar.gz
++cd wxWidgets-2.9.0
++mkdir buildgtk
++cd buildgtk
++../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
++make
++sudo su
++make install
++ldconfig
++
++
++Berkeley DB
++-----------
++You need Berkeley DB 4.7.  Don&#x27;t use 4.8, the database/log0000* files
++are incompatible.  If you have to build Berkeley DB yourself:
++../dist/configure --enable-cxx
++make
++
++
++Boost
++-----
++If you need to build Boost yourself:
++sudo su
++./bootstrap.sh
++./bjam install</code></pre></details><details><summary><code>cryptopp/License.txt</code></summary><pre><code>@@ -1,67 +1,67 @@
+-Compilation Copyright (c) 1995-2009 by Wei Dai.  All rights reserved.
+-This copyright applies only to this software distribution package 
+-as a compilation, and does not imply a copyright on any particular 
+-file in the package.
+-
+-The following files are copyrighted by their respective original authors,
+-and their use is subject to additional licenses included in these files.
+-
+-mars.cpp - Copyright 1998 Brian Gladman.
+-
+-All other files in this compilation are placed in the public domain by
+-Wei Dai and other contributors.
+-
+-I would like to thank the following authors for placing their works into
+-the public domain:
+-
+-Joan Daemen - 3way.cpp
+-Leonard Janke - cast.cpp, seal.cpp
+-Steve Reid - cast.cpp
+-Phil Karn - des.cpp
+-Andrew M. Kuchling - md2.cpp, md4.cpp
+-Colin Plumb - md5.cpp
+-Seal Woods - rc6.cpp
+-Chris Morgan - rijndael.cpp
+-Paulo Baretto - rijndael.cpp, skipjack.cpp, square.cpp
+-Richard De Moliner - safer.cpp
+-Matthew Skala - twofish.cpp
+-Kevin Springle - camellia.cpp, shacal2.cpp, ttmac.cpp, whrlpool.cpp, ripemd.cpp
+-
+-Permission to use, copy, modify, and distribute this compilation for
+-any purpose, including commercial applications, is hereby granted
+-without fee, subject to the following restrictions:
+-
+-1. Any copy or modification of this compilation in any form, except
+-in object code form as part of an application software, must include
+-the above copyright notice and this license.
+-
+-2. Users of this software agree that any modification or extension
+-they provide to Wei Dai will be considered public domain and not
+-copyrighted unless it includes an explicit copyright notice.
+-
+-3. Wei Dai makes no warranty or representation that the operation of the
+-software in this compilation will be error-free, and Wei Dai is under no
+-obligation to provide any services, by way of maintenance, update, or
+-otherwise.  THE SOFTWARE AND ANY DOCUMENTATION ARE PROVIDED &quot;AS IS&quot;
+-WITHOUT EXPRESS OR IMPLIED WARRANTY INCLUDING, BUT NOT LIMITED TO,
+-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+-PURPOSE. IN NO EVENT WILL WEI DAI OR ANY OTHER CONTRIBUTOR BE LIABLE FOR
+-DIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES, EVEN IF
+-ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+-
+-4. Users will not use Wei Dai or any other contributor&#x27;s name in any 
+-publicity or advertising, without prior written consent in each case.
+-
+-5. Export of this software from the United States may require a
+-specific license from the United States Government.  It is the
+-responsibility of any person or organization contemplating export
+-to obtain such a license before exporting.
+-
+-6. Certain parts of this software may be protected by patents.  It
+-is the users&#x27; responsibility to obtain the appropriate
+-licenses before using those parts.
+-
+-If this compilation is used in object code form in an application
+-software, acknowledgement of the author is not required but would be
+-appreciated. The contribution of any useful modifications or extensions
+-to Wei Dai is not required but would also be appreciated.
++Compilation Copyright (c) 1995-2009 by Wei Dai.  All rights reserved.
++This copyright applies only to this software distribution package 
++as a compilation, and does not imply a copyright on any particular 
++file in the package.
++
++The following files are copyrighted by their respective original authors,
++and their use is subject to additional licenses included in these files.
++
++mars.cpp - Copyright 1998 Brian Gladman.
++
++All other files in this compilation are placed in the public domain by
++Wei Dai and other contributors.
++
++I would like to thank the following authors for placing their works into
++the public domain:
++
++Joan Daemen - 3way.cpp
++Leonard Janke - cast.cpp, seal.cpp
++Steve Reid - cast.cpp
++Phil Karn - des.cpp
++Andrew M. Kuchling - md2.cpp, md4.cpp
++Colin Plumb - md5.cpp
++Seal Woods - rc6.cpp
++Chris Morgan - rijndael.cpp
++Paulo Baretto - rijndael.cpp, skipjack.cpp, square.cpp
++Richard De Moliner - safer.cpp
++Matthew Skala - twofish.cpp
++Kevin Springle - camellia.cpp, shacal2.cpp, ttmac.cpp, whrlpool.cpp, ripemd.cpp
++
++Permission to use, copy, modify, and distribute this compilation for
++any purpose, including commercial applications, is hereby granted
++without fee, subject to the following restrictions:
++
++1. Any copy or modification of this compilation in any form, except
++in object code form as part of an application software, must include
++the above copyright notice and this license.
++
++2. Users of this software agree that any modification or extension
++they provide to Wei Dai will be considered public domain and not
++copyrighted unless it includes an explicit copyright notice.
++
++3. Wei Dai makes no warranty or representation that the operation of the
++software in this compilation will be error-free, and Wei Dai is under no
++obligation to provide any services, by way of maintenance, update, or
++otherwise.  THE SOFTWARE AND ANY DOCUMENTATION ARE PROVIDED &quot;AS IS&quot;
++WITHOUT EXPRESS OR IMPLIED WARRANTY INCLUDING, BUT NOT LIMITED TO,
++THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++PURPOSE. IN NO EVENT WILL WEI DAI OR ANY OTHER CONTRIBUTOR BE LIABLE FOR
++DIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES, EVEN IF
++ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
++
++4. Users will not use Wei Dai or any other contributor&#x27;s name in any 
++publicity or advertising, without prior written consent in each case.
++
++5. Export of this software from the United States may require a
++specific license from the United States Government.  It is the
++responsibility of any person or organization contemplating export
++to obtain such a license before exporting.
++
++6. Certain parts of this software may be protected by patents.  It
++is the users&#x27; responsibility to obtain the appropriate
++licenses before using those parts.
++
++If this compilation is used in object code form in an application
++software, acknowledgement of the author is not required but would be
++appreciated. The contribution of any useful modifications or extensions
++to Wei Dai is not required but would also be appreciated.</code></pre></details><details><summary><code>cryptopp/Readme.txt</code></summary><pre><code>@@ -1,429 +1,429 @@
+-Crypto++: a C++ Class Library of Cryptographic Schemes
+-Version 5.6.0 (3/15/2009)
+-
+-Crypto++ Library is a free C++ class library of cryptographic schemes.
+-Currently the library contains the following algorithms:
+-
+-                   algorithm type  name
+-
+- authenticated encryption schemes  GCM, CCM, EAX
+- 
+-        high speed stream ciphers  Panama, Sosemanuk, Salsa20, XSalsa20
+-
+-           AES and AES candidates  AES (Rijndael), RC6, MARS, Twofish, Serpent,
+-                                   CAST-256
+-
+-                                   IDEA, Triple-DES (DES-EDE2 and DES-EDE3),
+-              other block ciphers  Camellia, SEED, RC5, Blowfish, TEA, XTEA,
+-                                   Skipjack, SHACAL-2
+-
+-  block cipher modes of operation  ECB, CBC, CBC ciphertext stealing (CTS),
+-                                   CFB, OFB, counter mode (CTR)
+-
+-     message authentication codes  VMAC, HMAC, CMAC, CBC-MAC, DMAC, 
+-                                   Two-Track-MAC
+-
+-                                   SHA-1, SHA-2 (SHA-224, SHA-256, SHA-384, and
+-                   hash functions  SHA-512), Tiger, WHIRLPOOL, RIPEMD-128,
+-                                   RIPEMD-256, RIPEMD-160, RIPEMD-320
+-
+-                                   RSA, DSA, ElGamal, Nyberg-Rueppel (NR),
+-          public-key cryptography  Rabin, Rabin-Williams (RW), LUC, LUCELG,
+-                                   DLIES (variants of DHAES), ESIGN
+-
+-   padding schemes for public-key  PKCS#1 v2.0, OAEP, PSS, PSSR, IEEE P1363
+-                          systems  EMSA2 and EMSA5
+-
+-                                   Diffie-Hellman (DH), Unified Diffie-Hellman
+-            key agreement schemes  (DH2), Menezes-Qu-Vanstone (MQV), LUCDIF,
+-                                   XTR-DH
+-
+-      elliptic curve cryptography  ECDSA, ECNR, ECIES, ECDH, ECMQV
+-
+-          insecure or obsolescent  MD2, MD4, MD5, Panama Hash, DES, ARC4, SEAL
+-algorithms retained for backwards  3.0, WAKE, WAKE-OFB, DESX (DES-XEX3), RC2,
+-     compatibility and historical  SAFER, 3-WAY, GOST, SHARK, CAST-128, Square
+-                            value
+-
+-Other features include:
+-
+-  * pseudo random number generators (PRNG): ANSI X9.17 appendix C, RandomPool
+-  * password based key derivation functions: PBKDF1 and PBKDF2 from PKCS #5,
+-    PBKDF from PKCS #12 appendix B
+-  * Shamir&#x27;s secret sharing scheme and Rabin&#x27;s information dispersal algorithm
+-    (IDA)
+-  * fast multi-precision integer (bignum) and polynomial operations
+-  * finite field arithmetics, including GF(p) and GF(2^n)
+-  * prime number generation and verification
+-  * useful non-cryptographic algorithms
+-      + DEFLATE (RFC 1951) compression/decompression with gzip (RFC 1952) and
+-        zlib (RFC 1950) format support
+-      + hex, base-32, and base-64 coding/decoding
+-      + 32-bit CRC and Adler32 checksum
+-  * class wrappers for these operating system features (optional):
+-      + high resolution timers on Windows, Unix, and Mac OS
+-      + Berkeley and Windows style sockets
+-      + Windows named pipes
+-      + /dev/random, /dev/urandom, /dev/srandom
+-      + Microsoft&#x27;s CryptGenRandom on Windows
+-  * A high level interface for most of the above, using a filter/pipeline
+-    metaphor
+-  * benchmarks and validation testing
+-  * x86, x86-64 (x64), MMX, and SSE2 assembly code for the most commonly used
+-    algorithms, with run-time CPU feature detection and code selection
+-  * some versions are available in FIPS 140-2 validated form</code></pre></details><details><summary><code>cryptopp/config.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/cpu.cpp</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/cpu.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/cryptlib.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/iterhash.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/misc.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/pch.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/secblock.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/simple.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/smartptr.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/stdcpp.h</code></summary><pre><code></code></pre></details><details><summary><code>db.cpp</code></summary><pre><code></code></pre></details><details><summary><code>db.h</code></summary><pre><code></code></pre></details><details><summary><code>headers.h</code></summary><pre><code></code></pre></details><details><summary><code>init.cpp</code></summary><pre><code></code></pre></details><details><summary><code>init.h</code></summary><pre><code></code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code></code></pre></details><details><summary><code>irc.h</code></summary><pre><code></code></pre></details><details><summary><code>json/LICENSE.txt</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_error_position.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_reader.cpp</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_reader.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_reader_template.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_stream_reader.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_utils.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_value.cpp</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_writer.cpp</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_writer.h</code></summary><pre><code></code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code></code></pre></details><details><summary><code>key.h</code></summary><pre><code></code></pre></details><details><summary><code>license.txt</code></summary><pre><code></code></pre></details><details><summary><code>main.cpp</code></summary><pre><code></code></pre></details><details><summary><code>main.h</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code></code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code></code></pre></details><details><summary><code>net.cpp</code></summary><pre><code></code></pre></details><details><summary><code>net.h</code></summary><pre><code></code></pre></details><details><summary><code>noui.h</code></summary><pre><code></code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code></code></pre></details><details><summary><code>rpc.h</code></summary><pre><code></code></pre></details><details><summary><code>script.cpp</code></summary><pre><code></code></pre></details><details><summary><code>script.h</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code></code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code></code></pre></details><details><summary><code>strlcpy.h</code></summary><pre><code></code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code></code></pre></details><details><summary><code>ui.h</code></summary><pre><code></code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code></code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uint256.h</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/343328c/">← added -testsafemode switch -- version 0.3.11 release</a><a rel="next" href="../../commits/d743f03/">Gavin Andresen: json-rpc return standard error objects… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

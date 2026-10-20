@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/dd51920/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/dd51920/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx locktime changes, fix hide unconfirmed generated", "url": "https://satoshimail.pages.dev/commits/dd51920/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T02:52:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dd519206a684c772a4a06ceecc87c665ad09d8be"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "addr relaying fixes, proxy option and…", "item": "https://satoshimail.pages.dev/commits/dd51920/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cdd519206a6">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">addr relaying fixes, proxy option and…</span></div></nav>
+<main class="in">
+<h1>addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx locktime changes, fix hide unconfirmed generated</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 29 October 2009 · SVN r18 · release v0.2.0 · 19 files, +1,209 −339</p>
+<p class="actions"><a class="btn" href="../../#t-cdd519206a6">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/dd519206a684c772a4a06ceecc87c665ad09d8be" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build.txt</code></summary><pre><code>@@ -1,4 +1,4 @@
+-BitCoin v0.1.6 ALPHA
++BitCoin v0.1.6 BETA
+ 
+ Copyright (c) 2009 Satoshi Nakamoto
+ Distributed under the MIT/X11 software license, see the accompanying
+@@ -19,10 +19,10 @@ Dependencies
+ Libraries you need to obtain separately to build:
+ 
+               default path   download
+-wxWidgets      \wxWidgets     http://www.wxwidgets.org/downloads/
+-OpenSSL        \OpenSSL       http://www.openssl.org/source/
+-Berkeley DB    \DB            http://www.oracle.com/technology/software/products/berkeley-db/index.html
+-Boost          \Boost         http://www.boost.org/users/download/
++wxWidgets      \wxwidgets     http://www.wxwidgets.org/downloads/
++OpenSSL        \openssl       http://www.openssl.org/source/
++Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
++Boost          \boost         http://www.boost.org/users/download/
+ 
+ Their licenses:
+ wxWidgets      LGPL 2.1 with very liberal exceptions
+@@ -75,7 +75,7 @@ If you want to use it with MSVC, generate the .lib file
+ Berkeley DB
+ -----------
+ Using MinGW and MSYS:
+-cd \DB\build_unix
++cd \db\build_unix
+ sh ../dist/configure --enable-mingw --enable-cxx
+ make
+ </code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -121,10 +121,12 @@ void CDB::Close()
+     pdb-&gt;close(0);
+     delete pdb;
+     pdb = NULL;
+-    dbenv.txn_checkpoint(0, 0, 0);
+ 
+     CRITICAL_BLOCK(cs_db)
++    {
++        dbenv.txn_checkpoint(0, 0, 0);
+         --mapFileUseCount[strFile];
++    }
+ 
+     RandAddSeed();
+ }
+@@ -376,11 +378,11 @@ bool CTxDB::LoadBlockIndex()
+     {
+         if (pindexGenesisBlock == NULL)
+             return true;
+-        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found\n&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : hashBestChain not found&quot;);
+     }
+ 
+     if (!mapBlockIndex.count(hashBestChain))
+-        return error(&quot;CTxDB::LoadBlockIndex() : blockindex for hashBestChain not found\n&quot;);
++        return error(&quot;CTxDB::LoadBlockIndex() : blockindex for hashBestChain not found&quot;);
+     pindexBest = mapBlockIndex[hashBestChain];
+     nBestHeight = pindexBest-&gt;nHeight;
+     printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,14).c_str(), nBestHeight);
+@@ -500,16 +502,15 @@ bool CReviewDB::WriteReviews(uint256 hash, const vector&lt;CReview&gt;&amp; vReviews)
+ CWalletDB::~CWalletDB()
+ {
+     // Flush whenever all handles to wallet.dat are closed
+-    Close();
+     CRITICAL_BLOCK(cs_db)
+     {
++        Close(); // close includes a txn_checkpoint
+         map&lt;string, int&gt;::iterator mi = mapFileUseCount.find(strFile);
+         if (mi != mapFileUseCount.end())
+         {
+             int nRefCount = (*mi).second;
+             if (nRefCount == 0)
+             {
+-                dbenv.txn_checkpoint(0, 0, 0);
+                 dbenv.lsn_reset(strFile.c_str(), 0);
+                 mapFileUseCount.erase(mi++);
+             }
+@@ -600,6 +601,9 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+                 if (strKey == &quot;nLimitProcessors&quot;)   ssValue &gt;&gt; nLimitProcessors;
+                 if (strKey == &quot;fMinimizeToTray&quot;)    ssValue &gt;&gt; fMinimizeToTray;
+                 if (strKey == &quot;fMinimizeOnClose&quot;)   ssValue &gt;&gt; fMinimizeOnClose;
++                if (strKey == &quot;fUseProxy&quot;)          ssValue &gt;&gt; fUseProxy;
++                if (strKey == &quot;addrProxy&quot;)          ssValue &gt;&gt; addrProxy;
++
+             }
+         }
+     }
+@@ -610,6 +614,9 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());
+     printf(&quot;fMinimizeToTray = %d\n&quot;, fMinimizeToTray);
+     printf(&quot;fMinimizeOnClose = %d\n&quot;, fMinimizeOnClose);
++    printf(&quot;fUseProxy = %d\n&quot;, fUseProxy);
++    printf(&quot;addrProxy = %s\n&quot;, addrProxy.ToString().c_str());
++
+ 
+     // The transaction fee setting won&#x27;t be needed for many years to come.
+     // Setting it to zero here in case they set it to something in an earlier version.
+@@ -639,7 +646,7 @@ bool LoadWallet(bool&amp; fFirstRunRet)
+     else
+     {
+         // Create new keyUser and set as default key
+-        RandAddSeed(true);
++        RandAddSeedPerfmon();
+         keyUser.MakeNewKey();
+         if (!AddKey(keyUser))
+             return false;</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -5,6 +5,7 @@
+ #ifdef _MSC_VER
+ #pragma warning(disable:4786)
+ #pragma warning(disable:4804)
++#pragma warning(disable:4805)
+ #pragma warning(disable:4717)
+ #endif
+ #ifdef _WIN32_WINNT
+@@ -62,6 +63,7 @@ using namespace boost;
+ 
+ 
+ 
++#include &quot;strlcpy.h&quot;
+ #include &quot;serialize.h&quot;
+ #include &quot;uint256.h&quot;
+ #include &quot;util.h&quot;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -163,6 +163,9 @@ void ThreadIRCSeed(void* parg)
+     int nErrorWait = 10;
+     int nRetryWait = 10;
+ 
++    if (fUseProxy &amp;&amp; addrProxy.port == htons(9050))
++        return;
++
+     while (!fShutdown)
+     {
+         CAddress addrConnect(&quot;216.155.130.130:6667&quot;);
+@@ -191,9 +194,10 @@ void ThreadIRCSeed(void* parg)
+                 return;
+         }
+ 
+-        string strMyName = EncodeAddress(addrLocalHost);
+-
+-        if (!addrLocalHost.IsRoutable())
++        string strMyName;
++        if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
++            strMyName = EncodeAddress(addrLocalHost);
++        else
+             strMyName = strprintf(&quot;x%u&quot;, GetRand(1000000000));
+ 
+ </code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -35,7 +35,7 @@ public:
+ };
+ 
+ 
+-// secure_allocator is defined is serialize.h
++// secure_allocator is defined in serialize.h
+ typedef vector&lt;unsigned char, secure_allocator&lt;unsigned char&gt; &gt; CPrivKey;
+ 
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -415,6 +415,10 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     if (!CheckTransaction())
+         return error(&quot;AcceptTransaction() : CheckTransaction failed&quot;);
+ 
++    // To help v0.1.5 clients who would see it as negative number. please delete this later.
++    if (nLockTime &gt; INT_MAX)
++        return error(&quot;AcceptTransaction() : not accepting nLockTime beyond 2038&quot;);
++
+     // Do we already have it?
+     uint256 hash = GetHash();
+     CRITICAL_BLOCK(cs_mapTransactions)
+@@ -1214,6 +1218,12 @@ bool CBlock::AcceptBlock()
+     if (nTime &lt;= pindexPrev-&gt;GetMedianTimePast())
+         return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);
+ 
++    // Check that all transactions are finalized (starting around 30 Nov 2009)
++    if (nBestHeight &gt; 31000) // 25620 + 5320
++        foreach(const CTransaction&amp; tx, vtx)
++            if (!tx.IsFinal(nTime))
++                return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
++
+     // Check proof of work
+     if (nBits != GetNextWorkRequired(pindexPrev))
+         return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+@@ -1649,7 +1659,7 @@ bool ProcessMessages(CNode* pfrom)
+     CDataStream&amp; vRecv = pfrom-&gt;vRecv;
+     if (vRecv.empty())
+         return true;
+-    printf(&quot;ProcessMessages(%d bytes)\n&quot;, vRecv.size());
++    //printf(&quot;ProcessMessages(%d bytes)\n&quot;, vRecv.size());
+ 
+     //
+     // Message format
+@@ -1692,7 +1702,7 @@ bool ProcessMessages(CNode* pfrom)
+         {
+             // Rewind and wait for rest of message
+             ///// need a mechanism to give up waiting for overlong message size error
+-            printf(&quot;MESSAGE-BREAK\n&quot;);
++            //printf(&quot;message-break\n&quot;);
+             vRecv.insert(vRecv.begin(), BEGIN(hdr), END(hdr));
+             Sleep(100);
+             break;
+@@ -1711,7 +1721,20 @@ bool ProcessMessages(CNode* pfrom)
+                 fRet = ProcessMessage(pfrom, strCommand, vMsg);
+             CheckForShutdown(2);
+         }
+-        CATCH_PRINT_EXCEPTION(&quot;ProcessMessage()&quot;)
++        catch (std::ios_base::failure&amp; e) {
++            if (strstr(e.what(), &quot;CDataStream::read() : end of data&quot;))
++            {
++                // Allow exceptions from underlength message on vRecv
++                LogException(&amp;e, &quot;ProcessMessage()&quot;);
++            }
++            else
++                PrintException(&amp;e, &quot;ProcessMessage()&quot;);
++        } catch (std::exception&amp; e) {
++            PrintException(&amp;e, &quot;ProcessMessage()&quot;);
++        } catch (...) {
++            PrintException(NULL, &quot;ProcessMessage()&quot;);
++        }
++
+         if (!fRet)
+             printf(&quot;ProcessMessage(%s, %d bytes) FAILED\n&quot;, strCommand.c_str(), nMessageSize);
+     }
+@@ -1726,7 +1749,8 @@ bool ProcessMessages(CNode* pfrom)
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ {
+     static map&lt;unsigned int, vector&lt;unsigned char&gt; &gt; mapReuseKey;
+-    printf(&quot;received: %-12s (%d bytes)\n&quot;, strCommand.c_str(), vRecv.size());
++    RandAddSeedPerfmon();
++    printf(&quot;received: %s (%d bytes)\n&quot;, strCommand.c_str(), vRecv.size());
+     if (nDropMessagesTest &gt; 0 &amp;&amp; GetRand(nDropMessagesTest) == 0)
+     {
+         printf(&quot;dropmessages DROPPING RECV MESSAGE\n&quot;);
+@@ -1735,18 +1759,32 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+ 
+ 
++
+     if (strCommand == &quot;version&quot;)
+     {
+-        // Can only do this once
++        // Each connection can only send one version message
+         if (pfrom-&gt;nVersion != 0)
+             return false;
+ 
+         int64 nTime;
+         CAddress addrMe;
++        CAddress addrFrom;
++        uint64 nNonce = 1;
+         vRecv &gt;&gt; pfrom-&gt;nVersion &gt;&gt; pfrom-&gt;nServices &gt;&gt; nTime &gt;&gt; addrMe;
++        if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())
++            vRecv &gt;&gt; addrFrom &gt;&gt; nNonce;
+         if (pfrom-&gt;nVersion == 0)
+             return false;
+ 
++        // Disconnect if we connected to ourself
++        if (nNonce == nLocalHostNonce)
++        {
++            pfrom-&gt;fDisconnect = true;
++            pfrom-&gt;vRecv.clear();
++            pfrom-&gt;vSend.clear();
++            return true;
++        }
++
+         pfrom-&gt;vSend.SetVersion(min(pfrom-&gt;nVersion, VERSION));
+         pfrom-&gt;vRecv.SetVersion(min(pfrom-&gt;nVersion, VERSION));
+ 
+@@ -1767,6 +1805,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             pfrom-&gt;PushMessage(&quot;getblocks&quot;, CBlockLocator(pindexBest), uint256(0));
+         }
+ 
++        pfrom-&gt;fSuccessfullyConnected = true;
++
+         printf(&quot;version message: version %d\n&quot;, pfrom-&gt;nVersion);
+     }
+ 
+@@ -1800,16 +1840,16 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+             if (fShutdown)
+                 return true;
+             AddAddress(addrdb, addr);
+-            if (addr.IsRoutable() &amp;&amp; addr.ip != addrLocalHost.ip)
++            pfrom-&gt;AddAddressKnown(addr);
++            if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
+             {
+                 // Put on lists to send to other nodes
+-                pfrom-&gt;setAddrKnown.insert(addr);
+                 CRITICAL_BLOCK(cs_vNodes)
+                     foreach(CNode* pnode, vNodes)
+-                        if (!pnode-&gt;setAddrKnown.count(addr))
+-                            pnode-&gt;vAddrToSend.push_back(addr);
++                        pnode-&gt;PushAddress(addr);
+             }
+         }
++        pfrom-&gt;fGetAddr = false;
+     }
+ 
+ 
+@@ -2009,7 +2049,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                     return true;
+                 const CAddress&amp; addr = item.second;
+                 if (addr.nTime &gt; nSince)
+-                    pfrom-&gt;vAddrToSend.push_back(addr);
++                    pfrom-&gt;PushAddress(addr);
+             }
+         }
+     }
+@@ -2108,8 +2148,11 @@ bool SendMessages(CNode* pto)
+         vector&lt;CAddress&gt; vAddrToSend;
+         vAddrToSend.reserve(pto-&gt;vAddrToSend.size());
+         foreach(const CAddress&amp; addr, pto-&gt;vAddrToSend)
+-            if (!pto-&gt;setAddrKnown.count(addr))
++        {
++            // returns true if wasn&#x27;t already contained in the set
++            if (pto-&gt;setAddrKnown.insert(addr).second)
+                 vAddrToSend.push_back(addr);
++        }
+         pto-&gt;vAddrToSend.clear();
+         if (!vAddrToSend.empty())
+             pto-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
+@@ -2193,7 +2236,7 @@ void GenerateBitcoins(bool fGenerate)
+         if (fLimitProcessors &amp;&amp; nProcessors &gt; nLimitProcessors)
+             nProcessors = nLimitProcessors;
+         int nAddThreads = nProcessors - vnThreadsRunning[3];
+-        printf(&quot;starting %d bitcoinminer threads\n&quot;, nAddThreads);
++        printf(&quot;Starting %d BitcoinMiner threads\n&quot;, nAddThreads);
+         for (int i = 0; i &lt; nAddThreads; i++)
+             if (_beginthread(ThreadBitcoinMiner, 0, NULL) == -1)
+                 printf(&quot;Error: _beginthread(ThreadBitcoinMiner) failed\n&quot;);
+@@ -2207,7 +2250,7 @@ void ThreadBitcoinMiner(void* parg)
+     try
+     {
+         bool fRet = BitcoinMiner();
+-        printf(&quot;BitcoinMiner returned %s\n\n\n&quot;, fRet ? &quot;true&quot; : &quot;false&quot;);
++        printf(&quot;BitcoinMiner returned %s\n&quot;, fRet ? &quot;true&quot; : &quot;false&quot;);
+         vnThreadsRunning[3]--;
+     }
+     catch (std::exception&amp; e) {
+@@ -2737,7 +2780,7 @@ bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+             else
+                 strError = &quot;Error: Transaction creation failed  &quot;;
+             wxMessageBox(strError, &quot;Sending...&quot;);
+-            return error(&quot;SendMoney() : %s\n&quot;, strError.c_str());
++            return error(&quot;SendMoney() : %s&quot;, strError.c_str());
+         }
+         if (!CommitTransactionSpent(wtxNew, key))
+         {</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -366,7 +366,7 @@ public:
+     int nVersion;
+     vector&lt;CTxIn&gt; vin;
+     vector&lt;CTxOut&gt; vout;
+-    int nLockTime;
++    unsigned int nLockTime;
+ 
+ 
+     CTransaction()
+@@ -401,9 +401,15 @@ public:
+         return SerializeHash(*this);
+     }
+ 
+-    bool IsFinal() const
++    bool IsFinal(int64 nBlockTime=0) const
+     {
+-        if (nLockTime == 0 || nLockTime &lt; nBestHeight)
++        // Time based nLockTime implemented in 0.1.6,
++        // do not use time based until most 0.1.5 nodes have upgraded.
++        if (nBlockTime == 0)
++            nBlockTime = GetAdjustedTime();
++        if (nLockTime == 0)
++            return true;
++        if (nLockTime &lt; (nLockTime &lt; 500000000 ? nBestHeight : nBlockTime))
+             return true;
+         foreach(const CTxIn&amp; txin, vin)
+             if (!txin.IsFinal())
+@@ -686,8 +692,9 @@ public:
+     char fSpent;
+     //// probably need to sign the order info so know it came from payer
+ 
+-    // memory only
++    // memory only UI hints
+     mutable unsigned int nTimeDisplayed;
++    mutable int nLinesDisplayed;
+ 
+ 
+     CWalletTx()
+@@ -712,6 +719,7 @@ public:
+         fFromMe = false;
+         fSpent = false;
+         nTimeDisplayed = 0;
++        nLinesDisplayed = 0;
+     }
+ 
+     IMPLEMENT_SERIALIZE</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -17,8 +17,8 @@ endif
+ 
+ 
+ 
+-INCLUDEPATHS=-I&quot;/boost&quot; -I&quot;/DB/build_unix&quot; -I&quot;/OpenSSL/include&quot; -I&quot;/wxWidgets/lib/vc_lib/mswd&quot; -I&quot;/wxWidgets/include&quot;
+-LIBPATHS=-L&quot;/DB/build_unix&quot; -L&quot;/OpenSSL/out&quot; -L&quot;/wxWidgets/lib/gcc_lib&quot;
++INCLUDEPATHS=-I&quot;/boost&quot; -I&quot;/db/build_unix&quot; -I&quot;/openssl/include&quot; -I&quot;/wxwidgets/lib/vc_lib/mswd&quot; -I&quot;/wxwidgets/include&quot;
++LIBPATHS=-L&quot;/db/build_unix&quot; -L&quot;/openssl/out&quot; -L&quot;/wxwidgets/lib/gcc_lib&quot;
+ LIBS= \
+  -l db_cxx \
+  -l eay32 \</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -8,6 +8,7 @@
+ void ThreadMessageHandler2(void* parg);
+ void ThreadSocketHandler2(void* parg);
+ void ThreadOpenConnections2(void* parg);
++bool OpenNetworkConnection(const CAddress&amp; addrConnect);
+ 
+ 
+ 
+@@ -22,8 +23,10 @@ uint64 nLocalServices = (fClient ? 0 : NODE_NETWORK);
+ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
+ CNode nodeLocalHost(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
+ CNode* pnodeLocalHost = &amp;nodeLocalHost;
++uint64 nLocalHostNonce = 0;
+ bool fShutdown = false;
+ array&lt;int, 10&gt; vnThreadsRunning;
++SOCKET hListenSocket = INVALID_SOCKET;
+ 
+ vector&lt;CNode*&gt; vNodes;
+ CCriticalSection cs_vNodes;
+@@ -34,9 +37,11 @@ deque&lt;pair&lt;int64, CInv&gt; &gt; vRelayExpiration;
+ CCriticalSection cs_mapRelay;
+ map&lt;CInv, int64&gt; mapAlreadyAskedFor;
+ 
++// Settings
++int fUseProxy = false;
++CAddress addrProxy(&quot;127.0.0.1:9050&quot;);
+ 
+ 
+-CAddress addrProxy;
+ 
+ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+ {
+@@ -47,7 +52,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+         return false;
+ 
+     bool fRoutable = !(addrConnect.GetByte(3) == 10 || (addrConnect.GetByte(3) == 192 &amp;&amp; addrConnect.GetByte(2) == 168));
+-    bool fProxy = (addrProxy.ip &amp;&amp; fRoutable);
++    bool fProxy = (fUseProxy &amp;&amp; fRoutable);
+     struct sockaddr_in sockaddr = (fProxy ? addrProxy.GetSockAddr() : addrConnect.GetSockAddr());
+ 
+     if (connect(hSocket, (struct sockaddr*)&amp;sockaddr, sizeof(sockaddr)) == SOCKET_ERROR)
+@@ -69,18 +74,18 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+         if (ret != nSize)
+         {
+             closesocket(hSocket);
+-            return error(&quot;Error sending to proxy\n&quot;);
++            return error(&quot;Error sending to proxy&quot;);
+         }
+         char pchRet[8];
+         if (recv(hSocket, pchRet, 8, 0) != 8)
+         {
+             closesocket(hSocket);
+-            return error(&quot;Error reading proxy response\n&quot;);
++            return error(&quot;Error reading proxy response&quot;);
+         }
+         if (pchRet[1] != 0x5a)
+         {
+             closesocket(hSocket);
+-            return error(&quot;Proxy returned error %d\n&quot;, pchRet[1]);
++            return error(&quot;Proxy returned error %d&quot;, pchRet[1]);
+         }
+         printf(&quot;Proxy connection established %s\n&quot;, addrConnect.ToStringLog().c_str());
+     }
+@@ -95,7 +100,7 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+ {
+     SOCKET hSocket;
+     if (!ConnectSocket(addrConnect, hSocket))
+-        return error(&quot;GetMyExternalIP() : connection to %s failed\n&quot;, addrConnect.ToString().c_str());
++        return error(&quot;GetMyExternalIP() : connection to %s failed&quot;, addrConnect.ToString().c_str());
+ 
+     send(hSocket, pszGet, strlen(pszGet), 0);
+ 
+@@ -131,7 +136,7 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+         }
+     }
+     closesocket(hSocket);
+-    return error(&quot;GetMyExternalIP() : connection closed\n&quot;);
++    return error(&quot;GetMyExternalIP() : connection closed&quot;);
+ }
+ 
+ 
+@@ -141,6 +146,9 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+     char* pszGet;
+     char* pszKeyword;
+ 
++    if (fUseProxy)
++        return false;
++
+     for (int nLookup = 0; nLookup &lt;= 1; nLookup++)
+     for (int nHost = 1; nHost &lt;= 2; nHost++)
+     {
+@@ -416,14 +424,14 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout)
+     }
+ }
+ 
+-void CNode::Disconnect()
++void CNode::DoDisconnect()
+ {
+     printf(&quot;disconnecting node %s\n&quot;, addr.ToStringLog().c_str());
+ 
+     closesocket(hSocket);
+ 
+     // If outbound and never got version message, mark address as failed
+-    if (!fInbound &amp;&amp; nVersion == 0)
++    if (!fInbound &amp;&amp; !fSuccessfullyConnected)
+         CRITICAL_BLOCK(cs_mapAddresses)
+             mapAddresses[addr.GetKey()].nLastFailed = GetTime();
+ 
+@@ -458,18 +466,18 @@ void ThreadSocketHandler(void* parg)
+ 
+     loop
+     {
+-        vnThreadsRunning[0] = true;
++        vnThreadsRunning[0]++;
+         CheckForShutdown(0);
+         try
+         {
+             ThreadSocketHandler2(parg);
+-            vnThreadsRunning[0] = false;
++            vnThreadsRunning[0]--;
+         }
+         catch (std::exception&amp; e) {
+-            vnThreadsRunning[0] = false;
++            vnThreadsRunning[0]--;
+             PrintException(&amp;e, &quot;ThreadSocketHandler()&quot;);
+         } catch (...) {
+-            vnThreadsRunning[0] = false;
++            vnThreadsRunning[0]--;
+             PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
+         }
+         Sleep(5000);
+@@ -479,7 +487,6 @@ void ThreadSocketHandler(void* parg)
+ void ThreadSocketHandler2(void* parg)
+ {
+     printf(&quot;ThreadSocketHandler started\n&quot;);
+-    SOCKET hListenSocket = *(SOCKET*)parg;
+     list&lt;CNode*&gt; vNodesDisconnected;
+     int nPrevNodeCount = 0;
+ 
+@@ -498,7 +505,7 @@ void ThreadSocketHandler2(void* parg)
+                 {
+                     // remove from vNodes
+                     vNodes.erase(remove(vNodes.begin(), vNodes.end(), pnode), vNodes.end());
+-                    pnode-&gt;Disconnect();
++                    pnode-&gt;DoDisconnect();
+ 
+                     // hold in disconnected pool until all refs are released
+                     pnode-&gt;nReleaseTime = max(pnode-&gt;nReleaseTime, GetTime() + 5 * 60);
+@@ -562,9 +569,9 @@ void ThreadSocketHandler2(void* parg)
+             }
+         }
+ 
+-        vnThreadsRunning[0] = false;
++        vnThreadsRunning[0]--;
+         int nSelect = select(hSocketMax + 1, &amp;fdsetRecv, &amp;fdsetSend, NULL, &amp;timeout);
+-        vnThreadsRunning[0] = true;
++        vnThreadsRunning[0]++;
+         CheckForShutdown(0);
+         if (nSelect == SOCKET_ERROR)
+         {
+@@ -577,7 +584,6 @@ void ThreadSocketHandler2(void* parg)
+             }
+             Sleep(timeout.tv_usec/1000);
+         }
+-        RandAddSeed();
+ 
+         //// debug print
+         //foreach(CNode* pnode, vNodes)
+@@ -711,18 +717,18 @@ void ThreadOpenConnections(void* parg)
+ 
+     loop
+     {
+-        vnThreadsRunning[1] = true;
++        vnThreadsRunning[1]++;
+         CheckForShutdown(1);
+         try
+         {
+             ThreadOpenConnections2(parg);
+-            vnThreadsRunning[1] = false;
++            vnThreadsRunning[1]--;
+         }
+         catch (std::exception&amp; e) {
+-            vnThreadsRunning[1] = false;
++            vnThreadsRunning[1]--;
+             PrintException(&amp;e, &quot;ThreadOpenConnections()&quot;);
+         } catch (...) {
+-            vnThreadsRunning[1] = false;
++            vnThreadsRunning[1]--;
+             PrintException(NULL, &quot;ThreadOpenConnections()&quot;);
+         }
+         Sleep(5000);
+@@ -733,6 +739,13 @@ void ThreadOpenConnections2(void* parg)
+ {
+     printf(&quot;ThreadOpenConnections started\n&quot;);
+ 
++    // Connect to one specified address
++    while (mapArgs.count(&quot;/connect&quot;))
++    {
++        OpenNetworkConnection(CAddress(mapArgs[&quot;/connect&quot;].c_str()));
++        Sleep(10000);
++    }
++
+     // Initiate network connections
+     int nTry = 0;
+     bool fIRCOnly = false;
+@@ -740,14 +753,14 @@ void ThreadOpenConnections2(void* parg)
+     loop
+     {
+         // Wait
+-        vnThreadsRunning[1] = false;
++        vnThreadsRunning[1]--;
+         Sleep(500);
+         while (vNodes.size() &gt;= nMaxConnections || vNodes.size() &gt;= mapAddresses.size())
+         {
+             CheckForShutdown(1);
+             Sleep(2000);
+         }
+-        vnThreadsRunning[1] = true;
++        vnThreadsRunning[1]++;
+         CheckForShutdown(1);
+ 
+ 
+@@ -835,43 +848,48 @@ void ThreadOpenConnections2(void* parg)
+ 
+         // Once we&#x27;ve chosen an IP, we&#x27;ll try every given port before moving on
+         foreach(const CAddress&amp; addrConnect, (*mi).second)
+-        {
+-            //
+-            // Initiate outbound network connection
+-            //
+-            CheckForShutdown(1);
+-            if (addrConnect.ip == addrLocalHost.ip || !addrConnect.IsIPv4() || FindNode(addrConnect.ip))
+-                continue;
++            if (OpenNetworkConnection(addrConnect))
++                break;
++    }
++}
+ 
+-            vnThreadsRunning[1] = false;
+-            CNode* pnode = ConnectNode(addrConnect);
+-            vnThreadsRunning[1] = true;
+-            CheckForShutdown(1);
+-            if (!pnode)
+-                continue;
+-            pnode-&gt;fNetworkNode = true;
++bool OpenNetworkConnection(const CAddress&amp; addrConnect)
++{
++    //
++    // Initiate outbound network connection
++    //
++    CheckForShutdown(1);
++    if (addrConnect.ip == addrLocalHost.ip || !addrConnect.IsIPv4() || FindNode(addrConnect.ip))
++        return false;
+ 
+-            if (addrLocalHost.IsRoutable())
+-            {
+-                // Advertise our address
+-                vector&lt;CAddress&gt; vAddrToSend;
+-                vAddrToSend.push_back(addrLocalHost);
+-                pnode-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
+-            }
++    vnThreadsRunning[1]--;
++    CNode* pnode = ConnectNode(addrConnect);
++    vnThreadsRunning[1]++;
++    CheckForShutdown(1);
++    if (!pnode)
++        return false;
++    pnode-&gt;fNetworkNode = true;
+ 
+-            // Get as many addresses as we can
+-            pnode-&gt;PushMessage(&quot;getaddr&quot;);
++    if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
++    {
++        // Advertise our address
++        vector&lt;CAddress&gt; vAddrToSend;
++        vAddrToSend.push_back(addrLocalHost);
++        pnode-&gt;PushMessage(&quot;addr&quot;, vAddrToSend);
++    }
+ 
+-            ////// should the one on the receiving end do this too?
+-            // Subscribe our local subscription list
+-            const unsigned int nHops = 0;
+-            for (unsigned int nChannel = 0; nChannel &lt; pnodeLocalHost-&gt;vfSubscribe.size(); nChannel++)
+-                if (pnodeLocalHost-&gt;vfSubscribe[nChannel])
+-                    pnode-&gt;PushMessage(&quot;subscribe&quot;, nChannel, nHops);
++    // Get as many addresses as we can
++    pnode-&gt;PushMessage(&quot;getaddr&quot;);
++    pnode-&gt;fGetAddr = true; // don&#x27;t relay the results of the getaddr
+ 
+-            break;
+-        }
+-    }
++    ////// should the one on the receiving end do this too?
++    // Subscribe our local subscription list
++    const unsigned int nHops = 0;
++    for (unsigned int nChannel = 0; nChannel &lt; pnodeLocalHost-&gt;vfSubscribe.size(); nChannel++)
++        if (pnodeLocalHost-&gt;vfSubscribe[nChannel])
++            pnode-&gt;PushMessage(&quot;subscribe&quot;, nChannel, nHops);
++
++    return true;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -174,7 +174,7 @@ public:
+     {
+         nServices = nServicesIn;
+         memcpy(pchReserved, pchIPv4, sizeof(pchReserved));
+-        ip = 0;
++        ip = INADDR_NONE;
+         port = DEFAULT_PORT;
+         nTime = GetAdjustedTime();
+         nLastFailed = 0;
+@@ -183,7 +183,7 @@ public:
+         if (strlen(pszIn) &gt; ARRAYLEN(psz)-1)
+             return;
+         strcpy(psz, pszIn);
+-        unsigned int a, b, c, d, e;
++        unsigned int a=0, b=0, c=0, d=0, e=0;
+         if (sscanf(psz, &quot;%u.%u.%u.%u:%u&quot;, &amp;a, &amp;b, &amp;c, &amp;d, &amp;e) &lt; 4)
+             return;
+         char* pszPort = strchr(psz, &#x27;:&#x27;);
+@@ -191,6 +191,10 @@ public:
+         {
+             *pszPort++ = &#x27;\0&#x27;;
+             port = htons(atoi(pszPort));
++            if (atoi(pszPort) &gt; USHRT_MAX)
++                port = htons(USHRT_MAX);
++            if (atoi(pszPort) &lt; 0)
++                port = htons(0);
+         }
+         ip = inet_addr(psz);
+     }
+@@ -215,6 +219,11 @@ public:
+                 a.port == b.port);
+     }
+ 
++    friend inline bool operator!=(const CAddress&amp; a, const CAddress&amp; b)
++    {
++        return (!(a == b));
++    }
++
+     friend inline bool operator&lt;(const CAddress&amp; a, const CAddress&amp; b)
+     {
+         int ret = memcmp(a.pchReserved, b.pchReserved, sizeof(a.pchReserved));
+@@ -277,6 +286,11 @@ public:
+         return strprintf(&quot;%u.%u.%u.%u&quot;, GetByte(3), GetByte(2), GetByte(1), GetByte(0));
+     }
+ 
++    string ToStringPort() const
++    {
++        return strprintf(&quot;%u&quot;, ntohs(port));
++    }
++
+     string ToStringLog() const
+     {
+         return &quot;&quot;;
+@@ -416,6 +430,7 @@ extern bool fClient;
+ extern uint64 nLocalServices;
+ extern CAddress addrLocalHost;
+ extern CNode* pnodeLocalHost;
++extern uint64 nLocalHostNonce;
+ extern bool fShutdown;
+ extern array&lt;int, 10&gt; vnThreadsRunning;
+ extern vector&lt;CNode*&gt; vNodes;
+@@ -426,6 +441,9 @@ extern map&lt;CInv, CDataStream&gt; mapRelay;
+ extern deque&lt;pair&lt;int64, CInv&gt; &gt; vRelayExpiration;
+ extern CCriticalSection cs_mapRelay;
+ extern map&lt;CInv, int64&gt; mapAlreadyAskedFor;
++
++// Settings
++extern int fUseProxy;
+ extern CAddress addrProxy;
+ 
+ 
+@@ -448,6 +466,7 @@ public:
+     bool fClient;
+     bool fInbound;
+     bool fNetworkNode;
++    bool fSuccessfullyConnected;
+     bool fDisconnect;
+ protected:
+     int nRefCount;
+@@ -459,6 +478,7 @@ public:
+     // flood
+     vector&lt;CAddress&gt; vAddrToSend;
+     set&lt;CAddress&gt; setAddrKnown;
++    bool fGetAddr;
+ 
+     // inventory based relay
+     set&lt;CInv&gt; setInventoryKnown;
+@@ -483,15 +503,20 @@ public:
+         fClient = false; // set by version message
+         fInbound = fInboundIn;
+         fNetworkNode = false;
++        fSuccessfullyConnected = false;
+         fDisconnect = false;
+         nRefCount = 0;
+         nReleaseTime = 0;
++        fGetAddr = false;
+         vfSubscribe.assign(256, false);
+ 
+         // Push a version message
+         /// when NTP implemented, change to just nTime = GetAdjustedTime()
+         int64 nTime = (fInbound ? GetAdjustedTime() : GetTime());
+-        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addr);
++        CAddress addrYou = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addr);
++        CAddress addrMe = (fUseProxy ? CAddress(&quot;0.0.0.0&quot;) : addrLocalHost);
++        RAND_bytes((unsigned char*)&amp;nLocalHostNonce, sizeof(nLocalHostNonce));
++        PushMessage(&quot;version&quot;, VERSION, nLocalServices, nTime, addrYou, addrMe, nLocalHostNonce);
+     }
+ 
+     ~CNode()
+@@ -531,6 +556,21 @@ public:
+ 
+ 
+ 
++    void AddAddressKnown(const CAddress&amp; addr)
++    {
++        setAddrKnown.insert(addr);
++    }
++
++    void PushAddress(const CAddress&amp; addr)
++    {
++        // Known checking here is only to save space from duplicates.
++        // SendMessages will filter it again for knowns that were added
++        // after addresses were pushed.
++        if (!setAddrKnown.count(addr))
++            vAddrToSend.push_back(addr);
++    }
++
++
+     void AddInventoryKnown(const CInv&amp; inv)
+     {
+         CRITICAL_BLOCK(cs_inventory)
+@@ -562,7 +602,6 @@ public:
+     }
+ 
+ 
+-
+     void BeginMessage(const char* pszCommand)
+     {
+         EnterCriticalSection(&amp;cs_vSend);
+@@ -570,7 +609,7 @@ public:
+             AbortMessage();
+         nPushPos = vSend.size();
+         vSend &lt;&lt; CMessageHeader(pszCommand, 0);
+-        printf(&quot;sending: %-12s &quot;, pszCommand);
++        printf(&quot;sending: %s &quot;, pszCommand);
+     }
+ 
+     void AbortMessage()
+@@ -706,6 +745,86 @@ public:
+         }
+     }
+ 
++    template&lt;typename T1, typename T2, typename T3, typename T4, typename T5&gt;
++    void PushMessage(const char* pszCommand, const T1&amp; a1, const T2&amp; a2, const T3&amp; a3, const T4&amp; a4, const T5&amp; a5)
++    {
++        try
++        {
++            BeginMessage(pszCommand);
++            vSend &lt;&lt; a1 &lt;&lt; a2 &lt;&lt; a3 &lt;&lt; a4 &lt;&lt; a5;
++            EndMessage();
++        }
++        catch (...)
++        {
++            AbortMessage();
++            throw;
++        }
++    }
++
++    template&lt;typename T1, typename T2, typename T3, typename T4, typename T5, typename T6&gt;
++    void PushMessage(const char* pszCommand, const T1&amp; a1, const T2&amp; a2, const T3&amp; a3, const T4&amp; a4, const T5&amp; a5, const T6&amp; a6)
++    {
++        try
++        {
++            BeginMessage(pszCommand);
++            vSend &lt;&lt; a1 &lt;&lt; a2 &lt;&lt; a3 &lt;&lt; a4 &lt;&lt; a5 &lt;&lt; a6;
++            EndMessage();
++        }
++        catch (...)
++        {
++            AbortMessage();
++            throw;
++        }
++    }
++
++    template&lt;typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7&gt;
++    void PushMessage(const char* pszCommand, const T1&amp; a1, const T2&amp; a2, const T3&amp; a3, const T4&amp; a4, const T5&amp; a5, const T6&amp; a6, const T7&amp; a7)
++    {
++        try
++        {
++            BeginMessage(pszCommand);
++            vSend &lt;&lt; a1 &lt;&lt; a2 &lt;&lt; a3 &lt;&lt; a4 &lt;&lt; a5 &lt;&lt; a6 &lt;&lt; a7;
++            EndMessage();
++        }
++        catch (...)
++        {
++            AbortMessage();
++            throw;
++        }
++    }
++
++    template&lt;typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8&gt;
++    void PushMessage(const char* pszCommand, const T1&amp; a1, const T2&amp; a2, const T3&amp; a3, const T4&amp; a4, const T5&amp; a5, const T6&amp; a6, const T7&amp; a7, const T8&amp; a8)
++    {
++        try
++        {
++            BeginMessage(pszCommand);
++            vSend &lt;&lt; a1 &lt;&lt; a2 &lt;&lt; a3 &lt;&lt; a4 &lt;&lt; a5 &lt;&lt; a6 &lt;&lt; a7 &lt;&lt; a8;
++            EndMessage();
++        }
++        catch (...)
++        {
++            AbortMessage();
++            throw;
++        }
++    }
++
++    template&lt;typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9&gt;
++    void PushMessage(const char* pszCommand, const T1&amp; a1, const T2&amp; a2, const T3&amp; a3, const T4&amp; a4, const T5&amp; a5, const T6&amp; a6, const T7&amp; a7, const T8&amp; a8, const T9&amp; a9)
++    {
++        try
++        {
++            BeginMessage(pszCommand);
++            vSend &lt;&lt; a1 &lt;&lt; a2 &lt;&lt; a3 &lt;&lt; a4 &lt;&lt; a5 &lt;&lt; a6 &lt;&lt; a7 &lt;&lt; a8 &lt;&lt; a9;
++            EndMessage();
++        }
++        catch (...)
++        {
++            AbortMessage();
++            throw;
++        }
++    }
++
+ 
+     void PushRequest(const char* pszCommand,
+                      void (*fn)(void*, CDataStream&amp;), void* param1)
+@@ -750,7 +869,7 @@ public:
+     bool IsSubscribed(unsigned int nChannel);
+     void Subscribe(unsigned int nChannel, unsigned int nHops=0);
+     void CancelSubscribe(unsigned int nChannel);
+-    void Disconnect();
++    void DoDisconnect();
+ };
+ 
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 105;
++static const int VERSION = 106;
+ 
+ 
+ </code></pre></details><details><summary><code>strlcpy.h</code></summary><pre><code>@@ -0,0 +1,84 @@
++/*
++ * Copyright (c) 1998 Todd C. Miller &lt;Todd.Miller@courtesan.com&gt;
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++/*
++ * Copy src to string dst of size siz.  At most siz-1 characters
++ * will be copied.  Always NUL terminates (unless siz == 0).
++ * Returns strlen(src); if retval &gt;= siz, truncation occurred.
++ */
++inline size_t strlcpy(char *dst, const char *src, size_t siz)
++{
++    char *d = dst;
++    const char *s = src;
++    size_t n = siz;
++
++    /* Copy as many bytes as will fit */
++    if (n != 0)
++    {
++        while (--n != 0)
++        {
++            if ((*d++ = *s++) == &#x27;\0&#x27;)
++                break;
++        }
++    }
++
++    /* Not enough room in dst, add NUL and traverse rest of src */
++    if (n == 0)
++    {
++        if (siz != 0)
++            *d = &#x27;\0&#x27;;  /* NUL-terminate dst */
++        while (*s++)
++            ;
++    }
++
++    return(s - src - 1); /* count does not include NUL */
++}
++
++/*
++ * Appends src to string dst of size siz (unlike strncat, siz is the
++ * full size of dst, not space left).  At most siz-1 characters
++ * will be copied.  Always NUL terminates (unless siz &lt;= strlen(dst)).
++ * Returns strlen(src) + MIN(siz, strlen(initial dst)).
++ * If retval &gt;= siz, truncation occurred.
++ */
++inline size_t strlcat(char *dst, const char *src, size_t siz)
++{
++    char *d = dst;
++    const char *s = src;
++    size_t n = siz;
++    size_t dlen;
++
++    /* Find the end of dst and adjust bytes left but don&#x27;t go past end */
++    while (n-- != 0 &amp;&amp; *d != &#x27;\0&#x27;)
++        d++;
++    dlen = d - dst;
++    n = siz - dlen;
++
++    if (n == 0)
++        return(dlen + strlen(s));
++    while (*s != &#x27;\0&#x27;)
++    {
++        if (n != 1)
++        {
++            *d++ = *s;
++            n--;
++        }
++        s++;
++    }
++    *d = &#x27;\0&#x27;;
++
++    return(dlen + (s - src)); /* count does not include NUL */
++}</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -497,7 +497,7 @@ string SingleLine(const string&amp; strIn)
+     return strOut;
+ }
+ 
+-void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
++bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+ {
+     int64 nTime = wtx.nTimeDisplayed = wtx.GetTxTime();
+     int64 nCredit = wtx.GetCredit();
+@@ -506,14 +506,11 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+     uint256 hash = wtx.GetHash();
+     string strStatus = FormatTxStatus(wtx);
+     map&lt;string, string&gt; mapValue = wtx.mapValue;
++    wtx.nLinesDisplayed = 1;
+ 
+     // Filter
+     if (wtx.IsCoinBase())
+     {
+-        // View-&gt;Show Generated
+-        if (!fShowGenerated)
+-            return;
+-
+         // Don&#x27;t show generated coin until confirmed by at least one block after it
+         // so we don&#x27;t get the user&#x27;s hopes up until it looks like it&#x27;s probably accepted.
+         //
+@@ -527,10 +524,13 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         //
+         if (wtx.GetDepthInMainChain() &lt; 2)
+         {
+-            // In case it was previously displayed
+-            DeleteLine(hash);
+-            return;
++            wtx.nLinesDisplayed = 0;
++            return false;
+         }
++
++        // View-&gt;Show Generated
++        if (!fShowGenerated)
++            return false;
+     }
+ 
+     // Find the block the tx is in
+@@ -644,6 +644,7 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             // Debit
+             //
+             int64 nTxFee = nDebit - wtx.GetValueOut();
++            wtx.nLinesDisplayed = 0;
+             for (int nOut = 0; nOut &lt; wtx.vout.size(); nOut++)
+             {
+                 const CTxOut&amp; txout = wtx.vout[nOut];
+@@ -685,6 +686,7 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                            SingleLine(strDescription),
+                            FormatMoney(-nValue, true),
+                            &quot;&quot;);
++                wtx.nLinesDisplayed++;
+             }
+         }
+         else
+@@ -706,12 +708,14 @@ void CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                        &quot;&quot;);
+         }
+     }
++
++    return true;
+ }
+ 
+ void CMainFrame::RefreshStatus()
+ {
+     static int nLastTop;
+-    int nTop = m_listCtrl-&gt;GetTopItem();
++    int nTop = max((int)m_listCtrl-&gt;GetTopItem(), 0);
+     if (nTop == nLastTop &amp;&amp; pindexBestLast == pindexBest)
+         return;
+ 
+@@ -729,7 +733,7 @@ void CMainFrame::RefreshStatus()
+         nLastTop = nTop;
+         pindexBestLast = pindexBest;
+ 
+-        for (int nIndex = nStart; nIndex &lt; nEnd; nIndex++)
++        for (int nIndex = nStart; nIndex &lt; min(nEnd, m_listCtrl-&gt;GetItemCount()); nIndex++)
+         {
+             uint256 hash((string)GetItemText(m_listCtrl, nIndex, 1));
+             map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(hash);
+@@ -738,9 +742,12 @@ void CMainFrame::RefreshStatus()
+                 printf(&quot;CMainFrame::RefreshStatus() : tx not found in mapWallet\n&quot;);
+                 continue;
+             }
+-            const CWalletTx&amp; wtx = (*mi).second;
++            CWalletTx&amp; wtx = (*mi).second;
+             if (wtx.IsCoinBase() || wtx.GetTxTime() != wtx.nTimeDisplayed)
+-                InsertTransaction(wtx, false, nIndex);
++            {
++                if (!InsertTransaction(wtx, false, nIndex))
++                    m_listCtrl-&gt;DeleteItem(nIndex--);
++            }
+             else
+                 m_listCtrl-&gt;SetItem(nIndex, 2, FormatTxStatus(wtx));
+         }
+@@ -801,6 +808,9 @@ void CMainFrame::OnIdle(wxIdleEvent&amp; event)
+         }
+ 
+         printf(&quot;RefreshListCtrl done\n&quot;);
++
++        // Update transaction total display
++        MainFrameRepaint();
+     }
+     else
+     {
+@@ -834,31 +844,54 @@ void DelayedRepaint(void* parg)
+         return;
+     fOneThread = true;
+     Sleep(1000);
++    printf(&quot;DelayedRepaint()\n&quot;);
+     MainFrameRepaint();
+     fOneThread = false;
+ }
+ 
+ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ {
++    if (ptaskbaricon)
++        ptaskbaricon-&gt;UpdateTooltip();
++
+     // Update listctrl contents
+     if (!vWalletUpdated.empty())
+     {
+         TRY_CRITICAL_BLOCK(cs_mapWallet)
+         {
++            bool fInserted = false;
+             foreach(uint256 hash, vWalletUpdated)
+             {
+                 map&lt;uint256, CWalletTx&gt;::iterator mi = mapWallet.find(hash);
+                 if (mi != mapWallet.end())
+-                    InsertTransaction((*mi).second, false);
++                    fInserted |= InsertTransaction((*mi).second, false);
+             }
+-            m_listCtrl-&gt;ScrollList(0, INT_MAX);
+             vWalletUpdated.clear();
++            if (fInserted)
++                m_listCtrl-&gt;ScrollList(0, INT_MAX);
+         }
+     }
+ 
+     // Update status column of visible items only
+     RefreshStatus();
+ 
++    // Balance total
++    bool fRefreshed = false;
++    static int nTransactionCount;
++    TRY_CRITICAL_BLOCK(cs_mapWallet)
++    {
++        fRefreshed = true;
++        m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
++
++        // Count hidden and multi-line transactions
++        nTransactionCount = 0;
++        for (map&lt;uint256, CWalletTx&gt;::iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
++        {
++            CWalletTx&amp; wtx = (*it).second;
++            nTransactionCount += wtx.nLinesDisplayed;
++        }
++    }
++
+     // Update status bar
+     string strGen = &quot;&quot;;
+     if (fGenerateBitcoins)
+@@ -867,17 +900,9 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+         strGen = &quot;(not connected)&quot;;
+     m_statusBar-&gt;SetStatusText(strGen, 1);
+ 
+-    string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, m_listCtrl-&gt;GetItemCount());
++    string strStatus = strprintf(&quot;     %d connections     %d blocks     %d transactions&quot;, vNodes.size(), nBestHeight + 1, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
+-    // Balance total
+-    bool fRefreshed = false;
+-    TRY_CRITICAL_BLOCK(cs_mapWallet)
+-    {
+-        m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+-        fRefreshed = true;
+-    }
+-
+     // mapWallet was locked, try again later
+     if (!vWalletUpdated.empty() || !fRefreshed)
+         _beginthread(DelayedRepaint, 0, NULL);
+@@ -1350,6 +1375,14 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     m_checkBoxMinimizeOnClose-&gt;Enable(fMinimizeToTray);
+     m_checkBoxMinimizeOnClose-&gt;SetValue(fMinimizeToTray &amp;&amp; fMinimizeOnClose);
+     fTmpMinimizeOnClose = fMinimizeOnClose;
++    m_checkBoxUseProxy-&gt;SetValue(fUseProxy);
++    m_textCtrlProxyIP-&gt;Enable(fUseProxy);
++    m_textCtrlProxyPort-&gt;Enable(fUseProxy);
++    m_staticTextProxyIP-&gt;Enable(fUseProxy);
++    m_staticTextProxyPort-&gt;Enable(fUseProxy);
++    m_textCtrlProxyIP-&gt;SetValue(addrProxy.ToStringIP());
++    m_textCtrlProxyPort-&gt;SetValue(addrProxy.ToStringPort());
++
+     m_buttonOK-&gt;SetFocus();
+ }
+ 
+@@ -1395,6 +1428,34 @@ void COptionsDialog::OnCheckBoxMinimizeToTray(wxCommandEvent&amp; event)
+ 
+ }
+ 
++void COptionsDialog::OnCheckBoxUseProxy(wxCommandEvent&amp; event)
++{
++    m_textCtrlProxyIP-&gt;Enable(event.IsChecked());
++    m_textCtrlProxyPort-&gt;Enable(event.IsChecked());
++    m_staticTextProxyIP-&gt;Enable(event.IsChecked());
++    m_staticTextProxyPort-&gt;Enable(event.IsChecked());
++}
++
++CAddress COptionsDialog::GetProxyAddr()
++{
++    // Be careful about byte order, addr.ip and addr.port are big endian
++    CAddress addr(m_textCtrlProxyIP-&gt;GetValue() + &quot;:&quot; + m_textCtrlProxyPort-&gt;GetValue());
++    if (addr.ip == INADDR_NONE)
++        addr.ip = addrProxy.ip;
++    int nPort = atoi(m_textCtrlProxyPort-&gt;GetValue());
++    addr.port = htons(nPort);
++    if (nPort &lt;= 0 || nPort &gt; USHRT_MAX)
++        addr.port = addrProxy.port;
++    return addr;
++}
++
++void COptionsDialog::OnKillFocusProxy(wxFocusEvent&amp; event)
++{
++    m_textCtrlProxyIP-&gt;SetValue(GetProxyAddr().ToStringIP());
++    m_textCtrlProxyPort-&gt;SetValue(GetProxyAddr().ToStringPort());
++}
++
++
+ void COptionsDialog::OnButtonOK(wxCommandEvent&amp; event)
+ {
+     OnButtonApply(event);
+@@ -1446,6 +1507,18 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+         fMinimizeOnClose = (fMinimizeToTray ? m_checkBoxMinimizeOnClose-&gt;GetValue() : fTmpMinimizeOnClose);
+         walletdb.WriteSetting(&quot;fMinimizeOnClose&quot;, fMinimizeOnClose);
+     }
++
++    if (fUseProxy != m_checkBoxUseProxy-&gt;GetValue())
++    {
++        fUseProxy = m_checkBoxUseProxy-&gt;GetValue();
++        walletdb.WriteSetting(&quot;fUseProxy&quot;, fUseProxy);
++    }
++
++    if (addrProxy != GetProxyAddr())
++    {
++        addrProxy = GetProxyAddr();
++        walletdb.WriteSetting(&quot;addrProxy&quot;, addrProxy);
++    }
+ }
+ 
+ 
+@@ -1657,7 +1730,7 @@ CSendingDialog::CSendingDialog(wxWindow* parent, const CAddress&amp; addrIn, int64 n
+     nPrice = nPriceIn;
+     wtx = wtxIn;
+     start = wxDateTime::UNow();
+-    strStatus = &quot;&quot;;
++    memset(pszStatus, 0, sizeof(pszStatus));
+     fCanCancel = true;
+     fAbort = false;
+     fSuccess = false;
+@@ -1721,10 +1794,10 @@ void CSendingDialog::OnButtonCancel(wxCommandEvent&amp; event)
+ 
+ void CSendingDialog::OnPaint(wxPaintEvent&amp; event)
+ {
+-    if (strStatus.size() &gt; 130)
+-        m_textCtrlStatus-&gt;SetValue(string(&quot;\n&quot;) + strStatus);
++    if (strlen(pszStatus) &gt; 130)
++        m_textCtrlStatus-&gt;SetValue(string(&quot;\n&quot;) + pszStatus);
+     else
+-        m_textCtrlStatus-&gt;SetValue(string(&quot;\n\n&quot;) + strStatus);
++        m_textCtrlStatus-&gt;SetValue(string(&quot;\n\n&quot;) + pszStatus);
+     m_staticTextSending-&gt;SetFocus();
+     if (!fCanCancel)
+         m_buttonCancel-&gt;Enable(false);
+@@ -1736,7 +1809,7 @@ void CSendingDialog::OnPaint(wxPaintEvent&amp; event)
+     }
+     if (fAbort &amp;&amp; fCanCancel &amp;&amp; IsShown())
+     {
+-        strStatus = &quot;CANCELLED&quot;;
++        strcpy(pszStatus, &quot;CANCELLED&quot;);
+         m_buttonOK-&gt;Enable(true);
+         m_buttonOK-&gt;SetFocus();
+         m_buttonCancel-&gt;Enable(false);
+@@ -1777,7 +1850,8 @@ bool CSendingDialog::Status()
+     }
+     if (fAbort &amp;&amp; fCanCancel)
+     {
+-        strStatus = &quot;CANCELLED&quot;;
++        memset(pszStatus, 0, 10);
++        strcpy(pszStatus, &quot;CANCELLED&quot;);
+         Repaint();
+         fWorkDone = true;
+         return false;
+@@ -1789,7 +1863,12 @@ bool CSendingDialog::Status(const string&amp; str)
+ {
+     if (!Status())
+         return false;
+-    strStatus = str;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -89,7 +89,7 @@ public:
+     void OnCrossThreadCall(wxCommandEvent&amp; event);
+     void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
+     bool DeleteLine(uint256 hashKey);
+-    void InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
++    bool InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
+     void RefreshListCtrl();
+     void RefreshStatus();
+ };
+@@ -121,6 +121,9 @@ protected:
+     void OnKillFocusTransactionFee(wxFocusEvent&amp; event);
+     void OnCheckBoxLimitProcessors(wxCommandEvent&amp; event);
+     void OnCheckBoxMinimizeToTray(wxCommandEvent&amp; event);
++    void OnCheckBoxUseProxy(wxCommandEvent&amp; event);
++    void OnKillFocusProxy(wxFocusEvent&amp; event);
++
+     void OnButtonOK(wxCommandEvent&amp; event);
+     void OnButtonCancel(wxCommandEvent&amp; event);
+     void OnButtonApply(wxCommandEvent&amp; event);
+@@ -133,6 +136,7 @@ public:
+     bool fTmpStartOnSystemStartup;
+     bool fTmpMinimizeOnClose;
+     void SelectPage(int nPage);
++    CAddress GetProxyAddr();
+ };
+ 
+ 
+@@ -193,7 +197,7 @@ public:
+     int64 nPrice;
+     CWalletTx wtx;
+     wxDateTime start;
+-    string strStatus;
++    char pszStatus[10000];
+     bool fCanCancel;
+     bool fAbort;
+     bool fSuccess;</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -380,7 +380,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	bSizer69 = new wxBoxSizer( wxVERTICAL );
+ 	
+ 	
+-	bSizer69-&gt;Add( 0, 14, 0, wxEXPAND, 5 );
++	bSizer69-&gt;Add( 0, 16, 0, wxEXPAND, 5 );
+ 	
+ 	m_staticText32 = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;Optional transaction fee you give to the nodes that process your transactions.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText32-&gt;Wrap( -1 );
+@@ -412,7 +412,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	bSizer71-&gt;Add( m_checkBoxLimitProcessors, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+ 	m_spinCtrlLimitProcessors = new wxSpinCtrl( m_panelMain, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxSP_ARROW_KEYS, 1, 999, 1 );
+-	bSizer71-&gt;Add( m_spinCtrlLimitProcessors, 0, wxTOP|wxBOTTOM, 5 );
++	bSizer71-&gt;Add( m_spinCtrlLimitProcessors, 0, wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	m_staticText35 = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;processors&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText35-&gt;Wrap( -1 );
+@@ -434,12 +434,45 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	
+ 	bSizer101-&gt;Add( 16, 0, 0, 0, 5 );
+ 	
+-	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;M&amp;inimize to system tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_checkBoxMinimizeOnClose = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;Mi&amp;nimize to system tray on close&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	
+-	bSizer101-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL, 5 );
++	bSizer101-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	bSizer69-&gt;Add( bSizer101, 1, wxEXPAND, 5 );
+ 	
++	wxBoxSizer* bSizer102;
++	bSizer102 = new wxBoxSizer( wxHORIZONTAL );
++	
++	m_checkBoxUseProxy = new wxCheckBox( m_panelMain, wxID_ANY, wxT(&quot;&amp;Connect through socks4 proxy: &quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	
++	bSizer102-&gt;Add( m_checkBoxUseProxy, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
++	
++	bSizer69-&gt;Add( bSizer102, 1, wxEXPAND, 5 );
++	
++	wxBoxSizer* bSizer103;
++	bSizer103 = new wxBoxSizer( wxHORIZONTAL );
++	
++	
++	bSizer103-&gt;Add( 18, 0, 0, 0, 5 );
++	
++	m_staticTextProxyIP = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot;Proxy &amp;IP:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextProxyIP-&gt;Wrap( -1 );
++	bSizer103-&gt;Add( m_staticTextProxyIP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
++	
++	m_textCtrlProxyIP = new wxTextCtrl( m_panelMain, wxID_PROXYIP, wxEmptyString, wxDefaultPosition, wxSize( 140,-1 ), 0 );
++	m_textCtrlProxyIP-&gt;SetMaxLength( 15 ); 
++	bSizer103-&gt;Add( m_textCtrlProxyIP, 0, wxALIGN_CENTER_VERTICAL, 5 );
++	
++	m_staticTextProxyPort = new wxStaticText( m_panelMain, wxID_ANY, wxT(&quot; &amp;Port:&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextProxyPort-&gt;Wrap( -1 );
++	bSizer103-&gt;Add( m_staticTextProxyPort, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
++	
++	m_textCtrlProxyPort = new wxTextCtrl( m_panelMain, wxID_PROXYPORT, wxEmptyString, wxDefaultPosition, wxSize( 55,-1 ), 0 );
++	m_textCtrlProxyPort-&gt;SetMaxLength( 5 ); 
++	bSizer103-&gt;Add( m_textCtrlProxyPort, 0, wxALIGN_CENTER_VERTICAL, 5 );
++	
++	bSizer69-&gt;Add( bSizer103, 1, wxEXPAND, 5 );
++	
+ 	m_panelMain-&gt;SetSizer( bSizer69 );
+ 	m_panelMain-&gt;Layout();
+ 	bSizer69-&gt;Fit( m_panelMain );
+@@ -450,13 +483,13 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	bSizer64 = new wxBoxSizer( wxVERTICAL );
+ 	
+ 	
+-	bSizer64-&gt;Add( 0, 14, 0, wxEXPAND, 5 );
++	bSizer64-&gt;Add( 0, 16, 0, wxEXPAND, 5 );
+ 	
+ 	m_staticText321 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;Test panel 2 for future expansion&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText321-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText321, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+-	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;MyLabel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText69 = new wxStaticText( m_panelTest2, wxID_ANY, wxT(&quot;Let&#x27;s not start multiple pages until the first page is filled up&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText69-&gt;Wrap( -1 );
+ 	bSizer64-&gt;Add( m_staticText69, 0, wxALL, 5 );
+ 	
+@@ -506,6 +539,9 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	m_textCtrlTransactionFee-&gt;Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusTransactionFee ), NULL, this );
+ 	m_checkBoxLimitProcessors-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxLimitProcessors ), NULL, this );
+ 	m_checkBoxMinimizeToTray-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxMinimizeToTray ), NULL, this );
++	m_checkBoxUseProxy-&gt;Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxUseProxy ), NULL, this );
++	m_textCtrlProxyIP-&gt;Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusProxy ), NULL, this );
++	m_textCtrlProxyPort-&gt;Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusProxy ), NULL, this );
+ 	m_buttonOK-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonOK ), NULL, this );
+ 	m_buttonCancel-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonCancel ), NULL, this );
+ 	m_buttonApply-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonApply ), NULL, this );
+@@ -518,6 +554,9 @@ COptionsDialogBase::~COptionsDialogBase()
+ 	m_textCtrlTransactionFee-&gt;Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusTransactionFee ), NULL, this );
+ 	m_checkBoxLimitProcessors-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxLimitProcessors ), NULL, this );
+ 	m_checkBoxMinimizeToTray-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxMinimizeToTray ), NULL, this );
++	m_checkBoxUseProxy-&gt;Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnCheckBoxUseProxy ), NULL, this );
++	m_textCtrlProxyIP-&gt;Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusProxy ), NULL, this );
++	m_textCtrlProxyPort-&gt;Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusProxy ), NULL, this );
+ 	m_buttonOK-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonOK ), NULL, this );
+ 	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonCancel ), NULL, this );
+ 	m_buttonApply-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonApply ), NULL, this );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -50,50 +50,52 @@
+ #define wxID_BUTTONCOPY 1006
+ #define wxID_BUTTONCHANGE 1007
+ #define wxID_TRANSACTIONFEE 1008
+-#define wxID_TEXTCTRLPAYTO 1009
+-#define wxID_BUTTONPASTE 1010
+-#define wxID_BUTTONADDRESSBOOK 1011
+-#define wxID_TEXTCTRLAMOUNT 1012
+-#define wxID_CHOICETRANSFERTYPE 1013
+-#define wxID_LISTCTRL 1014
+-#define wxID_BUTTONRENAME 1015
+-#define wxID_BUTTONNEW 1016
+-#define wxID_BUTTONEDIT 1017
+-#define wxID_BUTTONDELETE 1018
+-#define wxID_DEL0 1019
+-#define wxID_DEL1 1020
+-#define wxID_DEL2 1021
+-#define wxID_DEL3 1022
+-#define wxID_DEL4 1023
+-#define wxID_DEL5 1024
+-#define wxID_DEL6 1025
+-#define wxID_DEL7 1026
+-#define wxID_DEL8 1027
+-#define wxID_DEL9 1028
+-#define wxID_DEL10 1029
+-#define wxID_DEL11 1030</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/fa2a033/">← fix display of new generated coins, fix assertion in…</a><a rel="next" href="../../commits/dc73b32/">CCriticalSection using wxWidgets instead of Windows OS calls →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

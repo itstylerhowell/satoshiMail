@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fix wallet.dat compatibility… (r196) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2010: fix wallet.dat compatibility problem if you downgrade from 0.3.17 and then upgrade again. 3 files…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/865c3a2/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fix wallet.dat compatibility… (r196) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2010: fix wallet.dat compatibility problem if you downgrade from 0.3.17 and then upgrade again. 3 files…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/865c3a2/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fix wallet.dat compatibility… (r196) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 6 December 2010: fix wallet.dat compatibility problem if you downgrade from 0.3.17 and then upgrade again. 3 files…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix wallet.dat compatibility problem if you downgrade from 0.3.17 and then upgrade again", "url": "https://satoshimail.pages.dev/commits/865c3a2/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-12-06T15:59:28Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/865c3a23832e36d50cb873d38c976032b027b5d3"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix wallet.dat compatibility problem…", "item": "https://satoshimail.pages.dev/commits/865c3a2/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c865c3a2383">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fix wallet.dat compatibility problem…</span></div></nav>
+<main class="in">
+<h1>fix wallet.dat compatibility problem if you downgrade from 0.3.17 and then upgrade again</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 6 December 2010 · SVN r196 · release v0.3.18 · 3 files, +36 −15</p>
+<p class="actions"><a class="btn" href="../../#t-c865c3a2383">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/865c3a23832e36d50cb873d38c976032b027b5d3" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -656,6 +656,7 @@ bool CWalletDB::LoadWallet()
+ {
+     vchDefaultKey.clear();
+     int nFileVersion = 0;
++    vector&lt;uint256&gt; vWalletUpgrade;
+ 
+     // Modify defaults
+ #ifndef __WXMSW__
+@@ -705,6 +706,25 @@ bool CWalletDB::LoadWallet()
+                 if (wtx.GetHash() != hash)
+                     printf(&quot;Error in wallet.dat, hash mismatch\n&quot;);
+ 
++                // Undo serialize changes in 31600
++                if (31404 &lt;= wtx.fTimeReceivedIsTxTime &amp;&amp; wtx.fTimeReceivedIsTxTime &lt;= 31703)
++                {
++                    if (!ssValue.empty())
++                    {
++                        char fTmp;
++                        char fUnused;
++                        ssValue &gt;&gt; fTmp &gt;&gt; fUnused &gt;&gt; wtx.strFromAccount;
++                        printf(&quot;LoadWallet() upgrading tx ver=%d %d &#x27;%s&#x27; %s\n&quot;, wtx.fTimeReceivedIsTxTime, fTmp, wtx.strFromAccount.c_str(), hash.ToString().c_str());
++                        wtx.fTimeReceivedIsTxTime = fTmp;
++                    }
++                    else
++                    {
++                        printf(&quot;LoadWallet() repairing tx ver=%d %s\n&quot;, wtx.fTimeReceivedIsTxTime, hash.ToString().c_str());
++                        wtx.fTimeReceivedIsTxTime = 0;
++                    }
++                    vWalletUpgrade.push_back(hash);
++                }
++
+                 //// debug print
+                 //printf(&quot;LoadWallet  %s\n&quot;, wtx.GetHash().ToString().c_str());
+                 //printf(&quot; %12I64d  %s  %s  %s\n&quot;,
+@@ -774,6 +794,9 @@ bool CWalletDB::LoadWallet()
+         pcursor-&gt;close();
+     }
+ 
++    foreach(uint256 hash, vWalletUpgrade)
++        WriteTx(hash, mapWallet[hash]);
++
+     printf(&quot;nFileVersion = %d\n&quot;, nFileVersion);
+     printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
+     printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);
+@@ -794,6 +817,7 @@ bool CWalletDB::LoadWallet()
+         WriteVersion(VERSION);
+     }
+ 
++
+     return true;
+ }
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -751,11 +751,10 @@ public:
+     vector&lt;CMerkleTx&gt; vtxPrev;
+     map&lt;string, string&gt; mapValue;
+     vector&lt;pair&lt;string, string&gt; &gt; vOrderForm;
++    unsigned int fTimeReceivedIsTxTime;
+     unsigned int nTimeReceived;  // time received by this node
+     char fFromMe;
+     char fSpent;
+-    char fTimeReceivedIsTxTime;
+-    char fUnused;
+     string strFromAccount;
+ 
+     // memory only
+@@ -792,11 +791,10 @@ public:
+         vtxPrev.clear();
+         mapValue.clear();
+         vOrderForm.clear();
++        fTimeReceivedIsTxTime = false;
+         nTimeReceived = 0;
+         fFromMe = false;
+         fSpent = false;
+-        fTimeReceivedIsTxTime = false;
+-        fUnused = false;
+         strFromAccount.clear();
+         fDebitCached = false;
+         fCreditCached = false;
+@@ -811,24 +809,23 @@ public:
+ 
+     IMPLEMENT_SERIALIZE
+     (
++        CWalletTx* pthis = const_cast&lt;CWalletTx*&gt;(this);
+         if (fRead)
+-            const_cast&lt;CWalletTx*&gt;(this)-&gt;Init();
++            pthis-&gt;Init();
+         nSerSize += SerReadWrite(s, *(CMerkleTx*)this, nType, nVersion, ser_action);
+         READWRITE(vtxPrev);
++
++        pthis-&gt;mapValue[&quot;fromaccount&quot;] = pthis-&gt;strFromAccount;
+         READWRITE(mapValue);
++        pthis-&gt;strFromAccount = pthis-&gt;mapValue[&quot;fromaccount&quot;];
++        pthis-&gt;mapValue.erase(&quot;fromaccount&quot;);
++        pthis-&gt;mapValue.erase(&quot;version&quot;);
++
+         READWRITE(vOrderForm);
+-        READWRITE(nVersion);
+-        if (fRead &amp;&amp; nVersion &lt; 100)
+-            const_cast&lt;CWalletTx*&gt;(this)-&gt;fTimeReceivedIsTxTime = nVersion;
++        READWRITE(fTimeReceivedIsTxTime);
+         READWRITE(nTimeReceived);
+         READWRITE(fFromMe);
+         READWRITE(fSpent);
+-        if (nVersion &gt;= 31404)
+-        {
+-            READWRITE(fTimeReceivedIsTxTime);
+-            READWRITE(fUnused);
+-            READWRITE(strFromAccount);
+-        }
+     )
+ 
+     int64 GetDebit() const</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -25,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31703;
++static const int VERSION = 31704;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/f03304a/">← preps for future client-only mode, jgarzik&#x27;s initial…</a><a rel="next" href="../../commits/8220180/">-- version 0.3.18 release →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

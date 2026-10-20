@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>preps for future client-only… (r195) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 December 2010: preps for future client-only mode, jgarzik&#x27;s initial download speedup. 6 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/f03304a/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="preps for future client-only… (r195) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 December 2010: preps for future client-only mode, jgarzik&#x27;s initial download speedup. 6 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/f03304a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="preps for future client-only… (r195) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 5 December 2010: preps for future client-only mode, jgarzik&#x27;s initial download speedup. 6 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "preps for future client-only mode, jgarzik's initial download speedup", "url": "https://satoshimail.pages.dev/commits/f03304a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-12-05T09:29:30Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f03304a9c79a6cc6096ed501ad38702fd012e7f7"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "preps for future client-only mode…", "item": "https://satoshimail.pages.dev/commits/f03304a/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cf03304a9c7">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">preps for future client-only mode…</span></div></nav>
+<main class="in">
+<h1>preps for future client-only mode, jgarzik&#x27;s initial download speedup</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 5 December 2010 · SVN r195 · release v0.3.18 · 6 files, +165 −29</p>
+<p class="actions"><a class="btn" href="../../#t-cf03304a9c7">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/f03304a9c79a6cc6096ed501ad38702fd012e7f7" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -132,6 +132,8 @@ void CDB::Close()
+ 
+     // Flush database activity from memory pool to disk log
+     unsigned int nMinutes = 0;
++    if (fReadOnly)
++        nMinutes = 1;
+     if (strFile == &quot;addr.dat&quot;)
+         nMinutes = 2;
+     if (strFile == &quot;blkindex.dat&quot; &amp;&amp; IsInitialBlockDownload() &amp;&amp; nBestHeight % 500 != 0)</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -265,7 +265,7 @@ public:
+ class CTxDB : public CDB
+ {
+ public:
+-    CTxDB(const char* pszMode=&quot;r+&quot;) : CDB(!fClient ? &quot;blkindex.dat&quot; : NULL, pszMode) { }
++    CTxDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;blkindex.dat&quot;, pszMode) { }
+ private:
+     CTxDB(const CTxDB&amp;);
+     void operator=(const CTxDB&amp;);</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -173,6 +173,68 @@ bool Wait(int nSeconds)
+     return true;
+ }
+ 
++bool RecvCodeLine(SOCKET hSocket, const char* psz1, string&amp; strRet)
++{
++    strRet.clear();
++    loop
++    {
++        string strLine;
++        if (!RecvLineIRC(hSocket, strLine))
++            return false;
++
++        vector&lt;string&gt; vWords;
++        ParseString(strLine, &#x27; &#x27;, vWords);
++        if (vWords.size() &lt; 2)
++            continue;
++
++        if (vWords[1] == psz1)
++        {
++            printf(&quot;IRC %s\n&quot;, strLine.c_str());
++            strRet = strLine;
++            return true;
++        }
++    }
++}
++
++bool GetIPFromIRC(SOCKET hSocket, string strMyName, unsigned int&amp; ipRet)
++{
++    Send(hSocket, strprintf(&quot;USERHOST %s\r&quot;, strMyName.c_str()).c_str());
++
++    string strLine;
++    if (!RecvCodeLine(hSocket, &quot;302&quot;, strLine))
++        return false;
++
++    vector&lt;string&gt; vWords;
++    ParseString(strLine, &#x27; &#x27;, vWords);
++    if (vWords.size() &lt; 4)
++        return false;
++
++    string str = vWords[3];
++    if (str.rfind(&quot;@&quot;) == string::npos)
++        return false;
++    string strHost = str.substr(str.rfind(&quot;@&quot;)+1);
++
++    unsigned int a=0, b=0, c=0, d=0;
++    if (sscanf(strHost.c_str(), &quot;%u.%u.%u.%u&quot;, &amp;a, &amp;b, &amp;c, &amp;d) == 4 &amp;&amp;
++        inet_addr(strHost.c_str()) != INADDR_NONE)
++    {
++        printf(&quot;GetIPFromIRC() userhost is IP %s\n&quot;, strHost.c_str());
++        ipRet = CAddress(strHost).ip;
++    }
++    else
++    {
++        printf(&quot;GetIPFromIRC() got userhost %s\n&quot;, strHost.c_str());
++        if (fUseProxy)
++            return false;
++        struct hostent* phostent = gethostbyname(strHost.c_str());
++        if (!phostent || !phostent-&gt;h_addr_list || !phostent-&gt;h_addr_list[0])
++            return false;
++        ipRet = *(u_long*)phostent-&gt;h_addr_list[0];
++    }
++
++    return true;
++}
++
+ 
+ 
+ void ThreadIRCSeed(void* parg)
+@@ -265,6 +327,20 @@ void ThreadIRCSeed2(void* parg)
+         }
+         Sleep(500);
+ 
++        // Get my external IP from IRC server
++        CAddress addrFromIRC;
++        if (GetIPFromIRC(hSocket, strMyName, addrFromIRC.ip))
++        {
++            // Just using it as a backup for now
++            printf(&quot;GetIPFromIRC() returned %s\n&quot;, addrFromIRC.ToStringIP().c_str());
++            if (addrFromIRC.IsRoutable() &amp;&amp; !fUseProxy &amp;&amp; !addrLocalHost.IsRoutable())
++            {
++                addrLocalHost.ip = addrFromIRC.ip;
++                strMyName = EncodeAddress(addrLocalHost);
++                Send(hSocket, strprintf(&quot;NICK %s\r&quot;, strMyName.c_str()).c_str());
++            }
++        }
++
+         Send(hSocket, fTestNet ? &quot;JOIN #bitcoinTEST\r&quot; : &quot;JOIN #bitcoin\r&quot;);
+         Send(hSocket, fTestNet ? &quot;WHO #bitcoinTEST\r&quot;  : &quot;WHO #bitcoin\r&quot;);
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -870,6 +870,11 @@ void ResendWalletTransactions()
+ 
+ bool CBlock::ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions)
+ {
++    if (!fReadTransactions)
++    {
++        *this = pindex-&gt;GetBlockHeader();
++        return true;
++    }
+     if (!ReadFromDisk(pindex-&gt;nFile, pindex-&gt;nBlockPos, fReadTransactions))
+         return false;
+     if (GetHash() != pindex-&gt;GetBlockHash())
+@@ -1425,7 +1430,10 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+     pindexNew-&gt;bnChainWork = (pindexNew-&gt;pprev ? pindexNew-&gt;pprev-&gt;bnChainWork : 0) + pindexNew-&gt;GetBlockWork();
+ 
+     CTxDB txdb;
++    txdb.TxnBegin();
+     txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
++    if (!txdb.TxnCommit())
++        return false;
+ 
+     // New best
+     if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+@@ -1529,9 +1537,9 @@ bool CBlock::AcceptBlock()
+     // Write block to history file
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+         return error(&quot;AcceptBlock() : out of disk space&quot;);
+-    unsigned int nFile;
+-    unsigned int nBlockPos;
+-    if (!WriteToDisk(!fClient, nFile, nBlockPos))
++    unsigned int nFile = -1;
++    unsigned int nBlockPos = 0;
++    if (!WriteToDisk(nFile, nBlockPos))
+         return error(&quot;AcceptBlock() : WriteToDisk failed&quot;);
+     if (!AddToBlockIndex(nFile, nBlockPos))
+         return error(&quot;AcceptBlock() : AddToBlockIndex failed&quot;);
+@@ -1777,7 +1785,7 @@ bool LoadBlockIndex(bool fAllowNew)
+         // Start new block file
+         unsigned int nFile;
+         unsigned int nBlockPos;
+-        if (!block.WriteToDisk(!fClient, nFile, nBlockPos))
++        if (!block.WriteToDisk(nFile, nBlockPos))
+             return error(&quot;LoadBlockIndex() : writing genesis block to disk failed&quot;);
+         if (!block.AddToBlockIndex(nFile, nBlockPos))
+             return error(&quot;LoadBlockIndex() : genesis block not accepted&quot;);
+@@ -2181,11 +2189,6 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         }
+ 
+         pfrom-&gt;fClient = !(pfrom-&gt;nServices &amp; NODE_NETWORK);
+-        if (pfrom-&gt;fClient)
+-        {
+-            pfrom-&gt;vSend.nType |= SER_BLOCKHEADERONLY;
+-            pfrom-&gt;vRecv.nType |= SER_BLOCKHEADERONLY;
+-        }
+ 
+         AddTimeData(pfrom-&gt;addr.ip, nTime);
+ 
+@@ -2359,9 +2362,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                 map&lt;uint256, CBlockIndex*&gt;::iterator mi = mapBlockIndex.find(inv.hash);
+                 if (mi != mapBlockIndex.end())
+                 {
+-                    //// could optimize this to send header straight from blockindex for client
+                     CBlock block;
+-                    block.ReadFromDisk((*mi).second, !pfrom-&gt;fClient);
++                    block.ReadFromDisk((*mi).second);
+                     pfrom-&gt;PushMessage(&quot;block&quot;, block);
+ 
+                     // Trigger them to send a getblocks request for the next batch of inventory
+@@ -2405,7 +2407,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         uint256 hashStop;
+         vRecv &gt;&gt; locator &gt;&gt; hashStop;
+ 
+-        // Find the first block the caller has in the main chain
++        // Find the last block the caller has in the main chain
+         CBlockIndex* pindex = locator.GetBlockIndex();
+ 
+         // Send the rest of the chain
+@@ -2433,6 +2435,42 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     }
+ 
+ 
++    else if (strCommand == &quot;getheaders&quot;)
++    {
++        CBlockLocator locator;
++        uint256 hashStop;
++        vRecv &gt;&gt; locator &gt;&gt; hashStop;
++
++        CBlockIndex* pindex = NULL;
++        if (locator.IsNull())
++        {
++            // If locator is null, return the hashStop block
++            map&lt;uint256, CBlockIndex*&gt;::iterator mi = mapBlockIndex.find(hashStop);
++            if (mi == mapBlockIndex.end())
++                return true;
++            pindex = (*mi).second;
++        }
++        else
++        {
++            // Find the last block the caller has in the main chain
++            pindex = locator.GetBlockIndex();
++            if (pindex)
++                pindex = pindex-&gt;pnext;
++        }
++
++        vector&lt;CBlock&gt; vHeaders;
++        int nLimit = 2000 + locator.GetDistanceBack();
++        printf(&quot;getheaders %d to %s limit %d\n&quot;, (pindex ? pindex-&gt;nHeight : -1), hashStop.ToString().substr(0,20).c_str(), nLimit);
++        for (; pindex; pindex = pindex-&gt;pnext)
++        {
++            vHeaders.push_back(pindex-&gt;GetBlockHeader());
++            if (--nLimit &lt;= 0 || pindex-&gt;GetBlockHash() == hashStop)
++                break;
++        }
++        pfrom-&gt;PushMessage(&quot;headers&quot;, vHeaders);
++    }
++
++
+     else if (strCommand == &quot;tx&quot;)
+     {
+         vector&lt;uint256&gt; vWorkQueue;
+@@ -2488,17 +2526,16 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+     else if (strCommand == &quot;block&quot;)
+     {
+-        auto_ptr&lt;CBlock&gt; pblock(new CBlock);
+-        vRecv &gt;&gt; *pblock;
++        CBlock block;
++        vRecv &gt;&gt; block;
+ 
+-        //// debug print
+-        printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,20).c_str());
+-        // pblock-&gt;print();
++        printf(&quot;received block %s\n&quot;, block.GetHash().ToString().substr(0,20).c_str());
++        // block.print();
+ 
+-        CInv inv(MSG_BLOCK, pblock-&gt;GetHash());
++        CInv inv(MSG_BLOCK, block.GetHash());
+         pfrom-&gt;AddInventoryKnown(inv);
+ 
+-        if (ProcessBlock(pfrom, pblock.get()))
++        if (ProcessBlock(pfrom, &amp;block))
+             mapAlreadyAskedFor.erase(inv);
+     }
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -865,11 +865,6 @@ public:
+         return nChangeCached;
+     }
+ 
+-    bool IsFromMe() const
+-    {
+-        return (GetDebit() &gt; 0);
+-    }
+-
+     void GetAccountAmounts(string strAccount, const set&lt;CScript&gt;&amp; setPubKey,
+                            int64&amp; nGenerated, int64&amp; nReceived, int64&amp; nSent, int64&amp; nFee) const
+     {
+@@ -901,6 +896,11 @@ public:
+         }
+     }
+ 
++    bool IsFromMe() const
++    {
++        return (GetDebit() &gt; 0);
++    }
++
+     bool IsConfirmed() const
+     {
+         // Quick answer in most cases
+@@ -1158,14 +1158,12 @@ public:
+     }
+ 
+ 
+-    bool WriteToDisk(bool fWriteTransactions, unsigned int&amp; nFileRet, unsigned int&amp; nBlockPosRet)
++    bool WriteToDisk(unsigned int&amp; nFileRet, unsigned int&amp; nBlockPosRet)
+     {
+         // Open history file to append
+         CAutoFile fileout = AppendBlockFile(nFileRet);
+         if (!fileout)
+             return error(&quot;CBlock::WriteToDisk() : AppendBlockFile failed&quot;);
+-        if (!fWriteTransactions)
+-            fileout.nType |= SER_BLOCKHEADERONLY;
+ 
+         // Write index header
+         unsigned int nSize = fileout.GetSerializeSize(*this);
+@@ -1310,6 +1308,19 @@ public:
+         nNonce         = block.nNonce;
+     }
+ 
++    CBlock GetBlockHeader() const
++    {
++        CBlock block;
++        block.nVersion       = nVersion;
++        if (pprev)
++            block.hashPrevBlock = pprev-&gt;GetBlockHash();
++        block.hashMerkleRoot = hashMerkleRoot;
++        block.nTime          = nTime;
++        block.nBits          = nBits;
++        block.nNonce         = nNonce;
++        return block;
++    }
++
+     uint256 GetBlockHash() const
+     {
+         return *phashBlock;
+@@ -1511,6 +1522,16 @@ public:
+         READWRITE(vHave);
+     )
+ 
++    void SetNull()
++    {
++        vHave.clear();
++    }
++
++    bool IsNull()
++    {
++        return vHave.empty();
++    }
++
+     void Set(const CBlockIndex* pindex)
+     {
+         vHave.clear();</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -25,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31702;
++static const int VERSION = 31703;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/84d7c98/">← added boost tuples to serialize.h</a><a rel="next" href="../../commits/865c3a2/">fix wallet.dat compatibility problem if you downgrade from… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

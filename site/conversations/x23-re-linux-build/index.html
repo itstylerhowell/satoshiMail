@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Linux build – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 29 October 2009: The easy solution I took was to look at the wxWidgets source code and see how they did it. They just mapped it to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x23-re-linux-build/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Linux build – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 29 October 2009: The easy solution I took was to look at the wxWidgets source code and see how they did it. They just mapped it to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x23-re-linux-build/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Linux build – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 29 October 2009: The easy solution I took was to look at the wxWidgets source code and see how they did it. They just mapped it to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Linux build", "url": "https://satoshimail.pages.dev/conversations/x23-re-linux-build/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-10-29T06:38:30Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-29T06:38:30Z", "text": "The easy solution I took was to look at the wxWidgets source code and see how they did it. They just mapped it to wxMutex on non-MSW, which does have TryEnter, so that mapped in perfectly. I checked in all my backlog of changes to SVN, including the overhaul of CCriticalSection in util.h and OpenSSL's mutex callback in util.cpp to do everything with wxWidgets when not on Windows. If we get it working on Linux, I'll run my test suite against it here off-network first, then we can give an…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-30T01:05:45Z", "text": "I fixed some non-portable stuff I came across: QueryPerformanceCounter %I64d in printf format strings Sleep CheckDiskSpace If there's any other unportable stuff you know of I should fix, let me know. I think I'll move debug.log and db.log into the same directory as the data files (%appdata%\\Bitcoin), rather than whatever the current directory happens to be."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-10-31T09:21:50Z", "text": "I made an #ifdef to replace QueryPerformanceCounter with Linux's gettimeofday in util.h. Some Unicode/ANSI errors were resolved without code changes when I updated to wxWidgets 2.9. The only compile error I'm getting in Linux at the moment is from heapchk() in util.h."}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-10-31T20:09:58Z", "text": "heapchk() is just a MSVCRT debugging thing that's not being used. It can be a no-op on Linux. OpenSSL automatically uses /dev/urandom to seed on Linux, so RandAddSeedPerfmon can also be a no-op. Don't let it connect to the network before we've tested it thoroughly off-net. If you have two computers, unplug the internet and use \"bitcoin -connect=<ip>\" to connect to each other, one windows and one linux. -connect will allow you to connect to non-routable addresses like 192.168.x.x. We don't want…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-11-03T07:31:41Z", "text": "I uploaded what I've ported so far to the svn/branches. Util, script, db and the headers compile fully now and net.cpp partially, so there's still work to do. _beginthread doesn't have a direct Linux equivalent, so I used Boost threads instead. I couldn't get connected using the Tor SOCKS proxy. That might be because of the Freenode Tor policy which requires connecting to their hidden service: http://freenode.net/irc_servers.shtml#tor"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-04T05:38:17Z", "text": "It was almost there. I fixed a few things and got it to finish compiling but I don't know the system libraries to link to so there's undefined references galore. I changed the makefile to look for things under /usr/local and in their default \"make install\" locations. I wrote what I did and switches I used in build-unix.txt. I'm currently using wxWidgets 2.8.9 for now because it's the same version as on Windows and I don't want to wonder if there's version change issues at the same time as…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-04T20:38:03Z", "text": "Just letting you know I'm still working on the Linux build so we don't duplicate work. I got it linked and ran it and working through runtime issues like getting it switched to load bitmaps from xpm instead of resources. There are debian packages available for some of the dependencies instead of having to compile them ourselves: apt-get install build-essential apt-get install libgtk2.0-dev apt-get install libssl-dev I need to see if Berkeley DB or Boost have packages. We'll shared-link…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "mmalmi@cc.hut.fi"}, "dateSent": "2009-11-04T21:42:44Z", "text": "Enabling the proxy setting and restarting Bitcoin I got the first connections in less than a minute and ultimately even 8 connections. I wonder if they're all really through TOR. Netstat shows only 2 connections to localhost:9050 and 7 connections from local port 8333 to elsewhere. (Some of the shown connections may be already disconnected ones.) For some reason there's no debug.log in the folder where I'm running it. The wiki page sounds like a good and quickly applicable solution. I could…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-05T05:31:03Z", "text": "I merged the linux changes into the main trunk on SVN. It compiles and runs now. I think all the problems are in the UI. The menus quickly quit working and it doesn't repaint when it's supposed to unless I resize it, and the UI is getting some segfaults. Shouldn't be too hard to debug with gdb. I haven't tested if it plays nice with other nodes yet so keep it off-net. build-unix.txt and makefile.unix added"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-06T06:20:15Z", "text": "It works reliably on Linux now, except if it uses wxMessageBox() outside the GUI thread, it'll crash because non-GUI threads can't open a window on Linux. I haven't got to fixing that yet. I've been running my stress test on it and it's functioning normally. Most of wxWidgets is not thread-safe to use in threads other than the UI thread, but as a rule of thumb on Windows anything not UI related is OK. It turns out its more thread-unsafe on GTK. I replaced a bunch of stuff at once so I don't…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Re: Linux build", "item": "https://satoshimail.pages.dev/conversations/x23-re-linux-build/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x23">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Linux build</span></div></nav>
+<main class="in">
+<h1>Re: Linux build</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 10 messages · from 29 October 2009 · with Satoshi Nakamoto, mmalmi@cc.hut.fi</p>
+<p class="actions"><a class="btn" href="../../#t-x23">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-10-29T06:38:30Z">29 October 2009, 06:38 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-48" rel="nofollow noopener">original</a></span></header>
+<div class="t">The easy solution I took was to look at the wxWidgets source code and
+see how they did it.  They just mapped it to wxMutex on non-MSW, which
+does have TryEnter, so that mapped in perfectly.
+
+I checked in all my backlog of changes to SVN, including the overhaul of
+CCriticalSection in util.h and OpenSSL&#x27;s mutex callback in util.cpp to
+do everything with wxWidgets when not on Windows.
+
+If we get it working on Linux, I&#x27;ll run my test suite against it here
+off-network first, then we can give an unreleased build to
+LibertyStandard to test for a while before going public.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">&gt; I&#x27;ll convert the CriticalSection code to wxCriticalSection and upload
+&gt; it to SVN (it&#x27;s a little tricky).  I don&#x27;t know what to do for
+&gt; TryEnterCriticalSection though.  I think I&#x27;m almost ready to check
+&gt; everything in.
+
+Would the Boost mutex be of any help here?
+
+<a href="http://www.boost.org/doc/libs/1_40_0/doc/html/thread/synchronization.html#thread.synchronization.mutex_concepts" rel="nofollow noopener">http://www.boost.org/doc/libs/1_40_0/doc/html/thread/synchronization.html#thread.synchronization.mutex_concepts</a></div></blockquote></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2009-10-30T01:05:45Z">30 October 2009, 01:05 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-49" rel="nofollow noopener">original</a></span></header>
+<div class="t">I fixed some non-portable stuff I came across:
+QueryPerformanceCounter
+%I64d in printf format strings
+Sleep
+CheckDiskSpace
+
+If there&#x27;s any other unportable stuff you know of I should fix, let me know.
+
+I think I&#x27;ll move debug.log and db.log into the same directory as the
+data files (%appdata%\Bitcoin), rather than whatever the current
+directory happens to be.</div></article><article class="msg" id="m2">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-10-31T09:21:50Z">31 October 2009, 09:21 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-50" rel="nofollow noopener">original</a></span></header>
+<div class="t">I made an #ifdef to replace QueryPerformanceCounter with Linux&#x27;s
+gettimeofday in util.h. Some Unicode/ANSI errors were resolved without
+code changes when I updated to wxWidgets 2.9. The only compile error
+I&#x27;m getting in Linux at the moment is from heapchk() in util.h.</div><blockquote><div class="t">I fixed some non-portable stuff I came across:
+QueryPerformanceCounter
+%I64d in printf format strings
+Sleep
+CheckDiskSpace
+
+If there&#x27;s any other unportable stuff you know of I should fix, let me know.
+
+I think I&#x27;ll move debug.log and db.log into the same directory as the
+data files (%appdata%\Bitcoin), rather than whatever the current
+directory happens to be.</div></blockquote></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-10-31T20:09:58Z">31 October 2009, 20:09 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-51" rel="nofollow noopener">original</a></span></header>
+<div class="t">heapchk() is just a MSVCRT debugging thing that&#x27;s not being used.  It
+can be a no-op on Linux.  OpenSSL automatically uses /dev/urandom to
+seed on Linux, so RandAddSeedPerfmon can also be a no-op.
+
+Don&#x27;t let it connect to the network before we&#x27;ve tested it thoroughly
+off-net.  If you have two computers, unplug the internet and use
+&quot;bitcoin -connect=&lt;ip&gt;&quot; to connect to each other, one windows and one
+linux.  -connect will allow you to connect to non-routable addresses
+like 192.168.x.x.  We don&#x27;t want to reflect badly on the reliability of
+the network if it throws off some malformed crud we hadn&#x27;t thought to
+check for yet, or discovers something else anti-social to do on the network.
+
+I have time that I can do some testing when you&#x27;ve got something
+buildable to test.  I can include it in the stress test I&#x27;m currently
+running on the changes so far.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I made an #ifdef to replace QueryPerformanceCounter with Linux&#x27;s
+gettimeofday in util.h. Some Unicode/ANSI errors were resolved without
+code changes when I updated to wxWidgets 2.9. The only compile error I&#x27;m
+getting in Linux at the moment is from heapchk() in util.h.
+
+&gt; I fixed some non-portable stuff I came across:
+&gt; QueryPerformanceCounter
+&gt; %I64d in printf format strings
+&gt; Sleep
+&gt; CheckDiskSpace
+&gt;
+&gt; If there&#x27;s any other unportable stuff you know of I should fix, let me
+&gt; know.
+&gt;
+&gt; I think I&#x27;ll move debug.log and db.log into the same directory as the
+&gt; data files (%appdata%\Bitcoin), rather than whatever the current
+&gt; directory happens to be.</div></blockquote></article><article class="msg" id="m4">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-11-03T07:31:41Z">3 November 2009, 07:31 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-52" rel="nofollow noopener">original</a></span></header>
+<div class="t">I uploaded what I&#x27;ve ported so far to the svn/branches. Util, script,
+db and the headers compile fully now and net.cpp partially, so there&#x27;s
+still work to do.
+
+_beginthread doesn&#x27;t have a direct Linux equivalent, so I used Boost
+threads instead.
+
+I couldn&#x27;t get connected using the Tor SOCKS proxy. That might be
+because of the Freenode Tor policy which requires connecting to their
+hidden service: <a href="http://freenode.net/irc_servers.shtml#tor" rel="nofollow noopener">http://freenode.net/irc_servers.shtml#tor</a></div><blockquote><div class="t">heapchk() is just a MSVCRT debugging thing that&#x27;s not being used.  It
+can be a no-op on Linux.  OpenSSL automatically uses /dev/urandom to
+seed on Linux, so RandAddSeedPerfmon can also be a no-op.
+
+Don&#x27;t let it connect to the network before we&#x27;ve tested it thoroughly
+off-net.  If you have two computers, unplug the internet and use
+&quot;bitcoin -connect=&lt;ip&gt;&quot; to connect to each other, one windows and one
+linux.  -connect will allow you to connect to non-routable addresses
+like 192.168.x.x.  We don&#x27;t want to reflect badly on the reliability of
+the network if it throws off some malformed crud we hadn&#x27;t thought to
+check for yet, or discovers something else anti-social to do on the
+network.
+
+I have time that I can do some testing when you&#x27;ve got something
+buildable to test.  I can include it in the stress test I&#x27;m currently
+running on the changes so far.
+
+mmalmi@cc.hut.fi wrote:
+&gt; I made an #ifdef to replace QueryPerformanceCounter with Linux&#x27;s
+&gt; gettimeofday in util.h. Some Unicode/ANSI errors were resolved
+&gt; without code changes when I updated to wxWidgets 2.9. The only
+&gt; compile error I&#x27;m getting in Linux at the moment is from heapchk()
+&gt; in util.h.
+&gt;
+&gt;&gt; I fixed some non-portable stuff I came across:
+&gt;&gt; QueryPerformanceCounter
+&gt;&gt; %I64d in printf format strings
+&gt;&gt; Sleep
+&gt;&gt; CheckDiskSpace
+&gt;&gt;
+&gt;&gt; If there&#x27;s any other unportable stuff you know of I should fix,
+&gt;&gt; let me know.
+&gt;&gt;
+&gt;&gt; I think I&#x27;ll move debug.log and db.log into the same directory as the
+&gt;&gt; data files (%appdata%\Bitcoin), rather than whatever the current
+&gt;&gt; directory happens to be.
+&gt;
+&gt;
+&gt;</div></blockquote></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-11-04T05:38:17Z">4 November 2009, 05:38 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-54" rel="nofollow noopener">original</a></span></header>
+<div class="t">It was almost there.  I fixed a few things and got it to finish
+compiling but I don&#x27;t know the system libraries to link to so there&#x27;s
+undefined references galore.
+
+I changed the makefile to look for things under /usr/local and in their
+default &quot;make install&quot; locations.  I wrote what I did and switches I
+used in build-unix.txt.  I&#x27;m currently using wxWidgets 2.8.9 for now
+because it&#x27;s the same version as on Windows and I don&#x27;t want to wonder
+if there&#x27;s version change issues at the same time as platform change.
+2.8.10 or 2.9.0 are probably fine though.  I went with the
+single-library compile of wxWidgets since we&#x27;re linking to almost every
+library anyway.
+
+I added xpm files, which is what they use everywhere else but Windows
+instead of RC files.  They&#x27;re clever C files that define graphics in
+static arrays.  The bitcoin icon has 5 different versions but I couldn&#x27;t
+figure out how that works in xpm so I only put the biggest one.  Maybe
+on GTK it scales it for you.  I don&#x27;t know if these are right or what,
+but they compile.</div><blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">I uploaded what I&#x27;ve ported so far to the svn/branches. Util, script, db
+and the headers compile fully now and net.cpp partially, so there&#x27;s
+still work to do.
+
+_beginthread doesn&#x27;t have a direct Linux equivalent, so I used Boost
+threads instead.</div></blockquote></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-11-04T20:38:03Z">4 November 2009, 20:38 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-55" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just letting you know I&#x27;m still working on the Linux build so we don&#x27;t
+duplicate work.  I got it linked and ran it and working through runtime
+issues like getting it switched to load bitmaps from xpm instead of
+resources.
+
+There are debian packages available for some of the dependencies instead
+of having to compile them ourselves:
+apt-get install build-essential
+apt-get install libgtk2.0-dev
+apt-get install libssl-dev
+
+I need to see if Berkeley DB or Boost have packages.
+
+We&#x27;ll shared-link OpenSSL, I&#x27;m pretty sure it&#x27;s always preinstalled on
+Linux.  GTK has to be shared linked.  I&#x27;m not completely sure if it&#x27;s
+preinstalled by default.</div></article><article class="msg" id="m7">
+<header><b>mmalmi@cc.hut.fi</b> <span class="muted">to Satoshi Nakamoto &lt;satoshin@gmx.com&gt;</span><span class="muted"> · <time datetime="2009-11-04T21:42:44Z">4 November 2009, 21:42 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-56" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Besides the IRC part, how did your test of proxy go?  Since you&#x27;ve been
+connected before, your addr.dat contains known node addresses, but
+without IRC to know which ones are online, it takes a long time to find
+them.  There are normally 1 to 3 other nodes besides you that can
+accept incoming connections, and existing nodes that already know you
+would eventually connect to you.  How many connections did you get, and
+how long did it take?  I guess to know whether it successfully
+connected outbound through TOR you&#x27;d need to search debug.log for
+&quot;connected&quot;.</div></blockquote><div class="t">Enabling the proxy setting and restarting Bitcoin I got the first
+connections in less than a minute and ultimately even 8 connections. I
+wonder if they&#x27;re all really through TOR. Netstat shows only 2
+connections to localhost:9050 and 7 connections from local port 8333
+to elsewhere. (Some of the shown connections may be already
+disconnected ones.) For some reason there&#x27;s no debug.log in the folder
+where I&#x27;m running it.</div><blockquote><div class="t">If some nodes that accept incoming connects were willing to have their
+IP coded into the program, it could seed automatically.  Or some IP
+seed addresses posted on a Wiki page with the instructions.</div></blockquote><div class="t">The wiki page sounds like a good and quickly applicable solution. I
+could keep my ip updated there and we could ask others to do the same.
+When the Linux build works, it&#x27;s easier to set up nodes on servers
+that are online most of the time and have a static IP. A static ip
+list shipped with Bitcoin and a peer exchange protocol would be cool.
+That way there&#x27;d be no need for an IRC server.</div><blockquote><div class="t">Just letting you know I&#x27;m still working on the Linux build so we don&#x27;t
+duplicate work.  I got it linked and ran it and working through runtime
+issues like getting it switched to load bitmaps from xpm instead of
+resources.</div></blockquote><div class="t">Ok. I didn&#x27;t get it linked on the first attempt, but I didn&#x27;t look
+further into the dependencies yet.</div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2009-11-05T05:31:03Z">5 November 2009, 05:31 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-57" rel="nofollow noopener">original</a></span></header>
+<div class="t">I merged the linux changes into the main trunk on SVN.  It compiles and
+runs now.  I think all the problems are in the UI.  The menus quickly
+quit working and it doesn&#x27;t repaint when it&#x27;s supposed to unless I
+resize it, and the UI is getting some segfaults.  Shouldn&#x27;t be too hard
+to debug with gdb.  I haven&#x27;t tested if it plays nice with other nodes
+yet so keep it off-net.
+
+build-unix.txt and makefile.unix added</div></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2009-11-06T06:20:15Z">6 November 2009, 06:20 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-60" rel="nofollow noopener">original</a></span></header>
+<div class="t">It works reliably on Linux now, except if it uses wxMessageBox() outside
+the GUI thread, it&#x27;ll crash because non-GUI threads can&#x27;t open a window
+on Linux.  I haven&#x27;t got to fixing that yet.  I&#x27;ve been running my
+stress test on it and it&#x27;s functioning normally.
+
+Most of wxWidgets is not thread-safe to use in threads other than the UI
+thread, but as a rule of thumb on Windows anything not UI related is OK.
+  It turns out its more thread-unsafe on GTK.  I replaced a bunch of
+stuff at once so I don&#x27;t know if it was just one thing (probably
+Repaint), but I have to assume even any wx function that uses wxString
+is not safe to use outside the UI thread.  So dang, there goes all the
+nice wxWidgets portability support functions.  I left a few simple
+things like wxThread::GetCPUCount() that I checked the source and it&#x27;s
+all numerical, and wxMutex has to be safe or it&#x27;d be useless.
+
+There&#x27;s an issue that if you exit and run it again right away, it can&#x27;t
+bind port 8333.  The port frees up after about a minute.  Unless I&#x27;m
+missing something, I am closing the socket before exit, so I don&#x27;t know
+what else I can do.  Maybe this is just something about Linux that it
+takes a minute to free up a port you had bound.  Possibly a security
+feature so some trojan doesn&#x27;t kill the web server and quickly jump into
+its place and pick up all the client retries.
+
+Still gotta figure out how to do the xpm version of the icon correctly.
+
+I wonder if the database dat files are interchangeable with Windows.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x22-fw-bitcoin-sourceforge-net/">← Fw: bitcoin.sourceforge.net</a><a rel="next" href="../../conversations/x24-re-linux-build-proxy/">Re: Linux build, proxy →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>json-spirit print reals with 8 decimal… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: json-spirit print reals with 8 decimal places, bitcoind help &lt;command&gt; instead of bitcoind…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/410b618/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="json-spirit print reals with 8 decimal… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: json-spirit print reals with 8 decimal places, bitcoind help &lt;command&gt; instead of bitcoind…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/410b618/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="json-spirit print reals with 8 decimal… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 12 August 2010: json-spirit print reals with 8 decimal places, bitcoind help &lt;command&gt; instead of bitcoind…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "json-spirit print reals with 8 decimal places, bitcoind help <command> instead of bitcoind <command> -?", "url": "https://satoshimail.pages.dev/commits/410b618/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-12T13:20:57Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/410b618d18d712db680de8f173a671bb637ff2b0"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "json-spirit print reals with 8 decimal…", "item": "https://satoshimail.pages.dev/commits/410b618/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c410b618d18">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">json-spirit print reals with 8 decimal…</span></div></nav>
+<main class="in">
+<h1>json-spirit print reals with 8 decimal places, bitcoind help &lt;command&gt; instead of bitcoind &lt;command&gt; -?</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 12 August 2010 · release v0.3.11_notexact · 4 files, +48 −56</p>
+<p class="actions"><a class="btn" href="../../#t-c410b618d18">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/410b618d18d712db680de8f173a671bb637ff2b0" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>init.cpp</code></summary><pre><code>@@ -147,8 +147,8 @@ bool AppInit2(int argc, char* argv[])
+           _(&quot;Usage:&quot;) + &quot;\t\t\t\t\t\t\t\t\t\t\n&quot; +
+             &quot;  bitcoin [options]                   \t  &quot; + &quot;\n&quot; +
+             &quot;  bitcoin [options] &lt;command&gt; [params]\t  &quot; + _(&quot;Send command to -server or bitcoind\n&quot;) +
+-            &quot;  bitcoin [options] &lt;command&gt; -?      \t\t  &quot; + _(&quot;Get help for a command\n&quot;) +
+-            &quot;  bitcoin help                        \t\t\t  &quot; + _(&quot;List commands\n&quot;) +
++            &quot;  bitcoin [options] help              \t\t  &quot; + _(&quot;List commands\n&quot;) +
++            &quot;  bitcoin [options] help &lt;command&gt;    \t\t  &quot; + _(&quot;Get help for a command\n&quot;) +
+           _(&quot;Options:\n&quot;) +
+             &quot;  -conf=&lt;file&gt;    \t  &quot; + _(&quot;Specify configuration file (default: bitcoin.conf)\n&quot;) +
+             &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -342,7 +342,7 @@ namespace json_spirit
+         {
+             std::ostringstream os;
+ 
+-            /// satoshi: tell the types by name instead of by number
++            ///// Bitcoin: Tell the types by name instead of by number
+             os &lt;&lt; &quot;value is type &quot; &lt;&lt; Value_type_name[type()] &lt;&lt; &quot;, expected &quot; &lt;&lt; Value_type_name[vtype];
+ 
+             throw std::runtime_error( os.str() );</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -124,8 +124,11 @@ namespace json_spirit
+                 case str_type:   output( value.get_str() );   break;
+                 case bool_type:  output( value.get_bool() );  break;
+                 case int_type:   output_int( value );         break;
+-                case real_type:  os_ &lt;&lt; std::showpoint &lt;&lt; std::setprecision( 16 ) 
++
++                /// Bitcoin: Added std::fixed and changed precision from 16 to 8
++                case real_type:  os_ &lt;&lt; std::showpoint &lt;&lt; std::fixed &lt;&lt; std::setprecision(8)
+                                      &lt;&lt; value.get_real();     break;
++
+                 case null_type:  os_ &lt;&lt; &quot;null&quot;;               break;
+                 default: assert( false );
+             }</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -56,10 +56,14 @@ void PrintConsole(const char* format, ...)
+ 
+ Value help(const Array&amp; params, bool fHelp)
+ {
+-    if (fHelp || params.size() != 0)
++    if (fHelp || params.size() &gt; 1)
+         throw runtime_error(
+-            &quot;help\n&quot;
+-            &quot;List commands.&quot;);
++            &quot;help [command]\n&quot;
++            &quot;List commands, or get help for a command.&quot;);
++
++    string strCommand;
++    if (params.size() &gt; 0)
++        strCommand = params[0].get_str();
+ 
+     string strRet;
+     set&lt;rpcfn_type&gt; setDone;
+@@ -70,6 +74,8 @@ Value help(const Array&amp; params, bool fHelp)
+         if (strMethod == &quot;getamountreceived&quot; ||
+             strMethod == &quot;getallreceived&quot;)
+             continue;
++        if (strCommand != &quot;&quot; &amp;&amp; strMethod != strCommand)
++            continue;
+         try
+         {
+             Array params;
+@@ -81,11 +87,14 @@ Value help(const Array&amp; params, bool fHelp)
+         {
+             // Help text is returned in an exception
+             string strHelp = string(e.what());
+-            if (strHelp.find(&#x27;\n&#x27;) != -1)
+-                strHelp = strHelp.substr(0, strHelp.find(&#x27;\n&#x27;));
++            if (strCommand == &quot;&quot;)
++                if (strHelp.find(&#x27;\n&#x27;) != -1)
++                    strHelp = strHelp.substr(0, strHelp.find(&#x27;\n&#x27;));
+             strRet += strHelp + &quot;\n&quot;;
+         }
+     }
++    if (strRet == &quot;&quot;)
++        strRet = strprintf(&quot;help: unknown command: %s\n&quot;, strCommand.c_str());
+     strRet = strRet.substr(0,strRet.size()-1);
+     return strRet;
+ }
+@@ -1059,57 +1068,37 @@ int CommandLineRPC(int argc, char *argv[])
+             argv++;
+         }
+ 
+-        // Check that the method exists
++        // Method
+         if (argc &lt; 2)
+             throw runtime_error(&quot;too few parameters&quot;);
+         string strMethod = argv[1];
+-        if (!mapCallTable.count(strMethod))
+-            throw runtime_error(strprintf(&quot;unknown command: %s&quot;, strMethod.c_str()));
+ 
+-        Value result;
+-        if (argc == 3 &amp;&amp; strcmp(argv[2], &quot;-?&quot;) == 0)
+-        {
+-            // Call help locally, help text is returned in an exception
+-            try
+-            {
+-                map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+-                Array params;
+-                (*(*mi).second)(params, true);
+-            }
+-            catch (std::exception&amp; e)
+-            {
+-                result = e.what();
+-            }
+-        }
+-        else
+-        {
+-            // Parameters default to strings
+-            Array params;
+-            for (int i = 2; i &lt; argc; i++)
+-                params.push_back(argv[i]);
+-            int n = params.size();
+-
+-            //
+-            // Special case non-string parameter types
+-            //
+-            if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 0) ConvertTo&lt;bool&gt;(params[0]);
+-            if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
+-            if (strMethod == &quot;sendtoaddress&quot;          &amp;&amp; n &gt; 1) ConvertTo&lt;double&gt;(params[1]);
+-            if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
+-            if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+-            if (strMethod == &quot;getamountreceived&quot;      &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]); // deprecated
+-            if (strMethod == &quot;getreceivedbyaddress&quot;   &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
+-            if (strMethod == &quot;getreceivedbylabel&quot;     &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
+-            if (strMethod == &quot;getallreceived&quot;         &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]); // deprecated
+-            if (strMethod == &quot;getallreceived&quot;         &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+-            if (strMethod == &quot;listreceivedbyaddress&quot;  &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
+-            if (strMethod == &quot;listreceivedbyaddress&quot;  &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+-            if (strMethod == &quot;listreceivedbylabel&quot;    &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
+-            if (strMethod == &quot;listreceivedbylabel&quot;    &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+-
+-            // Execute
+-            result = CallRPC(strMethod, params);
+-        }
++        // Parameters default to strings
++        Array params;
++        for (int i = 2; i &lt; argc; i++)
++            params.push_back(argv[i]);
++        int n = params.size();
++
++        //
++        // Special case non-string parameter types
++        //
++        if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 0) ConvertTo&lt;bool&gt;(params[0]);
++        if (strMethod == &quot;setgenerate&quot;            &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
++        if (strMethod == &quot;sendtoaddress&quot;          &amp;&amp; n &gt; 1) ConvertTo&lt;double&gt;(params[1]);
++        if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
++        if (strMethod == &quot;listtransactions&quot;       &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
++        if (strMethod == &quot;getamountreceived&quot;      &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]); // deprecated
++        if (strMethod == &quot;getreceivedbyaddress&quot;   &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
++        if (strMethod == &quot;getreceivedbylabel&quot;     &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
++        if (strMethod == &quot;getallreceived&quot;         &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]); // deprecated
++        if (strMethod == &quot;getallreceived&quot;         &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
++        if (strMethod == &quot;listreceivedbyaddress&quot;  &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
++        if (strMethod == &quot;listreceivedbyaddress&quot;  &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
++        if (strMethod == &quot;listreceivedbylabel&quot;    &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
++        if (strMethod == &quot;listreceivedbylabel&quot;    &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
++
++        // Execute
++        Value result = CallRPC(strMethod, params);
+ 
+         // Print result
+         string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/4287732/">← fix build, thanks jgarzik</a><a rel="next" href="../../commits/9db7bf5/">gethashespersec and added version and hashespersec to… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

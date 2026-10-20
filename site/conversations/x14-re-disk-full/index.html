@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: disk full – Satoshi Nakamoto, Hal Finney</title>
+<meta name="description" content="Satoshi Nakamoto, 13 January 2009: If you build the dependencies, let me know how that goes. Everything is always harder to build on Windows than Linux.…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x14-re-disk-full/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: disk full – Satoshi Nakamoto, Hal Finney">
+<meta property="og:description" content="Satoshi Nakamoto, 13 January 2009: If you build the dependencies, let me know how that goes. Everything is always harder to build on Windows than Linux.…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x14-re-disk-full/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: disk full – Satoshi Nakamoto, Hal Finney">
+<meta name="twitter:description" content="Satoshi Nakamoto, 13 January 2009: If you build the dependencies, let me know how that goes. Everything is always harder to build on Windows than Linux.…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: disk full", "url": "https://satoshimail.pages.dev/conversations/x14-re-disk-full/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-01-13T14:42:00Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-13T14:42:00Z", "text": "If you build the dependencies, let me know how that goes. Everything is always harder to build on Windows than Linux. I’ve always hated projects with a lot of big dependencies, but there’s no avoiding it, each one is essential. I still haven’t figured out how you managed to get a read exception rather than a write exception when your disk filled up. It’s unlikely but maybe possible that the incident could have messed up your block data file. In that case, it might manifest as a similar…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-24T16:47:00Z", "text": "I hate duplicating code, but the compiler forces us. Copy the body of the function above it, like this: void insert(iterator it, const_iterator first, const_iterator last) { if (it == vch.begin() + nReadPos && last - first <= nReadPos) { // special case for inserting at the front when there’s room nReadPos -= (last - first); memcpy(&vch[nReadPos], &first[0], last - first); } else vch.insert(it, first, last); } #if !defined(_MSC_VER) || _MSC_VER >= 1300 void insert(iterator it, const char*…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Hal Finney", "item": "https://satoshimail.pages.dev/conversations/hal-finney/"}, {"@type": "ListItem", "position": 4, "name": "Re: disk full", "item": "https://satoshimail.pages.dev/conversations/x14-re-disk-full/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x14">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/hal-finney/">Private email with Hal Finney</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: disk full</span></div></nav>
+<main class="in">
+<h1>Re: disk full</h1>
+<p class="lead">Private email with Hal Finney · 2 messages · from 13 January 2009 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x14">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/doc/hal-finney/26.md" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to hal.finney@gmail.com</span><span class="muted"> · <time datetime="2009-01-13T14:42:00Z">13 January 2009, 14:42 UTC</time> · <a href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/doc/hal-finney/26.md" rel="nofollow noopener">original</a></span></header>
+<div class="t">If you build the dependencies, let me know how that goes.  Everything is always harder to build on Windows than Linux.  I’ve always hated projects with a lot of big dependencies, but there’s no avoiding it, each one is essential.
+
+I still haven’t figured out how you managed to get a read exception rather than a write exception when your disk filled up. It’s unlikely but maybe possible that the incident could have messed up your block data file.  In that case, it might manifest as a similar exception again, or if your block count in the status bar stopped going up, that would also indicate a problem.  As of this moment it’s at 375 blocks.
+
+If there is a problem, it could easily be solved by deleting your block files, as follows:
+
+(exit Bitcoin and make sure it’s stopped)
+cd /d “%appdata%\bitcoin”
+(backup this directory first)
+del blk0001.dat
+del blkindex.dat
+
+It’ll then re-download the block chain.  Your transactions and generated blocks show as 0/unconfirmed until it’s done downloading.
+
+The crucial file to backup is wallet.dat.  If bitcoin is running then you have to backup the whole %appdata%\bitcoin directory including the database subdirectory, but even if it’s not running it certainly feels safer to always backup the whole directory.
+
+The database unfortunately names its files “log.0000000001”.  To the rest of the world, “log” means delete-at-will, but to database people it means delete-and-lose-everything-in-your-other-files.  I tried to put them out of harm’s way by putting them in the database subdirectory.  Later I’ll write code to flush the logs after every wallet change so wallet.dat will be standalone safe almost all the time.
+
+Satoshi
+
+Hi Satoshi - Sorry I have not been able to do more today, this looks like a busy week for me. I started 0.1.3 again under the MSVC debugger this time so if it crashes tonight I may be able to get some more information.
+
+I remember now that last night, my disk filled up. I had downloaded a bunch of the dependencies (boost, etc) with an eye towards trying to build it myself, and my disk was already pretty full. I’m pretty sure this is what caused 0.1.3 to crash. I’ve attached the debug.log, which also includes some other runs. The error is about 1/3 of the way down and says,
+
+EXCEPTION: NSt8ios_base7failureE
+CAutoFile::read : end of file
+
+Normally this should be a rare occurrence with the large disk sizes people have today.
+
+Hal</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to hal.finney@gmail.com</span><span class="muted"> · <time datetime="2009-01-24T16:47:00Z">24 January 2009, 16:47 UTC</time> · <a href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/doc/hal-finney/27.md" rel="nofollow noopener">original</a></span></header>
+<div class="t">I hate duplicating code, but the compiler forces us. Copy the body of the function above it, like this:
+
+    void insert(iterator it, const_iterator first, const_iterator last)
+    {
+        if (it == vch.begin() + nReadPos &amp;&amp; last - first &lt;= nReadPos)
+        {
+            // special case for inserting at the front when there’s room
+            nReadPos -= (last - first);
+            memcpy(&amp;vch[nReadPos], &amp;first[0], last - first);
+        }
+        else
+            vch.insert(it, first, last);
+    }
+
+#if !defined(_MSC_VER) || _MSC_VER &gt;= 1300
+    void insert(iterator it, const char* first, const char* last)
+    {
+        if (it == vch.begin() + nReadPos &amp;&amp; last - first &lt;= nReadPos)
+        {
+            // special case for inserting at the front when there’s room
+            nReadPos -= (last - first);
+            memcpy(&amp;vch[nReadPos], &amp;first[0], last - first);
+        }
+        else
+            vch.insert(it, first, last);
+    }
+#endif
+
+The modified version of serialize.h is attached.
+
+BTW, in my tests, VC8 produced an EXE that would only run on systems that had VC8 installed on them.  The error it gives is extremely vague.  I think they expect you to install a package during setup, but bitcoin doesn’t have a setup.
+
+My testing has been with MSVC 6.0 SP6 and GCC 3.4.5.  GCC is the release build.  There’s nothing wrong with the MSVC 6.0 build other than its optimization of the SHA routines for generating blocks is slow.
+
+Satoshi</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x12-re-v0-1-3-gcc-debug-build/">← Re: v0.1.3 gcc debug build</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

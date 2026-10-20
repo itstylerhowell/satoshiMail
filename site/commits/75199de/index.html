@@ -1,0 +1,1283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default address…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/75199de/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default address…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/75199de/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default address…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Address Book with tabs instead of separate Your Address book, with live update of default address in main window, New... button on main window for creating new receiving address, made receiving address labels more visible, ask user before paying transaction fee, when sending to bitcoin address also use a bitcoin address for the change, added some event.Skip() to fix UI glitches -- version 0.2.4", "url": "https://satoshimail.pages.dev/commits/75199de/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-20T21:59:59Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/75199de534a590329a3b636d63fade2e4544ce97"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Address Book with tabs instead of…", "item": "https://satoshimail.pages.dev/commits/75199de/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c75199de534">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Address Book with tabs instead of…</span></div></nav>
+<main class="in">
+<h1>Address Book with tabs instead of separate Your Address book, with live update of default address in main window, New... button on main window for creating new receiving address, made receiving address labels more visible, ask user before paying transaction fee, when sending to bitcoin address also use a bitcoin address for the change, added some event.Skip() to fix UI glitches -- version 0.2.4</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 20 February 2010 · SVN r68 · release v0.2.4 · 10 files, +941 −549</p>
+<p class="actions"><a class="btn" href="../../#t-c75199de534">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/75199de534a590329a3b636d63fade2e4544ce97" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -2645,7 +2645,12 @@ void BitcoinMiner()
+                         do
+                         {
+                             pindexTmp = pindexBest;
+-                            Sleep(10000);
++                            for (int i = 0; i &lt; 10; i++)
++                            {
++                                Sleep(1000);
++                                if (fShutdown)
++                                    return;
++                            }
+                         }
+                         while (pindexTmp != pindexBest);
+                     }
+@@ -2852,10 +2857,13 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                     if (keyRet.IsNull())
+                         keyRet.MakeNewKey();
+ 
+-                    // Fill a vout to ourself
+-                    CScript scriptPubKey;
+-                    scriptPubKey &lt;&lt; keyRet.GetPubKey() &lt;&lt; OP_CHECKSIG;
+-                    wtxNew.vout.push_back(CTxOut(nValueIn - nTotalValue, scriptPubKey));
++                    // Fill a vout to ourself, using same address type as the payment
++                    CScript scriptChange;
++                    if (scriptPubKey.GetBitcoinAddressHash160() != 0)
++                        scriptChange.SetBitcoinAddress(keyRet.GetPubKey());
++                    else
++                        scriptChange &lt;&lt; keyRet.GetPubKey() &lt;&lt; OP_CHECKSIG;
++                    wtxNew.vout.push_back(CTxOut(nValueIn - nTotalValue, scriptChange));
+                 }
+ 
+                 // Fill a vout to the payee
+@@ -2894,42 +2902,50 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+ }
+ 
+ // Call after CreateTransaction unless you want to abort
+-bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
++bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key)
+ {
+     CRITICAL_BLOCK(cs_main)
+-    CRITICAL_BLOCK(cs_mapWallet)
+     {
+-        //// old: eventually should make this transactional, never want to add a
+-        ////  transaction without marking spent transactions, although the risk of
+-        ////  interruption during this step is remote.
+-        //// update: This matters even less now that fSpent can get corrected
+-        ////  when transactions are seen in VerifySignature.  The remote chance of
+-        ////  unmarked fSpent will be handled by that.  Don&#x27;t need to make this
+-        ////  transactional.  Pls delete this comment block later.
+-
+-        // This is only to keep the database open to defeat the auto-flush for the
+-        // duration of this scope.  This is the only place where this optimization
+-        // maybe makes sense; please don&#x27;t do it anywhere else.
+-        CWalletDB walletdb(&quot;r&quot;);
+-
+-        // Add the change&#x27;s private key to wallet
+-        if (!key.IsNull() &amp;&amp; !AddKey(key))
+-            throw runtime_error(&quot;CommitTransactionSpent() : AddKey failed\n&quot;);
+-
+-        // Add tx to wallet, because if it has change it&#x27;s also ours,
+-        // otherwise just for transaction history.
+-        AddToWallet(wtxNew);
++        printf(&quot;CommitTransaction:\n%s&quot;, wtxNew.ToString().c_str());
++        CRITICAL_BLOCK(cs_mapWallet)
++        {
++            // This is only to keep the database open to defeat the auto-flush for the
++            // duration of this scope.  This is the only place where this optimization
++            // maybe makes sense; please don&#x27;t do it anywhere else.
++            CWalletDB walletdb(&quot;r&quot;);
++
++            // Add the change&#x27;s private key to wallet
++            if (!key.IsNull() &amp;&amp; !AddKey(key))
++                throw runtime_error(&quot;CommitTransaction() : AddKey failed\n&quot;);
++
++            // Add tx to wallet, because if it has change it&#x27;s also ours,
++            // otherwise just for transaction history.
++            AddToWallet(wtxNew);
++
++            // Mark old coins as spent
++            set&lt;CWalletTx*&gt; setCoins;
++            foreach(const CTxIn&amp; txin, wtxNew.vin)
++                setCoins.insert(&amp;mapWallet[txin.prevout.hash]);
++            foreach(CWalletTx* pcoin, setCoins)
++            {
++                pcoin-&gt;fSpent = true;
++                pcoin-&gt;WriteToDisk();
++                vWalletUpdated.push_back(pcoin-&gt;GetHash());
++            }
++        }
++
++        // Track how many getdata requests our transaction gets
++        CRITICAL_BLOCK(cs_mapRequestCount)
++            mapRequestCount[wtxNew.GetHash()] = 0;
+ 
+-        // Mark old coins as spent
+-        set&lt;CWalletTx*&gt; setCoins;
+-        foreach(const CTxIn&amp; txin, wtxNew.vin)
+-            setCoins.insert(&amp;mapWallet[txin.prevout.hash]);
+-        foreach(CWalletTx* pcoin, setCoins)
++        // Broadcast
++        if (!wtxNew.AcceptTransaction())
+         {
+-            pcoin-&gt;fSpent = true;
+-            pcoin-&gt;WriteToDisk();
+-            vWalletUpdated.push_back(pcoin-&gt;GetHash());
++            // This must not fail. The transaction has already been signed and recorded.
++            printf(&quot;CommitTransaction() : Error: Transaction not valid&quot;);
++            return false;
+         }
++        wtxNew.RelayWalletTransaction();
+     }
+     MainFrameRepaint();
+     return true;
+@@ -2938,7 +2954,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key)
+ 
+ 
+ 
+-string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
++string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee)
+ {
+     CRITICAL_BLOCK(cs_main)
+     {
+@@ -2954,26 +2970,12 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+             printf(&quot;SendMoney() : %s&quot;, strError.c_str());
+             return strError;
+         }
+-        if (!CommitTransactionSpent(wtxNew, key))
+-        {
+-            printf(&quot;SendMoney() : Error finalizing transaction&quot;);
+-            return _(&quot;Error finalizing transaction&quot;);
+-        }
+-
+-        // Track how many getdata requests our transaction gets
+-        CRITICAL_BLOCK(cs_mapRequestCount)
+-            mapRequestCount[wtxNew.GetHash()] = 0;
+ 
+-        printf(&quot;SendMoney: %s\n&quot;, wtxNew.GetHash().ToString().substr(0,6).c_str());
++        if (fAskFee &amp;&amp; !ThreadSafeAskFee(nFeeRequired, _(&quot;Sending...&quot;), NULL))
++            return &quot;ABORTED&quot;;
+ 
+-        // Broadcast
+-        if (!wtxNew.AcceptTransaction())
+-        {
+-            // This must not fail. The transaction has already been signed and recorded.
+-            printf(&quot;SendMoney() : Error: Transaction not valid&quot;);
++        if (!CommitTransaction(wtxNew, key))
+             return _(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;);
+-        }
+-        wtxNew.RelayWalletTransaction();
+     }
+     MainFrameRepaint();
+     return &quot;&quot;;
+@@ -2981,7 +2983,7 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew)
+ 
+ 
+ 
+-string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew)
++string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee)
+ {
+     // Check amount
+     if (nValue &lt;= 0)
+@@ -2994,5 +2996,5 @@ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtx
+     if (!scriptPubKey.SetBitcoinAddress(strAddress))
+         return _(&quot;Invalid bitcoin address&quot;);
+ 
+-    return SendMoney(scriptPubKey, nValue, wtxNew);
++    return SendMoney(scriptPubKey, nValue, wtxNew, fAskFee);
+ }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -67,9 +67,10 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+ bool SendMessages(CNode* pto);
+ int64 GetBalance();
+ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
+-bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
+-string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
+-string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew);
++bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key);
++bool BroadcastTransaction(CWalletTx&amp; wtxNew);
++string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
++string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
+ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -580,6 +580,11 @@ public:
+         *this &lt;&lt; OP_DUP &lt;&lt; OP_HASH160 &lt;&lt; hash160 &lt;&lt; OP_EQUALVERIFY &lt;&lt; OP_CHECKSIG;
+     }
+ 
++    void SetBitcoinAddress(const vector&lt;unsigned char&gt;&amp; vchPubKey)
++    {
++        SetBitcoinAddress(Hash160(vchPubKey));
++    }
++
+     bool SetBitcoinAddress(const string&amp; strAddress)
+     {
+         this-&gt;clear();</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 203;
++static const int VERSION = 204;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -35,13 +35,54 @@ int fMinimizeOnClose = true;
+ // Util
+ //
+ 
++void ExitTimeout(void* parg)
++{
++#ifdef __WXMSW__
++    Sleep(5000);
++    ExitProcess(0);
++#endif
++}
++
++void Shutdown(void* parg)
++{
++    static CCriticalSection cs_Shutdown;
++    static bool fTaken;
++    bool fFirstThread;
++    CRITICAL_BLOCK(cs_Shutdown)
++    {
++        fFirstThread = !fTaken;
++        fTaken = true;
++    }
++    static bool fExit;
++    if (fFirstThread)
++    {
++        fShutdown = true;
++        nTransactionsUpdated++;
++        DBFlush(false);
++        StopNode();
++        DBFlush(true);
++        CreateThread(ExitTimeout, NULL);
++        Sleep(50);
++        printf(&quot;Bitcoin exiting\n\n&quot;);
++        fExit = true;
++        exit(0);
++    }
++    else
++    {
++        while (!fExit)
++            Sleep(500);
++        Sleep(100);
++        ExitThread(0);
++    }
++}
++
+ void HandleCtrlA(wxKeyEvent&amp; event)
+ {
+     // Ctrl-a select all
++    event.Skip();
+     wxTextCtrl* textCtrl = (wxTextCtrl*)event.GetEventObject();
+     if (event.GetModifiers() == wxMOD_CONTROL &amp;&amp; event.GetKeyCode() == &#x27;A&#x27;)
+         textCtrl-&gt;SetSelection(-1, -1);
+-    event.Skip();
+ }
+ 
+ bool Is24HourTime()
+@@ -194,6 +235,35 @@ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style
+ #endif
+ }
+ 
++bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent)
++{
++    if (nFeeRequired == 0 || fDaemon)
++        return true;
++    string strMessage = strprintf(
++        _(&quot;This transaction is over the size limit.  You can still send it for a fee of %s, &quot;
++          &quot;which goes to the nodes that process your transaction and helps to support the network.  &quot;
++          &quot;Do you want to pay the fee?&quot;),
++        FormatMoney(nFeeRequired).c_str());
++    return (ThreadSafeMessageBox(strMessage, strCaption, wxYES_NO, parent) == wxYES);
++}
++
++void SetDefaultReceivingAddress(const string&amp; strAddress)
++{
++    // Update main window address and database
++    if (pframeMain == NULL)
++        return;
++    if (strAddress != pframeMain-&gt;m_textCtrlAddress-&gt;GetValue())
++    {
++        uint160 hash160;
++        if (!AddressToHash160(strAddress, hash160))
++            return;
++        if (!mapPubKeys.count(hash160))
++            return;
++        CWalletDB().WriteDefaultKey(mapPubKeys[hash160]);
++        pframeMain-&gt;m_textCtrlAddress-&gt;SetValue(strAddress);
++    }
++}
++
+ 
+ 
+ 
+@@ -227,11 +297,6 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     fontTmp.SetFamily(wxFONTFAMILY_TELETYPE);
+     m_staticTextBalance-&gt;SetFont(fontTmp);
+     m_staticTextBalance-&gt;SetSize(140, 17);
+-    // &amp; underlines don&#x27;t work on the toolbar buttons on gtk
+-    m_toolBar-&gt;ClearTools();
+-    m_toolBar-&gt;AddTool(wxID_BUTTONSEND, _(&quot;Send Coins&quot;), wxBitmap(send20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+-    m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, _(&quot;Address Book&quot;), wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+-    m_toolBar-&gt;Realize();
+     // resize to fit ubuntu&#x27;s huge default font
+     dResize = 1.20;
+     SetSize((dResize + 0.02) * GetSize().GetWidth(), 1.09 * GetSize().GetHeight());
+@@ -276,47 +341,6 @@ CMainFrame::~CMainFrame()
+     ptaskbaricon = NULL;
+ }
+ 
+-void ExitTimeout(void* parg)
+-{
+-#ifdef __WXMSW__
+-    Sleep(5000);
+-    ExitProcess(0);
+-#endif
+-}
+-
+-void Shutdown(void* parg)
+-{
+-    static CCriticalSection cs_Shutdown;
+-    static bool fTaken;
+-    bool fFirstThread;
+-    CRITICAL_BLOCK(cs_Shutdown)
+-    {
+-        fFirstThread = !fTaken;
+-        fTaken = true;
+-    }
+-    static bool fExit;
+-    if (fFirstThread)
+-    {
+-        fShutdown = true;
+-        nTransactionsUpdated++;
+-        DBFlush(false);
+-        StopNode();
+-        DBFlush(true);
+-        CreateThread(ExitTimeout, NULL);
+-        Sleep(50);
+-        printf(&quot;Bitcoin exiting\n\n&quot;);
+-        fExit = true;
+-        exit(0);
+-    }
+-    else
+-    {
+-        while (!fExit)
+-            Sleep(500);
+-        Sleep(100);
+-        ExitThread(0);
+-    }
+-}
+-
+ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+ {
+     if (fMinimizeOnClose &amp;&amp; event.CanVeto() &amp;&amp; !IsIconized())
+@@ -335,6 +359,7 @@ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+ 
+ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ {
++    event.Skip();
+     // Hide the task bar button when minimized.
+     // Event is sent when the frame is minimized or restored.
+     // wxWidgets 2.8.9 doesn&#x27;t have IsIconized() so there&#x27;s no way
+@@ -342,7 +367,7 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+     if (!event.Iconized())
+         fClosedToTray = false;
+ #ifndef __WXMSW__
+-    // Tray is not reliable on Linux gnome
++    // Tray is not reliable on ubuntu 9.10 gnome
+     fClosedToTray = false;
+ #endif
+     if (fMinimizeToTray &amp;&amp; event.Iconized())
+@@ -353,6 +378,7 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ 
+ void CMainFrame::OnMouseEvents(wxMouseEvent&amp; event)
+ {
++    event.Skip();
+     RandAddSeed();
+     RAND_add(&amp;event.m_x, sizeof(event.m_x), 0.25);
+     RAND_add(&amp;event.m_y, sizeof(event.m_y), 0.25);
+@@ -360,9 +386,11 @@ void CMainFrame::OnMouseEvents(wxMouseEvent&amp; event)
+ 
+ void CMainFrame::OnListColBeginDrag(wxListEvent&amp; event)
+ {
+-     // Hidden columns not resizeable
+-     if (event.GetColumn() &lt;= 1 &amp;&amp; !fDebug)
++    // Hidden columns not resizeable
++    if (event.GetColumn() &lt;= 1 &amp;&amp; !fDebug)
+         event.Veto();
++    else
++        event.Skip();
+ }
+ 
+ int CMainFrame::GetSortIndex(const string&amp; strSort)
+@@ -546,7 +574,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+ 
+         if (wtx.IsCoinBase())
+         {
+-            // Coinbase
++            // Generated
+             strDescription = _(&quot;Generated&quot;);
+             if (nCredit == 0)
+             {
+@@ -569,7 +597,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         }
+         else if (!mapValue[&quot;from&quot;].empty() || !mapValue[&quot;message&quot;].empty())
+         {
+-            // Online transaction
++            // Received by IP connection
+             if (!mapValue[&quot;from&quot;].empty())
+                 strDescription += _(&quot;From: &quot;) + mapValue[&quot;from&quot;];
+             if (!mapValue[&quot;message&quot;].empty())
+@@ -581,7 +609,7 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         }
+         else
+         {
+-            // Offline transaction
++            // Received by Bitcoin Address
+             foreach(const CTxOut&amp; txout, wtx.vout)
+             {
+                 if (txout.IsMine())
+@@ -591,20 +619,19 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                     {
+                         CRITICAL_BLOCK(cs_mapAddressBook)
+                         {
++                            //strDescription += _(&quot;Received payment to &quot;);
++                            //strDescription += _(&quot;Received with address &quot;);
++                            strDescription += _(&quot;From: unknown, Received with: &quot;);
+                             string strAddress = PubKeyToAddress(vchPubKey);
+-                            if (mapAddressBook.count(strAddress))
++                            map&lt;string, string&gt;::iterator mi = mapAddressBook.find(strAddress);
++                            if (mi != mapAddressBook.end() &amp;&amp; !(*mi).second.empty())
+                             {
+-                                //strDescription += _(&quot;Received payment to &quot;);
+-                                //strDescription += _(&quot;Received with address &quot;);
+-                                strDescription += _(&quot;From: unknown, To: &quot;);
+-                                strDescription += strAddress;
+-                                /// The labeling feature is just too confusing, so I hid it
+-                                /// by putting it at the end where it runs off the screen.
+-                                /// It can still be seen by widening the column, or in the
+-                                /// details dialog.
+-                                if (!mapAddressBook[strAddress].empty())
+-                                    strDescription += &quot; (&quot; + mapAddressBook[strAddress] + &quot;)&quot;;
++                                string strLabel = (*mi).second;
++                                strDescription += strAddress.substr(0,12) + &quot;... &quot;;
++                                strDescription += &quot;(&quot; + strLabel + &quot;)&quot;;
+                             }
++                            else
++                                strDescription += strAddress;
+                         }
+                     }
+                     break;
+@@ -659,12 +686,12 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                 string strAddress;
+                 if (!mapValue[&quot;to&quot;].empty())
+                 {
+-                    // Online transaction
++                    // Sent to IP
+                     strAddress = mapValue[&quot;to&quot;];
+                 }
+                 else
+                 {
+-                    // Offline transaction
++                    // Sent to Bitcoin Address
+                     uint160 hash160;
+                     if (ExtractHash160(txout.scriptPubKey, hash160))
+                         strAddress = Hash160ToAddress(hash160);
+@@ -683,8 +710,11 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+                 }
+ 
+                 int64 nValue = txout.nValue;
+-                if (nOut == 0 &amp;&amp; nTxFee &gt; 0)
++                if (nTxFee &gt; 0)
++                {
+                     nValue += nTxFee;
++                    nTxFee = 0;
++                }
+ 
+                 InsertLine(fNew, nIndex, hash, strprintf(&quot;%s-%d&quot;, strSort.c_str(), nOut),
+                            strStatus,
+@@ -846,12 +876,12 @@ void CMainFrame::RefreshStatusColumn()
+ 
+ void CMainFrame::OnPaint(wxPaintEvent&amp; event)
+ {
++    event.Skip();
+     if (fRefresh)
+     {
+         fRefresh = false;
+         Refresh();
+     }
+-    event.Skip();
+ }
+ 
+ 
+@@ -903,6 +933,9 @@ void MainFrameRepaint()
+ 
+ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ {
++    // Skip lets the listctrl do the paint, we&#x27;re just hooking the message
++    event.Skip();
++
+     if (ptaskbaricon)
+         ptaskbaricon-&gt;UpdateTooltip();</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -2,11 +2,9 @@
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+-
+-
+-
+ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+ 
++
+ extern map&lt;string, string&gt; mapArgs;
+ 
+ // Settings
+@@ -22,6 +20,7 @@ void UIThreadCall(boost::function0&lt;void&gt;);
+ void MainFrameRepaint();
+ void Shutdown(void* parg);
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
++bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent);
+ 
+ 
+ 
+@@ -51,7 +50,7 @@ protected:
+     void OnButtonAddressBook(wxCommandEvent&amp; event);
+     void OnSetFocusAddress(wxFocusEvent&amp; event);
+     void OnMouseEventsAddress(wxMouseEvent&amp; event);
+-    void OnButtonChange(wxCommandEvent&amp; event);
++    void OnButtonNew(wxCommandEvent&amp; event);
+     void OnButtonCopy(wxCommandEvent&amp; event);
+     void OnListColBeginDrag(wxListEvent&amp; event);
+     void OnListItemActivated(wxListEvent&amp; event);
+@@ -205,53 +204,39 @@ void SendingDialogOnReply3(void* parg, CDataStream&amp; vRecv);
+ 
+ 
+ 
+-class CYourAddressDialog : public CYourAddressDialogBase
+-{
+-protected:
+-    // Event handlers
+-    void OnListEndLabelEdit(wxListEvent&amp; event);
+-    void OnListItemSelected(wxListEvent&amp; event);
+-    void OnListItemActivated(wxListEvent&amp; event);
+-    void OnButtonRename(wxCommandEvent&amp; event);
+-    void OnButtonNew(wxCommandEvent&amp; event);
+-    void OnButtonCopy(wxCommandEvent&amp; event);
+-    void OnButtonOK(wxCommandEvent&amp; event);
+-    void OnButtonCancel(wxCommandEvent&amp; event);
+-    void OnClose(wxCloseEvent&amp; event);
+-
+-public:
+-    /** Constructor */
+-    CYourAddressDialog(wxWindow* parent);
+-    CYourAddressDialog(wxWindow* parent, const string&amp; strInitSelected);
+-
+-    // Custom
+-    wxString GetAddress();
+-};
+-
+-
+-
+ class CAddressBookDialog : public CAddressBookDialogBase
+ {
+ protected:
+     // Event handlers
++    void OnNotebookPageChanged(wxNotebookEvent&amp; event);
+     void OnListEndLabelEdit(wxListEvent&amp; event);
+     void OnListItemSelected(wxListEvent&amp; event);
+     void OnListItemActivated(wxListEvent&amp; event);
+-    void OnButtonEdit(wxCommandEvent&amp; event);
+     void OnButtonDelete(wxCommandEvent&amp; event);
+-    void OnButtonNew(wxCommandEvent&amp; event);
+     void OnButtonCopy(wxCommandEvent&amp; event);
++    void OnButtonEdit(wxCommandEvent&amp; event);
++    void OnButtonNew(wxCommandEvent&amp; event);
+     void OnButtonOK(wxCommandEvent&amp; event);
+     void OnButtonCancel(wxCommandEvent&amp; event);
+     void OnClose(wxCloseEvent&amp; event);
+ 
+ public:
+     /** Constructor */
+-    CAddressBookDialog(wxWindow* parent, const wxString&amp; strInitSelected, bool fSendingIn);
++    CAddressBookDialog(wxWindow* parent, const wxString&amp; strInitSelected, int nPageIn, bool fDuringSendIn);
+ 
+     // Custom
+-    bool fSending;
++    enum
++    {
++        SENDING = 0,
++        RECEIVING = 1,
++    };
++    int nPage;
++    wxListCtrl* m_listCtrl;
++    bool fDuringSend;
+     wxString GetAddress();
++    wxString GetSelectedAddress();
++    wxString GetSelectedSendingAddress();
++    wxString GetSelectedReceivingAddress();
+     bool CheckIfMine(const string&amp; strAddress, const string&amp; strTitle);
+ };
+ 
+@@ -282,18 +267,25 @@ public:
+                            const string&amp; strMessage2=&quot;&quot;,
+                            const string&amp; strValue2=&quot;&quot;) : CGetTextFromUserDialogBase(parent, wxID_ANY, strCaption)
+     {
++        int x = GetSize().GetWidth();
++        int y = GetSize().GetHeight();
+         m_staticTextMessage1-&gt;SetLabel(strMessage1);
+         m_textCtrl1-&gt;SetValue(strValue1);
++        y += wxString(strMessage1).Freq(&#x27;\n&#x27;) * 14;
+         if (!strMessage2.empty())
+         {
+             m_staticTextMessage2-&gt;Show(true);
+             m_staticTextMessage2-&gt;SetLabel(strMessage2);
+             m_textCtrl2-&gt;Show(true);
+             m_textCtrl2-&gt;SetValue(strValue2);
+-            SetSize(wxDefaultCoord, 180);
++            y += 46 + wxString(strMessage2).Freq(&#x27;\n&#x27;) * 14;
+         }
+         if (!fWindows)
+-            SetSize(1.14 * GetSize().GetWidth(), 1.14 * GetSize().GetHeight());
++        {
++            x *= 1.14;
++            y *= 1.14;
++        }
++        SetSize(x, y);
+     }
+ 
+     // Custom</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -42,14 +42,14 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_menuOptions-&gt;Append( m_menuOptionsGenerateBitcoins );
+ 	
+ 	wxMenuItem* m_menuOptionsChangeYourAddress;
+-	m_menuOptionsChangeYourAddress = new wxMenuItem( m_menuOptions, wxID_ANY, wxString( _(&quot;&amp;Change Your Address...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
++	m_menuOptionsChangeYourAddress = new wxMenuItem( m_menuOptions, wxID_ANY, wxString( _(&quot;&amp;Your Receiving Addresses...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsChangeYourAddress );
+ 	
+ 	wxMenuItem* m_menuOptionsOptions;
+ 	m_menuOptionsOptions = new wxMenuItem( m_menuOptions, wxID_MENUOPTIONSOPTIONS, wxString( _(&quot;&amp;Options...&quot;) ) , wxEmptyString, wxITEM_NORMAL );
+ 	m_menuOptions-&gt;Append( m_menuOptionsOptions );
+ 	
+-	m_menubar-&gt;Append( m_menuOptions, _(&quot;&amp;Options&quot;) );
++	m_menubar-&gt;Append( m_menuOptions, _(&quot;&amp;Settings&quot;) );
+ 	
+ 	m_menuHelp = new wxMenu();
+ 	wxMenuItem* m_menuHelpAbout;
+@@ -65,8 +65,8 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_toolBar-&gt;SetToolSeparation( 1 );
+ 	m_toolBar-&gt;SetFont( wxFont( wxNORMAL_FONT-&gt;GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+ 	
+-	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, _(&quot;&amp;Send Coins&quot;), wxBitmap( send20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+-	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, _(&quot;&amp;Address Book&quot;), wxBitmap( addressbook20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONSEND, _(&quot;Send Coins&quot;), wxBitmap( send20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
++	m_toolBar-&gt;AddTool( wxID_BUTTONRECEIVE, _(&quot;Address Book&quot;), wxBitmap( addressbook20_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString );
+ 	m_toolBar-&gt;Realize();
+ 	
+ 	m_statusBar = this-&gt;CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
+@@ -86,14 +86,10 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	bSizer85-&gt;Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
+ 	
+ 	m_textCtrlAddress = new wxTextCtrl( this, wxID_TEXTCTRLADDRESS, wxEmptyString, wxDefaultPosition, wxSize( 340,-1 ), wxTE_READONLY );
+-	m_textCtrlAddress-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_MENU ) );
+-	
+ 	bSizer85-&gt;Add( m_textCtrlAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+ 	
+-	m_buttonNew = new wxButton( this, wxID_BUTTONCHANGE, _(&quot;&amp;New...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_buttonNew-&gt;Hide();
+-	
+-	bSizer85-&gt;Add( m_buttonNew, 0, wxRIGHT, 5 );
++	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, _(&quot; &amp;New... &quot;), wxDefaultPosition, wxSize( -1,-1 ), wxBU_EXACTFIT );
++	bSizer85-&gt;Add( m_buttonNew, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, _(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+ 	bSizer85-&gt;Add( m_buttonCopy, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+@@ -188,7 +184,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
+-	m_buttonNew-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
++	m_buttonNew-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonNew ), NULL, this );
+ 	m_buttonCopy-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+ 	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+@@ -240,7 +236,7 @@ CMainFrameBase::~CMainFrameBase()
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEventsAddress ), NULL, this );
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
+-	m_buttonNew-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonChange ), NULL, this );
++	m_buttonNew-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonNew ), NULL, this );
+ 	m_buttonCopy-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+ 	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+@@ -844,20 +840,53 @@ CAddressBookDialogBase::CAddressBookDialogBase( wxWindow* parent, wxWindowID id,
+ {
+ 	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );
+ 	
++	wxBoxSizer* bSizer58;
++	bSizer58 = new wxBoxSizer( wxVERTICAL );
++	
++	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
++	m_panelSending = new wxPanel( m_notebook, wxID_PANELSENDING, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+ 	wxBoxSizer* bSizer68;
+ 	bSizer68 = new wxBoxSizer( wxVERTICAL );
+ 	
+ 	
+-	bSizer68-&gt;Add( 0, 5, 0, wxEXPAND, 5 );
++	bSizer68-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+-	m_staticText55 = new wxStaticText( this, wxID_ANY, _(&quot;Bitcoin Address&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText55 = new wxStaticText( m_panelSending, wxID_ANY, _(&quot;Bitcoin Address&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_staticText55-&gt;Wrap( -1 );
+ 	m_staticText55-&gt;Hide();
+ 	
+ 	bSizer68-&gt;Add( m_staticText55, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+ 	
+-	m_listCtrl = new wxListCtrl( this, wxID_LISTCTRL, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_ASCENDING );
+-	bSizer68-&gt;Add( m_listCtrl, 1, wxALL|wxEXPAND, 5 );
++	m_listCtrlSending = new wxListCtrl( m_panelSending, wxID_LISTCTRLSENDING, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_ASCENDING );
++	bSizer68-&gt;Add( m_listCtrlSending, 1, wxALL|wxEXPAND, 5 );
++	
++	m_panelSending-&gt;SetSizer( bSizer68 );
++	m_panelSending-&gt;Layout();
++	bSizer68-&gt;Fit( m_panelSending );
++	m_notebook-&gt;AddPage( m_panelSending, _(&quot;Sending&quot;), false );
++	m_panelReceiving = new wxPanel( m_notebook, wxID_PANELRECEIVING, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
++	wxBoxSizer* bSizer681;
++	bSizer681 = new wxBoxSizer( wxVERTICAL );
++	
++	
++	bSizer681-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
++	
++	m_staticText45 = new wxStaticText( m_panelReceiving, wxID_ANY, _(&quot;These are your Bitcoin addresses for receiving payments.  You can give a different one to each sender to keep track of who is paying you.  The highlighted address will be displayed in the main window.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticText45-&gt;Wrap( 570 );
++	bSizer681-&gt;Add( m_staticText45, 0, wxTOP|wxRIGHT|wxLEFT, 6 );
++	
++	
++	bSizer681-&gt;Add( 0, 2, 0, wxEXPAND, 5 );
++	
++	m_listCtrlReceiving = new wxListCtrl( m_panelReceiving, wxID_LISTCTRLRECEIVING, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_ASCENDING );
++	bSizer681-&gt;Add( m_listCtrlReceiving, 1, wxALL|wxEXPAND, 5 );
++	
++	m_panelReceiving-&gt;SetSizer( bSizer681 );
++	m_panelReceiving-&gt;Layout();
++	bSizer681-&gt;Fit( m_panelReceiving );
++	m_notebook-&gt;AddPage( m_panelReceiving, _(&quot;Receiving&quot;), true );
++	
++	bSizer58-&gt;Add( m_notebook, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
+ 	
+ 	wxBoxSizer* bSizer69;
+ 	bSizer69 = new wxBoxSizer( wxHORIZONTAL );
+@@ -865,34 +894,42 @@ CAddressBookDialogBase::CAddressBookDialogBase( wxWindow* parent, wxWindowID id,
+ 	
+ 	bSizer69-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
++	m_buttonDelete = new wxButton( this, wxID_BUTTONDELETE, _(&quot;&amp;Delete&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	bSizer69-&gt;Add( m_buttonDelete, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
++	
++	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, _(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	bSizer69-&gt;Add( m_buttonCopy, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
++	
+ 	m_buttonEdit = new wxButton( this, wxID_BUTTONEDIT, _(&quot;&amp;Edit...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	bSizer69-&gt;Add( m_buttonEdit, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, _(&quot; &amp;New Address... &quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	bSizer69-&gt;Add( m_buttonNew, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonDelete = new wxButton( this, wxID_BUTTONDELETE, _(&quot;&amp;Delete&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonDelete, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+-	
+ 	m_buttonOK = new wxButton( this, wxID_OK, _(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer69-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
++	bSizer58-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+ 	
+-	this-&gt;SetSizer( bSizer68 );
++	this-&gt;SetSizer( bSizer58 );
+ 	this-&gt;Layout();
+ 	
+ 	// Connect Events
+ 	this-&gt;Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( CAddressBookDialogBase::OnClose ) );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_notebook-&gt;Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( CAddressBookDialogBase::OnNotebookPageChanged ), NULL, this );
++	m_listCtrlSending-&gt;Connect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
++	m_listCtrlSending-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSending-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_listCtrlReceiving-&gt;Connect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
++	m_listCtrlReceiving-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
++	m_listCtrlReceiving-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_buttonDelete-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonDelete ), NULL, this );
++	m_buttonCopy-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonCopy ), NULL, this );
+ 	m_buttonEdit-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonEdit ), NULL, this );
+ 	m_buttonNew-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonNew ), NULL, this );
+-	m_buttonDelete-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonDelete ), NULL, this );
+ 	m_buttonOK-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonOK ), NULL, this );
+ 	m_buttonCancel-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonCancel ), NULL, this );
+ }
+@@ -901,12 +938,17 @@ CAddressBookDialogBase::~CAddressBookDialogBase()
+ {
+ 	// Disconnect Events
+ 	this-&gt;Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( CAddressBookDialogBase::OnClose ) );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_notebook-&gt;Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( CAddressBookDialogBase::OnNotebookPageChanged ), NULL, this );
++	m_listCtrlSending-&gt;Disconnect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
++	m_listCtrlSending-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSending-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_listCtrlReceiving-&gt;Disconnect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( CAddressBookDialogBase::OnListEndLabelEdit ), NULL, this );
++	m_listCtrlReceiving-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CAddressBookDialogBase::OnListItemActivated ), NULL, this );
++	m_listCtrlReceiving-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CAddressBookDialogBase::OnListItemSelected ), NULL, this );
++	m_buttonDelete-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonDelete ), NULL, this );
++	m_buttonCopy-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonCopy ), NULL, this );
+ 	m_buttonEdit-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonEdit ), NULL, this );
+ 	m_buttonNew-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonNew ), NULL, this );
+-	m_buttonDelete-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonDelete ), NULL, this );
+ 	m_buttonOK-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonOK ), NULL, this );
+ 	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonCancel ), NULL, this );
+ }</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -36,6 +36,7 @@
+ #include &lt;wx/spinctrl.h&gt;
+ #include &lt;wx/scrolwin.h&gt;
+ #include &lt;wx/statbmp.h&gt;
++#include &lt;wx/notebook.h&gt;
+ 
+ ///////////////////////////////////////////////////////////////////////////
+ 
+@@ -46,7 +47,7 @@
+ #define wxID_BUTTONSEND 1004
+ #define wxID_BUTTONRECEIVE 1005
+ #define wxID_TEXTCTRLADDRESS 1006
+-#define wxID_BUTTONCHANGE 1007
++#define wxID_BUTTONNEW 1007
+ #define wxID_BUTTONCOPY 1008
+ #define wxID_TRANSACTIONFEE 1009
+ #define wxID_PROXYIP 1010
+@@ -58,10 +59,13 @@
+ #define wxID_CHOICETRANSFERTYPE 1016
+ #define wxID_LISTCTRL 1017
+ #define wxID_BUTTONRENAME 1018
+-#define wxID_BUTTONNEW 1019
+-#define wxID_BUTTONEDIT 1020
+-#define wxID_BUTTONDELETE 1021
+-#define wxID_TEXTCTRL 1022
++#define wxID_PANELSENDING 1019
++#define wxID_LISTCTRLSENDING 1020
++#define wxID_PANELRECEIVING 1021
++#define wxID_LISTCTRLRECEIVING 1022
++#define wxID_BUTTONDELETE 1023
++#define wxID_BUTTONEDIT 1024
++#define wxID_TEXTCTRL 1025
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CMainFrameBase
+@@ -79,7 +83,6 @@ class CMainFrameBase : public wxFrame
+ 		wxStatusBar* m_statusBar;
+ 		
+ 		wxStaticText* m_staticText32;
+-		wxTextCtrl* m_textCtrlAddress;
+ 		wxButton* m_buttonNew;
+ 		wxButton* m_buttonCopy;
+ 		
+@@ -108,7 +111,7 @@ class CMainFrameBase : public wxFrame
+ 		virtual void OnKeyDown( wxKeyEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnMouseEventsAddress( wxMouseEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnSetFocusAddress( wxFocusEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonChange( wxCommandEvent&amp; event ){ event.Skip(); }
++		virtual void OnButtonNew( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonCopy( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListColBeginDrag( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListItemActivated( wxListEvent&amp; event ){ event.Skip(); }
+@@ -117,6 +120,7 @@ class CMainFrameBase : public wxFrame
+ 	
+ 	public:
+ 		wxMenu* m_menuOptions;
++		wxTextCtrl* m_textCtrlAddress;
+ 		wxListCtrl* m_listCtrl;
+ 		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = _(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 712,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
+ 		~CMainFrameBase();
+@@ -343,23 +347,33 @@ class CAddressBookDialogBase : public wxDialog
+ 	private:
+ 	
+ 	protected:
++		wxNotebook* m_notebook;
++		wxPanel* m_panelSending;
+ 		
+ 		wxStaticText* m_staticText55;
+-		wxListCtrl* m_listCtrl;
++		wxListCtrl* m_listCtrlSending;
++		wxPanel* m_panelReceiving;
++		
++		wxStaticText* m_staticText45;
++		
++		wxListCtrl* m_listCtrlReceiving;
+ 		
++		wxButton* m_buttonDelete;
++		wxButton* m_buttonCopy;
+ 		wxButton* m_buttonEdit;
+ 		wxButton* m_buttonNew;
+-		wxButton* m_buttonDelete;
+ 		wxButton* m_buttonOK;
+ 		
+ 		// Virtual event handlers, overide them in your derived class
+ 		virtual void OnClose( wxCloseEvent&amp; event ){ event.Skip(); }
++		virtual void OnNotebookPageChanged( wxNotebookEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListEndLabelEdit( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListItemActivated( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListItemSelected( wxListEvent&amp; event ){ event.Skip(); }
++		virtual void OnButtonDelete( wxCommandEvent&amp; event ){ event.Skip(); }
++		virtual void OnButtonCopy( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonEdit( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonNew( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnButtonDelete( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonOK( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonCancel( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		
+@@ -397,7 +411,7 @@ class CGetTextFromUserDialogBase : public wxDialog
+ 		
+ 	
+ 	public:
+-		CGetTextFromUserDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxEmptyString, const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 403,138 ), long style = wxDEFAULT_DIALOG_STYLE );
++		CGetTextFromUserDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxEmptyString, const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 440,138 ), long style = wxDEFAULT_DIALOG_STYLE );
+ 		~CGetTextFromUserDialogBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -155,7 +155,7 @@
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+                 &lt;object class=&quot;wxMenu&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;label&quot;&gt;&amp;amp;Options&lt;/property&gt;
++                    &lt;property name=&quot;label&quot;&gt;&amp;amp;Settings&lt;/property&gt;
+                     &lt;property name=&quot;name&quot;&gt;m_menuOptions&lt;/property&gt;
+                     &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
+                     &lt;object class=&quot;wxMenuItem&quot; expanded=&quot;1&quot;&gt;
+@@ -180,7 +180,7 @@
+                         &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                         &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+-                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Change Your Address...&lt;/property&gt;
++                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Your Receiving Addresses...&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;m_menuOptionsChangeYourAddress&lt;/property&gt;
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                         &lt;property name=&quot;shortcut&quot;&gt;&lt;/property&gt;
+@@ -276,7 +276,7 @@
+                     &lt;property name=&quot;bitmap&quot;&gt;xpm/send20.xpm; Load From File&lt;/property&gt;
+                     &lt;property name=&quot;id&quot;&gt;wxID_BUTTONSEND&lt;/property&gt;
+                     &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+-                    &lt;property name=&quot;label&quot;&gt;&amp;amp;Send Coins&lt;/property&gt;
++                    &lt;property name=&quot;label&quot;&gt;Send Coins&lt;/property&gt;
+                     &lt;property name=&quot;name&quot;&gt;m_tool1&lt;/property&gt;
+                     &lt;property name=&quot;statusbar&quot;&gt;&lt;/property&gt;
+                     &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -290,7 +290,7 @@
+                     &lt;property name=&quot;bitmap&quot;&gt;xpm/addressbook20.xpm; Load From File&lt;/property&gt;
+                     &lt;property name=&quot;id&quot;&gt;wxID_BUTTONRECEIVE&lt;/property&gt;
+                     &lt;property name=&quot;kind&quot;&gt;wxITEM_NORMAL&lt;/property&gt;
+-                    &lt;property name=&quot;label&quot;&gt;&amp;amp;Address Book&lt;/property&gt;
++                    &lt;property name=&quot;label&quot;&gt;Address Book&lt;/property&gt;
+                     &lt;property name=&quot;name&quot;&gt;m_tool2&lt;/property&gt;
+                     &lt;property name=&quot;statusbar&quot;&gt;&lt;/property&gt;
+                     &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+@@ -426,7 +426,7 @@
+                             &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxTextCtrl&quot; expanded=&quot;1&quot;&gt;
+-                                &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_MENU&lt;/property&gt;
++                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                                 &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+@@ -437,7 +437,7 @@
+                                 &lt;property name=&quot;maxlength&quot;&gt;0&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;-1,-1&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_textCtrlAddress&lt;/property&gt;
+-                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;size&quot;&gt;340,-1&lt;/property&gt;
+                                 &lt;property name=&quot;style&quot;&gt;wxTE_READONLY&lt;/property&gt;
+@@ -478,7 +478,7 @@
+                         &lt;/object&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxRIGHT&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxRIGHT|wxALIGN_CENTER_VERTICAL&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -487,22 +487,22 @@
+                                 &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                                 &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;hidden&quot;&gt;1&lt;/property&gt;
+-                                &lt;property name=&quot;id&quot;&gt;wxID_BUTTONCHANGE&lt;/property&gt;
+-                                &lt;property name=&quot;label&quot;&gt;&amp;amp;New...&lt;/property&gt;
++                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                &lt;property name=&quot;id&quot;&gt;wxID_BUTTONNEW&lt;/property&gt;
++                                &lt;property name=&quot;label&quot;&gt; &amp;amp;New... &lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonNew&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
++                                &lt;property name=&quot;style&quot;&gt;wxBU_EXACTFIT&lt;/property&gt;
+                                 &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonChange&lt;/event&gt;
++                                &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonNew&lt;/event&gt;
+                                 &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                                 &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -4388,7 +4388,7 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
++                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;bSizer69&lt;/property&gt;
+                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+@@ -4721,89 +4721,29 @@
+             &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+             &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                &lt;property name=&quot;name&quot;&gt;bSizer68&lt;/property&gt;
++                &lt;property name=&quot;name&quot;&gt;bSizer58&lt;/property&gt;
+                 &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
+                 &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+-                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;spacer&quot; expanded=&quot;1&quot;&gt;
+-                        &lt;property name=&quot;height&quot;&gt;5&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                        &lt;property name=&quot;width&quot;&gt;0&lt;/property&gt;
+-                    &lt;/object&gt;
+-                &lt;/object&gt;
+-                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxTOP|wxRIGHT|wxLEFT&lt;/property&gt;
+-                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;hidden&quot;&gt;1&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+-                        &lt;property name=&quot;label&quot;&gt;Bitcoin Address&lt;/property&gt;
+-                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_staticText55&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;wrap&quot;&gt;-1&lt;/property&gt;
+-                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                    &lt;/object&gt;
+-                &lt;/object&gt;
+-                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                    &lt;property name=&quot;flag&quot;&gt;wxALL|wxEXPAND&lt;/property&gt;
++                    &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxTOP|wxRIGHT|wxLEFT&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                    &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxNotebook&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                        &lt;property name=&quot;bitmapsize&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_LISTCTRL&lt;/property&gt;
++                        &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_listCtrl&lt;/property&gt;
++                        &lt;property name=&quot;name&quot;&gt;m_notebook&lt;/property&gt;
+                         &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                         &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_ASCENDING&lt;/property&gt;
++                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+@@ -4819,32 +4759,14 @@
+                         &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColBeginDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;OnListEndLabelEdit&lt;/event&gt;
+-                        &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivated&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemSelected&quot;&gt;OnListItemSelected&lt;/event&gt;
+-                        &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnNotebookPageChanged&quot;&gt;OnNotebookPageChanged&lt;/event&gt;
++                        &lt;event name=&quot;OnNotebookPageChanging&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+@@ -4852,6 +4774,384 @@
+                         &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                        &lt;object class=&quot;notebookpage&quot; expanded=&quot;1&quot;&gt;
++                            &lt;property name=&quot;bitmap&quot;&gt;&lt;/property&gt;
++                            &lt;property name=&quot;label&quot;&gt;Sending&lt;/property&gt;
++                            &lt;property name=&quot;select&quot;&gt;0&lt;/property&gt;
++                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
++                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                &lt;property name=&quot;id&quot;&gt;wxID_PANELSENDING&lt;/property&gt;
++                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;name&quot;&gt;m_panelSending&lt;/property&gt;
++                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
++                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                    &lt;property name=&quot;name&quot;&gt;bSizer68&lt;/property&gt;
++                                    &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                        &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
++                                        &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                        &lt;object class=&quot;spacer&quot; expanded=&quot;1&quot;&gt;
++                                            &lt;property name=&quot;height&quot;&gt;0&lt;/property&gt;
++                                            &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                            &lt;property name=&quot;width&quot;&gt;0&lt;/property&gt;
++                                        &lt;/object&gt;
++                                    &lt;/object&gt;
++                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -445,10 +445,14 @@ const char* wxGetTranslation(const char* pszEnglish)
+ 
+         // wxWidgets translation
+         const char* pszTranslated = wxGetTranslation(wxString(pszEnglish, wxConvUTF8)).utf8_str();
++
++        // We don&#x27;t cache unknown strings because caller might be passing in a
++        // dynamic string and we would keep allocating memory for each variation.
+         if (strcmp(pszEnglish, pszTranslated) == 0)
+             return pszEnglish;
+ 
+-        // Add to cache, memory doesn&#x27;t need to be freed
++        // Add to cache, memory doesn&#x27;t need to be freed.  We only cache because
++        // we must pass back a pointer to permanently allocated memory.
+         char* pszCached = new char[strlen(pszTranslated)+1];
+         strcpy(pszCached, pszTranslated);
+         mapCache[pszEnglish] = pszCached;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c6ab3cf/">← safer wxGetTranslation wrapper</a><a rel="next" href="../../commits/0184604/">transaction filter tabs instead of view-&gt;show generated --… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

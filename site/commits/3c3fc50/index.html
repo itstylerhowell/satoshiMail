@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>added instructions to… (r92) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 June 2010: added instructions to build-unix.txt for building wxBase, which is needed to compile bitcoind. 1…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/3c3fc50/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="added instructions to… (r92) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 June 2010: added instructions to build-unix.txt for building wxBase, which is needed to compile bitcoind. 1…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/3c3fc50/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="added instructions to… (r92) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 June 2010: added instructions to build-unix.txt for building wxBase, which is needed to compile bitcoind. 1…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added instructions to build-unix.txt for building wxBase, which is needed to compile bitcoind", "url": "https://satoshimail.pages.dev/commits/3c3fc50/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-23T22:51:31Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/3c3fc50c79cbbc2f1da042bf48b34b5900428db6"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "added instructions to build-unix.txt…", "item": "https://satoshimail.pages.dev/commits/3c3fc50/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c3c3fc50c79">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">added instructions to build-unix.txt…</span></div></nav>
+<main class="in">
+<h1>added instructions to build-unix.txt for building wxBase, which is needed to compile bitcoind</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 23 June 2010 · SVN r92 · release v0.3.0 · 1 files, +9 −0</p>
+<p class="actions"><a class="btn" href="../../#t-c3c3fc50c79">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/3c3fc50c79cbbc2f1da042bf48b34b5900428db6" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -63,6 +63,15 @@ make
+ sudo su
+ make install
+ ldconfig
++su &lt;username&gt;
++cd ..
++mkdir buildbase
++cd buildbase
++../configure --disable-gui --enable-debug --disable-shared --enable-monolithic
++make
++sudo su
++make install
++ldconfig
+ 
+ 
+ Boost</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6344edc/">← version 0.3 rc1</a><a rel="next" href="../../commits/3401208/">updated build-unix.txt instructions: sudo apt-get install… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

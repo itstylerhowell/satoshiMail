@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>80x80 xpm icon for ubuntu… (r87) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: 80x80 xpm icon for ubuntu, alignment tweaked to scale nicely to 20x20 and 16x16. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/161c38b/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="80x80 xpm icon for ubuntu… (r87) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: 80x80 xpm icon for ubuntu, alignment tweaked to scale nicely to 20x20 and 16x16. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/161c38b/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="80x80 xpm icon for ubuntu… (r87) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 June 2010: 80x80 xpm icon for ubuntu, alignment tweaked to scale nicely to 20x20 and 16x16. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "80x80 xpm icon for ubuntu, alignment tweaked to scale nicely to 20x20 and 16x16", "url": "https://satoshimail.pages.dev/commits/161c38b/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-21T17:11:26Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/161c38ba6025fba019e84dd4b799addc544ea1b3"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "80x80 xpm icon for ubuntu, alignment…", "item": "https://satoshimail.pages.dev/commits/161c38b/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c161c38ba60">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">80x80 xpm icon for ubuntu, alignment…</span></div></nav>
+<main class="in">
+<h1>80x80 xpm icon for ubuntu, alignment tweaked to scale nicely to 20x20 and 16x16</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 21 June 2010 · SVN r87 · release v0.3.0 · 3 files, +295 −2</p>
+<p class="actions"><a class="btn" href="../../#t-c161c38ba60">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/161c38ba6025fba019e84dd4b799addc544ea1b3" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>headers.h</code></summary><pre><code>@@ -114,6 +114,7 @@ using namespace boost;
+ #include &quot;xpm/bitcoin20.xpm&quot;
+ #include &quot;xpm/bitcoin32.xpm&quot;
+ #include &quot;xpm/bitcoin48.xpm&quot;
++#include &quot;xpm/bitcoin80.xpm&quot;
+ #include &quot;xpm/check.xpm&quot;
+ #include &quot;xpm/send16.xpm&quot;
+ #include &quot;xpm/send16noshadow.xpm&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -250,7 +250,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ #ifdef __WXMSW__
+     SetIcon(wxICON(bitcoin));
+ #else
+-    SetIcon(bitcoin20_xpm);
++    SetIcon(bitcoin80_xpm);
+     SetBackgroundColour(m_toolBar-&gt;GetBackgroundColour());
+     wxFont fontTmp = m_staticText41-&gt;GetFont();
+     fontTmp.SetFamily(wxFONTFAMILY_TELETYPE);
+@@ -2439,7 +2439,7 @@ void CMyTaskBarIcon::Show(bool fShow)
+ #ifdef __WXMSW__
+             SetIcon(wxICON(bitcoin), strTooltip);
+ #else
+-            SetIcon(bitcoin20_xpm, strTooltip);
++            SetIcon(bitcoin80_xpm, strTooltip);
+ #endif
+         }
+     }</code></pre></details><details><summary><code>xpm/bitcoin80.xpm</code></summary><pre><code>@@ -0,0 +1,292 @@
++/* XPM */
++static const char * bitcoin80_xpm[] = {
++/* columns rows colors chars-per-pixel */
++&quot;80 80 206 2&quot;,
++&quot;   c #725203&quot;,
++&quot;.  c #785706&quot;,
++&quot;X  c #7B5907&quot;,
++&quot;o  c #7C5A09&quot;,
++&quot;O  c #7F5F10&quot;,
++&quot;+  c #815E0B&quot;,
++&quot;@  c #85620C&quot;,
++&quot;#  c #89650F&quot;,
++&quot;$  c #856313&quot;,
++&quot;%  c #896614&quot;,
++&quot;&amp;  c #8D6913&quot;,
++&quot;*  c #886718&quot;,
++&quot;=  c #8D6B1B&quot;,
++&quot;-  c #926D14&quot;,
++&quot;;  c #926E1B&quot;,
++&quot;:  c #967116&quot;,
++&quot;&gt;  c #997317&quot;,
++&quot;,  c #95711E&quot;,
++&quot;&lt;  c #9B7419&quot;,
++&quot;1  c #9F781B&quot;,
++&quot;2  c #A27B1D&quot;,
++&quot;3  c #8F6F22&quot;,
++&quot;4  c #926F21&quot;,
++&quot;5  c #947323&quot;,
++&quot;6  c #9A7623&quot;,
++&quot;7  c #9D7925&quot;,
++&quot;8  c #957628&quot;,
++&quot;9  c #9A7729&quot;,
++&quot;0  c #9D7B2B&quot;,
++&quot;q  c #9D7F33&quot;,
++&quot;w  c #A47D23&quot;,
++&quot;e  c #A97F27&quot;,
++&quot;r  c #A37E2B&quot;,
++&quot;t  c #9F8030&quot;,
++&quot;y  c #A78021&quot;,
++&quot;u  c #AC8425&quot;,
++&quot;i  c #A5802D&quot;,
++&quot;p  c #AC842B&quot;,
++&quot;a  c #AF8829&quot;,
++&quot;s  c #B2872C&quot;,
++&quot;d  c #B28B2D&quot;,
++&quot;f  c #A68333&quot;,
++&quot;g  c #AA8633&quot;,
++&quot;h  c #AD8A36&quot;,
++&quot;j  c #A4863A&quot;,
++&quot;k  c #A88638&quot;,
++&quot;l  c #A7893B&quot;,
++&quot;z  c #AC8B3B&quot;,
++&quot;x  c #B28732&quot;,
++&quot;c  c #B48C32&quot;,
++&quot;v  c #B98E34&quot;,
++&quot;b  c #B28D3B&quot;,
++&quot;n  c #B88F3C&quot;,
++&quot;m  c #B69033&quot;,
++&quot;M  c #BD9235&quot;,
++&quot;N  c #B4913D&quot;,
++&quot;B  c #BC943A&quot;,
++&quot;V  c #BE993C&quot;,
++&quot;C  c #C19336&quot;,
++&quot;Z  c #C1953B&quot;,
++&quot;A  c #C49A3C&quot;,
++&quot;S  c #C99C3D&quot;,
++&quot;D  c #CDA13F&quot;,
++&quot;F  c #D0A33F&quot;,
++&quot;G  c #A88B40&quot;,
++&quot;H  c #B08F40&quot;,
++&quot;J  c #AE9142&quot;,
++&quot;K  c #AE944C&quot;,
++&quot;L  c #B49443&quot;,
++&quot;P  c #BB9542&quot;,
++&quot;I  c #B49946&quot;,
++&quot;U  c #BD9846&quot;,
++&quot;Y  c #B3964C&quot;,
++&quot;T  c #BB974A&quot;,
++&quot;R  c #B6994A&quot;,
++&quot;E  c #BF9C4A&quot;,
++&quot;W  c #B69B53&quot;,
++&quot;Q  c #B99D53&quot;,
++&quot;!  c #BCA055&quot;,
++&quot;~  c #BDA25A&quot;,
++&quot;^  c #C49742&quot;,
++&quot;/  c #C49C43&quot;,
++&quot;(  c #CB9E42&quot;,
++&quot;)  c #C49D4B&quot;,
++&quot;_  c #C99E4C&quot;,
++&quot;`  c #C29F52&quot;,
++&quot;&#x27;  c #C5A244&quot;,
++&quot;]  c #CDA245&quot;,
++&quot;[  c #C5A34C&quot;,
++&quot;{  c #CCA34B&quot;,
++&quot;}  c #CCA94D&quot;,
++&quot;|  c #D2A445&quot;,
++&quot; . c #D1A54B&quot;,
++&quot;.. c #D5AA4E&quot;,
++&quot;X. c #DBAF4F&quot;,
++&quot;o. c #C6A352&quot;,
++&quot;O. c #CBA554&quot;,
++&quot;+. c #C5AA57&quot;,
++&quot;@. c #CEAC54&quot;,
++&quot;#. c #C4A65A&quot;,
++&quot;$. c #CDA458&quot;,
++&quot;%. c #C2A85F&quot;,
++&quot;&amp;. c #CEAA5B&quot;,
++&quot;*. c #D0A550&quot;,
++&quot;=. c #D4AB53&quot;,
++&quot;-. c #DBAE53&quot;,
++&quot;;. c #D0A75B&quot;,
++&quot;:. c #D4AC5A&quot;,
++&quot;&gt;. c #D9AE5C&quot;,
++&quot;,. c #CEB25E&quot;,
++&quot;&lt;. c #D4B156&quot;,
++&quot;1. c #DDB156&quot;,
++&quot;2. c #D4B25C&quot;,
++&quot;3. c #DCB35D&quot;,
++&quot;4. c #D7B85C&quot;,
++&quot;5. c #DCBA5E&quot;,
++&quot;6. c #E2B355&quot;,
++&quot;7. c #E2B65B&quot;,
++&quot;8. c #E4BA5D&quot;,
++&quot;9. c #EABD5E&quot;,
++&quot;0. c #C5AA62&quot;,
++&quot;q. c #CCAE63&quot;,
++&quot;w. c #C6AE69&quot;,
++&quot;e. c #D5AF62&quot;,
++&quot;r. c #CEB167&quot;,
++&quot;t. c #CCB36C&quot;,
++&quot;y. c #D5B162&quot;,
++&quot;u. c #DCB462&quot;,
++&quot;i. c #D7B964&quot;,
++&quot;p. c #DCBC64&quot;,
++&quot;a. c #D2B66B&quot;,
++&quot;s. c #DCB669&quot;,
++&quot;d. c #D7BE69&quot;,
++&quot;f. c #DFB86A&quot;,
++&quot;g. c #D0B771&quot;,
++&quot;h. c #D2BA74&quot;,
++&quot;j. c #D5BE78&quot;,
++&quot;k. c #E1B766&quot;,
++&quot;l. c #E4BB63&quot;,
++&quot;z. c #E9BE63&quot;,
++&quot;x. c #E3BB6A&quot;,
++&quot;c. c #E9BF6A&quot;,
++&quot;v. c #E1BE72&quot;,
++&quot;b. c #DDC16B&quot;,
++&quot;n. c #DAC27E&quot;,
++&quot;m. c #E4C164&quot;,
++&quot;M. c #ECC264&quot;,
++&quot;N. c #E4C36B&quot;,
++&quot;B. c #EBC36C&quot;,
++&quot;V. c #E7C96F&quot;,
++&quot;C. c #EECA6E&quot;,
++&quot;Z. c #F1C564&quot;,
++&quot;A. c #F1C76A&quot;,
++&quot;S. c #F5CB6C&quot;,
++&quot;D. c #FACE6D&quot;,
++&quot;F. c #F4D06F&quot;,
++&quot;G. c #FCD06E&quot;,
++&quot;H. c #E5C371&quot;,
++&quot;J. c #EDC573&quot;,
++&quot;K. c #E4CA73&quot;,
++&quot;L. c #ECCC74&quot;,
++&quot;P. c #E7CF7A&quot;,
++&quot;I. c #EBCD7A&quot;,
++&quot;U. c #F3CD73&quot;,
++&quot;Y. c #F8CE71&quot;,
++&quot;T. c #F3CD7A&quot;,
++&quot;R. c #EDD076&quot;,
++&quot;E. c #EDD17B&quot;,
++&quot;W. c #F4D274&quot;,
++&quot;Q. c #FBD274&quot;,
++&quot;!. c #FED977&quot;,
++&quot;~. c #F3D47B&quot;,
++&quot;^. c #FDD47A&quot;,
++&quot;/. c #F5DA7C&quot;,
++&quot;(. c #FDDA7C&quot;,
++&quot;). c #FFE07F&quot;,
++&quot;_. c #DBC481&quot;,
++&quot;`. c #DFC885&quot;,
++&quot;&#x27;. c #E1CA86&quot;,
++&quot;]. c #EACC80&quot;,
++&quot;[. c #E4CD8A&quot;,
++&quot;{. c #EED383&quot;,
++&quot;}. c #E7D18F&quot;,
++&quot;|. c #EAD38C&quot;,
++&quot; X c #F4D680&quot;,
++&quot;.X c #FDD780&quot;,
++&quot;XX c #F5DA83&quot;,
++&quot;oX c #FCDC84&quot;,
++&quot;OX c #F5DB8A&quot;,
++&quot;+X c #FADE89&quot;,
++&quot;@X c #EAD492&quot;,
++&quot;#X c #EED896&quot;,
++&quot;$X c #EFDA9A&quot;,
++&quot;%X c #F1DD9D&quot;,
++&quot;&amp;X c #FDE283&quot;,
++&quot;*X c #F6E18D&quot;,
++&quot;=X c #FEE48D&quot;,
++&quot;-X c #FFE692&quot;,
++&quot;;X c #FFE894&quot;,
++&quot;:X c #FBE799&quot;,
++&quot;&gt;X c #FFEA98&quot;,
++&quot;,X c #F6E2A3&quot;,
++&quot;&lt;X c #FAE6A6&quot;,
++&quot;1X c #FAE7A8&quot;,
++&quot;2X c #FDEAAB&quot;,
++&quot;3X c None&quot;,
++/* pixels */
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u u u u y y u y 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u u u u u u a u u u u u u a u u 2 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u u u u u s m V D &#x27; { &#x27; D M d u u a u u u u 2 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u u u M } m.~.oX=X=X=X=X=X-X-X=X&amp;X/.m.=.V u u a u u w 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u u M 4.~.=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X/.5.Z u u u u u 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u ] V.&amp;X=X=X&amp;X=X=X=X=X=X=X=X=X=X&amp;X=X=X=X=X=X=X=X=X=X=XW.} a u u u 2 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu a u u &#x27; W.=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X+X=X=X=X&amp;X=X=X=X~.} a u u u &lt; 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u M N.=X&amp;X=X=X=X=X=X=X=X-X=X=X=X=X&amp;X=X=X=XoX=X=X=X=X&amp;X+X=X=X=X=X=X=X=XL.M u u u &lt; 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u u } XX=X=X=X&amp;X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X*X=X=X=X=X=X=X=X=X=X=X=X=X=X=XoX&lt;.a u u 2 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u s m.&amp;X=X=X=X=X=X=X=X=X=X=X=X=X=X/.L.M.m.9.m.9.m.C.~.&amp;X*X=X=X=X=X=X=X=X=X=X=X=X=XV.m u u 2 o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3Xu u u c R.=X=X=X=X=X=X=X=X=X=X=XoXC.1.| S S A S D D D D ] ] ..&lt;.N./.=X-X=X-X=X=X=X=X=X=X=XXXZ u a 2 o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3Xu u u m XX=X=X=X=X=X=X=X=X=X=XW.3.| ^ A C M M M C S S A A A / ( { =.&lt;.l.I.=X-X-X=X=X=X=X=X=X=X=XV a u 2 . 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3Xu u m /.=X=X=X-X=X=X=X=X=X~.1.D ] S Z v x p s u s d d v c c v V { =.7.8.7.l.T.=X-X=X-X-X-X-X-X=X=XV u a 1   3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3Xu u d /.=X=X=X=X=X=X=X=X&amp;X8.^ A ( S M v e $.r.e.r.u w i a.a.a.&amp;.b ^ =.l.l.l.c.z.z.XX-X-X-X-X=X-X-X;X&amp;XV u u :   3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3Xu u s R.=X=X=X=X=X=X=X=XU.{ ^ Z C ( A M u w [.2X2X2X0 - 7 2X2X1X@Xi P *.l.x.B.U.C.z.z.W.-X-X-X-X-X-X=X-X*Xd a u # . 3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3Xu u u l.=X=X=X=X-X=X=X=Xm.Z Z Z Z n Z Z v e , &#x27;.2X2X2X5 &amp; ; 2X2X2X}.7 b { 3.x.^.^.^.Y.A.z.R.-X;X;X;X;X-X;X-XP.a u y . 3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3Xu u } -X-X=X-X=X=X=X=Xl.M M Z C C C C C x e ; &#x27;.2X2X2X, $ = 2X2X2X}.6 h ) &gt;.J..X.X.X.X(.W.Z.C.&amp;X;X;X;X;X-X-X-X&lt;.u u &lt;   3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3Xu u c oX=X=X=X=X=X=X=Xl.Z C M M C C v v v s w = &#x27;.2X2X2X5 $ = 2X2X2X}.5 g ) u./.+X+X=X=X=X&amp;XW.Z.F.=X;X;X;X;X-X-X*XV u y @ X 3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3Xu u u N.-X-X-X-X=X=X=XB.Z M C v v s e e e e w &gt; % `.2X2X2X= + % 2X2X2X}.= r L 4.E.OX+X-X=X=X&amp;X).W.M.R.;X;X;X-X-X-X;XR.u u y   3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3Xu u U -X-X-X-X-X-X=XW.^ C C C x e e r 6 5 4 ; = $ `.2X2X2X= O = 2X2X2X}.O = t Q ,.b.P./.*X=X&amp;X&amp;X).F.M.W.;X;X;X;X&amp;X-X&amp;X} u u O   3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xu u u R.-X-X-X-X-X-X=X=.{ ^ Z C x n 2X2X&lt;X&lt;X1X2X&lt;X&lt;X2X2X2X2X1X1X&lt;X2X2X2X&lt;X$X[.b.~ J I ~ b.P.&amp;X&amp;X&amp;X).!.F.m.).;X;X;X;X;X&amp;X).u y y   3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xu u U -X-X-X-X-X-X-Xc.=.=. ._ ^ x z 2X2X1X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X&lt;Xn.l I ,.K./.).).).F.Z.Z.&amp;X;X;X=X-X-X&amp;X} u u O   3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xu u V.-X;X-X-X-X-XOX&gt;.&gt;.&gt;.=.=._ n b 2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X:XI N +.V./.).).F.F.9.W.;X=X;X-X-X-XR.u u &gt;   3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xu u d =X;X-X-X-X-X-Xx.&gt;.&gt;.&gt;.&gt;.&gt;...^ P 2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X,Xl N 4.R.!.!.!.G.Z.M.&amp;X;X=X=X-X-X-XB a u     3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xu u @.;X;X-X;X;X;XXX&gt;.:.&gt;.&gt;.&gt;.&gt;.&gt;._ P ` Y Y W _.2X2X2X2X2X2X@XW W ~ 0.t.&#x27;.&lt;X2X2X2X2X2X2X2X2X&#x27;.0 &#x27; m./.!.!.Q.S.9.F.=X;X-X=X-X&amp;X4.u u @   3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xu u P.;X;X;X;X-X:XN.&gt;.&gt;.&gt;.&gt;.&gt;.&gt;.&gt;.=._ P z r 4 8 2X2X2X2X2X2X_.. $ , 6 1 3 t ~ 1X2X2X2X2X2X2X2Xt B 5.G.!.!.G.G.M.9.&amp;X;X=X-X-X=X/.u u &gt;   3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u d =X;X;X=X;X;X=X3.&gt;.&gt;.&gt;.e.&gt;.3.3.&gt;.:.*._ P r 9 2X2X2X2X2X1Xn.@ , c B N m h 8 ~ 2X2X2X2X2X2X2XI h &lt;.F.!.G.G.F.M.9.W.;X=X-X-X=X=Xm u y   . 3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u &#x27; -X-X&gt;X-X-X-X X&gt;.&gt;.&gt;.&gt;.&gt;.&gt;.&gt;.u.u.u.u.3.$.P f 2X2X2X2X2X2X_.$ i / -.&lt;.8.} h 8 1X2X2X2X2X2X2X! i &lt;.S.G.G.G.G.Z.9.Z.=X-X=X-X&amp;X-X} u u X   3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u 4.-X-X-X-X-X-XJ.3.&gt;.&gt;.k.k.k.k.k.u.k.u.u.:.U k 2X2X2X2X2X1X_.% f } 8.Z.F.8.U 8 ,X2X2X2X2X2X2XI g } Z.D.G.D.G.D.Z.9.&amp;X-X=X=X=X-Xm.u u @   3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u K.;X-X;X-X&gt;X-Xk.3.k.k.k.k.k.k.k.k.k.k.u.e.U k 2X2X2X2X2X2X_.% f [ 8.F.M.&lt;.b i 2X2X2X2X2X2X2Xt a X.Z.D.D.D.G.G.Z.9./.=X-X=X=X=XR.u u &amp;   3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u E.;X-X;X-X-X=Xl.l.x.c.k.x.k.k.x.x.v.x.x.u.) z 2X2X2X2X2X2X_.$ 7 L &lt;.&lt;.} N 6 h.2X2X2X2X2X2X_.: V 1.S.D.D.G.D.S.M.6.W.-X=X-X=X=X&amp;Xu u &gt;   X 3X3X3X3X3X&quot;,
++&quot;3X3X3Xu a u =X;X;X;X;X;XoX7.z.c.c.c.c.c.c.c.c.c.x.k.u.) z 2X2X2X2X2X2Xn.o = i N h i l n.2X2X2X2X2X2X&lt;Xt t D 7.M.Z.z.z.9.9.9.6.M.-X=X=X=X;X=Xm u 1     3X3X3X3X3X&quot;,
++&quot;3X3X3Xy u a =X;X;X;X;X;XXXl.z.c.c.c.c.T.J.J.T.v.J.J.s.` z 2X2X2X2X2X2X#XW ~ ~ t.n.$X2X2X2X2X2X2X2X,Xt % t V X.8.9.8.9.9.9.6.6.M.-X=X=X=X=X&amp;XM u 2     3X3X3X3X3X&quot;,
++&quot;3X3X3Xu u m -X-X-X;X;X;X~.z.z.c.c.c.c..XJ.J.J.J.J.J.x.O.b 2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2Xw.$ * y V X.7.8.8.9.7.8.7.6.8.=X=X-X-X=X-XV a y     3X3X3X3X3X&quot;,
++&quot;3X3X3Xu a m -X-X-X;X;X;X~.7.z.c.c.c.c.c.c.J.T.J.T.J.B.O.b 2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X,X~ , c &#x27; X.6.6.7.6.6.6.6.8.=X=X=X-X&amp;X-XV u y     3X3X3X3X3X&quot;,
++&quot;3X3X3Xu u m -X-X-X-X-X-X/.8.l.z.c.T.c.J.c.J.T.v.J.J.x.O.G 2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2Xn.r v { 6.6.6.6.6.6.-.7.&amp;X-X=X=X=X-XD u y     3X3X3X3X3X&quot;,
++&quot;3X3X3Xu u d =X-X-X-X-X-X~.7.z.z.c.c.c.c.c.J.c.T.T.^.T.y.R 2X2X2X2X2X2X@XK K W W W ~ h.#X1X2X2X2X2X2X2X2X2Xa.i Z ..X.6.6.-.-.6.7.-X-X-X-X-X-XD u 2     3X3X3X3X3X&quot;,
++&quot;3X3X3Xw u a =X-X-X-X-X-X~.7.7.8.c.c.c.c.T..X.X+X+X+XXXi.R 2X2X2X2X2X2Xn.. * 5 8 5 3 = * q `.2X2X2X2X2X2X2X&lt;Xk c | X.6.-.-.-.-.z.&amp;X;X=X;X-X;XV u w     3X3X3X3X3X&quot;,
++&quot;3X3X3Xu u u =X-X=X-X-X-X/.8.M.B.Y.T.^.^.^..X.XoXoX+XXXi.R 2X2X2X2X2X2X_.$ 0 b U U N l t 5 $ `.2X2X2X2X2X2X2X0.e Z  .....-.-.6.c.;X=X;X=X;X-Xd u 1     3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu a E.-X-X-X-X-X=Xz.S.D.Y.^.Q.^.^.^..XoX+X+XXXi.R 2X2X2X2X2X2X_.= l +.u.i.,.O.E h 5 G 2X2X2X2X2X2X2X_.0 n |  . .*. .*.T.-X;X;X;X-X=Xa u :     3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u N.-X-X-X=X-X-XA.Z.S.Y.Q.Q.^.^..X.XoXoX&amp;X.Xi.R 2X2X2X2X2X2X_.= N y.H.H.m.i.y.E f 8 2X2X2X2X2X2X2X&#x27;.6 n |  . . . . ..X;X;X;X;X-X~.u u &amp;     3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xu u &lt;.-X-X=X=X-X-XW.Z.S.Y.Y.Q.^.^.^.(..XoX=XXXi.R 2X2X2X2X2X2X_.= L 4.H.J.H.x.i.o.k j 2X2X2X2X2X2X2X_.6 B  . . . .{ =.-X;X-X;X-X-Xb.a u @     3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xy a V =X=X-X-X=X-XXXZ.S.Y.Y.Y.Q.!.^..X.XoXoXE.y.I 2X2X2X2X2X2X_.= J y.b.H.N.p.&amp;.P 0 g.2X2X2X2X2X2X2Xr.r B _ {  .| ] l.-X;X;X-X-X;X..u u .   . 3X3X3X3X3X&quot;,
++&quot;3X3X3X3Xy u a =X=X=X=X-X=X-XM.Z.S.Y.Y.Q.Q.^.^.^.U.J.u.E l 2X2X2X2X2X2X_.* k o.e.e.$.` P q W 1X2X2X2X2X2X2X2XG i B ] | ] ] ( ~.=X;X;X;X;X;XM u y     3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xu u V.-X=X-X=X-X-XF.M.A.D.Y.Q.Y.Q.Y.B.2.[ N 0 j 2X2X2X2X2X2X_.O 5 l G z H H Q _.2X2X2X2X2X2X2X2X#X, g ^ ] ] | ] ..-X-X-X-X&amp;X;X).u u :     3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xu u } =X=X=X=X-X=X&amp;XM.Z.S.D.W.Q.Y.B.*.a.#X@X|.,X2X2X2X2X2X2X,X[.[.}.}.%X&lt;X2X2X2X2X2X2X2X2X2X2X&lt;Xj 6 b / ] ] ] ] M.-X-X-X-X-X-X4.u u O     3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3Xy u d =X=X=X=X=X=X-XS.M.A.S.S.U.A.u.) n.2X2X2X2X2X2X2X2X2X2X2X2X1X2X2X2X2X2X2X2X2X2X2X2X2X2X2XW ; i M ( S S S ] &amp;X-X-X-X-X=X-Xm u y .   X 3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xu u p.=X=X=X=X=X-X&amp;X9.Z.C.S.S.M.:.b [.2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X%XG = r x v C D D D m.-X-X-X-X-X-XR.u u :     3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xy u B =X=X=X=X=X=X=XF.9.M.A.C.M.=.h %X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X2X1X#X~ 4 ; r p v v M C A | &amp;X-X-X-X-X-X-X] u u X     3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3Xy u u N.=X=X-X=X-X=X=XM.z.M.M.M.1.V #X%X%X%X%X$X%X%X&lt;X2X2X2X%X$X%X2X2X2X&lt;X[.n.t.W q = , r i x v C C C M C W.-X-X-X-X-X-X/.u u 1     X 3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3Xu u V *X=X=X*X=X=X=XoX8.M.M.M.5.{ m r , ; $ $ o o `.2X2X2X3 o $ 2X2X2X[.o $ 4 9 0 r g x v m C M C C C 8.&amp;X-X-X-X-X-X-X[ u u @     3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X2 u u 5.=X=X=X=X=X=X=XI.8.M.M.z.3.O.) P b r 0 4 % `.2X2X2X3 $ * 2X2X2X[.$ 4 r e ^ n n Z Z Z C C C M | =X=X-X-X-X-X-XR.u u &lt;       3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3Xy u d XX=X=X=X=X-X=X=XS.8.8.M.M.z.z.7.{ _ U g 5 `.2X2X2X8 = 3 2X2X2X}.3 0 x ^ _ ^ ^ ^ Z ^ B ^ C  .&amp;X-X-X-X-X-X-X=XB u u o     3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X1 u u &#x27; =X=X*X=X=X*X=X=XW.8.M.M.A.S.l.u.&gt;.o.L r [.2X2X2X9 = 8 2X2X2X}.4 r ^ _ *.*._ ) ) ^ ^ ^ O.oX=X-X-X-X-X-X-X&lt;.u u :     . 3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3Xy u u i.=X=X=X=X=X-X*X=XW.9.M.A.B.3.5.5.;.U f [.2X2X2Xq 4 8 2X2X2X}.r q _ _ ;.;.*._ _ ` _ e.+X-X-X-X-X-X-X-XR.a u 2       3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3Xu u u K.=X=X=X-X=X=X=X=XXXz.M.8.5.8.u.:.) h }.2X2X2Xj r f 2X2X2X@Xq T _ e.e.u.e.;.$.$.b.-X-X-X=X;X=X;X-X&amp;Xa a u +     3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3Xu u d ~.=X=X=X=X=X-X=X-X+XC.3.5.7.7.2.@.) q.r.q.q.H H L g.r.w.q.T ` e.k.v.k.k.s.s.{.-X-X;X-X;X;X;X;X*XV u u &amp;     . 3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X2 u u c XX-X=X=X=X=X-X=X-X-X Xl.7.7.u.2.$.o.[ [ o.O.$.&amp;.&amp;.` ` ` q.s.k.v.k.k.x.{.%X&gt;X&gt;X&gt;X;X&gt;X;X&gt;X&gt;X*XV u u &gt;       3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X2 u u m ~.=X-X-X-X=X-X-X-X-X-X Xc.7.5.u.3.e.y.u.s.f.k.s.e.e.s.s.k.k.k.v. X:X&gt;X&gt;X&gt;X&gt;X&gt;X&gt;X;X&gt;X&gt;X*XV u u &lt;       3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X2 u u d R.-X=X-X=X-X-X-X-X-X-X-X+XI.v.u.s.l.k.k.x.x.x.s.s.s.s.j.].+X&gt;X&gt;X&gt;X&gt;X&gt;X:X&gt;X&gt;X&gt;X&gt;X&gt;XOXV u u 1       3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X2 u u a p.-X-X-X;X;X;X-X-X-X:X-X-X-X-XOX XL.J.J.J.L.I.].OX:X&gt;X-X&gt;X&gt;X-X&gt;X&gt;X&gt;X&gt;X&gt;X&gt;X&gt;X&gt;XK.a a u &lt;       3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X2 u u u @.=X;X;X&gt;X;X-X-X&gt;X-X-X-X-X;X-X-X-X-X-X&gt;X&gt;X-X&gt;X-X&gt;X&gt;X&gt;X&gt;X;X&gt;X&gt;X&gt;X-X&gt;X-X-X:X&lt;.u u u &gt;       3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X1 u u u m n.&gt;X;X&gt;X&gt;X-X-X-X-X&gt;X-X-X-X;X;X;X-X-X-X-X-X&gt;X-X-X&gt;X-X&gt;X&gt;X-X&gt;X&gt;X&gt;X&gt;XK.B u u u &amp;       3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xw u u u / {.&gt;X&gt;X-X-X-X-X-X-X-X-X-X-X;X-X-X;X:X-X-X&gt;X-X:X&gt;X;X;X&gt;X;X;X{.[ u u u w +       3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X2 u u u u ) K.-X-X-X-X:X-X-X-X-X-X-X-X-X-X-X-X-X&gt;X-X-X-X-X-X-XE.[ u u u u -       . 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X1 u u u u m 2.E.-X+X:X-X-X-X-X-X-X-X-X-X:X-X-X-X;X-XOXi.B u u u u 1 o       3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&gt; u u u u u v [ l.I.OX-X-X-X-X-X-X-X-X+XI.f.@.m u u u u u 1 +       o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&amp; 2 u u u u u u u d B V V V V B d u u u u u u u y - .       o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X+ - 1 u u u u u u u a u u u u u u u u 2 - o         o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xo . X # - &gt; 1 2 2 2 1 2 &gt; - # o .         o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3Xo o                     . o 3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;,
++&quot;3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X3X&quot;
++};</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/68b973a/">← fixed colors on ubuntu lucid, enabled -O2 in…</a><a rel="next" href="../../commits/36bb88e/">fix system tray icon on windows →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

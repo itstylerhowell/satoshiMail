@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flood attack 0.00000001 BC – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 4 August 2010: Bitcoin isn&#x27;t currently practical for very small micropayments. Not for things like pay per search or per page view…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p86-flood-attack-0-00000001-bc/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Flood attack 0.00000001 BC – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 4 August 2010: Bitcoin isn&#x27;t currently practical for very small micropayments. Not for things like pay per search or per page view…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p86-flood-attack-0-00000001-bc/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Flood attack 0.00000001 BC – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 4 August 2010: Bitcoin isn&#x27;t currently practical for very small micropayments. Not for things like pay per search or per page view…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Flood attack 0.00000001 BC", "url": "https://satoshimail.pages.dev/conversations/p86-flood-attack-0-00000001-bc/", "author": {"@type": "Person", "name": "Mionione"}, "datePublished": "2010-07-12T12:04:24Z", "text": "hi, what would happen if someone sends millions of 0.00000001 BC to millions of address please ? => all of the networks peers must store all transactions ? => are each 0.00000001 owner/hash stocked in blocks on all peers? i don't really understand how bitcoin handle fractions of bc", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-07-12T12:08:45Z", "text": "From the source code: main.h: // To limit dust spam, require a 0.01 fee if any output is less than 0.01"}, {"@type": "Comment", "author": {"@type": "Person", "name": "llama"}, "datePublished": "2010-07-12T14:23:46Z", "text": "Hmm, I didn't realize that was in there, and I really don't like that approach. That pretty much ruins the possibility of using bitcoin for true micropayments. Wouldn't it be better for clients to just ignore a spammy IP? Sure an attacker could get more, but he couldn't get millions."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-07-12T14:45:54Z", "text": "But how would you distinguish between a legitimate micropayment-processing IP and a spammy \"I want to make Bitcoin use so much bandwidth nobody is willing to run it any more\" IP? Really small micropayments seem to me to be a really hard problem, and I don't think Bitcoin should try to solve too many very hard problems all at once."}, {"@type": "Comment", "author": {"@type": "Person", "name": "llama"}, "datePublished": "2010-07-12T14:56:11Z", "text": "Gavin, It's simple. You will need a fixed component transaction fee, but it will probably be much smaller than that. The fixed component should reflect the true cost to the network of running the transaction. So, the additional bandwidth, latency, etc that the transaction actually costs the network. Chances are, this will be tiny. I'd guess something like 0.00001 BC, even at the current exchange rate."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Mionione"}, "datePublished": "2010-07-12T15:05:44Z", "text": "if i send many 0.00000001 BC using a friend node that take no fee (or that send fee back to me). Will the friend node spead all the transactions over the network?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-07-12T15:22:31Z", "text": "The fee is paid to whoever generates the block that the transactions are in, and that's random. Your friend could run a node that refunds the fee, but unless your friend can convince a lot of other people to run nodes that do the same thing you're almost certainly going to end up paying the fee. Remember that all transactions (even payments from you to your friend) are broadcast across the payment network; they HAVE to be, because if they weren't you could spend the same coins twice without…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Mionione"}, "datePublished": "2010-07-12T15:40:04Z", "text": "so the fee must be the same for all nodes isn't it ? do the nodes reject other nodes that doesn't apply the same fee? if not, there is no way to wait/find a node that apply a lower fee?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-07-12T16:50:59Z", "text": "You can send a billion small transactions, it doesn't slow anything down, except the user interface because you end up with a ton of items in the list. Just go ahead and try it, see for yourself. All of the transactions are included by nodes that are attempting to generate the next block and only the header is hashed so it is not harder to generate a block that represents a million transactions than it is to generate a simple coinbase only. This is what the confirmations are, blocks that…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bencoder"}, "datePublished": "2010-07-12T22:10:51Z", "text": "I guess the worry here is that it's possible that bitcoins could end up being worth a lot more than they are today. For example, if 0.01 BTC works out to be the equivalent of $1 today, then that built-in 0.01 transaction fee is far too high. If there is some way to make the transaction fee scale with the worth of the currency that would be best, but I can't think even conceptually how that could be possible. It's not like the currency has any idea how much it is worth in real terms."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-12T22:14:50Z", "text": "I think a 0.01 BTC minimum send is fine for now. At the current exchange rate, that's 8/1000 of a penny USD, or 80 millionths of a dollar. Any micropayment smaller than that would not be made one at a time. If, for example, you wanted to charge 0.001BTC for something, you could just charge 0.01 and keep a balance. If bitcoins become much more valuable, we can change this and push out a new version."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-12T22:30:20Z", "text": "Ideally, you raise the ceiling in this situation. Right now, there is a 21 million coin limit. So as the value goes up, so does the ceiling so to speak. Unless one person has 20 million bitcoins and the rest of the world has to trade with 1 million, there should be no reason go in the opposite direction for the value to value comparison. But I do understand exactly what you mean though because some world currency is traded like that where 1 unit of XYZ country equals 20,000 of another, so…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "AndrewBuck"}, "datePublished": "2010-07-14T18:25:41Z", "text": "If I understand the workings of the system correctly, clients on the network are broadcast the details on the new transactions coming in. If a given client is generating they take any transactions they have seen come into them, bundle them into a \"trial block\" (along with a new 50 BTC token for themselves) and then commence trying to find a nonce which hashes this block to something below the target value. Since blocks with more transactions in them will take longer to hash, the flood of small…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-07-14T18:31:31Z", "text": "This is not quite right. The block header that is being hashed is a constant size no matter how many transactions the block contains. So blocks with more transactions in them should still take the same amount of time to hash. The rest is correct and insightful though."}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-07-15T05:41:07Z", "text": "I added this little tidbit into my IRC bot: According to http://is.gd/dsqcH the world population is 6,855,986,675. If everyone had the same amount of bitcoins, everyone would have 0.00306302 bitcoins. If 0.00000001 bitcoins were equivalent to US$0.01, then everyone would have equivalent of US$3,063.01645489 and the value of all bitcoins would be equivalent of US$21,000,000,000,000.00. How would the BTC0.01 fee affect things considering above?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-15T05:48:21Z", "text": "By the time everyone has Bitcoins, the fee will have been removed or adjusted."}, {"@type": "Comment", "author": {"@type": "Person", "name": "melvster"}, "datePublished": "2010-07-21T13:57:44Z", "text": "Would love to see this value at 0.001 rather than 0.01"}, {"@type": "Comment", "author": {"@type": "Person", "name": "BeeCee1"}, "datePublished": "2010-07-23T00:56:28Z", "text": "What would happen if someone modified their client to not offer to pay the fee, and also modified their client to not require the fee? Here's my best guess: * They generate a 0.00000001 BC payment (but don't include the fee) * This transaction goes to the clients peers * The peers don't include it in the block they are solving since fee not paid. * Do the peers still pass the transaction along to the rest of the network? * A block gets solved without the transaction in it * client notices its…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nenolod"}, "datePublished": "2010-07-23T05:03:00Z", "text": "I do not see how it does that. 1 BTC will likely always be smaller than USD/EUR/etc, thus meaning that it can be used for micropayments."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Red"}, "datePublished": "2010-07-23T05:23:59Z", "text": "Does paying the \"fee\" require the use of the \"pay to anyone\" signature I read about in another thread?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "throughput"}, "datePublished": "2010-07-23T13:39:41Z", "text": "Hi. Micropayment is less that 0.01 $, I suppose. Having an (economically) effective implementation of micropayment system will affect the way current economics works. For example, it may make the media producer's business unprofitable in some areas, I suppose. So, the economics may be interested in payments with less that 0.001 $ volume and with more than millions transaction per day numbers. But that system still does not exists Sad"}, {"@type": "Comment", "author": {"@type": "Person", "name": "melvster"}, "datePublished": "2010-07-23T14:32:12Z", "text": "You can do it if you have a system of micropayments with the CASH OUT in bitcoins. That way most transactions will not go through the bitcoin system."}, {"@type": "Comment", "author": {"@type": "Person", "name": "llama"}, "datePublished": "2010-08-04T05:14:55Z", "text": "I think it's very important that the transaction fee reflect no more than the true cost that the transaction causes the network. Micropayments can be useful even if they're very very tiny. Imagine a lightbulb that sends a little ping bitcoin charge for every millisecond it's turned on. There are countless applications for tiny tiny payments."}, {"@type": "Comment", "author": {"@type": "Person", "name": "bytemaster"}, "datePublished": "2010-08-04T06:22:56Z", "text": "Well, right now nothing stops someone from creating a system where: A sends 1.00000001 to B B sends 1.00000000 back to A Net result is a micro-payment and no processing fee. I am creating a system that does something very similar to the above. The reality is that any \"micro-payment\" system should probably be handled outside the BTC block and have the payments \"summed up\" before being sent. I think the processing fee design is brilliant. Every node can pick and choose which transactions it…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-04T11:58:58Z", "text": "... unless B started with zero bitcoins. Then B is stuck; she can't send 1.0 back, because doing that would cause a 0.00000001 bitcoin 'change' transaction, which would trigger the 0.01BTC fee, which they can't pay (because they only have 1.0000000001)."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-08-04T12:17:00Z", "text": "Surely this is not correct? The 1 BTC transaction is a transaction with 1 input and 2 outputs, but it's still only 1 transaction."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-08-04T12:55:59Z", "text": "The rule is \"if any TxOut (output) has a value of less than 0.01 bitcoins, charge a 0.01 fee\": main.h: foreach(const CTxOut& txout, vout) if (txout.nValue < CENT) nMinFee = CENT;"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-08-04T13:04:18Z", "text": "Since there is no way to tell which is the 'change' transaction. That's kinda cool. (and somewhat horrible at the same time.)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "bytemaster"}, "datePublished": "2010-08-04T13:40:35Z", "text": "Wow, ok this needs to go or it becomes impossible to do micropayment systems. For example, I am trying to build an automated system you \"pay per packet\" sent across a P2P network. Payments would generally be advanced, say 1 BTC at a time and when the connection closes any \"change\" would be returned. This rule makes it impossible to pay for a simple \"search query\" with no further transactions. I suppose that I would have to release the P2P program with its own BTC client that does not have this…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-08-04T14:58:31Z", "text": "What exactly is this 'dust spam' that this 0.01BTC transaction fee \"solving\"? It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting. I'm not aware that the network is straining under the weight of the existing transaction volume. Anyone wishing to send a lot of transactions can already do this by sending x BTC to themselves a lot."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-04T15:02:02Z", "text": "There are builds that remove this limit, mainly for testing right now, I think that's why it's disabled until it can be tweaked a little more."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Flood attack 0.00000001 BC", "item": "https://satoshimail.pages.dev/conversations/p86-flood-attack-0-00000001-bc/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p86">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Flood attack 0.00000001 BC</span></div></nav>
+<main class="in">
+<h1>Flood attack 0.00000001 BC</h1>
+<p class="lead">BitcoinTalk forum · 58 messages · from 12 July 2010 · with AndrewBuck, Anonymous, BeeCee1, ByteCoin, FreeMoney, Gavin Andresen…</p>
+<p class="actions"><a class="btn" href="../../#t-p86">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/86/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Mionione</b><span class="muted"> · <time datetime="2010-07-12T12:04:24Z">12 July 2010, 12:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2293#msg2293" rel="nofollow noopener">original</a></span></header>
+<div class="t">hi, what would happen if someone sends millions of 0.00000001 BC to millions of address please ?
+
+=&gt; all of the networks peers must store all transactions ?
+=&gt; are each 0.00000001 owner/hash stocked in blocks on all peers?
+
+i don&#x27;t really understand how bitcoin handle fractions of bc</div></article><article class="msg" id="m1">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-12T12:08:45Z">12 July 2010, 12:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2295#msg2295" rel="nofollow noopener">original</a></span></header>
+<div class="t">From the source code:</div><pre><code>main.h:        // To limit dust spam, require a 0.01 fee if any output is less than 0.01</code></pre></article><article class="msg" id="m2">
+<header><b>llama</b><span class="muted"> · <time datetime="2010-07-12T14:23:46Z">12 July 2010, 14:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2314#msg2314" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hmm, I didn&#x27;t realize that was in there, and I really don&#x27;t like that approach.
+
+That pretty much ruins the possibility of using bitcoin for true micropayments.  Wouldn&#x27;t it be better for clients to just ignore a spammy IP?  Sure an attacker could get more, but he couldn&#x27;t get millions.</div></article><article class="msg" id="m3">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-12T14:45:54Z">12 July 2010, 14:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2319#msg2319" rel="nofollow noopener">original</a></span></header>
+<div class="t">But how would you distinguish between a legitimate micropayment-processing IP and a spammy &quot;I want to make Bitcoin use so much bandwidth nobody is willing to run it any more&quot; IP?
+
+Really small micropayments seem to me to be a really hard problem, and I don&#x27;t think Bitcoin should try to solve too many very hard problems all at once.</div></article><article class="msg" id="m4">
+<header><b>llama</b><span class="muted"> · <time datetime="2010-07-12T14:56:11Z">12 July 2010, 14:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2322#msg2322" rel="nofollow noopener">original</a></span></header>
+<div class="t">Gavin,
+
+It&#x27;s simple.  You will need a fixed component transaction fee, but it will probably be much smaller than that.  The fixed component should reflect the true cost to the network of running the transaction.  So, the additional bandwidth, latency, etc that the transaction actually costs the network.
+
+Chances are, this will be tiny.  I&#x27;d guess something like 0.00001 BC, even at the current exchange rate.</div></article><article class="msg" id="m5">
+<header><b>Mionione</b><span class="muted"> · <time datetime="2010-07-12T15:05:44Z">12 July 2010, 15:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2327#msg2327" rel="nofollow noopener">original</a></span></header>
+<div class="t">if i send many 0.00000001 BC using a friend node that take no fee (or that send fee back to me).
+
+Will the friend node spead all the transactions over the network?</div></article><article class="msg" id="m6">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-12T15:22:31Z">12 July 2010, 15:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2328#msg2328" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Mionione on July 12, 2010, 03:05:44 PM</div><div class="t">if i send many 0.00000001 BC using a friend node that take no fee (or that send fee back to me).
+
+Will the friend node spread all the transactions over the network?</div></blockquote><div class="t">The fee is paid to whoever generates the block that the transactions are in, and that&#x27;s random.
+
+Your friend could run a node that refunds the fee, but unless your friend can convince a lot of other people to run nodes that do the same thing you&#x27;re almost certainly going to end up paying the fee.
+
+Remember that all transactions (even payments from you to your friend) are broadcast across the payment network; they HAVE to be, because if they weren&#x27;t you could spend the same coins twice without getting caught.</div></article><article class="msg" id="m7">
+<header><b>Mionione</b><span class="muted"> · <time datetime="2010-07-12T15:40:04Z">12 July 2010, 15:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2329#msg2329" rel="nofollow noopener">original</a></span></header>
+<div class="t">so the fee must be the same for all nodes isn&#x27;t it ?
+
+do the nodes reject other nodes that doesn&#x27;t apply the same fee?
+
+if not, there is no way to wait/find a node that apply a lower fee?</div></article><article class="msg" id="m8">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-07-12T16:50:59Z">12 July 2010, 16:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2342#msg2342" rel="nofollow noopener">original</a></span></header>
+<div class="t">You can send a billion small transactions, it doesn&#x27;t slow anything down, except the user interface because you end up with a ton of items in the list.  Just go ahead and try it, see for yourself.
+
+All of the transactions are included by nodes that are attempting to generate the next block and only the header is hashed so it is not harder to generate a block that represents a million transactions than it is to generate a simple coinbase only.  This is what the confirmations are, blocks that include your transaction.</div></article><article class="msg" id="m9">
+<header><b>bencoder</b><span class="muted"> · <time datetime="2010-07-12T22:10:51Z">12 July 2010, 22:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2399#msg2399" rel="nofollow noopener">original</a></span></header>
+<div class="t">I guess the worry here is that it&#x27;s possible that bitcoins could end up being worth a lot more than they are today. For example, if 0.01 BTC works out to be the equivalent of $1 today, then that built-in 0.01 transaction fee is far too high.
+
+If there is some way to make the transaction fee scale with the worth of the currency that would be best, but I can&#x27;t think even conceptually how that could be possible. It&#x27;s not like the currency has any idea how much it is worth in real terms.</div></article><article class="msg" id="m10">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-12T22:14:50Z">12 July 2010, 22:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2400#msg2400" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think a 0.01 BTC minimum send is fine for now. At the current exchange rate, that&#x27;s 8/1000 of a penny USD, or 80 millionths of a dollar. Any micropayment smaller than that would not be made one at a time. If, for example, you wanted to charge 0.001BTC for something, you could just charge 0.01 and keep a balance.
+
+If bitcoins become much more valuable, we can change this and push out a new version.</div></article><article class="msg" id="m11">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-12T22:30:20Z">12 July 2010, 22:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2407#msg2407" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bencoder on July 12, 2010, 10:10:51 PM</div><div class="t">I guess the worry here is that it&#x27;s possible that bitcoins could end up being worth a lot more than they are today. For example, if 0.01 BTC works out to be the equivalent of $1 today, then that built-in 0.01 transaction fee is far too high.
+
+If there is some way to make the transaction fee scale with the worth of the currency that would be best, but I can&#x27;t think even conceptually how that could be possible. It&#x27;s not like the currency has any idea how much it is worth in real terms.</div></blockquote><div class="t">Ideally, you raise the ceiling in this situation. Right now, there is a 21 million coin limit. So as the value goes up, so does the ceiling so to speak. Unless one person has 20 million bitcoins and the rest of the world has to trade with 1 million, there should be no reason go in the opposite direction for the value to value comparison. But I do understand exactly what you mean though because some world currency is traded like that where 1 unit of XYZ country equals 20,000 of another, so small decimal values have to be used.
+
+Since the transaction fee can&#x27;t get below 0.01, the value should always be greater than the fee, otherwise, people are not making any financial sense. It would be like living in a city where it cost $10.00 to drink from a water fountain. The business model should fail in light of free, public water fountains outside, so who would bother to pay that much money when the alternative makes more financial sense.
+
+Same way with the 0.01 fee limit, people already expect it and won&#x27;t value things beneath it as it wouldn&#x27;t make financial sense.  If the lowest possible fee is 0.01, why would anyone sell anything for less than that? You would put yourself out of business quickly.</div></article><article class="msg" id="m12">
+<header><b>AndrewBuck</b><span class="muted"> · <time datetime="2010-07-14T18:25:41Z">14 July 2010, 18:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2904#msg2904" rel="nofollow noopener">original</a></span></header>
+<div class="t">If I understand the workings of the system correctly, clients on the network are broadcast the details on the new transactions coming in.  If a given client is generating they take any transactions they have seen come into them, bundle them into a &quot;trial block&quot; (along with a new 50 BTC token for themselves) and then commence trying to find a nonce which hashes this block to something below the target value.
+
+Since blocks with more transactions in them will take longer to hash, the flood of small payments would  make the client work harder before it solves a block.  What if we change the transaction format from the current &quot;123 wants to send X coins to 456&quot;, to be something like &quot;123 wants to send X coins to 456 and will pay Y coins to whomever solves the block containing this transaction&quot;.
+
+Then each client sets their own minimum transaction fee (which defaults to 0).  If they receive new transaction from someone, they check that the fee is greater than or equal to their own minimum transaction fee.  If the fee is high enough they will add the transaction to the pool of transactions they are trying to find a solution for.  If not, they will just ignore the update (still forwarding it on to others though so the network still functions).  When they add the transaction they will really add it as 2 parts, the X coins from 123 to 456, and a second transaction of 123 to themself.
+
+This allows for the creation of a &quot;processing market&quot; and allows the fee to be set by the market itself.  Some people will be willing to solve blocks for free and will include any transaction they are sent.  Other clients will set a very high fee and only try to solve the few that meet this fee.  In this way transactions with higher fees get &quot;priority&quot; processing since they will be included in more nodes calculations.  People who don&#x27;t want to pay a transaction fee can still put packets out and they will eventually be solved but will take longer because some nodes won&#x27;t work on them.
+
+This allows the transaction fee to move up and down with the value of bitcoins and it also gives people an incentive to keep running the program after new blocks are not generating bitcoins (as they will be 20 years from now).
+
+-Buck</div></article><article class="msg" id="m13">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-07-14T18:31:31Z">14 July 2010, 18:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg2905#msg2905" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: AndrewBuck on July 14, 2010, 06:25:41 PM</div><div class="t">Since blocks with more transactions in them will take longer to hash, the flood of small payments would  make the client work harder before it solves a block.  </div></blockquote><div class="t">This is not quite right.  The block header that is being hashed is a constant size no matter how many transactions the block contains.
+So blocks with more transactions in them should still take the same amount of time to hash.
+
+The rest is correct and insightful though.</div></article><article class="msg" id="m14">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-07-15T05:41:07Z">15 July 2010, 05:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg3098#msg3098" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on July 12, 2010, 12:08:45 PM</div><div class="t">From the source code:
+
+main.h:        // To limit dust spam, require a 0.01 fee if any output is less than 0.01</div></blockquote><div class="t">I added this little tidbit into my IRC bot:
+
+According to <a href="http://is.gd/dsqcH" rel="nofollow noopener">http://is.gd/dsqcH</a> the world population is 6,855,986,675. If everyone had the same amount of bitcoins, everyone would have 0.00306302 bitcoins.  If 0.00000001 bitcoins were equivalent to US$0.01, then everyone would have equivalent of US$3,063.01645489 and the value of all bitcoins would be equivalent of US$21,000,000,000,000.00.
+
+How would the BTC0.01 fee affect things considering above?</div></article><article class="msg" id="m15">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-15T05:48:21Z">15 July 2010, 05:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg3100#msg3100" rel="nofollow noopener">original</a></span></header>
+<div class="t">By the time everyone has Bitcoins, the fee will have been removed or adjusted.</div></article><article class="msg" id="m16">
+<header><b>melvster</b><span class="muted"> · <time datetime="2010-07-21T13:57:44Z">21 July 2010, 13:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg4728#msg4728" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on July 12, 2010, 12:08:45 PM</div><div class="t">From the source code:
+
+main.h:        // To limit dust spam, require a 0.01 fee if any output is less than 0.01</div></blockquote><div class="t">Would love to see this value at 0.001 rather than 0.01</div></article><article class="msg" id="m17">
+<header><b>BeeCee1</b><span class="muted"> · <time datetime="2010-07-23T00:56:28Z">23 July 2010, 00:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg5168#msg5168" rel="nofollow noopener">original</a></span></header>
+<div class="t">What would happen if someone modified their client to not offer to pay the fee, and also modified their client to not require the fee?
+
+Here&#x27;s my best guess:
+* They generate a 0.00000001 BC payment (but don&#x27;t include the fee)
+* This transaction goes to the clients peers
+* The peers don&#x27;t include it in the block they are solving since fee not paid.
+* Do the peers still pass the transaction along to the rest of the network?
+* A block gets solved without the transaction in it
+* client notices its transaction wasn&#x27;t in the block and re-broadcasts the transaction?
+* eventually client solves a block itself and that transaction is included in it so it goes out to the rest of the network</div></article><article class="msg" id="m18">
+<header><b>nenolod</b><span class="muted"> · <time datetime="2010-07-23T05:03:00Z">23 July 2010, 05:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg5200#msg5200" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: llama on July 12, 2010, 02:23:46 PM</div><div class="t">That pretty much ruins the possibility of using bitcoin for true micropayments. </div></blockquote><div class="t">I do not see how it does that.  1 BTC will likely always be smaller than USD/EUR/etc, thus meaning that it can be used for micropayments.</div></article><article class="msg" id="m19">
+<header><b>Red</b><span class="muted"> · <time datetime="2010-07-23T05:23:59Z">23 July 2010, 05:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg5203#msg5203" rel="nofollow noopener">original</a></span></header>
+<div class="t">Does paying the &quot;fee&quot; require the use of the &quot;pay to anyone&quot; signature I read about in another thread?</div></article><article class="msg" id="m20">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-07-23T13:39:41Z">23 July 2010, 13:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg5270#msg5270" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hi.</div><blockquote><div class=qh>Quote from: nenolod on July 23, 2010, 05:03:00 AM</div><div class="t">&gt; Quote from: llama on July 12, 2010, 02:23:46 PM
+&gt; That pretty much ruins the possibility of using bitcoin for true micropayments. 
+
+I do not see how it does that.  1 BTC will likely always be smaller than USD/EUR/etc, thus meaning that it can be used for micropayments.</div></blockquote><div class="t">Micropayment is less that 0.01 $, I suppose.
+Having an (economically) effective implementation of micropayment system will affect the way current economics works.
+For example, it may make the media producer&#x27;s business unprofitable in some areas, I suppose.
+
+So, the economics may be interested in payments with less that 0.001 $ volume and with more than millions transaction per day numbers.
+But that system still does not exists Sad</div></article><article class="msg" id="m21">
+<header><b>melvster</b><span class="muted"> · <time datetime="2010-07-23T14:32:12Z">23 July 2010, 14:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg5279#msg5279" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: throughput on July 23, 2010, 01:39:41 PM</div><div class="t">Hi.
+
+&gt; Quote from: nenolod on July 23, 2010, 05:03:00 AM
+&gt; &gt; Quote from: llama on July 12, 2010, 02:23:46 PM
+&gt; &gt; That pretty much ruins the possibility of using bitcoin for true micropayments. 
+&gt;
+&gt; I do not see how it does that.  1 BTC will likely always be smaller than USD/EUR/etc, thus meaning that it can be used for micropayments.
+
+Micropayment is less that 0.01 $, I suppose.
+Having an (economically) effective implementation of micropayment system will affect the way current economics works.
+For example, it may make the media producer&#x27;s business unprofitable in some areas, I suppose.
+
+So, the economics may be interested in payments with less that 0.001 $ volume and with more than millions transaction per day numbers.
+But that system still does not exists Sad</div></blockquote><div class="t">You can do it if you have a system of micropayments with the CASH OUT in bitcoins.  That way most transactions will not go through the bitcoin system.</div></article><article class="msg" id="m22">
+<header><b>llama</b><span class="muted"> · <time datetime="2010-08-04T05:14:55Z">4 August 2010, 05:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7437#msg7437" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think it&#x27;s very important that the transaction fee reflect no more than the true cost that the transaction causes the network.
+
+Micropayments can be useful even if they&#x27;re very very tiny.  Imagine a lightbulb that sends a little ping bitcoin charge for every millisecond it&#x27;s turned on.  There are countless applications for tiny tiny payments.</div></article><article class="msg" id="m23">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-04T06:22:56Z">4 August 2010, 06:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7443#msg7443" rel="nofollow noopener">original</a></span></header>
+<div class="t">Well, right now nothing stops someone from creating a system where:
+
+A sends  1.00000001 to B
+B sends  1.00000000 back to A
+
+Net result is a micro-payment and no processing fee.  I am creating a system that does something very similar to the above.   The reality is that any &quot;micro-payment&quot; system should probably be handled outside the BTC block and have the payments &quot;summed up&quot; before being sent. 
+
+I think the processing fee design is brilliant.  Every node can pick and choose which transactions it wants to include and thus the &quot;time until included&quot; is directly proportional to the number of nodes who accept your &quot;offer&quot;.  Worst case you have to wait until your lonely PC can create a block which at the moment could be weeks!
+
+In fact, I think it would be reasonable to offer to pay the nodes that propagate your transaction if there was some way to &quot;enforce it&quot; and prevent rouge clients from collecting fees but not doing work. </div></article><article class="msg" id="m24">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-04T11:58:58Z">4 August 2010, 11:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7454#msg7454" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster on August 04, 2010, 06:22:56 AM</div><div class="t">Well, right now nothing stops someone from creating a system where:
+
+A sends  1.00000001 to B
+B sends  1.00000000 back to A
+
+Net result is a micro-payment and no processing fee.</div></blockquote><div class="t">... unless B started with zero bitcoins.  Then B is stuck; she can&#x27;t send 1.0 back, because doing that would cause a 0.00000001 bitcoin &#x27;change&#x27; transaction, which would trigger the 0.01BTC fee, which they can&#x27;t pay (because they only have 1.0000000001).</div></article><article class="msg" id="m25">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T12:17:00Z">4 August 2010, 12:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7456#msg7456" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on August 04, 2010, 11:58:58 AM</div><div class="t">... unless B started with zero bitcoins.  Then B is stuck; she can&#x27;t send 1.0 back, because doing that would cause a 0.00000001 bitcoin &#x27;change&#x27; transaction, which would trigger the 0.01BTC fee, which they can&#x27;t pay (because they only have 1.0000000001).</div></blockquote><div class="t">Surely this is not correct?
+
+The 1 BTC transaction is a transaction with 1 input and 2 outputs, but it&#x27;s still only 1 transaction.</div></article><article class="msg" id="m26">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-04T12:55:59Z">4 August 2010, 12:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7459#msg7459" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 04, 2010, 12:17:00 PM</div><div class="t">The 1 BTC transaction is a transaction with 1 input and 2 outputs, but it&#x27;s still only 1 transaction.</div></blockquote><div class="t">The rule is &quot;if any TxOut (output) has a value of less than 0.01 bitcoins, charge a 0.01 fee&quot;:</div><pre><code>main.h:
+foreach(const CTxOut&amp; txout, vout)
+  if (txout.nValue &lt; CENT)
+    nMinFee = CENT;</code></pre></article><article class="msg" id="m27">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T13:04:18Z">4 August 2010, 13:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7460#msg7460" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on August 04, 2010, 12:55:59 PM</div><div class="t">The rule is &quot;if any TxOut (output) has a value of less than 0.01 bitcoins, charge a 0.01 fee&quot;:</div></blockquote><div class="t">Since there is no way to tell which is the &#x27;change&#x27; transaction.
+That&#x27;s kinda cool.
+ (and somewhat horrible at the same time.)</div></article><article class="msg" id="m28">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-04T13:40:35Z">4 August 2010, 13:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7468#msg7468" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on August 04, 2010, 12:55:59 PM</div><div class="t">&gt; Quote from: Insti on August 04, 2010, 12:17:00 PM
+&gt; The 1 BTC transaction is a transaction with 1 input and 2 outputs, but it&#x27;s still only 1 transaction.
+The rule is &quot;if any TxOut (output) has a value of less than 0.01 bitcoins, charge a 0.01 fee&quot;:
+
+main.h:
+foreach(const CTxOut&amp; txout, vout)
+  if (txout.nValue &lt; CENT)
+    nMinFee = CENT;</div></blockquote><div class="t">Wow, ok this needs to go or it becomes impossible to do micropayment systems.    For example, I am trying to build an automated system you &quot;pay per packet&quot; sent across a P2P network.  Payments would generally be advanced, say 1 BTC at a time and when the connection closes any &quot;change&quot; would be returned.  This rule makes it impossible to pay for a simple &quot;search query&quot; with no further transactions.   I suppose that I would have to release the P2P program with its own BTC client that does not have this rule.  It would take longer for transactions to post, but in theory if all clients are mining then you would still have a good chance of getting the payment in.</div></article><article class="msg" id="m29">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T14:58:31Z">4 August 2010, 14:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7498#msg7498" rel="nofollow noopener">original</a></span></header>
+<div class="t">What exactly is this &#x27;dust spam&#x27; that this 0.01BTC transaction fee &quot;solving&quot;?
+It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting.
+
+I&#x27;m not aware that the network is straining under the weight of the existing transaction volume.
+Anyone wishing to send a lot of transactions can already do this by sending x BTC to themselves a lot.</div></article><article class="msg" id="m30">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-04T15:02:02Z">4 August 2010, 15:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7500#msg7500" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 04, 2010, 02:58:31 PM</div><div class="t">What exactly is this &#x27;dust spam&#x27; that this 0.01BTC transaction fee &quot;solving&quot;?
+It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting.
+
+I&#x27;m not aware that the network is straining under the weight of the existing transaction volume.
+Anyone wishing to send a lot of transactions can already do this by sending x BTC to themselves a lot.</div></blockquote><div class="t">There are builds that remove this limit, mainly for testing right now, I think that&#x27;s why it&#x27;s disabled until it can be tweaked a little more.</div></article><article class="msg" id="m31">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-08-04T15:43:56Z">4 August 2010, 15:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7516#msg7516" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 04, 2010, 02:58:31 PM</div><div class="t">What exactly is this &#x27;dust spam&#x27; that this 0.01BTC transaction fee &quot;solving&quot;?
+It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting.
+
+I&#x27;m not aware that the network is straining under the weight of the existing transaction volume.
+Anyone wishing to send a lot of transactions can already do this by sending x BTC to themselves a lot.</div></blockquote><div class="t">Someone with only one Bitcoin could send 100,000,000 transactions, which might overload the network. This isn&#x27;t a good solution, though -- the vulnerability will still exist when the limit is lowered because someone will certainly be saving a bunch of Bitcoins.
+
+A better solution would be to deprioritize transactions below 0.01 and completely drop them if there are more than 10,000 (or whatever) in the queue. Then these transactions would be slower and less reliable than other transactions, but they would work and not interfere with &quot;real&quot; transactions.</div></article><article class="msg" id="m32">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-04T15:54:09Z">4 August 2010, 15:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7518#msg7518" rel="nofollow noopener">original</a></span></header>
+<div class="t">priority is all contingent upon how many nodes accept them.  Thus if only 1% of the nodes accept a transaction fee of 0.000001 btc then you will have a 1% chance of being included in the next block.  If all nodes accept transaction fees of 1BTC then you have near 100% chance of being in the next block. </div></article><article class="msg" id="m33">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T16:11:55Z">4 August 2010, 16:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7521#msg7521" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: theymos on August 04, 2010, 03:43:56 PM</div><div class="t">&gt; Quote from: Insti on August 04, 2010, 02:58:31 PM
+&gt; What exactly is this &#x27;dust spam&#x27; that this 0.01BTC transaction fee &quot;solving&quot;?
+Someone with only one Bitcoin could send 100,000,000 transactions, which might overload the network. This isn&#x27;t a good solution, though -- the vulnerability will still exist when the limit is lowered because someone will certainly be saving a bunch of Bitcoins.</div></blockquote><div class="t">Someone with one Bitcoin can already send 100,000,000 transactions, by repeatedly sending the coin to themselves. How is it any different if the value of the transaction is 1 or 0.00000001 ?</div></article><article class="msg sat" id="m34">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-04T16:25:36Z">4 August 2010, 16:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7524#msg7524" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 04, 2010, 02:58:31 PM</div><div class="t">It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting.</div></blockquote><div class="t">Bitcoin isn&#x27;t currently practical for very small micropayments.  Not for things like pay per search or per page view without an aggregating mechanism, not things needing to pay less than 0.01.  The dust spam limit is a first try at intentionally trying to prevent overly small micropayments like that.
+
+Bitcoin is practical for smaller transactions than are practical with existing payment methods.  Small enough to include what you might call the top of the micropayment range.  But it doesn&#x27;t claim to be practical for arbitrarily small micropayments.</div></article><article class="msg" id="m35">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T16:33:24Z">4 August 2010, 16:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7525#msg7525" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 04, 2010, 04:25:36 PM</div><div class="t">&gt; Quote from: Insti on August 04, 2010, 02:58:31 PM
+&gt; It seems to do more harm than good because it prevents micropayment implementations such as the one bytemaster is suggesting.
+Bitcoin isn&#x27;t practical for very small micropayments.  Not for things like pay per search or per page view without an aggregating mechanism, certainly not things needing to pay less than 0.01.  The dust spam limit is a first try at intentionally trying to prevent overly small micropayments like that.
+
+Bitcoin is practical for smaller transactions than are practical with existing payment methods.  Small enough to include what you might call the top of the micropayment range.  But it doesn&#x27;t claim to be practical for arbitrarily small micropayments.</div></blockquote><div class="t">Why not?
+I don&#x27;t see how size would make a difference.
+Is it just due to the number of transactions that the system is able to handle?</div></article><article class="msg" id="m36">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-04T17:22:53Z">4 August 2010, 17:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7537#msg7537" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 04, 2010, 05:03:23 PM</div><div class="t">User sends you 1.005 bc&#x27;s, you send them back 1. Is a fee charged in that scenario? Because the change coming back to you would be .005?</div></blockquote><div class="t">Yes, this was covered above.</div><blockquote><div class=qh>Quote from: gavinandresen on August 04, 2010, 12:55:59 PM</div><div class="t">The rule is &quot;if any TxOut (output) has a value of less than 0.01 bitcoins, charge a 0.01 fee&quot;:
+
+main.h:
+foreach(const CTxOut&amp; txout, vout)
+  if (txout.nValue &lt; CENT)
+    nMinFee = CENT;</div></blockquote><div class="t">In your scenario there are two outputs, 1 is 1 BTC and the other is 0.005 BTC.
+0.005 &lt; 0.01 therefore a fee applies to the transaction.</div></article><article class="msg" id="m37">
+<header><b>FreeMoney</b><span class="muted"> · <time datetime="2010-08-04T19:30:32Z">4 August 2010, 19:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7569#msg7569" rel="nofollow noopener">original</a></span></header>
+<div class="t">Can the fee rules be arbitrarily complicated? And is the size limit hard wired or completely up to the node?
+
+Does including more slow down your hashing rate?  </div></article><article class="msg" id="m38">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-05T14:52:32Z">5 August 2010, 14:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7674#msg7674" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on August 04, 2010, 05:02:14 PM</div><div class="t">&gt; Quote from: Insti on August 04, 2010, 04:11:55 PM
+&gt; &gt; Quote from: theymos on August 04, 2010, 03:43:56 PM
+&gt; &gt; &gt; Quote from: Insti on August 04, 2010, 02:58:31 PM
+&gt; &gt; &gt; What exactly is this &#x27;dust spam&#x27; that this 0.01BTC transaction fee &quot;solving&quot;?
+&gt; &gt; Someone with only one Bitcoin could send 100,000,000 transactions, which might overload the network. This isn&#x27;t a good solution, though -- the vulnerability will still exist when the limit is lowered because someone will certainly be saving a bunch of Bitcoins.
+&gt;
+&gt; Someone with one Bitcoin can already send 100,000,000 transactions, by repeatedly sending the coin to themselves. How is it any different if the value of the transaction is 1 or 0.00000001 ?
+
+I&#x27;d like to repeat that question. Why could someone with 1 bc, not just send it back and forth between accounts a billion times? No fees would be charged.</div></blockquote><div class="t">Sending 1 BTC back and forth a million times creates a single transaction chain, sending a million transactions of 0.000001 BTC makes a million nearly independant transactions which all must be remembered. Due to the way bitcoin can drop old deeply confirmed transactions the first is far less overhead than the second in the long run. There may be similar network cost but the disk space cost can be greatly reduced for the single chain.
+
+Only if the &quot;dust&quot; is combined back together and confirmed deeply enough again only then can the dust space be dropped.</div></article><article class="msg" id="m39">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-05T14:59:51Z">5 August 2010, 14:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7675#msg7675" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen on August 04, 2010, 11:58:58 AM</div><div class="t">&gt; Quote from: bytemaster on August 04, 2010, 06:22:56 AM
+&gt; Well, right now nothing stops someone from creating a system where:
+&gt;
+&gt; A sends  1.00000001 to B
+&gt; B sends  1.00000000 back to A
+&gt;
+&gt; Net result is a micro-payment and no processing fee.
+
+... unless B started with zero bitcoins.  Then B is stuck; she can&#x27;t send 1.0 back, because doing that would cause a 0.00000001 bitcoin &#x27;change&#x27; transaction, which would trigger the 0.01BTC fee, which they can&#x27;t pay (because they only have 1.0000000001).</div></blockquote><div class="t">ok if a and b both start out with 1 BTC and agree to transfer 0.0001 using two inputs and two outputs on a single transaction can change a to 0.9999 and b to 1.0001. The rest of the network it would seem would accept the transaction.
+
+The only stumbling block is whoever creates the transaction needs the private keys for both inputs which would come from different wallets normally. The one who creates the transaction could cheat.</div></article><article class="msg" id="m40">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-05T15:11:10Z">5 August 2010, 15:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7677#msg7677" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 04, 2010, 04:25:36 PM</div><div class="t">Bitcoin isn&#x27;t currently practical for very small micropayments.  Not for things like pay per search or per page view without an aggregating mechanism, not things needing to pay less than 0.01.  The dust spam limit is a first try at intentionally trying to prevent overly small micropayments like that.
+
+Bitcoin is practical for smaller transactions than are practical with existing payment methods.  Small enough to include what you might call the top of the micropayment range.  But it doesn&#x27;t claim to be practical for arbitrarily small micropayments.</div></blockquote><div class="t">Why isn&#x27;t it practical? I agree that a good micropayment system would avoid generating thousands of transactions (e.g. one per packet), but that doesn&#x27;t mean that bytemaster&#x27;s change idea is wrong:</div><blockquote><div class=qh>Quote from: bytemaster</div><div class="t">Payments would generally be advanced, say 1 BTC at a time and when the connection closes any &quot;change&quot; would be returned.  This rule makes it impossible to pay for a simple &quot;search query&quot; with no further transactions.</div></blockquote><div class="t">That seems like a great use case. Furthermore, as llama said, the fixed component of a transaction fee should always represent the real cost of including that transaction in a block. So, are there any more intelligent and less painful ways of implementing anti-dust spam systems?</div></article><article class="msg" id="m41">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-05T15:39:19Z">5 August 2010, 15:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7684#msg7684" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think the current system works fine.  If someone wants to implement a micro-payment system then they will have to host enough nodes and contribute enough processing power to include their small transactions.   I see no reason to require any node to accept or forward micro-payment transactions if said nodes does not wish to.  
+
+The real issue is that even a simple legitimate automated micro-payment system could overload bitcoin by introducing more transactions than the credit card system currently uses.   The net result is that block sizes could become HUGE.
+
+In my use case you have a P2P system where they pay for priority downloads.   Assume you have a single &quot;torrent&quot; file with 100,000 people all seeding and downloading.  That could easily generate 100,000 micro-payments per minute.  Now clearly, the program would only have to use BTC in the event that upload != download between two clients.  
+
+It would be distributed and thus there would be no easy way to identify &quot;spam&quot; from legitimate usage.    Even using my solution of transferring 1+ BTC at a time and giving change if the balance is greater than 0.01 could cause a transaction bloat writ large.
+
+I suspect that the &quot;cost&quot; of handing individual transactions may be low (.00001 BTC) but the cost of handling ALL of those little transactions from millions of users using automated payment negotiation/bidding systems would quickly make it impossible to even listen for all incoming transactions.  
+
+The only solution to this problem is to make broadcasting of a transaction &quot;non free&quot;.  Namely, if you want me to include it you have to pay me.  The net (no pun intended) result is that each client would need to pay other clients to whom they even send their transaction, not just the individual who gets it in a block.   In this way the laws of economics take over and no one gets a free ride on the transaction broadcast system.  
+
+The implication is that you may not even receive notice of payment until a node that you paid to receive your transaction and *attempt* to integrate it into a block manages to do so.  This means that you would not even see 0/unconfirmed and that a transaction must make it into a block before anyone that wasn&#x27;t paid to *attempt* to integrate it even knows it exists.
+
+This structure would encourage pay-to-ip systems because that make the receiver of the payment responsible for paying to get it integrated.   Either they run their own bitcoin generators *or* they pay to send the transaction to someone who is.  
+
+  </div></article><article class="msg sat" id="m42">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-05T16:03:21Z">5 August 2010, 16:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7687#msg7687" rel="nofollow noopener">original</a></span></header>
+<div class="t">Forgot to add the good part about micropayments.  While I don&#x27;t think Bitcoin is practical for smaller micropayments right now, it will eventually be as storage and bandwidth costs continue to fall.  If Bitcoin catches on on a big scale, it may already be the case by that time.  Another way they can become more practical is if I implement client-only mode and the number of network nodes consolidates into a smaller number of professional server farms.  Whatever size micropayments you need will eventually be practical.  I think in 5 or 10 years, the bandwidth and storage will seem trivial.
+
+I am not claiming that the network is impervious to DoS attack.  I think most P2P networks can be DoS attacked in numerous ways.  (On a side note, I read that the record companies would like to DoS all the file sharing networks, but they don&#x27;t want to break the anti-hacking/anti-abuse laws.)
+
+If we started getting DoS attacked with loads of wasted transactions back and forth, you would need to start paying a 0.01 minimum transaction fee.  0.1.5 actually had an option to set that, but I took it out to reduce confusion.  Free transactions are nice and we can keep it that way if people don&#x27;t abuse them.
+
+That brings up the question: if there was a minimum 0.01 fee for each transaction, should we automatically add the fee if it&#x27;s just the minimum 0.01?  It would be awfully annoying to ask each time.  If you have 50.00 and send 10.00, the recipient would get 10.00 and you&#x27;d have 39.99 left.  I think it should just add it automatically.  It&#x27;s trivial compared to the fees many other types of services add automatically.</div><blockquote><div class=qh>Quote from: FreeMoney on August 04, 2010, 07:30:32 PM</div><div class="t">Does including more slow down your hashing rate?  </div></blockquote><div class="t">No, not at all.</div></article><article class="msg sat" id="m43">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-05T16:30:20Z">5 August 2010, 16:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7694#msg7694" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster</div><div class="t">Payments would generally be advanced, say 1 BTC at a time and when the connection closes any &quot;change&quot; would be returned.  This rule makes it impossible to pay for a simple &quot;search query&quot; with no further transactions.</div></blockquote><div class="t">One alternative is to use a round-up system.  You pay for, say, 1000 pages or images or downloads or searches or whatever at a time.  When you&#x27;ve used up your 1000 pages, you pay for another 1000 pages.  If you only use 1 page, then you have 999 left that you may never use, but it&#x27;s not a big deal because the cost per 1000 is still small.
+
+Or you could pay per day.  The first time you access the site on a given day, you pay for 24 hours of access.
+
+Per 1000 or per day may be easier for consumers to get their heads around too.  They worry about per item because it&#x27;s harder to figure if it might add up too fast.  Unlimited for 24 hours they know what the cost will be.  Or if 1000 seems like plenty, they&#x27;re not worrying that it&#x27;s costing more with each click if they figure 1000 is more than they&#x27;ll probably use.</div></article><article class="msg" id="m44">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-08-05T16:37:53Z">5 August 2010, 16:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7695#msg7695" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 05, 2010, 02:52:32 PM</div><div class="t">Sending 1 BTC back and forth a million times creates a single transaction chain, sending a million transactions of 0.000001 BTC makes a million nearly independant transactions which all must be remembered. Due to the way bitcoin can drop old deeply confirmed transactions the first is far less overhead than the second in the long run. There may be similar network cost but the disk space cost can be greatly reduced for the single chain.
+
+Only if the &quot;dust&quot; is combined back together and confirmed deeply enough again only then can the dust space be dropped.</div></blockquote><div class="t">Improved attack would be : start with 1BTC then transfer 0.999999999BTC, then 0.999999998BTC, ...
+It results 1 million accounts (minus 10000) with 0.000000001BTC each.</div></article><article class="msg sat" id="m45">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-05T16:39:58Z">5 August 2010, 16:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7696#msg7696" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster on August 05, 2010, 03:39:19 PM</div><div class="t">The only solution to this problem is to make broadcasting of a transaction &quot;non free&quot;.  Namely, if you want me to include it you have to pay me.  The net (no pun intended) result is that each client would need to pay other clients to whom they even send their transaction, not just the individual who gets it in a block.   In this way the laws of economics take over and no one gets a free ride on the transaction broadcast system.  </div></blockquote><div class="t">I don&#x27;t know a way to implement that.  The transaction fee to the block creator uses a special trick to include the transaction fee without any additional size.  If there was a transaction for each transaction fee, then what about the transactions fees for the transaction fee&#x27;s transaction?</div></article><article class="msg" id="m46">
+<header><b>ByteCoin</b><span class="muted"> · <time datetime="2010-08-05T16:45:58Z">5 August 2010, 16:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7698#msg7698" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 05, 2010, 04:39:58 PM</div><div class="t">If there was a transaction for each transaction fee, then what about the transactions fees for the transaction fee&#x27;s transaction?</div></blockquote><div class="t">The transaction fee transaction would be designed to be a completely predictable consequence of the main transaction and hopefully any fee for processing the main transaction would also take into account the need for a fee transaction too. In other words the fee transaction would contain its own fee. This therefore seems to be a manageable aspect of the problem.
+
+ByteCoin</div></article><article class="msg" id="m47">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-05T16:46:52Z">5 August 2010, 16:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7699#msg7699" rel="nofollow noopener">original</a></span></header>
+<div class="t">Right now the transaction fee address is left &quot;blank&quot; and the block generator fills it out.
+Now you would fill it in with the address of the person you are asking to build the block.  
+
+If the transmit fee &lt;= block integration fee no one could profitably forward the transaction and thus must generate a block themselves. </div></article><article class="msg sat" id="m48">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-05T17:49:43Z">5 August 2010, 17:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7710#msg7710" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster on August 05, 2010, 04:46:52 PM</div><div class="t">Right now the transaction fee address is left &quot;blank&quot; and the block generator fills it out.
+Now you would fill it in with the address of the person you are asking to build the block.  </div></blockquote><div class="t">If you&#x27;re only going to have one person work on building the block, that could take days.  Oh, do you mean send a different variation to each node with the tx fee written to them?
+
+The way it is now, it&#x27;s whoever builds this gets it.
+
+If we needed to, we could have a BitTorrent-esque tit-for-tat for transaction broadcast.  Relay paying transactions to me, or I won&#x27;t relay them to you.  It probably won&#x27;t be an actual problem though.  It only takes one node relaying like it should to cancel out 7 others greedily not relaying.</div></article><article class="msg" id="m49">
+<header><b>bytemaster</b><span class="muted"> · <time datetime="2010-08-05T18:12:02Z">5 August 2010, 18:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7713#msg7713" rel="nofollow noopener">original</a></span></header>
+<div class="t">The assumption is that you would send variations of the same transaction to different nodes with a tip for working to integrate your transaction.  In order for that node to collect their tip they eventually have to generate a block, but they eventually will anyway.  The tip would be below the amount that would allow said user to &quot;rebroadcast&quot; their transmit fee.  So you don&#x27;t get recursive transmit fees. 
+
+Say I want to send .001 BTC to Fred.   The cluster is operating at 1billion k/hash/second, then I need to distribute my transactions to enough nodes so that the k/hash/second % of the total is acceptably high for the transaction to get logged within the next N blocks.   
+
+So generating nodes A, B, and C each price their transmit fee proportional to their khash rate.  (how do they prove their khash rate?  total blocks generated over time?)
+
+So I send a transaction of .001 BTC from me to Fred and .000001 BTC from me to A.   I send a different one to B and C.   
+
+Now A, B, and C cannot make a profit by sending that transaction for anyone else to crunch on so if they want to collect they have to process it.
+
+The trick is enforcing the rule that 0.001 only flows from me to fred once and not in each block.</div></article><article class="msg" id="m50">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-05T19:43:02Z">5 August 2010, 19:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7727#msg7727" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 05, 2010, 02:52:32 PM</div><div class="t">Sending 1 BTC back and forth a million times creates a single transaction chain, sending a million transactions of 0.000001 BTC makes a million nearly independant transactions which all must be remembered. Due to the way bitcoin can drop old deeply confirmed transactions the first is far less overhead than the second in the long run. There may be similar network cost but the disk space cost can be greatly reduced for the single chain.
+
+Only if the &quot;dust&quot; is combined back together and confirmed deeply enough again only then can the dust space be dropped.</div></blockquote><div class="t">Does sending 0.1 BTC a million times also create a single transaction? Where is the line when it goes from a single transaction to independent transactions?
+Can the line be moved down slightly? Any bad side-effects if it was?</div></article><article class="msg" id="m51">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-08-06T00:32:49Z">6 August 2010, 00:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg7761#msg7761" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: bytemaster on August 05, 2010, 06:12:02 PM</div><div class="t">So I send a transaction of .001 BTC from me to Fred and .000001 BTC from me to A.   I send a different one to B and C.   
+
+Now A, B, and C cannot make a profit by sending that transaction for anyone else to crunch on so if they want to collect they have to process it.
+
+The trick is enforcing the rule that 0.001 only flows from me to fred once and not in each block.</div></blockquote><div class="t">I&#x27;m thoroughly confused on what, exactly, you&#x27;re proposing.
+
+I want to make a 100 Bitcoin transaction to you.
+
+You&#x27;re proposing that I need to pay a &quot;transmit fee&quot; ... which is paid to who and does what, exactly?
+
+If I pay it to A, B, and C, does that mean they rebroadcast the transaction to everybody they&#x27;re connected to?  Do they, in turn, pay transmit fees to the nodes they&#x27;re rebroadcast it to?  What stops them from saying &quot;Thank you very much for the transmit fee&quot; and cheating (drop my transaction on the floor)?
+
+Satoshi&#x27;s proposal that all transaction carry a minimum fee to cover network overhead makes sense; whoever generates the block with the transaction gets the fee.</div></article><article class="msg" id="m52">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-07T05:36:13Z">7 August 2010, 05:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8056#msg8056" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 05, 2010, 07:43:02 PM</div><div class="t">&gt; Quote from: lfm on August 05, 2010, 02:52:32 PM
+&gt; Sending 1 BTC back and forth a million times creates a single transaction chain, sending a million transactions of 0.000001 BTC makes a million nearly independant transactions which all must be remembered. Due to the way bitcoin can drop old deeply confirmed transactions the first is far less overhead than the second in the long run. There may be similar network cost but the disk space cost can be greatly reduced for the single chain.
+&gt;
+&gt; Only if the &quot;dust&quot; is combined back together and confirmed deeply enough again only then can the dust space be dropped.
+Does sending 0.1 BTC a million times also create a single transaction? Where is the line when it goes from a single transaction to independent transactions?
+Can the line be moved down slightly? Any bad side-effects if it was?</div></blockquote><div class="t">I don&#x27;t think you understood, it&#x27;s nothing to do with the size of the transaction. it&#x27;s the way transactions get split up. If you start with 1 BTC and send 100 x 0.01 transactions to your friend thats 100 transaction chains one step long. He may or may not combine them back together into a single 1BTC transaction but untill he does the net must keep all 100 transactions stored.
+
+If you start with the same 1BTC or 0.01BTC or any single amount and pass it back and forth to your friend 100 times. Its a similar amount of traffic and storage at first but once the last one gets deeply confirmed (ie 6 blocks/1 hr later) you can forget/delete from your disk database all the transactions but the last one. It&#x27;s the Merkle hash tree pruning stuff in the white paper.</div></article><article class="msg" id="m53">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-09T09:18:42Z">9 August 2010, 09:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8338#msg8338" rel="nofollow noopener">original</a></span></header>
+<div class="t">Are:
+1) The transaction fees charged entirely up  to the block processing node?
+Or
+2) The transaction fees enforced by the network, which would mean that any block that contains an &#x27;invalid&#x27; transaction because it did not include the correct fee would be rejected?</div></article><article class="msg" id="m54">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-08-10T10:13:30Z">10 August 2010, 10:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8508#msg8508" rel="nofollow noopener">original</a></span></header>
+<div class="t">Does that mean, that my abilities to DDoS the entire Bitcoin network are only limited by my BTC
+bying power? And not by the number of my network connections, nodes, etc?
+
+BTW, let&#x27;s test the network someday?
+It is trivial to automate the process of sending small transactions to the list of known addresses.
+Let&#x27;s abuse the network and know the effect precisely.
+
+I suppose, we should caution the other users...</div></article><article class="msg" id="m55">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-08-10T14:53:41Z">10 August 2010, 14:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8541#msg8541" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: throughput on August 10, 2010, 10:13:30 AM</div><div class="t">BTW, let&#x27;s test the network someday?
+It is trivial to automate the process of sending small transactions to the list of known addresses.
+Let&#x27;s abuse the network and know the effect precisely.
+
+I suppose, we should caution the other users...</div></blockquote><div class="t">You should use the Test network &lt;<a href="http://bitcointalk.org/index.php?topic=363.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=363.0</a>&gt;</div></article><article class="msg" id="m56">
+<header><b>throughput</b><span class="muted"> · <time datetime="2010-08-11T07:37:23Z">11 August 2010, 07:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8697#msg8697" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Insti on August 10, 2010, 02:53:41 PM</div><div class="t">&gt; Quote from: throughput on August 10, 2010, 10:13:30 AM
+&gt; BTW, let&#x27;s test the network someday?
+&gt; It is trivial to automate the process of sending small transactions to the list of known addresses.
+&gt; Let&#x27;s abuse the network and know the effect precisely.
+&gt;
+&gt; I suppose, we should caution the other users...
+
+You should use the Test network &lt;<a href="http://bitcointalk.org/index.php?topic=363.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=363.0</a>&gt;</div></blockquote><div class="t">Test network have test scale.
+
+Hmm, I think the other guys may not ask your permission to abuse the real network next time.
+They will just do it.
+
+I&#x27;m sure, the Bitcoin is useless if it is vulnerable to such a simple intrusion.
+We should prove, that it is sustainable to real world threats. Like me  Grin
+
+Perhaps somebody just experimented already?</div></article><article class="msg sat" id="m57">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-11T23:28:50Z">11 August 2010, 23:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=287.msg8810#msg8810" rel="nofollow noopener">original</a></span></header>
+<div class="t">It would be nice to keep the blk*.dat files small as long as we can.
+
+The eventual solution will be to not care how big it gets.
+
+But for now, while it&#x27;s still small, it&#x27;s nice to keep it small so new users can get going faster.  When I eventually implement client-only mode, that won&#x27;t matter much anymore.
+
+There&#x27;s more work to do on transaction fees.  In the event of a flood, you would still be able to jump the queue and get your transactions into the next block by paying a 0.01 transaction fee.  However, I haven&#x27;t had time yet to add that option to the UI.
+
+Scale or not, the test network will react in the same ways, but with much less wasted bandwidth and annoyance.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p85-scalability/">← Scalability</a><a rel="next" href="../../conversations/p87-warning-this-block-was-not-received-by-any-other-nodes/">Warning this block was not received by any other nodes →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

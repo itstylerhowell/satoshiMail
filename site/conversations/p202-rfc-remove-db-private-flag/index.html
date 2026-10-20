@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RFC: remove DB_PRIVATE flag – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 26 August 2010: Can you provide more details about what removing DB_PRIVATE does? I can&#x27;t remember if I had a specific reason for…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p202-rfc-remove-db-private-flag/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="RFC: remove DB_PRIVATE flag – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 26 August 2010: Can you provide more details about what removing DB_PRIVATE does? I can&#x27;t remember if I had a specific reason for…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p202-rfc-remove-db-private-flag/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="RFC: remove DB_PRIVATE flag – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 26 August 2010: Can you provide more details about what removing DB_PRIVATE does? I can&#x27;t remember if I had a specific reason for…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "RFC: remove DB_PRIVATE flag", "url": "https://satoshimail.pages.dev/conversations/p202-rfc-remove-db-private-flag/", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-25T01:03:13Z", "text": "Wallet backups and other DB examination are easily possible in a safe, atomic, transactional fashion... if and only if DB_PRIVATE flag is removed. --- a/db.cpp +++ b/db.cpp @@ -77,7 +77,6 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL) DB_INIT_MPOOL | DB_INIT_TXN | DB_THREAD | - DB_PRIVATE | DB_RECOVER, S_IRUSR | S_IWUSR); What, if any, problems arise from doing this? Obviously, this does not cover the non-db4 databases such as the block data file.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-26T00:33:28Z", "text": "Can you provide more details about what removing DB_PRIVATE does? I can't remember if I had a specific reason for DB_PRIVATE, or if I just copied the flags from some example code. Does removing DB_PRIVATE make it safe for other processes to open the database simultaneously? That may be an improvement, depending what the side effects are. Does it substantially reduce performance by making it have to write out every change immediately or do other coordination? Are there additional locking or…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-26T00:39:24Z", "text": "DB_PRIVATE enables a few optimizations by making the assumption that only one process will access the db4 database. Notably, this flag enables db4 to use pthreads-style mutex locking rather than heavy, operating-system-provided flock and shared memory. Ref: DB_ENV->open documentation <http://pybsddb.sourceforge.net/api_c/env_open.html>. The general motivation is that db4 databases can be safely accessed in parallel with bitcoin client, assuming (a) DB_PRIVATE is removed and (b) bitcoin…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-12T18:00:39Z", "text": "Trying it without the DB_PRIVATE flag in rev 153. We need to keep an eye on what's different. On Windows at least, it creates six __db.001 - __db.006 files with sizes from 24K to 4MB. It doesn't delete them on exit, it just leaves them behind. The docs say it uses memory mapped files. I assume they have the same file permissions as the database files, so the same user access restrictions apply. Tests on Windows private LAN download of 78500 blocks: with DB_PRIVATE 20 minutes 51 seconds without…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "RFC: remove DB_PRIVATE flag", "item": "https://satoshimail.pages.dev/conversations/p202-rfc-remove-db-private-flag/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p202">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">RFC: remove DB_PRIVATE flag</span></div></nav>
+<main class="in">
+<h1>RFC: remove DB_PRIVATE flag</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 25 August 2010 · with Satoshi Nakamoto, jgarzik</p>
+<p class="actions"><a class="btn" href="../../#t-p202">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/202/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-25T01:03:13Z">25 August 2010, 01:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=920.msg11087#msg11087" rel="nofollow noopener">original</a></span></header>
+<div class="t">Wallet backups and other DB examination are easily possible in a safe, atomic, transactional fashion...   if and only if DB_PRIVATE flag is removed.</div><pre><code>--- a/db.cpp
++++ b/db.cpp
+@@ -77,7 +77,6 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+                              DB_INIT_MPOOL |
+                              DB_INIT_TXN   |
+                              DB_THREAD     |
+-                             DB_PRIVATE    |
+                              DB_RECOVER,
+                              S_IRUSR | S_IWUSR);</code></pre><div class="t">What, if any, problems arise from doing this?  Obviously, this does not cover the non-db4 databases such as the block data file.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-26T00:33:28Z">26 August 2010, 00:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=920.msg11224#msg11224" rel="nofollow noopener">original</a></span></header>
+<div class="t">Can you provide more details about what removing DB_PRIVATE does?
+
+I can&#x27;t remember if I had a specific reason for DB_PRIVATE, or if I just copied the flags from some example code.  Does removing DB_PRIVATE make it safe for other processes to open the database simultaneously?  That may be an improvement, depending what the side effects are.  Does it substantially reduce performance by making it have to write out every change immediately or do other coordination?  Are there additional locking or coordination files then?  What else changes?  You could test by timing an initial block download with and without DB_PRIVATE, preferably -connect-ing to a local machine so network isn&#x27;t a factor.
+
+Apparently, DB_PRIVATE doesn&#x27;t do what you would hope it would do, which is prevent other processes from being able to open the database.  It still lets them, it just screws up if they do.  Another option, if there&#x27;s a way, would be to make it lock the database files so they can&#x27;t be accessed by other processes.</div></article><article class="msg" id="m2">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-26T00:39:24Z">26 August 2010, 00:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=920.msg11225#msg11225" rel="nofollow noopener">original</a></span></header>
+<div class="t">DB_PRIVATE enables a few optimizations by making the assumption that only one process will access the db4 database.  Notably, this flag enables db4 to use pthreads-style mutex locking rather than heavy, operating-system-provided flock and shared memory.  Ref: DB_ENV-&gt;open documentation &lt;<a href="http://pybsddb.sourceforge.net/api_c/env_open.html" rel="nofollow noopener">http://pybsddb.sourceforge.net/api_c/env_open.html</a>&gt;.
+
+The general motivation is that db4 databases can be safely accessed in parallel with bitcoin client, assuming (a) DB_PRIVATE is removed and (b) bitcoin properly uses db4 transactions.  db4 transactions may even be employed to wrap around non-db4 data such as blk0001.dat, if the code is properly architected.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-12T18:00:39Z">12 September 2010, 18:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=920.msg12484#msg12484" rel="nofollow noopener">original</a></span></header>
+<div class="t">Trying it without the DB_PRIVATE flag in rev 153.  We need to keep an eye on what&#x27;s different.
+
+On Windows at least, it creates six __db.001 - __db.006 files with sizes from 24K to 4MB.  It doesn&#x27;t delete them on exit, it just leaves them behind.
+
+The docs say it uses memory mapped files.  I assume they have the same file permissions as the database files, so the same user access restrictions apply.
+
+Tests on Windows private LAN download of 78500 blocks:
+with DB_PRIVATE     20 minutes 51 seconds
+without DB_PRIVATE   20 minutes 51 seconds
+
+I wasn&#x27;t expecting them to come out exactly the same.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p201-development-of-alert-system/">← Development of alert system</a><a rel="next" href="../../conversations/p203-auto-backing-up-of-wallet-dat/">auto backing up of wallet.dat →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

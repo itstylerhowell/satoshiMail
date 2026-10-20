@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hostnames instead of IP Addresses – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 2 June 2010: The current sending by IP is not very useful: it connects to the IP, so you&#x27;d like to use TOR for anonymity, but then it…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p60-hostnames-instead-of-ip-addresses/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Hostnames instead of IP Addresses – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 2 June 2010: The current sending by IP is not very useful: it connects to the IP, so you&#x27;d like to use TOR for anonymity, but then it…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p60-hostnames-instead-of-ip-addresses/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Hostnames instead of IP Addresses – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 2 June 2010: The current sending by IP is not very useful: it connects to the IP, so you&#x27;d like to use TOR for anonymity, but then it…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Hostnames instead of IP Addresses", "url": "https://satoshimail.pages.dev/conversations/p60-hostnames-instead-of-ip-addresses/", "author": {"@type": "Person", "name": "SirArthur"}, "datePublished": "2010-05-29T04:38:52Z", "text": "At least the Windows client seams unable to resolve hostnames - or doesn't even try, pops up an \"Invalid Address\" right away. This is a huge setback taken most people have dynamic IP Addresses. Therefore, instead of \"123.123.123.123\" only it should be added the hability to send also to \"someone-accepting-bitcoins.somedomain.sometld\".", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Xunie"}, "datePublished": "2010-05-29T16:41:24Z", "text": "Or it should just look the hostname up before it dismisses it as an invalid address. This has probably just slipped the mind of the developer."}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-01T11:01:02Z", "text": "There are security implications with sending payments to a 'hostname' instead of an internet address. TCP is difficult to forge, however DNS is trivial. It is not a good idea to send payments to a hostname. Whether it is an oversight or intentional, it probably should not be used for anything where fraud is a concern. Here's something I quickly googled up for anyone interested: http://adventuresinsecurity.com/Papers/DNS_Cache_Poisoning.pdf It is not even really an attack, it's just how it…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SirArthur"}, "datePublished": "2010-06-01T11:37:31Z", "text": "Here we go again... YES, you can be phished, hijacked, whatever... but, again, it has to rely on informed options rather than behaviors of \"I decided this is more secure to you\"."}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-01T12:17:23Z", "text": "I'm not sure what you mean by again (I'm not the developer).. anyway I'm just trying to explain why I don't think you should use it to accept payments. Sending payments to a hostname is not reliable for the reasons I said above, and the biggest problem is that there is no way to even know that the payment went to the wrong place, for the sender. There is a better (reliable) alternative using one time bitcoin addresses. What I was getting at is that there is no authentication and no way to know…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-02T18:18:15Z", "text": "The current sending by IP is not very useful: it connects to the IP, so you'd like to use TOR for anonymity, but then it can totally be eavesdropped and man-in-the-middled. The future plan for sending to an IP is to make it a bitcoin address plus IP, like: 1auaDZCFYqaGx4FKS5WenNfurk2SkoDu4h<someseparatorcharacter>1.2.3.4 or 1auaDZCFYqaGx4FKS5WenNfurk2SkoDu4h<someseparatorcharacter>domain.com I need suggestions for the separator character. \":\" is a candidate, but IPv6 has : in it and that might…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-06-03T02:56:19Z", "text": "How about $ ? It's distinctive, allowed in URLs, and related to money. You could also surround the authentication address in parentheses to emphasize that coins should not be sent to that address directly. I really like that authentication method."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-06-03T14:29:56Z", "text": "Seems like $ would be inviting confusion, since it's followed by numbers that can look kind-of like a dollar amount: 19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3$64.20.45.38 means send $64.20 to my bitcoin address ? Hyphen or underscore would be less confusing, but I think period would work really nicely: 19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3.64.20.45.38 19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3.skypaint.com The advantage of that last one is it is a valid URL; if a user pasted that into Firefox's URL bar or…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-03T17:19:23Z", "text": "Maybe you just use a regular old URL or URN.. Kind of like namespaces in XML. URN: urn:bitcoin.org:19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3@12.34.56.78 URL (not for using with a web browser, but it's unique): http://bitcoin.org/12.34.56.78/19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-06-03T17:34:38Z", "text": "That's ambiguous. How do we know whether to send coins securely to skypaint.com or insecurely to the IP address that the entire thing resolves to? Having an informational page at the subdomain would be pretty awesome, though. Maybe it's worth implementing around the ambiguity."}, {"@type": "Comment", "author": {"@type": "Person", "name": "SirArthur"}, "datePublished": "2010-06-04T01:54:52Z", "text": "The idea of send by DCC is to simplify. It's not like put 1000 USD over a rock, the attacks are \"theoretically easy\" but on practical not, unless your ISP attacks you... but if it does so, why not attack your bank account instead? Except maybe for cable access where your neighbor can sniff you. This bitcoin.org:19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3@12.34.56.78 is about as practical as nothing. What would be the simplification-add of such? Try to say to someone over the phone your BC address on…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-04T02:45:21Z", "text": "Bank sites and such use end to end encryption which makes intercepting more difficult and there is usually two way authentication. The website authenticates itself to you by showing you your personally selected image/phrase, thus you recognize that this is the site you wanted to visit, and then you authenticate to the website so they recognize you as the customer you claim to be. It's not perfect but it's like putting a pad lock on a box full of money to keep honest people honest. Sometimes…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "SirArthur"}, "datePublished": "2010-06-04T03:26:58Z", "text": "Put things this way; if you manage (on a more or less distant future, don't know) to run sort of a shop on surface web* with BC, you may want: » Your customers to be identifiable - to know who is paying what and handle refunds » Your customers to leave notes along with the payment. » Your customers to have a friendly address to pay to (not an IP, not an unreadable hash) - unless you run thenerdsshop.com there is. » Your customers to not be nagged. For this would be obviously interesting a…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-11T14:33:55Z", "text": "I don't see why these two ideas are mutually exclusive, although I'd assume implementing SSL/TLS is not trivial. We do already link to the OpenSSL library, so I don't know. I personally would prefer a urn scheme to handle a bitcoin address. That would be perfect, although I would prefer to use the hostname on the right side. Of course, I'm the kind of guy who might shop at thenerdsshop.com Smiley For grandma, the entire bitcoin concept is pretty confusing at the moment. Even neglecting all the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-14T19:53:44Z", "text": "SirArthur has a good point about the normal online merchant case, which is what the send-by-IP option is more suited to. This is the case where the merchant will have a server on a static IP and their own domain name and SSL cert. Instead of connecting by IP, we can connect to a domain name by SSL, using the existing CA infrastructure to authenticate that you're connected to the owner of that domain. The user would send to domain.com (or www.domain.com <http://www.domain.com> is ok too). That…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Hostnames instead of IP Addresses", "item": "https://satoshimail.pages.dev/conversations/p60-hostnames-instead-of-ip-addresses/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p60">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Hostnames instead of IP Addresses</span></div></nav>
+<main class="in">
+<h1>Hostnames instead of IP Addresses</h1>
+<p class="lead">BitcoinTalk forum · 15 messages · from 29 May 2010 · with Gavin Andresen, Satoshi Nakamoto, SirArthur, Xunie, lachesis, laszlo…</p>
+<p class="actions"><a class="btn" href="../../#t-p60">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/60/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>SirArthur</b><span class="muted"> · <time datetime="2010-05-29T04:38:52Z">29 May 2010, 04:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1284#msg1284" rel="nofollow noopener">original</a></span></header>
+<div class="t">At least the Windows client seams unable to resolve hostnames - or doesn&#x27;t even try, pops up an &quot;Invalid Address&quot; right away.
+
+This is a huge setback taken most people have dynamic IP Addresses. Therefore, instead of &quot;123.123.123.123&quot; only it should be added the hability to send also to &quot;someone-accepting-bitcoins.somedomain.sometld&quot;.</div></article><article class="msg" id="m1">
+<header><b>Xunie</b><span class="muted"> · <time datetime="2010-05-29T16:41:24Z">29 May 2010, 16:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1292#msg1292" rel="nofollow noopener">original</a></span></header>
+<div class="t">Or it should just look the hostname up before it dismisses it as an invalid address.
+This has probably just slipped the mind of the developer.</div></article><article class="msg" id="m2">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-01T11:01:02Z">1 June 2010, 11:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1317#msg1317" rel="nofollow noopener">original</a></span></header>
+<div class="t">There are security implications with sending payments to a &#x27;hostname&#x27; instead of an internet address.  TCP is difficult to forge, however DNS is trivial.  It is not a good idea to send payments to a hostname.  Whether it is an oversight or intentional, it probably should not be used for anything where fraud is a concern.
+
+Here&#x27;s something I quickly googled up for anyone interested: <a href="http://adventuresinsecurity.com/Papers/DNS_Cache_Poisoning.pdf" rel="nofollow noopener">http://adventuresinsecurity.com/Papers/DNS_Cache_Poisoning.pdf</a>
+
+It is not even really an attack, it&#x27;s just how it works..  This is why once people figured out that DNS was unreliable, things like .rhosts for rsh went out of style and ssh uses public keys instead.  It still does some DNS checking to see if the key changed, which could indicate that the DNS has been used to divert your connection to another host.
+
+It is very easy for me to make your computer think that someone-accepting-bitcoins.somedomain.sometld is MY computer, especially if I know you will be sending payment to it.. however if somedomain.sometld is some popular well known service like an exchange, I can just go trying to poison every bitcoin user&#x27;s cache randomly and see how many I get.  I know every node&#x27;s network address so I can figure out who their provider is, thus I can easily narrow down which recursors they&#x27;re likely to be using, so it makes attacking it a lot nicer rather than blindly messing with a bunch of random resolvers that may or may not have any effect.
+
+Many internet DNS servers will just accept any random data you send them, though there have been attempts to patch these things and work around some of the really trivial attacks.  In the end though, it is the DNS protocol that&#x27;s at fault and it is not easily patchable without replacing it.  There are things in the works to make the protocol more secure and such, but until it&#x27;s adopted by the entire internet, there will always be places to mess with it.
+
+It is not even a good idea to send payment to an internet address in my opinion, because the way it is implemented in bitcoin right now, you don&#x27;t know if you connected to the right node.  There is no pre-shared password or public key to verify manually.  While it is not feasible to take over an existing TCP connection, it is possible to use NAT to divert it.  In this case the attacker would have to have control of a router along the way to your destination, but in the case of Tor anyone can run an exit node and just accept all the bitcoin payments.. it&#x27;s really easy to do that because they&#x27;re all on port 8333 so I can just DNAT every connection to 8333 to my own bitcoin host.
+
+Just don&#x27;t use hostnames or internet addresses - use bitcoin addresses.</div></article><article class="msg" id="m3">
+<header><b>SirArthur</b><span class="muted"> · <time datetime="2010-06-01T11:37:31Z">1 June 2010, 11:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1319#msg1319" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here we go again...
+
+YES, you can be phished, hijacked, whatever... but, again, it has to rely on informed options rather than behaviors of &quot;I decided this is more secure to you&quot;. </div></article><article class="msg" id="m4">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-01T12:17:23Z">1 June 2010, 12:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1320#msg1320" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m not sure what you mean by again (I&#x27;m not the developer)..  anyway I&#x27;m just trying to explain why I don&#x27;t think you should use it to accept payments.  Sending payments to a hostname is not reliable for the reasons I said above, and the biggest problem is that there is no way to even know that the payment went to the wrong place, for the sender.  There is a better (reliable) alternative using one time bitcoin addresses.
+
+What I was getting at is that there is no authentication and no way to know if the payment got there with internet address based transactions.  I think the internet address based payments are only for testing locally.  The option is there but I don&#x27;t think it&#x27;s suitable for using on the internet or any multi-user network.
+
+If there was any real amount of internet address based transactions and tor users I would set up an exit node just to intercept any tor based payments.. I still may do it just to see if I can get any because it&#x27;s just another way to make a few more bitcoins per day.
+
+I guess what I&#x27;m trying to say that it is the equivalent of leaving a pile of cash in your driveway with a rock on top of it to keep it from blowing away in the wind.  Anyone can just go pick it up and so if you&#x27;re a service provider you would not want to encourage your customers to pay you in that way, because it would just cause problems when the customer says they paid and the service provider says they didn&#x27;t receive it.  The only reason it&#x27;s even possible to use on the internet right now is because unlike cash which has perceived value to a lot of people, bitcoins are like a pile of rocks to random internet users, they just walk by.  If there are all these piles of bitcoins in everybody&#x27;s driveway and people start figuring out that they&#x27;re valuable, you can bet they&#x27;ll start disappearing, so it&#x27;s best not to put them there in the first place.
+
+Laszlo</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-02T18:18:15Z">2 June 2010, 18:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1322#msg1322" rel="nofollow noopener">original</a></span></header>
+<div class="t">The current sending by IP is not very useful: it connects to the IP, so you&#x27;d like to use TOR for anonymity, but then it can totally be eavesdropped and man-in-the-middled.
+
+The future plan for sending to an IP is to make it a bitcoin address plus IP, like:
+
+1auaDZCFYqaGx4FKS5WenNfurk2SkoDu4h&lt;someseparatorcharacter&gt;1.2.3.4
+or
+1auaDZCFYqaGx4FKS5WenNfurk2SkoDu4h&lt;someseparatorcharacter&gt;domain.com
+
+I need suggestions for the separator character.  &quot;:&quot; is a candidate, but IPv6 has : in it and that might get confusing.  Something that&#x27;s allowed in url parameters would be nice.
+
+I want to use SSL for the connection, using the bitcoin address&#x27; public key as the cert.  You would be certain you&#x27;re connected to who you thought, and safely encrypted.  The bitcoin address would not be used for the transaction, only for authentication.  A new generated bitcoin address would be sent through the SSL connection.
+
+Since it&#x27;s authenticated, it would then be safe to allow the IP address to be a domain name.  Some care taken that if a proxy is used, it uses socks4a instead of DNS lookup.</div></article><article class="msg" id="m6">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-06-03T02:56:19Z">3 June 2010, 02:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1330#msg1330" rel="nofollow noopener">original</a></span></header>
+<div class="t">How about $ ? It&#x27;s distinctive, allowed in URLs, and related to money. You could also surround the authentication address in parentheses to emphasize that coins should not be sent to that address directly.
+
+I really like that authentication method.</div></article><article class="msg" id="m7">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-06-03T14:29:56Z">3 June 2010, 14:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1332#msg1332" rel="nofollow noopener">original</a></span></header>
+<div class="t">Seems like $ would be inviting confusion, since it&#x27;s followed by numbers that can look kind-of like a dollar amount:
+19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3$64.20.45.38
+
+means send $64.20 to my bitcoin address ?
+
+Hyphen or underscore would be less confusing, but I think period would work really nicely:
+
+19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3.64.20.45.38
+19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3.skypaint.com
+
+The advantage of that last one is it is a valid URL;  if a user pasted that into Firefox&#x27;s URL bar or searched for it in Google the website owner could display a helpful web page explaining how to pay.</div></article><article class="msg" id="m8">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-03T17:19:23Z">3 June 2010, 17:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1333#msg1333" rel="nofollow noopener">original</a></span></header>
+<div class="t">Maybe you just use a regular old URL or URN.. Kind of like namespaces in XML.
+
+URN:
+urn:bitcoin.org:19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3@12.34.56.78
+
+URL (not for using with a web browser, but it&#x27;s unique):
+<a href="http://bitcoin.org/12.34.56.78/19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3" rel="nofollow noopener">http://bitcoin.org/12.34.56.78/19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3</a></div></article><article class="msg" id="m9">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-06-03T17:34:38Z">3 June 2010, 17:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1334#msg1334" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: gavinandresen</div><div class="t">19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3.skypaint.com</div></blockquote><div class="t">That&#x27;s ambiguous. How do we know whether to send coins securely to skypaint.com or insecurely to the IP address that the entire thing resolves to?
+
+Having an informational page at the subdomain would be pretty awesome, though. Maybe it&#x27;s worth implementing around the ambiguity.</div></article><article class="msg" id="m10">
+<header><b>SirArthur</b><span class="muted"> · <time datetime="2010-06-04T01:54:52Z">4 June 2010, 01:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1342#msg1342" rel="nofollow noopener">original</a></span></header>
+<div class="t">The idea of send by DCC is to simplify.
+
+It&#x27;s not like put 1000 USD over a rock, the attacks are &quot;theoretically easy&quot; but on practical not, unless your ISP attacks you... but if it does so, why not attack your bank account instead? Except maybe for cable access where your neighbor can sniff you.
+
+This bitcoin.org:19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3@12.34.56.78 is about as practical as nothing. What would be the simplification-add of such? Try to say to someone over the phone your BC address on such manner.
+
+Let&#x27;s do one thing, right: PUT TOR ASIDE. One thing is using BC for anonymous payments / OTHER is to make non-anonymous payments.
+If you&#x27;re up to do anonymous payments, that&#x27;s already sorted: Use BC address and that&#x27;s it.
+
+It&#x27;s then a matter of choices, if for security reasons you feel more confortable with it disabled, do it like: Disabled by default / Enable if you want and know what you&#x27;re doing.
+
+Someone could hijack my site and show another BC address
+-Someone could hijack your site and show another PayPal email also. Defacings aren&#x27;t however easy to do, you don&#x27;t see sites defaced everyday.
+
+Someone could hijack DNS to resolve to something else
+-Someone could hijack your bank&#x27;s login and make you pass over your password to it... again DNS hijack/spoof isn&#x27;t also that easy to do. Theoretically (again) it is, but that would be if you were using some bogus Nameserver. If you use your ISP defaults it would be rather complicated. And if someone invaded your PC to make it change DNS&#x27;s, then that same one would open your BC Client and send all your BC&#x27;s to his address.
+
+So, in the end, my proposal is:
+
+Split the &quot;project idea&quot; in two different (way different) branches:
+
+1 - Anonymous payments - Using BC Address exclusivelly
+2 - Non-anonymous (regular) payments - Using BC Addresses OR DCC.
+
+It makes no sense at all to use Tor arguments over branch 2.</div></article><article class="msg" id="m11">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-04T02:45:21Z">4 June 2010, 02:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1343#msg1343" rel="nofollow noopener">original</a></span></header>
+<div class="t">Bank sites and such use end to end encryption which makes intercepting more difficult and there is usually two way authentication.  The website authenticates itself to you by showing you your personally selected image/phrase, thus you recognize that this is the site you wanted to visit, and then you authenticate to the website so they recognize you as the customer you claim to be.  It&#x27;s not perfect but it&#x27;s like putting a pad lock on a box full of money to keep honest people honest.  Sometimes they use a bigger/thicker pad lock so the effort/gain ratio makes it not really worth trying to break it.
+
+I agree with you in a way about security, if it&#x27;s too inconvenient then it&#x27;s not very useful... though encryption and authentication are generally good enough to deter trivial things and they provide some reassurance.
+
+It is certainly convenient to be able to send to a paypal email address, but even there you get two way authentication.  PayPal will display the name of the person you&#x27;re sending to, before you commit to how much you&#x27;re sending.  PayPal is very popular and is riddled with fraud.. if Bitcoin was accepted on Ebay and the IP address based sending was used as it is today, it would never get there because people would just intercept it along the way, TOR or not.
+
+If you&#x27;ve used ssh you know that uses two way authentication as well - you verify the server&#x27;s key visually before you present your own authentication credentials.  This technique is problematic in a way because if it&#x27;s the first time you&#x27;re connecting you don&#x27;t know what it should be.. you have to call up the person operating the server and ask them to read you the key.  I think the idea of putting it into the URL or other address notation is that you declare what you expect it to be and the local client will tell you if the peer presents something different.  I suppose you could go the ssh route, just let someone accept whatever is presented.. though right now the key is dynamically generated, it could be changed so that it would present some key that changes once a day or something.. then you could show it on the web site that&#x27;s expecting the payment, but then why wouldn&#x27;t you just show the bitcoin address itself and send that way.
+
+I guess I don&#x27;t really understand your point with simplification.. if you have to copy/paste an address already, what does it matter if it&#x27;s an internet address, a DNS address or a bitcoin address?</div></article><article class="msg" id="m12">
+<header><b>SirArthur</b><span class="muted"> · <time datetime="2010-06-04T03:26:58Z">4 June 2010, 03:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1345#msg1345" rel="nofollow noopener">original</a></span></header>
+<div class="t">Put things this way; if you manage (on a more or less distant future, don&#x27;t know) to run sort of a shop on surface web* with BC, you may want:
+
+» Your customers to be identifiable - to know who is paying what and handle refunds
+» Your customers to leave notes along with the payment.
+» Your customers to have a friendly address to pay to (not an IP, not an unreadable hash) - unless you run thenerdsshop.com there is.
+» Your customers to not be nagged.
+
+For this would be obviously interesting a TLS/SSL feature. Imagine this operation:
+
+Client -&gt; send BC 50 to bcpay.mysite.com
+bcpay.mysite.com -&gt; send a certificate with the store&#x27;s data, client&#x27;s get a popup with this server&#x27;s information to confirm
+
+eg:
+You&#x27;re about to make a payment to the following Bitcoin client:
+
+SITE NAME: mystore.com
+COMMON NAME: Payments Gateway
+CA VERIFIED BY: BitcoinSSL
+
+Client -&gt; Confirm ? payment is sent: payment is cancelled.
+
+* Tor users: Let&#x27;s call it a surface web shop shipping goods to your house, so you wouldn&#x27;t go there anyway. What would be the point of hide your IP while give your home address?</div></article><article class="msg" id="m13">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-11T14:33:55Z">11 June 2010, 14:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1482#msg1482" rel="nofollow noopener">original</a></span></header>
+<div class="t">I don&#x27;t see why these two ideas are mutually exclusive, although I&#x27;d assume implementing SSL/TLS is not trivial. We do already link to the OpenSSL library, so I don&#x27;t know.
+
+I personally would prefer a urn scheme to handle a bitcoin address.</div><blockquote><div class=qh>Quote from: Lazslo</div><div class="t">urn:bitcoin.org:19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3@12.34.56.78</div></blockquote><div class="t">That would be perfect, although I would prefer to use the hostname on the right side.
+
+Of course, I&#x27;m the kind of guy who might shop at thenerdsshop.com Smiley
+
+For grandma, the entire bitcoin concept is pretty confusing at the moment. Even neglecting all the technical details, the UI still shows a huge string of numbers and letters (your receiving address) and best practices currently require you to deal with that every time you give someone your address.
+
+Another option is to use something like what OpenID uses: hidden tags on the store&#x27;s (hopefully SSL) site. Then you could just enter a site&#x27;s URL as the receiving address. It would hit that site, search for something like</div><pre><code>&lt;link rel=&quot;bitcoin.address&quot; href=&quot;19vcWM6EEbQHVdN2W8NXv9ySgsPjbZ6gU3&quot;&gt;
+&lt;link rel=&quot;bitcoin.server&quot; href=&quot;12.34.56.78&quot;&gt;</code></pre><div class="t">Or some other form and try to send securely to that.</div></article><article class="msg sat" id="m14">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-14T19:53:44Z">14 June 2010, 19:53 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=158.msg1582#msg1582" rel="nofollow noopener">original</a></span></header>
+<div class="t">SirArthur has a good point about the normal online merchant case, which is what the send-by-IP option is more suited to.  This is the case where the merchant will have a server on a static IP and their own domain name and SSL cert.
+
+Instead of connecting by IP, we can connect to a domain name by SSL, using the existing CA infrastructure to authenticate that you&#x27;re connected to the owner of that domain.
+
+The user would send to domain.com (or www.domain.com &lt;<a href="http://www.domain.com" rel="nofollow noopener">http://www.domain.com</a>&gt; is ok too).  That would be very natural and users could see and verify that what they entered is who they intend to pay.
+
+The SSL also makes it safe for TOR users.
+
+Problem is, I think merchants would still prefer to use bitcoin addresses to be certain they know what the payment is for.  You simply cannot count on users to enter the right thing in the comment fields to identify the transaction.  It would only approach practical if we had a mailto style link that prepopulates the comment field with the order number, but then the link could just as well be a bitcoin address.
+
+Just having an open bitcoin server at domain.com that users could send unidentified payments to would be too much of a liability.  Regular users aren&#x27;t used to the idea of having to identify the payment.  Merchants would get too many blank payments followed by &quot;I paid you, where&#x27;s my stuff?!&quot; a week later.
+
+The payment sequence does have a step where the receiver verifies the order before accepting it.  It can reject the payment and return an error message if it doesn&#x27;t contain a valid order number.  That would require a difficult level of integration of custom code with the bitcoin server though.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p59-json-rpc-programming-tips-using-labels/">← JSON-RPC programming tips using labels</a><a rel="next" href="../../conversations/p61-can-t-build-r80-from-svn/">Can&#x27;t Build r80 from SVN →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

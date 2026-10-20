@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8be979d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8be979d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added superfluous GetEventHandler()'s, there's still a bug on wx2.9.0 that the status number is mashed up for some reason otherwise seems to run fine", "url": "https://satoshimail.pages.dev/commits/8be979d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-01-28T21:49:20Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8be979d9aef606f2a196a2addcf80473d571185b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "now compiles on 64-bit Ubuntu Karmic…", "item": "https://satoshimail.pages.dev/commits/8be979d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c8be979d9ae">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">now compiles on 64-bit Ubuntu Karmic…</span></div></nav>
+<main class="in">
+<h1>now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added superfluous GetEventHandler()&#x27;s, there&#x27;s still a bug on wx2.9.0 that the status number is mashed up for some reason otherwise seems to run fine</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 28 January 2010 · SVN r54 · release v0.2.2 · 8 files, +242 −130</p>
+<p class="actions"><a class="btn" href="../../#t-c8be979d9ae">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/8be979d9aef606f2a196a2addcf80473d571185b" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -1,6 +1,6 @@
+ Bitcoin v0.2.0 BETA
+ 
+-Copyright (c) 2009 Satoshi Nakamoto
++Copyright (c) 2009-2010 Satoshi Nakamoto
+ Distributed under the MIT/X11 software license, see the accompanying
+ file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ This product includes software developed by the OpenSSL Project for use in
+@@ -13,15 +13,22 @@ UNIX BUILD NOTES
+ 
+ Dependencies
+ ------------
+-apt-get install build-essential
+-apt-get install libgtk2.0-dev
+-apt-get install libssl-dev
+-apt-get install libdb4.7-dev
+-apt-get install libdb4.7++-dev
+-apt-get install libboost-dev
++sudo apt-get install build-essential
++sudo apt-get install libgtk2.0-dev
++sudo apt-get install libssl-dev
++sudo apt-get install libdb4.7-dev
++sudo apt-get install libdb4.7++-dev
++sudo apt-get install libboost-dev
++
++There is currently no libwxgtk2.8-ansi-dev debian package for Karmic.
++libwxgtk2.8-dev is the &quot;unicode&quot; build, but for wxWidgets 2.8 &quot;unicode&quot;
++means wchar, not UTF-8.  wchar wxString doesn&#x27;t convert to std::string.
++
++In wxWidgets 2.9, unicode is UTF-8 and that&#x27;s the only version.
+ 
+ You need to download wxWidgets from http://www.wxwidgets.org/downloads/
+-and build it yourself.
++and build it yourself.  See the build instructions and configure parameters
++below.
+ 
+ Licenses of statically linked libraries:
+ wxWidgets      LGPL 2.1 with very liberal exceptions
+@@ -48,7 +55,7 @@ symbols, which reduces the executable size by about 90%.
+ 
+ wxWidgets
+ ---------
+-cd /usr/local/wxWidgets-2.8.9
++cd /usr/local/wxWidgets-2.8.9 or 2.9.0
+ mkdir buildgtk
+ cd buildgtk
+ ../configure --with-gtk --enable-debug --disable-shared --enable-monolithic</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -0,0 +1,89 @@
++# Copyright (c) 2009 Satoshi Nakamoto
++# Distributed under the MIT/X11 software license, see the accompanying
++# file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
++
++ifneq &quot;$(BUILD)&quot; &quot;debug&quot;
++ifneq &quot;$(BUILD)&quot; &quot;release&quot;
++BUILD=debug
++endif
++endif
++ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
++D=d
++DEBUGFLAGS=-g -D__WXDEBUG__
++endif
++
++
++
++INCLUDEPATHS= \
++ -I&quot;/usr/include&quot; \
++ -I&quot;/usr/local/include/wx-2.9&quot; \
++ -I&quot;/usr/local/lib/wx/include/gtk2-unicode-debug-static-2.9&quot;
++
++LIBPATHS= \
++ -L&quot;/usr/lib&quot; \
++ -L&quot;/usr/local/lib&quot;
++
++LIBS= \
++ -Wl,-Bstatic \
++   -l boost_system-mt -l boost_filesystem-mt \
++   -l db_cxx \
++   -l wx_gtk2u$(D)-2.9 \
++ -Wl,-Bdynamic \
++   -l crypto \
++   -l gtk-x11-2.0 -l gthread-2.0 -l SM
++
++WXDEFS=-D__WXGTK__ -DNOPCH
++CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
++HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
++
++
++
++all: bitcoin
++
++
++headers.h.gch: headers.h $(HEADERS) net.h irc.h market.h uibase.h ui.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/util.o: util.cpp                $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/script.o: script.cpp            $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/db.o: db.cpp                    $(HEADERS) market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/net.o: net.cpp                  $(HEADERS) net.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/main.o: main.cpp                $(HEADERS) net.h market.h sha.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/market.o: market.cpp            $(HEADERS) market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/ui.o: ui.cpp                    $(HEADERS) net.h uibase.h ui.h market.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/uibase.o: uibase.cpp            uibase.h
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++obj/sha.o: sha.cpp                  sha.h
++	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
++
++obj/irc.o: irc.cpp                  $(HEADERS)
++	g++ -c $(CFLAGS) -o $@ $&lt;
++
++
++
++
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
++
++bitcoin: headers.h.gch $(OBJS)
++	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
++
++clean:
++	-rm obj/*
++	-rm headers.h.gch</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+-// Copyright (c) 2009 Satoshi Nakamoto
++// Copyright (c) 2009-2010 Satoshi Nakamoto
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
+@@ -252,18 +252,23 @@ bool IsCallbackAvailable(void* p)
+ template&lt;typename T&gt;
+ void AddPendingCustomEvent(wxEvtHandler* pevthandler, int nEventID, const T pbeginIn, const T pendIn)
+ {
+-    if (!pevthandler)
+-        return;
+-
+-    const char* pbegin = (pendIn != pbeginIn) ? &amp;pbeginIn[0] : NULL;
+-    const char* pend = pbegin + (pendIn - pbeginIn) * sizeof(pbeginIn[0]);
+-    wxCommandEvent event(nEventID);
+-    wxString strData(wxChar(0), (pend - pbegin) / sizeof(wxChar) + 1);
+-    memcpy(&amp;strData[0], pbegin, pend - pbegin);
+-    event.SetString(strData);
+-    event.SetInt(pend - pbegin);
+-
+-    pevthandler-&gt;AddPendingEvent(event);
++    // Need to rewrite with something like UIThreadCall
++    // I&#x27;m tired of maintaining this hack that&#x27;s only called by unfinished unused code,
++    // but I&#x27;m not willing to delete it because it serves as documentation of what the
++    // unfinished code was trying to do.
++    assert((&quot;Unimplemented&quot;, 0));
++    //if (!pevthandler)
++    //    return;
++    //
++    //const char* pbegin = (pendIn != pbeginIn) ? &amp;pbeginIn[0] : NULL;
++    //const char* pend = pbegin + (pendIn - pbeginIn) * sizeof(pbeginIn[0]);
++    //wxCommandEvent event(nEventID);
++    //wxString strData(wxChar(0), (pend - pbegin) / sizeof(wxChar) + 1);
++    //memcpy(&amp;strData[0], pbegin, pend - pbegin);
++    //event.SetString(strData);
++    //event.SetInt(pend - pbegin);
++    //
++    //pevthandler-&gt;AddPendingEvent(event);
+ }
+ 
+ template&lt;class T&gt;
+@@ -335,9 +340,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, &quot;Address Book&quot;, wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+     m_toolBar-&gt;Realize();
+     // resize to fit ubuntu&#x27;s huge default font
+-    dResize = 1.19;
+-    SetSize(dResize * GetSize().GetWidth(), 1.1 * GetSize().GetHeight());
+     dResize = 1.20;
++    SetSize(dResize * GetSize().GetWidth(), 1.1 * GetSize().GetHeight());
+ #endif
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+@@ -458,6 +462,8 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ {
+     // Hide the task bar button when minimized.
+     // Event is sent when the frame is minimized or restored.
++    // wxWidgets 2.8.9 doesn&#x27;t have IsIconized() so there&#x27;s no way
++    // to get rid of the deprecated warning.  Just ignore it.
+     if (!event.Iconized())
+         fClosedToTray = false;
+ #ifndef __WXMSW__
+@@ -985,7 +991,7 @@ void ThreadDelayedRepaint(void* parg)
+                 printf(&quot;DelayedRepaint\n&quot;);
+                 wxPaintEvent event;
+                 pframeMain-&gt;fRefresh = true;
+-                pframeMain-&gt;AddPendingEvent(event);
++                pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
+             }
+         }
+         Sleep(nRepaintInterval);
+@@ -1010,7 +1016,7 @@ void MainFrameRepaint()
+         printf(&quot;MainFrameRepaint\n&quot;);
+         wxPaintEvent event;
+         pframeMain-&gt;fRefresh = true;
+-        pframeMain-&gt;AddPendingEvent(event);
++        pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
+     }
+ }
+ 
+@@ -1695,12 +1701,14 @@ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
+ 
+     // Workaround until upgrade to wxWidgets supporting UTF-8
+     wxString str = m_staticTextMain-&gt;GetLabel();
++#if !wxUSE_UNICODE
+     if (str.Find(&#x27;Â&#x27;) != wxNOT_FOUND)
+         str.Remove(str.Find(&#x27;Â&#x27;), 1);
+-    m_staticTextMain-&gt;SetLabel(str);
++#endif
+ #ifndef __WXMSW__
+     SetSize(510, 380);
+ #endif
++    m_staticTextMain-&gt;SetLabel(str);
+ }
+ 
+ void CAboutDialog::OnButtonOK(wxCommandEvent&amp; event)
+@@ -1732,7 +1740,7 @@ CSendDialog::CSendDialog(wxWindow* parent, const wxString&amp; strAddress) : CSendDi
+     if (fontTmp.GetPointSize() &gt; 9);
+         fontTmp.SetPointSize(9);
+     m_staticTextInstructions-&gt;SetFont(fontTmp);
+-    SetSize(725, wxDefaultCoord);
++    SetSize(725, 380);
+ #endif
+ 
+     // Set Icon
+@@ -2000,7 +2008,7 @@ void CSendingDialog::Repaint()
+ {
+     Refresh();
+     wxPaintEvent event;
+-    AddPendingEvent(event);
++    GetEventHandler()-&gt;AddPendingEvent(event);
+ }
+ 
+ bool CSendingDialog::Status()
+@@ -3379,14 +3387,14 @@ void CMyTaskBarIcon::OnMenuOptions(wxCommandEvent&amp; event)
+ {
+     // Since it&#x27;s modal, get the main window to do it
+     wxCommandEvent event2(wxEVT_COMMAND_MENU_SELECTED, wxID_MENUOPTIONSOPTIONS);
+-    pframeMain-&gt;AddPendingEvent(event2);
++    pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event2);
+ }
+ 
+ void CMyTaskBarIcon::Restore()
+ {
+     pframeMain-&gt;Show();
+     wxIconizeEvent event(0, false);
+-    pframeMain-&gt;AddPendingEvent(event);
++    pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
+     pframeMain-&gt;Iconize(false);
+     pframeMain-&gt;Raise();
+ }
+@@ -3548,7 +3556,7 @@ bool CMyApp::OnInit2()
+     if (!fDebug &amp;&amp; !pszSetDataDir[0])
+         ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, wxGetOsDescription().mb_str());
++    printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, ((string)wxGetOsDescription()).c_str());
+ 
+     if (mapArgs.count(&quot;-loadblockindextest&quot;))
+     {</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,3 +1,7 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -639,7 +643,7 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	bSizer21-&gt;Add( 0, 5, 0, wxEXPAND, 5 );
+ 	
+ 	wxFlexGridSizer* fgSizer1;
+-	fgSizer1 = new wxFlexGridSizer( 3, 2, 0, 0 );
++	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
+ 	fgSizer1-&gt;AddGrowableCol( 1 );
+ 	fgSizer1-&gt;SetFlexibleDirection( wxBOTH );
+ 	fgSizer1-&gt;SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,3 +1,7 @@
++// Copyright (c) 2009-2010 Satoshi Nakamoto
++// Distributed under the MIT/X11 software license, see the accompanying
++// file license.txt or http://www.opensource.org/licenses/mit-license.php.
++
+ ///////////////////////////////////////////////////////////////////////////
+ // C++ code generated with wxFormBuilder (version Apr 16 2008)
+ // http://www.wxformbuilder.org/
+@@ -158,7 +162,7 @@ class CMainFrameBase : public wxFrame
+ 		wxListCtrl* m_listCtrlOrdersSent;
+ 		wxListCtrl* m_listCtrlProductsSent;
+ 		wxListCtrl* m_listCtrlOrdersReceived;
+-		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 725,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
++		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 727,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
+ 		~CMainFrameBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;725,484&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;727,484&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;Bitcoin&lt;/property&gt;
+@@ -3509,7 +3509,7 @@
+                 &lt;/object&gt;
+             &lt;/object&gt;
+         &lt;/object&gt;
+-        &lt;object class=&quot;Dialog&quot; expanded=&quot;0&quot;&gt;
++        &lt;object class=&quot;Dialog&quot; expanded=&quot;1&quot;&gt;
+             &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -3580,7 +3580,7 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND|wxLEFT&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxFlexGridSizer&quot; expanded=&quot;0&quot;&gt;
++                    &lt;object class=&quot;wxFlexGridSizer&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;cols&quot;&gt;2&lt;/property&gt;
+                         &lt;property name=&quot;flexible_direction&quot;&gt;wxBOTH&lt;/property&gt;
+                         &lt;property name=&quot;growablecols&quot;&gt;1&lt;/property&gt;
+@@ -3590,7 +3590,7 @@
+                         &lt;property name=&quot;name&quot;&gt;fgSizer1&lt;/property&gt;
+                         &lt;property name=&quot;non_flexible_grow_mode&quot;&gt;wxFLEX_GROWMODE_SPECIFIED&lt;/property&gt;
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                        &lt;property name=&quot;rows&quot;&gt;3&lt;/property&gt;
++                        &lt;property name=&quot;rows&quot;&gt;0&lt;/property&gt;
+                         &lt;property name=&quot;vgap&quot;&gt;0&lt;/property&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+@@ -4189,7 +4189,7 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;bSizer672&lt;/property&gt;
+                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+@@ -4317,7 +4317,7 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;bSizer67&lt;/property&gt;
+                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+@@ -4445,7 +4445,7 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;bSizer23&lt;/property&gt;
+                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/cb0f896/">← simplify AddAddress, readcompactsize limit, fixed a 64-bit…</a><a rel="next" href="../../commits/53d5080/">update fSpent flag on wallet transactions if they&#x27;re seen… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

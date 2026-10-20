@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Proxy – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 5 November 2009: debug.log moved to the data directory &quot;%appdata%/bitcoin/debug.log&quot; 7 inbound and 2 outbound sounds about as expected.…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x25-re-proxy/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Proxy – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 5 November 2009: debug.log moved to the data directory &quot;%appdata%/bitcoin/debug.log&quot; 7 inbound and 2 outbound sounds about as expected.…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x25-re-proxy/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Proxy – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 5 November 2009: debug.log moved to the data directory &quot;%appdata%/bitcoin/debug.log&quot; 7 inbound and 2 outbound sounds about as expected.…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Proxy", "url": "https://satoshimail.pages.dev/conversations/x25-re-proxy/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-11-05T15:25:27Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-11-05T15:25:27Z", "text": "debug.log moved to the data directory \"%appdata%/bitcoin/debug.log\" 7 inbound and 2 outbound sounds about as expected. My last SVN commit included an overhaul of the code that selects the order of addresses to connect to, trying them in the order of most recently seen online, so it should get connected in a more reasonable amount of time if IRC is unavailable. IRC is really only needed to seed the first connection, but we've been using it as a crutch to get connected faster. That would be…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Re: Proxy", "item": "https://satoshimail.pages.dev/conversations/x25-re-proxy/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x25">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Proxy</span></div></nav>
+<main class="in">
+<h1>Re: Proxy</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 1 message · from 5 November 2009 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x25">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to mmalmi@cc.hut.fi</span><span class="muted"> · <time datetime="2009-11-05T15:25:27Z">5 November 2009, 15:25 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-58" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>mmalmi@cc.hut.fi wrote:</div><div class="t">Enabling the proxy setting and restarting Bitcoin I got the first
+connections in less than a minute and ultimately even 8 connections. I
+wonder if they&#x27;re all really through TOR. Netstat shows only 2
+connections to localhost:9050 and 7 connections from local port 8333 to
+elsewhere. (Some of the shown connections may be already disconnected
+ones.) For some reason there&#x27;s no debug.log in the folder where I&#x27;m
+running it.</div></blockquote><div class="t">debug.log moved to the data directory &quot;%appdata%/bitcoin/debug.log&quot;
+
+7 inbound and 2 outbound sounds about as expected.
+
+My last SVN commit included an overhaul of the code that selects the
+order of addresses to connect to, trying them in the order of most
+recently seen online, so it should get connected in a more reasonable
+amount of time if IRC is unavailable.  IRC is really only needed to seed
+the first connection, but we&#x27;ve been using it as a crutch to get
+connected faster.</div><blockquote><div class="t">&gt; If some nodes that accept incoming connects were willing to have their
+&gt; IP coded into the program, it could seed automatically.  Or some IP
+&gt; seed addresses posted on a Wiki page with the instructions.
+
+The wiki page sounds like a good and quickly applicable solution. I
+could keep my ip updated there and we could ask others to do the same.
+When the Linux build works, it&#x27;s easier to set up nodes on servers that
+are online most of the time and have a static IP. A static ip list
+shipped with Bitcoin and a peer exchange protocol would be cool. That
+way there&#x27;d be no need for an IRC server.</div></blockquote><div class="t">That would be great.  It&#x27;s only TOR users that need it, so in the
+instructions saying &quot;bitcoin -proxy=127.0.0.1:9050 -addnode=&lt;someip&gt;&quot;,
+someip could be an actual static IP, with the wiki free-for-all
+add-your-ip list nearby or a link to it.  There should be a link to that optional step, add your IP to this list now that you can accept incoming
+if you&#x27;re static.
+
+Do you think anonymous people are looking to be completely stealth, as
+in never connect once without TOR so nobody knows they use bitcoin, or
+just want to switch to TOR before doing any transactions?  It&#x27;s just if
+you want to be completely stealth that you&#x27;d have to go through the
+-proxy -addnode manual seeding.  It would be very easy to fumble that
+up; if you run bitcoin normally to begin with it immediately
+automatically starts connecting.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x24-re-linux-build-proxy/">← Re: Linux build, proxy</a><a rel="next" href="../../conversations/x26-forum/">Forum →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

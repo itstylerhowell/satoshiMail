@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Version 0.3.9 rc1, please test – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 13 August 2010: Here&#x27;s a test build if you&#x27;d like to help test before 0.3.9 is released. (or if you&#x27;d rather get upgrading out of the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p180-version-0-3-9-rc1-please-test/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Version 0.3.9 rc1, please test – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 13 August 2010: Here&#x27;s a test build if you&#x27;d like to help test before 0.3.9 is released. (or if you&#x27;d rather get upgrading out of the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p180-version-0-3-9-rc1-please-test/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Version 0.3.9 rc1, please test – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 13 August 2010: Here&#x27;s a test build if you&#x27;d like to help test before 0.3.9 is released. (or if you&#x27;d rather get upgrading out of the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Version 0.3.9 rc1, please test", "url": "https://satoshimail.pages.dev/conversations/p180-version-0-3-9-rc1-please-test/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-13T17:40:00Z", "text": "Here's a test build if you'd like to help test before 0.3.9 is released. (or if you'd rather get upgrading out of the way now instead of waiting) Downloads: (binaries only) http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-win32.zip (http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-linux.tar.gz) SHA1 a36ea00cce27b4b083755df73a3d1e5e5729884e bitcoin-0.3.9.rc1-win32.zip SHA1 bbb333b0ea57302740ad1bb9948520d00f884f9d bitcoin-0.3.9.rc1-linux.tar.gz Edit: Linux please test rc2 instead. This adds a -4way switch for tcatm's 4-way SSE2. This will only be for Linux: http://www.bitcoin.org/download/bitcoin-0.3.9.rc2-linux.tar.gz SHA1 47d9998f7d15fe81234a5c89a542da9d0664df40 bitcoin-0.3.9.rc2-linux.tar.gz Please report back your results http://bitcointalk.org/index.php?topic=820", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-13T20:49:14Z", "text": "What's new? Do we have an official changelog yet?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Tilka"}, "datePublished": "2010-08-15T14:11:20Z", "text": "Unfortunately we don't have an official changelog yet (except for the SVN revision descriptions). Here is my unofficial changelog: • fix: makefile.osx • change: enable SSE2 in 64 bit builds • change: connection rules - always make 8 outbound connections - only one connection per a.b.*.* range • add: switch \"-maxconnections=#\" (discussed here <http://bitcointalk.org/index.php?topic=766.0>) • change: JSON-RPC API prints floats with 8 decimal places • change: \"bitcoind help <command>\" instead of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-15T17:32:57Z", "text": "That's a great changelog. I sent you ฿2 for your trouble. Smiley"}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-08-15T17:46:27Z", "text": "Don't wanna take credit where it's not due Smiley the hashes/sec patch was from lachesis, and the extended-help might have been based on my idea, but the code was somewhat different."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-15T18:11:41Z", "text": "The idea was the main part. When you posted your patch, I realized it should have been done that way instead of \"-?\". I always had reservations about \"-?\" because it intrudes on the possible parameter values, and the help response is based on the version of the caller instead of the server."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Version 0.3.9 rc1, please test", "item": "https://satoshimail.pages.dev/conversations/p180-version-0-3-9-rc1-please-test/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p180">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Version 0.3.9 rc1, please test</span></div></nav>
+<main class="in">
+<h1>Version 0.3.9 rc1, please test</h1>
+<p class="lead">BitcoinTalk forum · 6 messages · from 13 August 2010 · with Satoshi Nakamoto, Tilka, jgarzik, lachesis</p>
+<p class="actions"><a class="btn" href="../../#t-p180">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/180/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T17:40:00Z">13 August 2010, 17:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9046#msg9046" rel="nofollow noopener">original</a></span></header>
+<div class="t">Here&#x27;s a test build if you&#x27;d like to help test before 0.3.9 is released.
+(or if you&#x27;d rather get upgrading out of the way now instead of waiting)
+
+Downloads:  (binaries only)
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-win32.zip" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-win32.zip</a>
+(<a href="http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-linux.tar.gz" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.9.rc1-linux.tar.gz</a>)
+
+SHA1 a36ea00cce27b4b083755df73a3d1e5e5729884e bitcoin-0.3.9.rc1-win32.zip
+SHA1 bbb333b0ea57302740ad1bb9948520d00f884f9d bitcoin-0.3.9.rc1-linux.tar.gz
+
+Edit:
+Linux please test rc2 instead.  This adds a -4way switch for tcatm&#x27;s 4-way SSE2.  This will only be for Linux:
+<a href="http://www.bitcoin.org/download/bitcoin-0.3.9.rc2-linux.tar.gz" rel="nofollow noopener">http://www.bitcoin.org/download/bitcoin-0.3.9.rc2-linux.tar.gz</a>
+
+SHA1 47d9998f7d15fe81234a5c89a542da9d0664df40 bitcoin-0.3.9.rc2-linux.tar.gz
+
+Please report back your results
+<a href="http://bitcointalk.org/index.php?topic=820" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=820</a></div></article><article class="msg" id="m1">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-13T20:49:14Z">13 August 2010, 20:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9100#msg9100" rel="nofollow noopener">original</a></span></header>
+<div class="t">What&#x27;s new? Do we have an official changelog yet?</div></article><article class="msg" id="m2">
+<header><b>Tilka</b><span class="muted"> · <time datetime="2010-08-15T14:11:20Z">15 August 2010, 14:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9439#msg9439" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on August 13, 2010, 08:49:14 PM</div><div class="t">What&#x27;s new? Do we have an official changelog yet?</div></blockquote><div class="t">Unfortunately we don&#x27;t have an official changelog yet (except for the SVN revision descriptions).
+
+Here is my unofficial changelog:
+
+• fix: makefile.osx
+
+• change: enable SSE2 in 64 bit builds
+
+• change: connection rules
+- always make 8 outbound connections
+- only one connection per a.b.*.* range
+
+• add: switch &quot;-maxconnections=#&quot; (discussed here &lt;<a href="http://bitcointalk.org/index.php?topic=766.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=766.0</a>&gt;)
+
+• change: JSON-RPC API prints floats with 8 decimal places
+
+• change: &quot;bitcoind help &lt;command&gt;&quot; instead of &quot;bitcoind &lt;command&gt; -?&quot; (based on a patch by jgarzik &lt;<a href="http://bitcointalk.org/index.php?topic=637.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=637.0</a>&gt;)
+
+• add: JSON-RPC &quot;gethashespersec&quot; (based on a patch by lachesis &lt;<a href="http://bitcointalk.org/index.php?topic=609.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=609.0</a>&gt;)
+
+• add: &quot;version&quot; and &quot;hashespersec&quot; fields in JSON-RPC &quot;getinfo&quot;
+
+• fix: &quot;-datadir=&lt;path&gt;&quot; with relative path (bug described here &lt;<a href="http://bitcointalk.org/index.php?topic=601.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=601.0</a>&gt;)
+
+• change: autostart disabled by default except on Windows (requested here &lt;<a href="http://bitcointalk.org/index.php?topic=720.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=720.0</a>&gt;)
+
+• fix: occasional &quot;vector iterator not dereferencable&quot; assertion when compiled with msvc
+
+• fix: readlink compile warning on Linux build
+
+• fix: BSD detection (bug described here &lt;<a href="http://bitcointalk.org/index.php?topic=790.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=790.0</a>&gt;)
+
+• add: &quot;-paytxfee=#&quot; switch (explained here &lt;<a href="http://bitcointalk.org/index.php?topic=795.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=795.0</a>&gt;)
+
+Please tell me if you know of any other forum threads discussing the bugs/changes so I can add them to the list.</div></article><article class="msg" id="m3">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-15T17:32:57Z">15 August 2010, 17:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9464#msg9464" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Tilka on August 15, 2010, 02:11:20 PM</div><div class="t">Unfortunately we don&#x27;t have an official changelog yet (except for the SVN revision descriptions).
+...
+Please tell me if you know of any other forum threads discussing the bugs/changes so I can add them to the list.</div></blockquote><div class="t">That&#x27;s a great changelog. I sent you ฿2 for your trouble. Smiley</div></article><article class="msg" id="m4">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-08-15T17:46:27Z">15 August 2010, 17:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9467#msg9467" rel="nofollow noopener">original</a></span></header>
+<div class="t">Don&#x27;t wanna take credit where it&#x27;s not due Smiley
+
+the hashes/sec patch was from lachesis, and the extended-help might have been based on my idea, but the code was somewhat different.</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T18:11:41Z">15 August 2010, 18:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=806.msg9475#msg9475" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on August 15, 2010, 05:46:27 PM</div><div class="t">the extended-help might have been based on my idea, but the code was somewhat different.</div></blockquote><div class="t">The idea was the main part.  When you posted your patch, I realized it should have been done that way instead of &quot;-?&quot;.  I always had reservations about &quot;-?&quot; because it intrudes on the possible parameter values, and the help response is based on the version of the caller instead of the server.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p179-bugfixes-in-svn-rev-130/">← Bugfixes in SVN rev 130</a><a rel="next" href="../../conversations/p181-proposed-change-to-sendtoaddress-api-call/">Proposed change to sendtoaddress API call →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

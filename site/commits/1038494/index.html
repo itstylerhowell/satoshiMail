@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>key pool for safer wallet backup (r163) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 October 2010: key pool for safer wallet backup. 8 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/1038494/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="key pool for safer wallet backup (r163) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 October 2010: key pool for safer wallet backup. 8 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/1038494/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="key pool for safer wallet backup (r163) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 9 October 2010: key pool for safer wallet backup. 8 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "key pool for safer wallet backup", "url": "https://satoshimail.pages.dev/commits/1038494/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-10-09T19:33:35Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/103849419a9c014a69c76b6f96e48b66cbc838ca"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "key pool for safer wallet backup", "item": "https://satoshimail.pages.dev/commits/1038494/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c103849419a">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">key pool for safer wallet backup</span></div></nav>
+<main class="in">
+<h1>key pool for safer wallet backup</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 9 October 2010 · SVN r163 · release v0.3.14 · 8 files, +198 −57</p>
+<p class="actions"><a class="btn" href="../../#t-c103849419a">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/103849419a9c014a69c76b6f96e48b66cbc838ca" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -576,6 +576,9 @@ bool LoadAddresses()
+ // CWalletDB
+ //
+ 
++static set&lt;int64&gt; setKeyPool;
++static CCriticalSection cs_setKeyPool;
++
+ bool CWalletDB::LoadWallet()
+ {
+     vchDefaultKey.clear();
+@@ -654,6 +657,12 @@ bool CWalletDB::LoadWallet()
+             {
+                 ssValue &gt;&gt; vchDefaultKey;
+             }
++            else if (strType == &quot;pool&quot;)
++            {
++                int64 nIndex;
++                ssKey &gt;&gt; nIndex;
++                setKeyPool.insert(nIndex);
++            }
+             else if (strType == &quot;version&quot;)
+             {
+                 ssValue &gt;&gt; nFileVersion;
+@@ -836,3 +845,59 @@ void BackupWallet(const string&amp; strDest)
+         Sleep(100);
+     }
+ }
++
++void CWalletDB::ReserveKeyFromKeyPool(int64&amp; nIndex, CKeyPool&amp; keypool)
++{
++    nIndex = -1;
++    keypool.vchPubKey.clear();
++    CRITICAL_BLOCK(cs_setKeyPool)
++    {
++        // Top up key pool
++        int64 nTargetSize = max(GetArg(&quot;-keypool&quot;, 100), (int64)0);
++        while (setKeyPool.size() &lt; nTargetSize+1)
++        {
++            int64 nEnd = 1;
++            if (!setKeyPool.empty())
++                nEnd = *(--setKeyPool.end()) + 1;
++            if (!Write(make_pair(string(&quot;pool&quot;), nEnd), CKeyPool(GenerateNewKey())))
++                throw runtime_error(&quot;ReserveKeyFromKeyPool() : writing generated key failed&quot;);
++            setKeyPool.insert(nEnd);
++            printf(&quot;keypool added key %&quot;PRI64d&quot;, size=%d\n&quot;, nEnd, setKeyPool.size());
++        }
++
++        // Get the oldest key
++        assert(!setKeyPool.empty());
++        nIndex = *(setKeyPool.begin());
++        setKeyPool.erase(setKeyPool.begin());
++        if (!Read(make_pair(string(&quot;pool&quot;), nIndex), keypool))
++            throw runtime_error(&quot;ReserveKeyFromKeyPool() : read failed&quot;);
++        if (!mapKeys.count(keypool.vchPubKey))
++            throw runtime_error(&quot;ReserveKeyFromKeyPool() : unknown key in key pool&quot;);
++        assert(!keypool.vchPubKey.empty());
++        printf(&quot;keypool reserve %&quot;PRI64d&quot;\n&quot;, nIndex);
++    }
++}
++
++void CWalletDB::KeepKey(int64 nIndex)
++{
++    // Remove from key pool
++    Erase(make_pair(string(&quot;pool&quot;), nIndex));
++    printf(&quot;keypool keep %&quot;PRI64d&quot;\n&quot;, nIndex);
++}
++
++void CWalletDB::ReturnKey(int64 nIndex)
++{
++    // Return to key pool
++    CRITICAL_BLOCK(cs_setKeyPool)
++        setKeyPool.insert(nIndex);
++    printf(&quot;keypool return %&quot;PRI64d&quot;\n&quot;, nIndex);
++}
++
++vector&lt;unsigned char&gt; CWalletDB::GetKeyFromKeyPool()
++{
++    int64 nIndex = 0;
++    CKeyPool keypool;
++    ReserveKeyFromKeyPool(nIndex, keypool);
++    KeepKey(nIndex);
++    return keypool.vchPubKey;
++}</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -308,6 +308,35 @@ bool LoadAddresses();
+ 
+ 
+ 
++class CKeyPool
++{
++public:
++    int64 nTime;
++    vector&lt;unsigned char&gt; vchPubKey;
++
++    CKeyPool()
++    {
++        nTime = GetTime();
++    }
++
++    CKeyPool(const vector&lt;unsigned char&gt;&amp; vchPubKeyIn)
++    {
++        nTime = GetTime();
++        vchPubKey = vchPubKeyIn;
++    }
++
++    IMPLEMENT_SERIALIZE
++    (
++        if (!(nType &amp; SER_GETHASH))
++            READWRITE(nVersion);
++        READWRITE(nTime);
++        READWRITE(vchPubKey);
++    )
++};
++
++
++
++
+ class CWalletDB : public CDB
+ {
+ public:
+@@ -396,6 +425,13 @@ public:
+     }
+ 
+     bool LoadWallet();
++protected:
++    void ReserveKeyFromKeyPool(int64&amp; nIndex, CKeyPool&amp; keypool);
++    void KeepKey(int64 nIndex);
++    static void ReturnKey(int64 nIndex);
++    friend class CReserveKey;
++public:
++    vector&lt;unsigned char&gt; GetKeyFromKeyPool();
+ };
+ 
+ bool LoadWallet(bool&amp; fFirstRunRet);
+@@ -405,3 +441,48 @@ inline bool SetAddressBookName(const string&amp; strAddress, const string&amp; strName)
+ {
+     return CWalletDB().WriteName(strAddress, strName);
+ }
++
++class CReserveKey
++{
++protected:
++    int64 nIndex;
++    vector&lt;unsigned char&gt; vchPubKey;
++public:
++    CReserveKey()
++    {
++        nIndex = -1;
++    }
++
++    ~CReserveKey()
++    {
++        ReturnKey();
++    }
++
++    vector&lt;unsigned char&gt; GetReservedKey()
++    {
++        if (nIndex == -1)
++        {
++            CKeyPool keypool;
++            CWalletDB().ReserveKeyFromKeyPool(nIndex, keypool);
++            vchPubKey = keypool.vchPubKey;
++        }
++        assert(!vchPubKey.empty());
++        return vchPubKey;
++    }
++
++    void KeepKey()
++    {
++        if (nIndex != -1)
++            CWalletDB().KeepKey(nIndex);
++        nIndex = -1;
++        vchPubKey.clear();
++    }
++
++    void ReturnKey()
++    {
++        if (nIndex != -1)
++            CWalletDB::ReturnKey(nIndex);
++        nIndex = -1;
++        vchPubKey.clear();
++    }
++};</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -126,7 +126,7 @@ bool RecvLineIRC(SOCKET hSocket, string&amp; strLine)
+     }
+ }
+ 
+-int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const char* psz3=NULL)
++int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const char* psz3=NULL, const char* psz4=NULL)
+ {
+     loop
+     {
+@@ -141,6 +141,8 @@ int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const cha
+             return 2;
+         if (psz3 &amp;&amp; strLine.find(psz3) != -1)
+             return 3;
++        if (psz4 &amp;&amp; strLine.find(psz4) != -1)
++            return 4;
+     }
+ }
+ 
+@@ -210,7 +212,7 @@ void ThreadIRCSeed2(void* parg)
+                 return;
+         }
+ 
+-        if (!RecvUntil(hSocket, &quot;Found your hostname&quot;, &quot;using your IP address instead&quot;, &quot;Couldn&#x27;t look up your hostname&quot;))
++        if (!RecvUntil(hSocket, &quot;Found your hostname&quot;, &quot;using your IP address instead&quot;, &quot;Couldn&#x27;t look up your hostname&quot;, &quot;ignoring hostname&quot;))
+         {
+             closesocket(hSocket);
+             hSocket = INVALID_SOCKET;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -158,7 +158,8 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
+             if (txout.scriptPubKey == scriptDefaultKey)
+             {
+                 CWalletDB walletdb;
+-                walletdb.WriteDefaultKey(GenerateNewKey());
++                vchDefaultKey = walletdb.GetKeyFromKeyPool();
++                walletdb.WriteDefaultKey(vchDefaultKey);
+                 walletdb.WriteName(PubKeyToAddress(vchDefaultKey), &quot;&quot;);
+             }
+         }
+@@ -1493,15 +1494,6 @@ bool CBlock::AcceptBlock()
+         (nHeight == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
+         return error(&quot;AcceptBlock() : rejected by checkpoint lockin at %d&quot;, nHeight);
+ 
+-    // Scanback checkpoint lockin
+-    for (CBlockIndex* pindex = pindexPrev; pindex-&gt;nHeight &gt;= 74000; pindex = pindex-&gt;pprev)
+-    {
+-        if (pindex-&gt;nHeight == 74000 &amp;&amp; pindex-&gt;GetBlockHash() != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;))
+-            return error(&quot;AcceptBlock() : rejected by scanback lockin at %d&quot;, pindex-&gt;nHeight);
+-        if (pindex-&gt;nHeight == 74638 &amp;&amp; pindex-&gt;GetBlockHash() == uint256(&quot;0x0000000000790ab3f22ec756ad43b6ab569abf0bddeb97c67a6f7b1470a7ec1c&quot;))
+-            return error(&quot;AcceptBlock() : rejected by scanback lockin at %d&quot;, pindex-&gt;nHeight);
+-    }
+-
+     // Write block to history file
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+         return error(&quot;AcceptBlock() : out of disk space&quot;);
+@@ -1961,7 +1953,7 @@ bool AlreadyHave(CTxDB&amp; txdb, const CInv&amp; inv)
+ {
+     switch (inv.type)
+     {
+-    case MSG_TX:    return mapTransactions.count(inv.hash) || txdb.ContainsTx(inv.hash);
++    case MSG_TX:    return mapTransactions.count(inv.hash) || mapOrphanTransactions.count(inv.hash) || txdb.ContainsTx(inv.hash);
+     case MSG_BLOCK: return mapBlockIndex.count(inv.hash) || mapOrphanBlocks.count(inv.hash);
+     }
+     // Don&#x27;t know what it is, just say we already got one
+@@ -2472,7 +2464,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+         // Keep giving the same key to the same ip until they use it
+         if (!mapReuseKey.count(pfrom-&gt;addr.ip))
+-            mapReuseKey[pfrom-&gt;addr.ip] = GenerateNewKey();
++            mapReuseKey[pfrom-&gt;addr.ip] = CWalletDB().GetKeyFromKeyPool();
+ 
+         // Send back approval of order and pubkey to use
+         CScript scriptPubKey;
+@@ -2933,8 +2925,7 @@ void BitcoinMiner()
+     if (mapArgs.count(&quot;-4way&quot;))
+         f4WaySSE2 = (mapArgs[&quot;-4way&quot;] != &quot;0&quot;);
+ 
+-    CKey key;
+-    key.MakeNewKey();
++    CReserveKey reservekey;
+     CBigNum bnExtraNonce = 0;
+     while (fGenerateBitcoins)
+     {
+@@ -2961,9 +2952,9 @@ void BitcoinMiner()
+         CTransaction txNew;
+         txNew.vin.resize(1);
+         txNew.vin[0].prevout.SetNull();
+-        txNew.vin[0].scriptSig &lt;&lt; nBits &lt;&lt; ++bnExtraNonce;
++        txNew.vin[0].scriptSig &lt;&lt; ++bnExtraNonce;
+         txNew.vout.resize(1);
+-        txNew.vout[0].scriptPubKey &lt;&lt; key.GetPubKey() &lt;&lt; OP_CHECKSIG;
++        txNew.vout[0].scriptPubKey &lt;&lt; reservekey.GetReservedKey() &lt;&lt; OP_CHECKSIG;
+ 
+ 
+         //
+@@ -3113,10 +3104,8 @@ void BitcoinMiner()
+                     {
+                         if (pindexPrev == pindexBest)
+                         {
+-                            // Save key
+-                            if (!AddKey(key))
+-                                return;
+-                            key.MakeNewKey();
++                            // Remove key from key pool
++                            reservekey.KeepKey();
+ 
+                             // Track how many getdata requests this block gets
+                             CRITICAL_BLOCK(cs_mapRequestCount)
+@@ -3183,7 +3172,10 @@ void BitcoinMiner()
+                 break;
+ 
+             // Update nTime every few seconds
+-            pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++            int64 nNewTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++            if (nNewTime != pblock-&gt;nTime &amp;&amp; bnExtraNonce &gt; 10)
++                bnExtraNonce = 0;
++            pblock-&gt;nTime = nNewTime;
+             tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
+         }
+     }
+@@ -3342,7 +3334,7 @@ bool SelectCoins(int64 nTargetValue, set&lt;CWalletTx*&gt;&amp; setCoinsRet)
+ 
+ 
+ 
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet)
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRequiredRet)
+ {
+     nFeeRequiredRet = 0;
+     CRITICAL_BLOCK(cs_main)
+@@ -3386,18 +3378,20 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                     //  rediscover unknown transactions that were written with keys of ours to recover
+                     //  post-backup change.
+ 
+-                    // New private key
+-                    if (keyRet.IsNull())
+-                        keyRet.MakeNewKey();
++                    // Reserve a new key pair from key pool
++                    vector&lt;unsigned char&gt; vchPubKey = reservekey.GetReservedKey();
++                    assert(mapKeys.count(vchPubKey));
+ 
+                     // Fill a vout to ourself, using same address type as the payment
+                     CScript scriptChange;
+                     if (scriptPubKey.GetBitcoinAddressHash160() != 0)
+-                        scriptChange.SetBitcoinAddress(keyRet.GetPubKey());
++                        scriptChange.SetBitcoinAddress(vchPubKey);
+                     else
+-                        scriptChange &lt;&lt; keyRet.GetPubKey() &lt;&lt; OP_CHECKSIG;
++                        scriptChange &lt;&lt; vchPubKey &lt;&lt; OP_CHECKSIG;
+                     wtxNew.vout.push_back(CTxOut(nChange, scriptChange));
+                 }
++                else
++                    reservekey.ReturnKey();
+ 
+                 // Fill a vout to the payee
+                 if (fChangeFirst)
+@@ -3440,7 +3434,7 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+ }
+ 
+ // Call after CreateTransaction unless you want to abort
+-bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key)
++bool CommitTransaction(CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey)
+ {
+     CRITICAL_BLOCK(cs_main)
+     {
+@@ -3452,9 +3446,8 @@ bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key)
+             // maybe makes sense; please don&#x27;t do it anywhere else.
+             CWalletDB walletdb(&quot;r&quot;);
+ 
+-            // Add the change&#x27;s private key to wallet
+-            if (!key.IsNull() &amp;&amp; !AddKey(key))
+-                throw runtime_error(&quot;CommitTransaction() : AddKey failed&quot;);
++            // Take key pair from key pool so it won&#x27;t be used again
++            reservekey.KeepKey();
+ 
+             // Add tx to wallet, because if it has change it&#x27;s also ours,
+             // otherwise just for transaction history.
+@@ -3496,9 +3489,9 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAs
+ {
+     CRITICAL_BLOCK(cs_main)
+     {
+-        CKey key;
++        CReserveKey reservekey;
+         int64 nFeeRequired;
+-        if (!CreateTransaction(scriptPubKey, nValue, wtxNew, key, nFeeRequired))
++        if (!CreateTransaction(scriptPubKey, nValue, wtxNew, reservekey, nFeeRequired))
+         {
+             string strError;
+             if (nValue + nFeeRequired &gt; GetBalance())
+@@ -3512,7 +3505,7 @@ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAs
+         if (fAskFee &amp;&amp; !ThreadSafeAskFee(nFeeRequired, _(&quot;Sending...&quot;), NULL))
+             return &quot;ABORTED&quot;;
+ 
+-        if (!CommitTransaction(wtxNew, key))
++        if (!CommitTransaction(wtxNew, reservekey))
+             return _(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;);
+     }
+     MainFrameRepaint();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -76,8 +76,8 @@ bool ProcessMessages(CNode* pfrom);
+ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+ bool SendMessages(CNode* pto, bool fSendTrickle);
+ int64 GetBalance();
+-bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
+-bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key);
++bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey, int64&amp; nFeeRequiredRet);
++bool CommitTransaction(CWalletTx&amp; wtxNew, CReserveKey&amp; reservekey);
+ bool BroadcastTransaction(CWalletTx&amp; wtxNew);
+ string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
+ string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
+@@ -361,7 +361,7 @@ public:
+     {
+         if (scriptPubKey.size() &lt; 6)
+             return &quot;CTxOut(error)&quot;;
+-        return strprintf(&quot;CTxOut(nValue=%&quot;PRI64d&quot;.%08&quot;PRI64d&quot;, scriptPubKey=%s)&quot;, nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,24).c_str());
++        return strprintf(&quot;CTxOut(nValue=%&quot;PRI64d&quot;.%08&quot;PRI64d&quot;, scriptPubKey=%s)&quot;, nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,30).c_str());
+     }
+ 
+     void print() const</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -275,7 +275,7 @@ Value getnewaddress(const Array&amp; params, bool fHelp)
+         strLabel = params[0].get_str();
+ 
+     // Generate a new key that is added to wallet
+-    string strAddress = PubKeyToAddress(GenerateNewKey());
++    string strAddress = PubKeyToAddress(CWalletDB().GetKeyFromKeyPool());
+ 
+     SetAddressBookName(strAddress, strLabel);
+     return strAddress;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -22,7 +22,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31302;
++static const int VERSION = 31303;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ 
+@@ -725,39 +725,39 @@ public:
+     typedef vector_type::const_iterator   const_iterator;
+     typedef vector_type::reverse_iterator reverse_iterator;
+ 
+-    explicit CDataStream(int nTypeIn=0, int nVersionIn=VERSION)
++    explicit CDataStream(int nTypeIn=SER_NETWORK, int nVersionIn=VERSION)
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ 
+-    CDataStream(const_iterator pbegin, const_iterator pend, int nTypeIn=0, int nVersionIn=VERSION) : vch(pbegin, pend)
++    CDataStream(const_iterator pbegin, const_iterator pend, int nTypeIn=SER_NETWORK, int nVersionIn=VERSION) : vch(pbegin, pend)
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ 
+ #if !defined(_MSC_VER) || _MSC_VER &gt;= 1300
+-    CDataStream(const char* pbegin, const char* pend, int nTypeIn=0, int nVersionIn=VERSION) : vch(pbegin, pend)
++    CDataStream(const char* pbegin, const char* pend, int nTypeIn=SER_NETWORK, int nVersionIn=VERSION) : vch(pbegin, pend)
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ #endif
+ 
+-    CDataStream(const vector_type&amp; vchIn, int nTypeIn=0, int nVersionIn=VERSION) : vch(vchIn.begin(), vchIn.end())
++    CDataStream(const vector_type&amp; vchIn, int nTypeIn=SER_NETWORK, int nVersionIn=VERSION) : vch(vchIn.begin(), vchIn.end())
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ 
+-    CDataStream(const vector&lt;char&gt;&amp; vchIn, int nTypeIn=0, int nVersionIn=VERSION) : vch(vchIn.begin(), vchIn.end())
++    CDataStream(const vector&lt;char&gt;&amp; vchIn, int nTypeIn=SER_NETWORK, int nVersionIn=VERSION) : vch(vchIn.begin(), vchIn.end())
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ 
+-    CDataStream(const vector&lt;unsigned char&gt;&amp; vchIn, int nTypeIn=0, int nVersionIn=VERSION) : vch((char*)&amp;vchIn.begin()[0], (char*)&amp;vchIn.end()[0])
++    CDataStream(const vector&lt;unsigned char&gt;&amp; vchIn, int nTypeIn=SER_NETWORK, int nVersionIn=VERSION) : vch((char*)&amp;vchIn.begin()[0], (char*)&amp;vchIn.end()[0])
+     {
+         Init(nTypeIn, nVersionIn);
+     }
+ 
+-    void Init(int nTypeIn=0, int nVersionIn=VERSION)
++    void Init(int nTypeIn=SER_NETWORK, int nVersionIn=VERSION)
+     {
+         nReadPos = 0;
+         nType = nTypeIn;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1170,7 +1170,7 @@ void CMainFrame::OnButtonNew(wxCommandEvent&amp; event)
+     string strName = dialog.GetValue();
+ 
+     // Generate new key
+-    string strAddress = PubKeyToAddress(GenerateNewKey());
++    string strAddress = PubKeyToAddress(CWalletDB().GetKeyFromKeyPool());
+ 
+     // Save
+     SetAddressBookName(strAddress, strName);
+@@ -1425,7 +1425,10 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                 if (txout.IsMine())
+                     strHTML += &quot;&lt;b&gt;Credit:&lt;/b&gt; &quot; + FormatMoney(txout.GetCredit()) + &quot;&lt;br&gt;&quot;;
+ 
+-            strHTML += &quot;&lt;b&gt;Inputs:&lt;/b&gt;&lt;br&gt;&quot;;
++            strHTML += &quot;&lt;br&gt;&lt;b&gt;Transaction:&lt;/b&gt;&lt;br&gt;&quot;;
++            strHTML += HtmlEscape(wtx.ToString(), true);
++
++            strHTML += &quot;&lt;br&gt;&lt;b&gt;Inputs:&lt;/b&gt;&lt;br&gt;&quot;;
+             CRITICAL_BLOCK(cs_mapWallet)
+             {
+                 foreach(const CTxIn&amp; txin, wtx.vin)
+@@ -1444,9 +1447,6 @@ CTxDetailsDialog::CTxDetailsDialog(wxWindow* parent, CWalletTx wtx) : CTxDetails
+                     }
+                 }
+             }
+-
+-            strHTML += &quot;&lt;br&gt;&lt;hr&gt;&lt;br&gt;&lt;b&gt;Transaction:&lt;/b&gt;&lt;br&gt;&quot;;
+-            strHTML += HtmlEscape(wtx.ToString(), true);
+         }
+ 
+ 
+@@ -2245,9 +2245,9 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+             Error(_(&quot;Insufficient funds&quot;));
+             return;
+         }
+-        CKey key;
++        CReserveKey reservekey;
+         int64 nFeeRequired;
+-        if (!CreateTransaction(scriptPubKey, nPrice, wtx, key, nFeeRequired))
++        if (!CreateTransaction(scriptPubKey, nPrice, wtx, reservekey, nFeeRequired))
+         {
+             if (nPrice + nFeeRequired &gt; GetBalance())
+                 Error(strprintf(_(&quot;This is an oversized transaction that requires a transaction fee of %s&quot;), FormatMoney(nFeeRequired).c_str()));
+@@ -2287,7 +2287,7 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+             return;
+ 
+         // Commit
+-        if (!CommitTransaction(wtx, key))
++        if (!CommitTransaction(wtx, reservekey))
+         {
+             Error(_(&quot;The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;));
+             return;
+@@ -2565,7 +2565,7 @@ void CAddressBookDialog::OnButtonNew(wxCommandEvent&amp; event)
+         strName = dialog.GetValue();
+ 
+         // Generate new key
+-        strAddress = PubKeyToAddress(GenerateNewKey());
++        strAddress = PubKeyToAddress(CWalletDB().GetKeyFromKeyPool());
+     }
+ 
+     // Add to list and select it</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0a27bd0/">← updated Russian translation</a><a rel="next" href="../../commits/83082f0/">dkaparis: boost::bind build fix for c++0x →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

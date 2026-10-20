@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DEB Package? – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 12 February 2010: Are you just trying to run the program or do you really need to compile it? There&#x27;s a 32-bit linux binary that can be…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p28-deb-package/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="DEB Package? – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 12 February 2010: Are you just trying to run the program or do you really need to compile it? There&#x27;s a 32-bit linux binary that can be…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p28-deb-package/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="DEB Package? – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 12 February 2010: Are you just trying to run the program or do you really need to compile it? There&#x27;s a 32-bit linux binary that can be…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "DEB Package?", "url": "https://satoshimail.pages.dev/conversations/p28-deb-package/", "author": {"@type": "Person", "name": "nphyx"}, "datePublished": "2010-02-12T00:31:35Z", "text": "I am having 0 luck attempting to compile w/wxWidgets. Trying to compile wx from source was a no-go (various syntax errors I didn't really delve into), downloaded latest precompiled wx packages for ubuntu karmic, but they do not match up to your static links far as I can tell. I guess what I'm getting at is, rather than try to sort out these issues, I'd really love a .deb <.< I'd like to participate - as an agorist and a fan of cryptoanarchic theory this is sort of a fantasy of mine, but there is frankly no way I will dual boot windows or run this in as insecure an environment as a VM. DEB isn't a bad route, you'll hit the vast majority of desktop linux users, most of whom won't be buggered to try compiling in the first place, so I don't think it's entirely unreasonable. Alternatively if you are interested in helping me work out compilation issues I would be happy to provide x86_64 binaries for ubuntu as long as I am compiling them. I haven't done .debs before but I am sure I can figure that out. Let me know Smiley", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-12T02:33:02Z", "text": "Are you just trying to run the program or do you really need to compile it? There's a 32-bit linux binary that can be run on 64-bit ubuntu if you \"sudo apt-get ia32-libs\". http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.2.0-linux.tar.gz/download I recently updated the SVN for building on 64-bit Karmic with wxWidgets 2.9.0. This was after the 0.2.0 release. The 0.2.0 release did not build on 64-bit yet. Unfortunately there currently isn't a -dev deb package of either of the…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-12T15:57:37Z", "text": "Am I missing something? Is there something wrong with the 32-bit linux precompiled binary on bitcoin.org? The bitcoin binary in the distribution static links the wxWidgets library, and its shared links (openssl and GTK) are included in Ubuntu, so it can run without needing to be a .deb to pull down dependencies. Since we're upgrading to wxWidgets 2.9.0 for UTF-8, which doesn't have a DEB package yet, we'll continue to need to static link it."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nphyx"}, "datePublished": "2010-02-13T00:25:04Z", "text": "Sorry, I should have mentioned more clearly that I am running AMD64. I was trying to compile with 0.2.0, so that would explain a lot of my issues. I *would* like to have a native 64 bit binary, but it sounds like that isn't going to happen right now. I have ia32-lib already, I'll try running what you've supplied, and failing that Wine might be an option. Thanks for the help. I don't remember coming across SVN links on the download page, but once you get up to wxWidgets2.9 I may try again. I…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-13T01:38:37Z", "text": "I couldn't get wxWidgets 2.8.9 to compile on Karmic 64-bit either. I have been compiling the latest SVN on Karmic 64-bit with wxWidgets 2.9.0, which compiles fine on 64-bit. Read build-unix.txt and use the given ../configure parameters on wxWidgets so you can use the makefile.unix.wx2.9 as supplied. (--enable-debug --disable-shared --enable-monolithic) There's one cosmetic bug with 2.9.0 I still need to fix where the status number display is bunched up for some reason. -- fixed The download…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "DEB Package?", "item": "https://satoshimail.pages.dev/conversations/p28-deb-package/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p28">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">DEB Package?</span></div></nav>
+<main class="in">
+<h1>DEB Package?</h1>
+<p class="lead">BitcoinTalk forum · 5 messages · from 12 February 2010 · with Satoshi Nakamoto, nphyx</p>
+<p class="actions"><a class="btn" href="../../#t-p28">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/28/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>nphyx</b><span class="muted"> · <time datetime="2010-02-12T00:31:35Z">12 February 2010, 00:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=49.msg314#msg314" rel="nofollow noopener">original</a></span></header>
+<div class="t">I am having 0 luck attempting to compile w/wxWidgets. Trying to compile wx from source was a no-go (various syntax errors I didn&#x27;t really delve into), downloaded latest precompiled wx packages for ubuntu karmic, but they do not match up to your static links far as I can tell. I guess what I&#x27;m getting at is, rather than try to sort out these issues, I&#x27;d really love a .deb &lt;.&lt; I&#x27;d like to participate - as an agorist and a fan of cryptoanarchic theory this is sort of a fantasy of mine, but there is frankly no way I will dual boot windows or run this in as insecure an environment as a VM.
+
+DEB isn&#x27;t a bad route, you&#x27;ll hit the vast majority of desktop linux users, most of whom won&#x27;t be buggered to try compiling in the first place, so I don&#x27;t think it&#x27;s entirely unreasonable. Alternatively if you are interested in helping me work out compilation issues I would be happy to provide x86_64 binaries for ubuntu as long as I am compiling them. I haven&#x27;t done .debs before but I am sure I can figure that out. Let me know Smiley</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-12T02:33:02Z">12 February 2010, 02:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=49.msg315#msg315" rel="nofollow noopener">original</a></span></header>
+<div class="t">Are you just trying to run the program or do you really need to compile it?  There&#x27;s a 32-bit linux binary that can be run on 64-bit ubuntu if you &quot;sudo apt-get ia32-libs&quot;.
+<a href="http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.2.0-linux.tar.gz/download" rel="nofollow noopener">http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.2.0-linux.tar.gz/download</a>
+
+I recently updated the SVN for building on 64-bit Karmic with wxWidgets 2.9.0.  This was after the 0.2.0 release.  The 0.2.0 release did not build on 64-bit yet.
+
+Unfortunately there currently isn&#x27;t a -dev deb package of either of the versions of wxWidgets that we can use.  On Karmic they only have the UTF-16 version.  We need either the ANSI (libwxgtk2.8-ansi-dev) version or the UTF-8 (wxWidgets 2.9.0) version.  We&#x27;re moving towards 2.9.0.
+
+I know you said you didn&#x27;t want VM, but as a last resort, last I checked the Windows version runs fine in Wine.</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-12T15:57:37Z">12 February 2010, 15:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=49.msg322#msg322" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: soultcer on February 12, 2010, 02:31:50 PM</div><div class="t">If you want, I can provide you with a precompiled binary.</div></blockquote><div class="t">Am I missing something?  Is there something wrong with the 32-bit linux precompiled binary on bitcoin.org?
+
+The bitcoin binary in the distribution static links the wxWidgets library, and its shared links (openssl and GTK) are included in Ubuntu, so it can run without needing to be a .deb to pull down dependencies.
+
+Since we&#x27;re upgrading to wxWidgets 2.9.0 for UTF-8, which doesn&#x27;t have a DEB package yet, we&#x27;ll continue to need to static link it.</div></article><article class="msg" id="m3">
+<header><b>nphyx</b><span class="muted"> · <time datetime="2010-02-13T00:25:04Z">13 February 2010, 00:25 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=49.msg325#msg325" rel="nofollow noopener">original</a></span></header>
+<div class="t">Sorry, I should have mentioned more clearly that I am running AMD64. I was trying to compile with 0.2.0, so that would explain a lot of my issues. I *would* like to have a native 64 bit binary, but it sounds like that isn&#x27;t going to happen right now. I have ia32-lib already, I&#x27;ll try running what you&#x27;ve supplied, and failing that Wine might be an option. Thanks for the help. I don&#x27;t remember coming across SVN links on the download page, but once you get up to wxWidgets2.9 I may try again. I could *not* get 2.8.10 to compile for me, I&#x27;m sure I probably was overlooking something, but it sounds like 2.9 at least resolves the utf-8/ansi issue Smiley</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-13T01:38:37Z">13 February 2010, 01:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=49.msg326#msg326" rel="nofollow noopener">original</a></span></header>
+<div class="t">I couldn&#x27;t get wxWidgets 2.8.9 to compile on Karmic 64-bit either.
+
+I have been compiling the latest SVN on Karmic 64-bit with wxWidgets 2.9.0, which compiles fine on 64-bit.  Read build-unix.txt and use the given ../configure parameters on wxWidgets so you can use the makefile.unix.wx2.9 as supplied.  (--enable-debug --disable-shared --enable-monolithic)
+
+There&#x27;s one cosmetic bug with 2.9.0 I still need to fix where the status number display is bunched up for some reason.  -- fixed
+
+The download link on the homepage is to the sourceforge tar.gz archive which contains the 32-bit binary and the 0.2.0 sources, which were not yet buildable on 64-bit at the time.
+
+The SVN was first buildable on 64-bit with wx2.9.0 on 28 January 2010.
+
+Hopefully they&#x27;ll have a wxWidgets 2.9.0 debian package someday.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p27-what-s-with-this-odd-generation/">← What&#x27;s with this odd generation?</a><a rel="next" href="../../conversations/p29-setting-up-multiple-bitcoin-machines-behind-nat/">Setting up multiple bitcoin machines behind NAT →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

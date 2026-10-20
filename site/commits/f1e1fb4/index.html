@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cleanup, catch some recoverable… (r148) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/f1e1fb4/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="cleanup, catch some recoverable… (r148) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/f1e1fb4/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="cleanup, catch some recoverable… (r148) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "cleanup, catch some recoverable exceptions and continue", "url": "https://satoshimail.pages.dev/commits/f1e1fb4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-07T01:12:53Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f1e1fb4bdef878c8fc1564fa418d44e7541a7e83"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "cleanup, catch some recoverable…", "item": "https://satoshimail.pages.dev/commits/f1e1fb4/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cf1e1fb4bde">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">cleanup, catch some recoverable…</span></div></nav>
+<main class="in">
+<h1>cleanup, catch some recoverable exceptions and continue</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 7 September 2010 · SVN r148 · release v0.3.13 · 18 files, +350 −278</p>
+<p class="actions"><a class="btn" href="../../#t-cf1e1fb4bde">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/f1e1fb4bdef878c8fc1564fa418d44e7541a7e83" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>cryptopp/secblock.h</code></summary><pre><code>@@ -184,7 +184,8 @@ public:
+ 
+ 	void deallocate(void *p, size_type n)
+ 	{
+-		assert(false);
++        //// Bitcoin: can&#x27;t figure out why this is tripping on a few compiles.
++        //assert(false);
+ 	}
+ 
+ 	size_type max_size() const {return 0;}</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -820,10 +820,15 @@ void BackupWallet(const string&amp; strDest)
+                 mapFileUseCount.erase(strFile);
+ 
+                 // Copy wallet.dat
++                filesystem::path pathSrc(GetDataDir() + &quot;/&quot; + strFile);
+                 filesystem::path pathDest(strDest);
+                 if (filesystem::is_directory(pathDest))
+                     pathDest = pathDest / strFile;
+-                filesystem::copy_file(filesystem::path(GetDataDir() + &quot;/&quot; + strFile), pathDest, filesystem::copy_option::overwrite_if_exists);
++#if BOOST_VERSION &gt;= 104000
++                filesystem::copy_file(pathSrc, pathDest, filesystem::copy_option::overwrite_if_exists);
++#else
++                filesystem::copy_file(pathSrc, pathDest);
++#endif
+                 printf(&quot;copied wallet.dat to %s\n&quot;, pathDest.string().c_str());
+ 
+                 return;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -297,7 +297,7 @@ bool AppInit2(int argc, char* argv[])
+ 
+     if (!strErrors.empty())
+     {
+-        wxMessageBox(strErrors, &quot;Bitcoin&quot;);
++        wxMessageBox(strErrors, &quot;Bitcoin&quot;, wxOK | wxICON_ERROR);
+         return false;
+     }
+ 
+@@ -374,7 +374,7 @@ bool AppInit2(int argc, char* argv[])
+             return false;
+         }
+         if (nTransactionFee &gt; 1 * COIN)
+-            wxMessageBox(_(&quot;Warning: -paytxfee is set very high.  This is the transaction fee you will pay if you send a transaction.&quot;), &quot;Bitcoin&quot;);
++            wxMessageBox(_(&quot;Warning: -paytxfee is set very high.  This is the transaction fee you will pay if you send a transaction.&quot;), &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
+     }
+ 
+     //</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -6,6 +6,9 @@
+ 
+ int nGotIRCAddresses = 0;
+ 
++void ThreadIRCSeed2(void* parg);
++
++
+ 
+ 
+ #pragma pack(push, 1)
+@@ -128,6 +131,7 @@ int RecvUntil(SOCKET hSocket, const char* psz1, const char* psz2=NULL, const cha
+     loop
+     {
+         string strLine;
++        strLine.reserve(10000);
+         if (!RecvLineIRC(hSocket, strLine))
+             return 0;
+         printf(&quot;IRC %s\n&quot;, strLine.c_str());
+@@ -157,6 +161,21 @@ bool Wait(int nSeconds)
+ 
+ 
+ void ThreadIRCSeed(void* parg)
++{
++    IMPLEMENT_RANDOMIZE_STACK(ThreadIRCSeed(parg));
++    try
++    {
++        ThreadIRCSeed2(parg);
++    }
++    catch (std::exception&amp; e) {
++        PrintExceptionContinue(&amp;e, &quot;ThreadIRCSeed()&quot;);
++    } catch (...) {
++        PrintExceptionContinue(NULL, &quot;ThreadIRCSeed()&quot;);
++    }
++    printf(&quot;ThreadIRCSeed exiting\n&quot;);
++}
++
++void ThreadIRCSeed2(void* parg)
+ {
+     if (mapArgs.count(&quot;-connect&quot;))
+         return;
+@@ -236,6 +255,7 @@ void ThreadIRCSeed(void* parg)
+ 
+         int64 nStart = GetTime();
+         string strLine;
++        strLine.reserve(10000);
+         while (!fShutdown &amp;&amp; RecvLineIRC(hSocket, strLine))
+         {
+             if (strLine.empty() || strLine.size() &gt; 900 || strLine[0] != &#x27;:&#x27;)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -91,7 +91,7 @@ vector&lt;unsigned char&gt; GenerateNewKey()
+     CKey key;
+     key.MakeNewKey();
+     if (!AddKey(key))
+-        throw runtime_error(&quot;GenerateNewKey() : AddKey failed\n&quot;);
++        throw runtime_error(&quot;GenerateNewKey() : AddKey failed&quot;);
+     return key.GetPubKey();
+ }
+ 
+@@ -487,21 +487,25 @@ void CWalletTx::AddSupportingTransactions(CTxDB&amp; txdb)
+ 
+ 
+ 
+-bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMissingInputs)
++bool CTransaction::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMissingInputs)
+ {
+     if (pfMissingInputs)
+         *pfMissingInputs = false;
+ 
+     // Coinbase is only valid in a block, not as a loose transaction
+     if (IsCoinBase())
+-        return error(&quot;AcceptTransaction() : coinbase as individual tx&quot;);
++        return error(&quot;AcceptToMemoryPool() : coinbase as individual tx&quot;);
+ 
+     if (!CheckTransaction())
+-        return error(&quot;AcceptTransaction() : CheckTransaction failed&quot;);
++        return error(&quot;AcceptToMemoryPool() : CheckTransaction failed&quot;);
+ 
+     // To help v0.1.5 clients who would see it as a negative number
+     if ((int64)nLockTime &gt; INT_MAX)
+-        return error(&quot;AcceptTransaction() : not accepting nLockTime beyond 2038 yet&quot;);
++        return error(&quot;AcceptToMemoryPool() : not accepting nLockTime beyond 2038 yet&quot;);
++
++    // Rather not work on nonstandard transactions
++    if (GetSigOpCount() &gt; 2 || ::GetSerializeSize(*this, SER_NETWORK) &lt; 100)
++        return error(&quot;AcceptToMemoryPool() : nonstandard transaction&quot;);
+ 
+     // Do we already have it?
+     uint256 hash = GetHash();
+@@ -545,7 +549,7 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     {
+         if (pfMissingInputs)
+             *pfMissingInputs = true;
+-        return error(&quot;AcceptTransaction() : ConnectInputs failed %s&quot;, hash.ToString().substr(0,6).c_str());
++        return error(&quot;AcceptToMemoryPool() : ConnectInputs failed %s&quot;, hash.ToString().substr(0,6).c_str());
+     }
+ 
+     // Store transaction in memory
+@@ -553,10 +557,10 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     {
+         if (ptxOld)
+         {
+-            printf(&quot;AcceptTransaction() : replacing tx %s with new version\n&quot;, ptxOld-&gt;GetHash().ToString().c_str());
++            printf(&quot;AcceptToMemoryPool() : replacing tx %s with new version\n&quot;, ptxOld-&gt;GetHash().ToString().c_str());
+             ptxOld-&gt;RemoveFromMemoryPool();
+         }
+-        AddToMemoryPool();
++        AddToMemoryPoolUnchecked();
+     }
+ 
+     ///// are we sure this is ok when loading transactions or restoring block txes
+@@ -564,15 +568,15 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     if (ptxOld)
+         EraseFromWallet(ptxOld-&gt;GetHash());
+ 
+-    printf(&quot;AcceptTransaction(): accepted %s\n&quot;, hash.ToString().substr(0,6).c_str());
++    printf(&quot;AcceptToMemoryPool(): accepted %s\n&quot;, hash.ToString().substr(0,6).c_str());
+     return true;
+ }
+ 
+ 
+-bool CTransaction::AddToMemoryPool()
++bool CTransaction::AddToMemoryPoolUnchecked()
+ {
+     // Add to memory pool without checking anything.  Don&#x27;t call this directly,
+-    // call AcceptTransaction to properly check the transaction first.
++    // call AcceptToMemoryPool to properly check the transaction first.
+     CRITICAL_BLOCK(cs_mapTransactions)
+     {
+         uint256 hash = GetHash();
+@@ -637,17 +641,17 @@ int CMerkleTx::GetBlocksToMaturity() const
+ }
+ 
+ 
+-bool CMerkleTx::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs)
++bool CMerkleTx::AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs)
+ {
+     if (fClient)
+     {
+         if (!IsInMainChain() &amp;&amp; !ClientConnectInputs())
+             return false;
+-        return CTransaction::AcceptTransaction(txdb, false);
++        return CTransaction::AcceptToMemoryPool(txdb, false);
+     }
+     else
+     {
+-        return CTransaction::AcceptTransaction(txdb, fCheckInputs);
++        return CTransaction::AcceptToMemoryPool(txdb, fCheckInputs);
+     }
+ }
+ 
+@@ -657,19 +661,19 @@ bool CWalletTx::AcceptWalletTransaction(CTxDB&amp; txdb, bool fCheckInputs)
+ {
+     CRITICAL_BLOCK(cs_mapTransactions)
+     {
++        // Add previous supporting transactions first
+         foreach(CMerkleTx&amp; tx, vtxPrev)
+         {
+             if (!tx.IsCoinBase())
+             {
+                 uint256 hash = tx.GetHash();
+                 if (!mapTransactions.count(hash) &amp;&amp; !txdb.ContainsTx(hash))
+-                    tx.AcceptTransaction(txdb, fCheckInputs);
++                    tx.AcceptToMemoryPool(txdb, fCheckInputs);
+             }
+         }
+-        if (!IsCoinBase())
+-            return AcceptTransaction(txdb, fCheckInputs);
++        return AcceptToMemoryPool(txdb, fCheckInputs);
+     }
+-    return true;
++    return false;
+ }
+ 
+ void ReacceptWalletTransactions()
+@@ -1046,6 +1050,8 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+         if (nTxFee &lt; nMinFee)
+             return false;
+         nFees += nTxFee;
++        if (!MoneyRange(nFees))
++            return error(&quot;ConnectInputs() : nFees out of range&quot;);
+     }
+ 
+     if (fBlock)
+@@ -1098,6 +1104,9 @@ bool CTransaction::ClientConnectInputs()
+             // txPrev.vout[prevout.n].posNext = posThisTx;
+ 
+             nValueIn += txPrev.vout[prevout.n].nValue;
++
++            if (!MoneyRange(txPrev.vout[prevout.n].nValue) || !MoneyRange(nValueIn))
++                return error(&quot;ClientConnectInputs() : txin values out of range&quot;);
+         }
+         if (GetValueOut() &gt; nValueIn)
+             return false;
+@@ -1251,7 +1260,7 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+ 
+     // Resurrect memory transactions that were in the disconnected branch
+     foreach(CTransaction&amp; tx, vResurrect)
+-        tx.AcceptTransaction(txdb, false);
++        tx.AcceptToMemoryPool(txdb, false);
+ 
+     // Delete redundant memory transactions that are in the connected branch
+     foreach(CTransaction&amp; tx, vDelete)
+@@ -1365,7 +1374,7 @@ bool CBlock::CheckBlock() const
+     // that can be verified before saving an orphan block.
+ 
+     // Size limits
+-    if (vtx.empty() || vtx.size() &gt; MAX_SIZE || ::GetSerializeSize(*this, SER_DISK) &gt; MAX_SIZE)
++    if (vtx.empty() || vtx.size() &gt; MAX_SIZE || ::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_SIZE)
+         return error(&quot;CheckBlock() : size limits failed&quot;);
+ 
+     // Check timestamp
+@@ -1407,6 +1416,15 @@ bool CBlock::AcceptBlock()
+     if (mi == mapBlockIndex.end())
+         return error(&quot;AcceptBlock() : prev block not found&quot;);
+     CBlockIndex* pindexPrev = (*mi).second;
++    int nHeight = pindexPrev-&gt;nHeight+1;
++
++    // Check size
++    if (nHeight &gt; 79400 &amp;&amp; ::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
++        return error(&quot;AcceptBlock() : over size limit&quot;);
++
++    // Check that it&#x27;s not full of nonstandard transactions
++    if (nHeight &gt; 79400 &amp;&amp; GetSigOpCount() &gt; MAX_BLOCK_SIGOPS)
++        return error(&quot;AcceptBlock() : too many nonstandard transactions&quot;);
+ 
+     // Check timestamp against prev
+     if (GetBlockTime() &lt;= pindexPrev-&gt;GetMedianTimePast())
+@@ -1414,7 +1432,7 @@ bool CBlock::AcceptBlock()
+ 
+     // Check that all transactions are finalized
+     foreach(const CTransaction&amp; tx, vtx)
+-        if (!tx.IsFinal(pindexPrev-&gt;nHeight+1, GetBlockTime()))
++        if (!tx.IsFinal(nHeight, GetBlockTime()))
+             return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+     // Check proof of work
+@@ -1422,12 +1440,12 @@ bool CBlock::AcceptBlock()
+         return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+ 
+     // Check that the block chain matches the known block chain up to a checkpoint
+-    if ((pindexPrev-&gt;nHeight+1 == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
+-        (pindexPrev-&gt;nHeight+1 == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
+-        (pindexPrev-&gt;nHeight+1 == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;)) ||
+-        (pindexPrev-&gt;nHeight+1 == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;)) ||
+-        (pindexPrev-&gt;nHeight+1 == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
+-        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at %d&quot;, pindexPrev-&gt;nHeight+1);
++    if ((nHeight == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
++        (nHeight == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
++        (nHeight == 68555 &amp;&amp; hash != uint256(&quot;0x00000000001e1b4903550a0b96e9a9405c8a95f387162e4944e8d9fbe501cd6a&quot;)) ||
++        (nHeight == 70567 &amp;&amp; hash != uint256(&quot;0x00000000006a49b14bcf27462068f1264c961f11fa2e0eddd2be0791e1d4124a&quot;)) ||
++        (nHeight == 74000 &amp;&amp; hash != uint256(&quot;0x0000000000573993a3c9e41ce34471c079dcf5f52a0e824a81e7f953b8661a20&quot;)))
++        return error(&quot;AcceptBlock() : rejected by checkpoint lockin at %d&quot;, nHeight);
+ 
+     // Scanback checkpoint lockin
+     for (CBlockIndex* pindex = pindexPrev; pindex-&gt;nHeight &gt;= 74000; pindex = pindex-&gt;pprev)
+@@ -2012,13 +2030,13 @@ bool ProcessMessages(CNode* pfrom)
+             }
+             else
+             {
+-                PrintException(&amp;e, &quot;ProcessMessage()&quot;);
++                PrintExceptionContinue(&amp;e, &quot;ProcessMessage()&quot;);
+             }
+         }
+         catch (std::exception&amp; e) {
+-            PrintException(&amp;e, &quot;ProcessMessage()&quot;);
++            PrintExceptionContinue(&amp;e, &quot;ProcessMessage()&quot;);
+         } catch (...) {
+-            PrintException(NULL, &quot;ProcessMessage()&quot;);
++            PrintExceptionContinue(NULL, &quot;ProcessMessage()&quot;);
+         }
+ 
+         if (!fRet)
+@@ -2165,7 +2183,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                     multimap&lt;uint256, CNode*&gt; mapMix;
+                     foreach(CNode* pnode, vNodes)
+                         mapMix.insert(make_pair(hashRand = Hash(BEGIN(hashRand), END(hashRand)), pnode));
+-                    int nRelayNodes = 4;
++                    int nRelayNodes = 2;
+                     for (multimap&lt;uint256, CNode*&gt;::iterator mi = mapMix.begin(); mi != mapMix.end() &amp;&amp; nRelayNodes-- &gt; 0; ++mi)
+                         ((*mi).second)-&gt;PushAddress(addr);
+                 }
+@@ -2313,7 +2331,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         pfrom-&gt;AddInventoryKnown(inv);
+ 
+         bool fMissingInputs = false;
+-        if (tx.AcceptTransaction(true, &amp;fMissingInputs))
++        if (tx.AcceptToMemoryPool(true, &amp;fMissingInputs))
+         {
+             AddToWalletIfMine(tx, NULL);
+             RelayMessage(inv, vMsg);
+@@ -2333,7 +2351,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+                     CDataStream(vMsg) &gt;&gt; tx;
+                     CInv inv(MSG_TX, tx.GetHash());
+ 
+-                    if (tx.AcceptTransaction(true))
++                    if (tx.AcceptToMemoryPool(true))
+                     {
+                         printf(&quot;   accepted orphan tx %s\n&quot;, inv.hash.ToString().substr(0,6).c_str());
+                         AddToWalletIfMine(tx, NULL);
+@@ -2809,8 +2827,9 @@ void BitcoinMiner()
+             map&lt;uint256, CTxIndex&gt; mapTestPool;
+             vector&lt;char&gt; vfAlreadyAdded(mapTransactions.size());
+             bool fFoundSomething = true;
+-            uint64 nBlockSize = 0;
+-            while (fFoundSomething &amp;&amp; nBlockSize &lt; MAX_SIZE/2)
++            uint64 nBlockSize = 10000;
++            int nBlockSigOps = 100;
++            while (fFoundSomething)
+             {
+                 fFoundSomething = false;
+                 unsigned int n = 0;
+@@ -2822,7 +2841,10 @@ void BitcoinMiner()
+                     if (tx.IsCoinBase() || !tx.IsFinal())
+                         continue;
+                     unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
+-                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE - 10000)
++                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE)
++                        continue;
++                    int nTxSigOps = tx.GetSigOpCount();
++                    if (nBlockSigOps + nTxSigOps &gt;= MAX_BLOCK_SIGOPS)
+                         continue;
+ 
+                     // Transaction fee based on block size
+@@ -2835,6 +2857,7 @@ void BitcoinMiner()
+ 
+                     pblock-&gt;vtx.push_back(tx);
+                     nBlockSize += nTxSize;
++                    nBlockSigOps += nTxSigOps;
+                     vfAlreadyAdded[n] = true;
+                     fFoundSomething = true;
+                 }
+@@ -3297,7 +3320,7 @@ bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key)
+ 
+             // Add the change&#x27;s private key to wallet
+             if (!key.IsNull() &amp;&amp; !AddKey(key))
+-                throw runtime_error(&quot;CommitTransaction() : AddKey failed\n&quot;);
++                throw runtime_error(&quot;CommitTransaction() : AddKey failed&quot;);
+ 
+             // Add tx to wallet, because if it has change it&#x27;s also ours,
+             // otherwise just for transaction history.
+@@ -3320,7 +3343,7 @@ bool CommitTransaction(CWalletTx&amp; wtxNew, const CKey&amp; key)
+             mapRequestCount[wtxNew.GetHash()] = 0;
+ 
+         // Broadcast
+-        if (!wtxNew.AcceptTransaction())
++        if (!wtxNew.AcceptToMemoryPool())
+         {
+             // This must not fail. The transaction has already been signed and recorded.
+             printf(&quot;CommitTransaction() : Error: Transaction not valid&quot;);</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -15,6 +15,7 @@ class CWalletTx;
+ class CKeyItem;
+ 
+ static const unsigned int MAX_BLOCK_SIZE = 1000000;
++static const int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
+ static const int64 MAX_MONEY = 21000000 * COIN;
+@@ -266,7 +267,7 @@ public:
+         str += strprintf(&quot;CTxIn(&quot;);
+         str += prevout.ToString();
+         if (prevout.IsNull())
+-            str += strprintf(&quot;, coinbase %s&quot;, HexStr(scriptSig.begin(), scriptSig.end(), false).c_str());
++            str += strprintf(&quot;, coinbase %s&quot;, HexStr(scriptSig).c_str());
+         else
+             str += strprintf(&quot;, scriptSig=%s&quot;, scriptSig.ToString().substr(0,24).c_str());
+         if (nSequence != UINT_MAX)
+@@ -474,7 +475,7 @@ public:
+             return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
+ 
+         // Size limits
+-        if (::GetSerializeSize(*this, SER_DISK) &gt; MAX_SIZE)
++        if (::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_SIZE)
+             return error(&quot;CTransaction::CheckTransaction() : size limits failed&quot;);
+ 
+         // Check for negative or overflow output values
+@@ -505,6 +506,16 @@ public:
+         return true;
+     }
+ 
++    int GetSigOpCount() const
++    {
++        int n = 0;
++        foreach(const CTxIn&amp; txin, vin)
++            n += txin.scriptSig.GetSigOpCount();
++        foreach(const CTxOut&amp; txout, vout)
++            n += txout.scriptPubKey.GetSigOpCount();
++        return n;
++    }
++
+     bool IsMine() const
+     {
+         foreach(const CTxOut&amp; txout, vout)
+@@ -570,11 +581,16 @@ public:
+                 if (txout.nValue &lt; CENT)
+                     nMinFee = CENT;
+ 
++        // Raise the price as the block approaches full
++        if (MAX_BLOCK_SIZE/2 &lt;= nBlockSize &amp;&amp; nBlockSize &lt; MAX_BLOCK_SIZE)
++            nMinFee *= MAX_BLOCK_SIZE / (MAX_BLOCK_SIZE - nBlockSize);
++        if (!MoneyRange(nMinFee))
++            nMinFee = MAX_MONEY;
++
+         return nMinFee;
+     }
+ 
+ 
+-
+     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
+     {
+         CAutoFile filein = OpenBlockFile(pos.nFile, 0, pfileRet ? &quot;rb+&quot; : &quot;rb&quot;);
+@@ -639,16 +655,16 @@ public:
+                        CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
+     bool ClientConnectInputs();
+ 
+-    bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
++    bool AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
+ 
+-    bool AcceptTransaction(bool fCheckInputs=true, bool* pfMissingInputs=NULL)
++    bool AcceptToMemoryPool(bool fCheckInputs=true, bool* pfMissingInputs=NULL)
+     {
+         CTxDB txdb(&quot;r&quot;);
+-        return AcceptTransaction(txdb, fCheckInputs, pfMissingInputs);
++        return AcceptToMemoryPool(txdb, fCheckInputs, pfMissingInputs);
+     }
+ 
+ protected:
+-    bool AddToMemoryPool();
++    bool AddToMemoryPoolUnchecked();
+ public:
+     bool RemoveFromMemoryPool();
+ };
+@@ -721,8 +737,8 @@ public:
+     int GetDepthInMainChain() const { int nHeight; return GetDepthInMainChain(nHeight); }
+     bool IsInMainChain() const { return GetDepthInMainChain() &gt; 0; }
+     int GetBlocksToMaturity() const;
+-    bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true);
+-    bool AcceptTransaction() { CTxDB txdb(&quot;r&quot;); return AcceptTransaction(txdb); }
++    bool AcceptToMemoryPool(CTxDB&amp; txdb, bool fCheckInputs=true);
++    bool AcceptToMemoryPool() { CTxDB txdb(&quot;r&quot;); return AcceptToMemoryPool(txdb); }
+ };
+ 
+ 
+@@ -852,12 +868,8 @@ public:
+ 
+     friend bool operator==(const CTxIndex&amp; a, const CTxIndex&amp; b)
+     {
+-        if (a.pos != b.pos || a.vSpent.size() != b.vSpent.size())
+-            return false;
+-        for (int i = 0; i &lt; a.vSpent.size(); i++)
+-            if (a.vSpent[i] != b.vSpent[i])
+-                return false;
+-        return true;
++        return (a.pos    == b.pos &amp;&amp;
++                a.vSpent == b.vSpent);
+     }
+ 
+     friend bool operator!=(const CTxIndex&amp; a, const CTxIndex&amp; b)
+@@ -948,6 +960,14 @@ public:
+         return (int64)nTime;
+     }
+ 
++    int GetSigOpCount() const
++    {
++        int n = 0;
++        foreach(const CTransaction&amp; tx, vtx)
++            n += tx.GetSigOpCount();
++        return n;
++    }
++
+ 
+     uint256 BuildMerkleTree() const
+     {</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -7,11 +7,13 @@ INCLUDEPATHS= \
+  -I&quot;/usr/local/include/wx-2.9&quot; \
+  -I&quot;/usr/local/lib/wx/include/gtk2-unicode-debug-static-2.9&quot;
+ 
++# for wxWidgets 2.9.1, add -l Xxf86vm
+ WXLIBS= \
+  -Wl,-Bstatic \
+    -l wx_gtk2ud-2.9 \
+  -Wl,-Bdynamic \
+-   -l gtk-x11-2.0 -l SM
++   -l gtk-x11-2.0 \
++   -l SM
+ 
+ # for boost 1.37, add -mt to the boost libraries
+ LIBS= \</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -25,7 +25,6 @@ CNode* pnodeLocalHost = NULL;
+ uint64 nLocalHostNonce = 0;
+ array&lt;int, 10&gt; vnThreadsRunning;
+ SOCKET hListenSocket = INVALID_SOCKET;
+-int64 nThreadSocketHandlerHeartbeat = INT64_MAX;
+ 
+ vector&lt;CNode*&gt; vNodes;
+ CCriticalSection cs_vNodes;
+@@ -789,7 +788,6 @@ void ThreadSocketHandler2(void* parg)
+                 pnode-&gt;Release();
+         }
+ 
+-        nThreadSocketHandlerHeartbeat = GetTime();
+         Sleep(10);
+     }
+ }
+@@ -1364,57 +1362,6 @@ void StartNode(void* parg)
+ 
+     // Generate coins in the background
+     GenerateBitcoins(fGenerateBitcoins);
+-
+-    //
+-    // Thread monitoring
+-    // Not really needed anymore, the cause of the hanging was fixed
+-    //
+-    loop
+-    {
+-        Sleep(1000);
+-        if (fShutdown)
+-            return;
+-        if (GetTime() - nThreadSocketHandlerHeartbeat &gt; 15 * 60)
+-        {
+-            // First see if closing sockets will free it
+-            printf(&quot;*** ThreadSocketHandler is stopped ***\n&quot;);
+-            CRITICAL_BLOCK(cs_vNodes)
+-            {
+-                foreach(CNode* pnode, vNodes)
+-                {
+-                    bool fGot = false;
+-                    TRY_CRITICAL_BLOCK(pnode-&gt;cs_vRecv)
+-                        TRY_CRITICAL_BLOCK(pnode-&gt;cs_vSend)
+-                            fGot = true;
+-                    if (!fGot)
+-                    {
+-                        printf(&quot;*** closing socket\n&quot;);
+-                        pnode-&gt;CloseSocketDisconnect();
+-                    }
+-                }
+-            }
+-            Sleep(10000);
+-            if (fShutdown)
+-                return;
+-            if (GetTime() - nThreadSocketHandlerHeartbeat &lt; 60)
+-                continue;
+-
+-            // Hopefully it never comes to this.
+-            // We know it&#x27;ll always be hung in the recv or send call.
+-            // cs_vRecv or cs_vSend may be left permanently unreleased,
+-            // but we always only use TRY_CRITICAL_SECTION on them.
+-            printf(&quot;*** Restarting ThreadSocketHandler ***\n&quot;);
+-            TerminateThread(hThreadSocketHandler, 0);
+-            #ifdef __WXMSW__
+-            CloseHandle(hThreadSocketHandler);
+-            #endif
+-            vnThreadsRunning[0] = 0;
+-
+-            // Restart
+-            hThreadSocketHandler = CreateThread(ThreadSocketHandler, NULL, true);
+-            nThreadSocketHandlerHeartbeat = GetTime();
+-        }
+-    }
+ }
+ 
+ bool StopNode()</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -117,9 +117,9 @@ public:
+         }
+ 
+         // Message size
+-        if (nMessageSize &gt; 0x10000000)
++        if (nMessageSize &gt; MAX_SIZE)
+         {
+-            printf(&quot;CMessageHeader::IsValid() : nMessageSize too large %u\n&quot;, nMessageSize);
++            printf(&quot;CMessageHeader::IsValid() : (%s, %u bytes) nMessageSize &gt; MAX_SIZE\n&quot;, GetCommand().c_str(), nMessageSize);
+             return false;
+         }
+ 
+@@ -466,7 +466,6 @@ extern CNode* pnodeLocalHost;
+ extern uint64 nLocalHostNonce;
+ extern array&lt;int, 10&gt; vnThreadsRunning;
+ extern SOCKET hListenSocket;
+-extern int64 nThreadSocketHandlerHeartbeat;
+ 
+ extern vector&lt;CNode*&gt; vNodes;
+ extern CCriticalSection cs_vNodes;</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -59,6 +59,13 @@ void MakeSameSize(valtype&amp; vch1, valtype&amp; vch2)
+ //
+ #define stacktop(i)  (stack.at(stack.size()+(i)))
+ #define altstacktop(i)  (altstack.at(altstack.size()+(i)))
++static inline void popstack(vector&lt;valtype&gt;&amp; stack)
++{
++    if (stack.empty())
++        throw runtime_error(&quot;popstack() : stack empty&quot;);
++    stack.pop_back();
++}
++
+ 
+ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nIn, int nHashType)
+ {
+@@ -66,6 +73,8 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+     CScript::const_iterator pc = script.begin();
+     CScript::const_iterator pend = script.end();
+     CScript::const_iterator pbegincodehash = script.begin();
++    opcodetype opcode;
++    valtype vchPushValue;
+     vector&lt;bool&gt; vfExec;
+     vector&lt;valtype&gt; altstack;
+     if (script.size() &gt; 10000)
+@@ -82,13 +91,11 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+             //
+             // Read instruction
+             //
+-            opcodetype opcode;
+-            valtype vchPushValue;
+             if (!script.GetOp(pc, opcode, vchPushValue))
+                 return false;
+             if (vchPushValue.size() &gt; 520)
+                 return false;
+-            if (opcode &gt; OP_16 &amp;&amp; nOpCount++ &gt; 200)
++            if (opcode &gt; OP_16 &amp;&amp; ++nOpCount &gt; 201)
+                 return false;
+ 
+             if (opcode == OP_CAT ||
+@@ -108,7 +115,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                 opcode == OP_RSHIFT)
+                 return false;
+ 
+-            if (fExec &amp;&amp; opcode &lt;= OP_PUSHDATA4)
++            if (fExec &amp;&amp; 0 &lt;= opcode &amp;&amp; opcode &lt;= OP_PUSHDATA4)
+                 stack.push_back(vchPushValue);
+             else if (fExec || (OP_IF &lt;= opcode &amp;&amp; opcode &lt;= OP_ENDIF))
+             switch (opcode)
+@@ -149,14 +156,6 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                 case OP_NOP6: case OP_NOP7: case OP_NOP8: case OP_NOP9: case OP_NOP10:
+                 break;
+ 
+-                case OP_VER:
+-                case OP_VERIF:
+-                case OP_VERNOTIF:
+-                {
+-                    return false;
+-                }
+-                break;
+-
+                 case OP_IF:
+                 case OP_NOTIF:
+                 {
+@@ -170,7 +169,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         fValue = CastToBool(vch);
+                         if (opcode == OP_NOTIF)
+                             fValue = !fValue;
+-                        stack.pop_back();
++                        popstack(stack);
+                     }
+                     vfExec.push_back(fValue);
+                 }
+@@ -200,7 +199,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         return false;
+                     bool fValue = CastToBool(stacktop(-1));
+                     if (fValue)
+-                        stack.pop_back();
++                        popstack(stack);
+                     else
+                         return false;
+                 }
+@@ -221,7 +220,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; 1)
+                         return false;
+                     altstack.push_back(stacktop(-1));
+-                    stack.pop_back();
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -230,15 +229,17 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (altstack.size() &lt; 1)
+                         return false;
+                     stack.push_back(altstacktop(-1));
+-                    altstack.pop_back();
++                    popstack(altstack);
+                 }
+                 break;
+ 
+                 case OP_2DROP:
+                 {
+                     // (x1 x2 -- )
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    if (stack.size() &lt; 2)
++                        return false;
++                    popstack(stack);
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -327,7 +328,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // (x -- )
+                     if (stack.size() &lt; 1)
+                         return false;
+-                    stack.pop_back();
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -368,7 +369,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     if (stack.size() &lt; 2)
+                         return false;
+                     int n = CastToBigNum(stacktop(-1)).getint();
+-                    stack.pop_back();
++                    popstack(stack);
+                     if (n &lt; 0 || n &gt;= stack.size())
+                         return false;
+                     valtype vch = stacktop(-n-1);
+@@ -421,7 +422,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     valtype&amp; vch1 = stacktop(-2);
+                     valtype&amp; vch2 = stacktop(-1);
+                     vch1.insert(vch1.end(), vch2.begin(), vch2.end());
+-                    stack.pop_back();
++                    popstack(stack);
+                     if (stacktop(-1).size() &gt; 520)
+                         return false;
+                 }
+@@ -443,8 +444,8 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         nEnd = vch.size();
+                     vch.erase(vch.begin() + nEnd, vch.end());
+                     vch.erase(vch.begin(), vch.begin() + nBegin);
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    popstack(stack);
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -464,7 +465,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         vch.erase(vch.begin() + nSize, vch.end());
+                     else
+                         vch.erase(vch.begin(), vch.end() - nSize);
+-                    stack.pop_back();
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -518,7 +519,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         for (int i = 0; i &lt; vch1.size(); i++)
+                             vch1[i] ^= vch2[i];
+                     }
+-                    stack.pop_back();
++                    popstack(stack);
+                 }
+                 break;
+ 
+@@ -537,13 +538,13 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     // zero bytes after it (numerically, 0x01 == 0x0001 == 0x000001)
+                     //if (opcode == OP_NOTEQUAL)
+                     //    fEqual = !fEqual;
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    popstack(stack);
++                    popstack(stack);
+                     stack.push_back(fEqual ? vchTrue : vchFalse);
+                     if (opcode == OP_EQUALVERIFY)
+                     {
+                         if (fEqual)
+-                            stack.pop_back();
++                            popstack(stack);
+                         else
+                             return false;
+                     }
+@@ -578,7 +579,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     case OP_NOT:        bn = (bn == bnZero); break;
+                     case OP_0NOTEQUAL:  bn = (bn != bnZero); break;
+                     }
+-                    stack.pop_back();
++                    popstack(stack);
+                     stack.push_back(bn.getvch());
+                 }
+                 break;
+@@ -657,14 +658,14 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     case OP_MIN:                 bn = (bn1 &lt; bn2 ? bn1 : bn2); break;
+                     case OP_MAX:                 bn = (bn1 &gt; bn2 ? bn1 : bn2); break;
+                     }
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    popstack(stack);
++                    popstack(stack);
+                     stack.push_back(bn.getvch());
+ 
+                     if (opcode == OP_NUMEQUALVERIFY)
+                     {
+                         if (CastToBool(stacktop(-1)))
+-                            stack.pop_back();
++                            popstack(stack);
+                         else
+                             return false;
+                     }
+@@ -680,9 +681,9 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     CBigNum bn2 = CastToBigNum(stacktop(-2));
+                     CBigNum bn3 = CastToBigNum(stacktop(-1));
+                     bool fValue = (bn2 &lt;= bn1 &amp;&amp; bn1 &lt; bn3);
+-                    stack.pop_back();
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    popstack(stack);
++                    popstack(stack);
++                    popstack(stack);
+                     stack.push_back(fValue ? vchTrue : vchFalse);
+                 }
+                 break;
+@@ -718,7 +719,7 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                         uint256 hash = Hash(vch.begin(), vch.end());
+                         memcpy(&amp;vchHash[0], &amp;hash, sizeof(hash));
+                     }
+-                    stack.pop_back();
++                    popstack(stack);
+                     stack.push_back(vchHash);
+                 }
+                 break;
+@@ -752,13 +753,13 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+ 
+                     bool fSuccess = CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType);
+ 
+-                    stack.pop_back();
+-                    stack.pop_back();
++                    popstack(stack);
++                    popstack(stack);
+                     stack.push_back(fSuccess ? vchTrue : vchFalse);
+                     if (opcode == OP_CHECKSIGVERIFY)
+                     {
+                         if (fSuccess)
+-                            stack.pop_back();
++                            popstack(stack);
+                         else
+                             return false;
+                     }
+@@ -822,13 +823,13 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+                     }
+ 
+                     while (i-- &gt; 0)
+-                        stack.pop_back();
++                        popstack(stack);
+                     stack.push_back(fSuccess ? vchTrue : vchFalse);
+ 
+                     if (opcode == OP_CHECKMULTISIGVERIFY)
+                     {
+                         if (fSuccess)
+-                            stack.pop_back();
++                            popstack(stack);
+                         else
+                             return false;
+                     }
+@@ -856,8 +857,6 @@ bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, co
+     return true;
+ }
+ 
+-#undef top
+-
+ 
+ 
+ 
+@@ -945,10 +944,7 @@ bool CheckSig(vector&lt;unsigned char&gt; vchSig, vector&lt;unsigned char&gt; vchPubKey, CSc
+         return false;
+     vchSig.pop_back();
+ 
+-    if (key.Verify(SignatureHash(scriptCode, txTo, nIn, nHashType), vchSig))
+-        return true;
+-
+-    return false;
++    return key.Verify(SignatureHash(scriptCode, txTo, nIn, nHashType), vchSig);
+ }
+ 
+ 
+@@ -986,21 +982,19 @@ bool Solver(const CScript&amp; scriptPubKey, vector&lt;pair&lt;opcodetype, valtype&gt; &gt;&amp; vSo
+         CScript::const_iterator pc2 = script2.begin();
+         loop
+         {
+-            bool f1 = script1.GetOp(pc1, opcode1, vch1);
+-            bool f2 = script2.GetOp(pc2, opcode2, vch2);
+-            if (!f1 &amp;&amp; !f2)
++            if (pc1 == script1.end() &amp;&amp; pc2 == script2.end())
+             {
+-                // Success
++                // Found a match
+                 reverse(vSolutionRet.begin(), vSolutionRet.end());
+                 return true;
+             }</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -150,18 +150,11 @@ enum opcodetype
+ 
+ 
+ 
+-
+-    // multi-byte opcodes
+-    OP_SINGLEBYTE_END = 0xF0,
+-    OP_DOUBLEBYTE_BEGIN = 0xF000,
+-
+     // template matching params
+-    OP_PUBKEY,
+-    OP_PUBKEYHASH,
+-
+-
++    OP_PUBKEYHASH = 0xfd,
++    OP_PUBKEY = 0xfe,
+ 
+-    OP_INVALIDOPCODE = 0xFFFF,
++    OP_INVALIDOPCODE = 0xff,
+ };
+ 
+ 
+@@ -304,16 +297,13 @@ inline const char* GetOpName(opcodetype opcode)
+ 
+ 
+ 
+-    // multi-byte opcodes
+-    case OP_SINGLEBYTE_END         : return &quot;OP_SINGLEBYTE_END&quot;;
+-    case OP_DOUBLEBYTE_BEGIN       : return &quot;OP_DOUBLEBYTE_BEGIN&quot;;
+-    case OP_PUBKEY                 : return &quot;OP_PUBKEY&quot;;
++    // template matching params
+     case OP_PUBKEYHASH             : return &quot;OP_PUBKEYHASH&quot;;
+-
++    case OP_PUBKEY                 : return &quot;OP_PUBKEY&quot;;
+ 
+     case OP_INVALIDOPCODE          : return &quot;OP_INVALIDOPCODE&quot;;
+     default:
+-        return &quot;UNKNOWN_OPCODE&quot;;
++        return &quot;OP_UNKNOWN&quot;;
+     }
+ };
+ 
+@@ -325,8 +315,7 @@ inline string ValueString(const vector&lt;unsigned char&gt;&amp; vch)
+     if (vch.size() &lt;= 4)
+         return strprintf(&quot;%d&quot;, CBigNum(vch).getint());
+     else
+-        return HexNumStr(vch.begin(), vch.end());
+-        //return string(&quot;(&quot;) + HexStr(vch.begin(), vch.end()) + string(&quot;)&quot;);
++        return HexStr(vch);
+ }
+ 
+ inline string StackString(const vector&lt;vector&lt;unsigned char&gt; &gt;&amp; vStack)
+@@ -363,12 +352,12 @@ protected:
+             CBigNum bn(n);
+             *this &lt;&lt; bn.getvch();
+         }
+-        return (*this);
++        return *this;
+     }
+ 
+     CScript&amp; push_uint64(uint64 n)
+     {
+-        if (n == -1 || (n &gt;= 1 &amp;&amp; n &lt;= 16))
++        if (n &gt;= 1 &amp;&amp; n &lt;= 16)
+         {
+             push_back(n + (OP_1 - 1));
+         }
+@@ -377,7 +366,7 @@ protected:
+             CBigNum bn(n);
+             *this &lt;&lt; bn.getvch();
+         }
+-        return (*this);
++        return *this;
+     }
+ 
+ public:
+@@ -398,7 +387,7 @@ public:
+     {
+         CScript ret = a;
+         ret += b;
+-        return (ret);
++        return ret;
+     }
+ 
+ 
+@@ -419,50 +408,43 @@ public:
+     explicit CScript(const vector&lt;unsigned char&gt;&amp; b) { operator&lt;&lt;(b); }
+ 
+ 
+-    CScript&amp; operator&lt;&lt;(char b)           { return (push_int64(b)); }
+-    CScript&amp; operator&lt;&lt;(short b)          { return (push_int64(b)); }
+-    CScript&amp; operator&lt;&lt;(int b)            { return (push_int64(b)); }
+-    CScript&amp; operator&lt;&lt;(long b)           { return (push_int64(b)); }
+-    CScript&amp; operator&lt;&lt;(int64 b)          { return (push_int64(b)); }
+-    CScript&amp; operator&lt;&lt;(unsigned char b)  { return (push_uint64(b)); }
+-    CScript&amp; operator&lt;&lt;(unsigned int b)   { return (push_uint64(b)); }
+-    CScript&amp; operator&lt;&lt;(unsigned short b) { return (push_uint64(b)); }
+-    CScript&amp; operator&lt;&lt;(unsigned long b)  { return (push_uint64(b)); }
+-    CScript&amp; operator&lt;&lt;(uint64 b)         { return (push_uint64(b)); }
++    CScript&amp; operator&lt;&lt;(char b)           { return push_int64(b); }
++    CScript&amp; operator&lt;&lt;(short b)          { return push_int64(b); }
++    CScript&amp; operator&lt;&lt;(int b)            { return push_int64(b); }
++    CScript&amp; operator&lt;&lt;(long b)           { return push_int64(b); }
++    CScript&amp; operator&lt;&lt;(int64 b)          { return push_int64(b); }
++    CScript&amp; operator&lt;&lt;(unsigned char b)  { return push_uint64(b); }
++    CScript&amp; operator&lt;&lt;(unsigned int b)   { return push_uint64(b); }
++    CScript&amp; operator&lt;&lt;(unsigned short b) { return push_uint64(b); }
++    CScript&amp; operator&lt;&lt;(unsigned long b)  { return push_uint64(b); }
++    CScript&amp; operator&lt;&lt;(uint64 b)         { return push_uint64(b); }
+ 
+     CScript&amp; operator&lt;&lt;(opcodetype opcode)
+     {
+-        if (opcode &lt;= OP_SINGLEBYTE_END)
+-        {
+-            insert(end(), (unsigned char)opcode);
+-        }
+-        else
+-        {
+-            assert(opcode &gt;= OP_DOUBLEBYTE_BEGIN);
+-            insert(end(), (unsigned char)(opcode &gt;&gt; 8));
+-            insert(end(), (unsigned char)(opcode &amp; 0xFF));
+-        }
+-        return (*this);
++        if (opcode &lt; 0 || opcode &gt; 0xff)
++            throw runtime_error(&quot;CScript::operator&lt;&lt;() : invalid opcode&quot;);
++        insert(end(), (unsigned char)opcode);
++        return *this;
+     }
+ 
+     CScript&amp; operator&lt;&lt;(const uint160&amp; b)
+     {
+         insert(end(), sizeof(b));
+         insert(end(), (unsigned char*)&amp;b, (unsigned char*)&amp;b + sizeof(b));
+-        return (*this);
++        return *this;
+     }
+ 
+     CScript&amp; operator&lt;&lt;(const uint256&amp; b)
+     {
+         insert(end(), sizeof(b));
+         insert(end(), (unsigned char*)&amp;b, (unsigned char*)&amp;b + sizeof(b));
+-        return (*this);
++        return *this;
+     }
+ 
+     CScript&amp; operator&lt;&lt;(const CBigNum&amp; b)
+     {
+         *this &lt;&lt; b.getvch();
+-        return (*this);
++        return *this;
+     }
+ 
+     CScript&amp; operator&lt;&lt;(const vector&lt;unsigned char&gt;&amp; b)
+@@ -476,14 +458,20 @@ public:
+             insert(end(), OP_PUSHDATA1);
+             insert(end(), (unsigned char)b.size());
+         }
+-        else
++        else if (b.size() &lt;= 0xffff)
+         {
+             insert(end(), OP_PUSHDATA2);
+             unsigned short nSize = b.size();
+             insert(end(), (unsigned char*)&amp;nSize, (unsigned char*)&amp;nSize + sizeof(nSize));
+         }
++        else
++        {
++            insert(end(), OP_PUSHDATA4);
++            unsigned int nSize = b.size();
++            insert(end(), (unsigned char*)&amp;nSize, (unsigned char*)&amp;nSize + sizeof(nSize));
++        }
+         insert(end(), b.begin(), b.end());
+-        return (*this);
++        return *this;
+     }
+ 
+     CScript&amp; operator&lt;&lt;(const CScript&amp; b)
+@@ -491,7 +479,7 @@ public:
+         // I&#x27;m not sure if this should push the script or concatenate scripts.
+         // If there&#x27;s ever a use for pushing a script onto a script, delete this member fn
+         assert((&quot;warning: pushing a CScript onto a CScript with &lt;&lt; is probably not intended, use + to concatenate&quot;, false));
+-        return (*this);
++        return *this;
+     }
+ 
+ 
+@@ -499,41 +487,59 @@ public:
+     {
+          // Wrapper so it can be called with either iterator or const_iterator
+          const_iterator pc2 = pc;
+-         bool fRet = GetOp(pc2, opcodeRet, vchRet);
++         bool fRet = GetOp2(pc2, opcodeRet, &amp;vchRet);
++         pc = begin() + (pc2 - begin());
++         return fRet;
++    }
++
++    bool GetOp(iterator&amp; pc, opcodetype&amp; opcodeRet)
++    {
++         const_iterator pc2 = pc;
++         bool fRet = GetOp2(pc2, opcodeRet, NULL);
+          pc = begin() + (pc2 - begin());
+          return fRet;
+     }
+ 
+     bool GetOp(const_iterator&amp; pc, opcodetype&amp; opcodeRet, vector&lt;unsigned char&gt;&amp; vchRet) const
++    {
++        return GetOp2(pc, opcodeRet, &amp;vchRet);
++    }
++
++    bool GetOp(const_iterator&amp; pc, opcodetype&amp; opcodeRet) const
++    {
++        return GetOp2(pc, opcodeRet, NULL);
++    }
++
++    bool GetOp2(const_iterator&amp; pc, opcodetype&amp; opcodeRet, vector&lt;unsigned char&gt;* pvchRet) const
+     {
+         opcodeRet = OP_INVALIDOPCODE;
+-        vchRet.clear();
++        if (pvchRet)
++            pvchRet-&gt;clear();
+         if (pc &gt;= end())
+             return false;
+ 
+         // Read instruction
++        if (end() - pc &lt; 1)
++            return false;
+         unsigned int opcode = *pc++;
+-        if (opcode &gt;= OP_SINGLEBYTE_END)
+-        {
+-            if (pc + 1 &gt; end())
+-                return false;
+-            opcode &lt;&lt;= 8;
+-            opcode |= *pc++;
+-        }
+ 
+         // Immediate operand
+         if (opcode &lt;= OP_PUSHDATA4)
+         {
+-            unsigned int nSize = opcode;
+-            if (opcode == OP_PUSHDATA1)
++            unsigned int nSize;
++            if (opcode &lt; OP_PUSHDATA1)
++            {
++                nSize = opcode;
++            }
++            else if (opcode == OP_PUSHDATA1)
+             {
+-                if (pc + 1 &gt; end())
++                if (end() - pc &lt; 1)
+                     return false;
+                 nSize = *pc++;
+             }
+             else if (opcode == OP_PUSHDATA2)
+             {
+-                if (pc + 2 &gt; end())
++                if (end() - pc &lt; 2)
+                     return false;
+                 nSize = 0;
+                 memcpy(&amp;nSize, &amp;pc[0], 2);
+@@ -541,14 +547,15 @@ public:
+             }
+             else if (opcode == OP_PUSHDATA4)
+             {
+-                if (pc + 4 &gt; end())
++                if (end() - pc &lt; 4)
+                     return false;
+                 memcpy(&amp;nSize, &amp;pc[0], 4);
+                 pc += 4;
+             }
+-            if (pc + nSize &gt; end())
++            if (end() - pc &lt; nSize)
+                 return false;
+-            vchRet.assign(pc, pc + nSize);
++            if (pvchRet)
++                pvchRet-&gt;assign(pc, pc + nSize);
+             pc += nSize;
+         }
+ 
+@@ -559,20 +566,34 @@ public:
+ 
+     void FindAndDelete(const CScript&amp; b)
+     {
++        if (b.empty())
++            return;
+         iterator pc = begin();
+         opcodetype opcode;
+-        vector&lt;unsigned char&gt; vchPushValue;
+-        int count = 0;
+         do
+         {
+             while (end() - pc &gt;= b.size() &amp;&amp; memcmp(&amp;pc[0], &amp;b[0], b.size()) == 0)
+-            {
+                 erase(pc, pc + b.size());
+-                count++;
+-            }
+         }
+-        while (GetOp(pc, opcode, vchPushValue));
+-        //printf(&quot;FindAndDeleted deleted %d items\n&quot;, count); /// debug
++        while (GetOp(pc, opcode));
++    }
++</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -23,7 +23,7 @@ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+ static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.0&quot;;
++static const char* pszSubVer = &quot;.1&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.10
++!define VERSION 0.3.12
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.10-win32-setup.exe
++OutFile bitcoin-0.3.12-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.10.0
++VIProductVersion 0.3.12.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -87,6 +87,8 @@ static inline void dumpreg(__m128i x, char *msg) {
+ #else
+ #define dumpstate()
+ #endif
++
++
+ void Double_BlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[9][NPAR], const void *init)
+ {
+     unsigned int* In = (unsigned int*)pin;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1031,9 +1031,6 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     string strStatus = strprintf(_(&quot;     %d connections     %d blocks     %d transactions&quot;), vNodes.size(), nBestHeight, nTransactionCount);
+     m_statusBar-&gt;SetStatusText(strStatus, 2);
+ 
+-    if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)
+-        m_statusBar-&gt;SetStatusText(&quot;     ERROR: ThreadSocketHandler has stopped&quot;, 0);
+-
+     // Update receiving address
+     string strDefaultAddress = PubKeyToAddress(vchDefaultKey);
+     if (m_textCtrlAddress-&gt;GetValue() != strDefaultAddress)</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -305,8 +305,8 @@ public:
+             y += 46 + wxString(strMessage2).Freq(&#x27;\n&#x27;) * 14;
+         }
+ #ifndef __WXMSW__
+-        x *= 1.14;
+-        y *= 1.14;
++        x = x * 114 / 100;
++        y = y * 114 / 100;
+ #endif
+         SetSize(x, y);
+     }</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -79,7 +79,7 @@ instance_of_cinit;
+ void RandAddSeed()
+ {
+     // Seed with CPU performance counter
+-    int64 nCounter = PerformanceCounter();
++    int64 nCounter = GetPerformanceCounter();
+     RAND_add(&amp;nCounter, sizeof(nCounter), 1.5);
+     memset(&amp;nCounter, 0, sizeof(nCounter));
+ }
+@@ -499,23 +499,47 @@ void FormatException(char* pszMessage, std::exception* pex, const char* pszThrea
+ 
+ void LogException(std::exception* pex, const char* pszThread)
+ {
+-    char pszMessage[1000];
++    char pszMessage[10000];
+     FormatException(pszMessage, pex, pszThread);
+     printf(&quot;\n%s&quot;, pszMessage);
+ }
+ 
+ void PrintException(std::exception* pex, const char* pszThread)
+ {
+-    char pszMessage[1000];
++    char pszMessage[10000];
+     FormatException(pszMessage, pex, pszThread);
+     printf(&quot;\n\n************************\n%s\n&quot;, pszMessage);
+     fprintf(stderr, &quot;\n\n************************\n%s\n&quot;, pszMessage);
++    strMiscWarning = pszMessage;
+ #ifdef GUI
+     if (wxTheApp &amp;&amp; !fDaemon)
+-        MyMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
++        MyMessageBox(pszMessage, &quot;Bitcoin&quot;, wxOK | wxICON_ERROR);
+ #endif
+     throw;
+-    //DebugBreak();
++}
++
++void ThreadOneMessageBox(string strMessage)
++{
++    // Skip message boxes if one is already open
++    static bool fMessageBoxOpen;
++    if (fMessageBoxOpen)
++        return;
++    fMessageBoxOpen = true;
++    ThreadSafeMessageBox(strMessage, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
++    fMessageBoxOpen = false;
++}
++
++void PrintExceptionContinue(std::exception* pex, const char* pszThread)
++{
++    char pszMessage[10000];
++    FormatException(pszMessage, pex, pszThread);
++    printf(&quot;\n\n************************\n%s\n&quot;, pszMessage);
++    fprintf(stderr, &quot;\n\n************************\n%s\n&quot;, pszMessage);
++    strMiscWarning = pszMessage;
++#ifdef GUI
++    if (wxTheApp &amp;&amp; !fDaemon)
++        boost::thread(bind(ThreadOneMessageBox, string(pszMessage)));
++#endif
+ }
+ 
+ 
+@@ -749,7 +773,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+             if (!fMatch &amp;&amp; !fDone)
+             {
+                 fDone = true;
+-                string strMessage = _(&quot;Warning: Check your system date and time, you may not be able to generate or receive the most recent blocks!&quot;);
++                string strMessage = _(&quot;Warning: Please check that your computer&#x27;s date and time are correct.  If your clock is wrong Bitcoin will not work properly.&quot;);
+                 strMiscWarning = strMessage;
+                 printf(&quot;*** %s\n&quot;, strMessage.c_str());
+                 boost::thread(bind(ThreadSafeMessageBox, strMessage+&quot; &quot;, string(&quot;Bitcoin&quot;), wxOK | wxICON_EXCLAMATION, (wxWindow*)NULL, -1, -1));</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -151,8 +151,9 @@ int OutputDebugStringF(const char* pszFormat, ...);
+ int my_snprintf(char* buffer, size_t limit, const char* format, ...);
+ string strprintf(const char* format, ...);
+ bool error(const char* format, ...);
+-void PrintException(std::exception* pex, const char* pszThread);
+ void LogException(std::exception* pex, const char* pszThread);
++void PrintException(std::exception* pex, const char* pszThread);
++void PrintExceptionContinue(std::exception* pex, const char* pszThread);
+ void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v);
+ string FormatMoney(int64 n, bool fPlus=false);
+ bool ParseMoney(const string&amp; str, int64&amp; nRet);
+@@ -305,19 +306,20 @@ inline int64 abs64(int64 n)
+ }
+ 
+ template&lt;typename T&gt;
+-string HexStr(const T itbegin, const T itend, bool fSpaces=true)
++string HexStr(const T itbegin, const T itend, bool fSpaces=false)
+ {
+     if (itbegin == itend)
+         return &quot;&quot;;
+     const unsigned char* pbegin = (const unsigned char*)&amp;itbegin[0];
+     const unsigned char* pend = pbegin + (itend - itbegin) * sizeof(itbegin[0]);
+     string str;
++    str.reserve((pend-pbegin) * (fSpaces ? 3 : 2));
+     for (const unsigned char* p = pbegin; p != pend; p++)
+         str += strprintf((fSpaces &amp;&amp; p != pend-1 ? &quot;%02x &quot; : &quot;%02x&quot;), *p);
+     return str;
+ }
+ 
+-inline string HexStr(vector&lt;unsigned char&gt; vch, bool fSpaces=true)
++inline string HexStr(const vector&lt;unsigned char&gt;&amp; vch, bool fSpaces=false)
+ {
+     return HexStr(vch.begin(), vch.end(), fSpaces);
+ }
+@@ -330,23 +332,29 @@ string HexNumStr(const T itbegin, const T itend, bool f0x=true)
+     const unsigned char* pbegin = (const unsigned char*)&amp;itbegin[0];
+     const unsigned char* pend = pbegin + (itend - itbegin) * sizeof(itbegin[0]);
+     string str = (f0x ? &quot;0x&quot; : &quot;&quot;);
++    str.reserve(str.size() + (pend-pbegin) * 2);
+     for (const unsigned char* p = pend-1; p &gt;= pbegin; p--)
+-        str += strprintf(&quot;%02X&quot;, *p);
++        str += strprintf(&quot;%02x&quot;, *p);
+     return str;
+ }
+ 
++inline string HexNumStr(const vector&lt;unsigned char&gt;&amp; vch, bool f0x=true)
++{
++    return HexNumStr(vch.begin(), vch.end(), f0x);
++}
++
+ template&lt;typename T&gt;
+ void PrintHex(const T pbegin, const T pend, const char* pszFormat=&quot;%s&quot;, bool fSpaces=true)
+ {
+     printf(pszFormat, HexStr(pbegin, pend, fSpaces).c_str());
+ }
+ 
+-inline void PrintHex(vector&lt;unsigned char&gt; vch, const char* pszFormat=&quot;%s&quot;, bool fSpaces=true)
++inline void PrintHex(const vector&lt;unsigned char&gt;&amp; vch, const char* pszFormat=&quot;%s&quot;, bool fSpaces=true)
+ {
+     printf(pszFormat, HexStr(vch, fSpaces).c_str());
+ }
+ 
+-inline int64 PerformanceCounter()
++inline int64 GetPerformanceCounter()
+ {
+     int64 nCounter = 0;
+ #ifdef __WXMSW__
+@@ -409,16 +417,16 @@ inline void heapchk()
+ }
+ 
+ // Randomize the stack to help protect against buffer overrun exploits
+-#define IMPLEMENT_RANDOMIZE_STACK(ThreadFn)                         \
+-    {                                                               \
+-        static char nLoops;                                         \
+-        if (nLoops &lt;= 0)                                            \
+-            nLoops = GetRand(20) + 1;                               \
+-        if (nLoops-- &gt; 1)                                           \
+-        {                                                           \
+-            ThreadFn;                                               \
+-            return;                                                 \
+-        }                                                           \
++#define IMPLEMENT_RANDOMIZE_STACK(ThreadFn)     \
++    {                                           \
++        static char nLoops;                     \
++        if (nLoops &lt;= 0)                        \
++            nLoops = GetRand(20) + 1;           \
++        if (nLoops-- &gt; 1)                       \
++        {                                       \
++            ThreadFn;                           \
++            return;                             \
++        }                                       \
+     }
+ 
+ #define CATCH_PRINT_EXCEPTION(pszFn)     \</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/d743f03/">← Gavin Andresen: json-rpc return standard error objects…</a><a rel="next" href="../../commits/8c9479c/">cleanup, catch some recoverable exceptions and continue --… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

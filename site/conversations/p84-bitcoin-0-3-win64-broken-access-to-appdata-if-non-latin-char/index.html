@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bitcoin 0.3 win64 - broken access to APPDATA… – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 8 July 2010: Thanks for finding that. We switched from ANSI in 0.2 to UTF-8 in version 0.3, so it must be related to that. Just to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p84-bitcoin-0-3-win64-broken-access-to-appdata-if-non-latin-char/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="bitcoin 0.3 win64 - broken access to APPDATA… – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 8 July 2010: Thanks for finding that. We switched from ANSI in 0.2 to UTF-8 in version 0.3, so it must be related to that. Just to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p84-bitcoin-0-3-win64-broken-access-to-appdata-if-non-latin-char/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="bitcoin 0.3 win64 - broken access to APPDATA… – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 8 July 2010: Thanks for finding that. We switched from ANSI in 0.2 to UTF-8 in version 0.3, so it must be related to that. Just to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "bitcoin 0.3 win64 - broken access to APPDATA if non-latin characters in username", "url": "https://satoshimail.pages.dev/conversations/p84-bitcoin-0-3-win64-broken-access-to-appdata-if-non-latin-char/", "author": {"@type": "Person", "name": "m0mchil"}, "datePublished": "2010-07-08T09:33:16Z", "text": "I know it's not the smartest move to name my user account using non-latin characters. Anyway, 0.2 has no problems with this. Verified as follows... created a 'normal' new user and 0.3 opened the data folder. Created new, fresh data folder and copied it to the non-standard user - 0.3 fails with DB_RUN_RECOVERY.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-08T18:24:19Z", "text": "Thanks for finding that. We switched from ANSI in 0.2 to UTF-8 in version 0.3, so it must be related to that. Just to confirm, if you log in with the non-latin character username, not having an appdata/Bitcoin directory yet, and run Bitcoin and let it create the database from scratch, does it work or not?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-09T03:01:35Z", "text": "I think I see where the problem is. Coincidentally, I recently coded a replacement for the function in question which should fix it. It's not enabled yet, but in the SVN version it prints a debug message in debug.log showing the new directory value and old value for comparison."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-09T15:37:05Z", "text": "I tested this with a non-lower-ASCII account name on XP and confirmed the bug, then tested that the new GetDefaultDataDir fixed it. This change is revision 102 of the SVN."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "bitcoin 0.3 win64 - broken access to APPDATA if…", "item": "https://satoshimail.pages.dev/conversations/p84-bitcoin-0-3-win64-broken-access-to-appdata-if-non-latin-char/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p84">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">bitcoin 0.3 win64 - broken access to APPDATA if…</span></div></nav>
+<main class="in">
+<h1>bitcoin 0.3 win64 - broken access to APPDATA if non-latin characters in username</h1>
+<p class="lead">BitcoinTalk forum · 4 messages · from 8 July 2010 · with Satoshi Nakamoto, m0mchil</p>
+<p class="actions"><a class="btn" href="../../#t-p84">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/84/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>m0mchil</b><span class="muted"> · <time datetime="2010-07-08T09:33:16Z">8 July 2010, 09:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=246.msg2052#msg2052" rel="nofollow noopener">original</a></span></header>
+<div class="t">I know it&#x27;s not the smartest move to name my user account using non-latin characters. Anyway, 0.2 has no problems with this.
+
+Verified as follows... created a &#x27;normal&#x27; new user and 0.3 opened the data folder. Created new, fresh data folder and copied it to the non-standard user - 0.3 fails with DB_RUN_RECOVERY.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-08T18:24:19Z">8 July 2010, 18:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=246.msg2068#msg2068" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks for finding that.  We switched from ANSI in 0.2 to UTF-8 in version 0.3, so it must be related to that.
+
+Just to confirm, if you log in with the non-latin character username, not having an appdata/Bitcoin directory yet, and run Bitcoin and let it create the database from scratch, does it work or not?</div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-09T03:01:35Z">9 July 2010, 03:01 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=246.msg2077#msg2077" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think I see where the problem is.  Coincidentally, I recently coded a replacement for the function in question which should fix it.  It&#x27;s not enabled yet, but in the SVN version it prints a debug message in debug.log showing the new directory value and old value for comparison.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-09T15:37:05Z">9 July 2010, 15:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=246.msg2092#msg2092" rel="nofollow noopener">original</a></span></header>
+<div class="t">I tested this with a non-lower-ASCII account name on XP and confirmed the bug, then tested that the new GetDefaultDataDir fixed it.  This change is revision 102 of the SVN.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p83-btc-vulnerability-massive-attack-against-btc-system-is-it-re/">← BTC Vulnerability? (Massive Attack against BTC system. Is it really?)</a><a rel="next" href="../../conversations/p85-scalability/">Scalability →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

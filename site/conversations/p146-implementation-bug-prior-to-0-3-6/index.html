@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Implementation bug prior to 0.3.6 – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 29 July 2010: Actually, it works well to just PM me. I&#x27;m the one who&#x27;s going to be fixing it. If you find a security flaw, I would…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p146-implementation-bug-prior-to-0-3-6/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Implementation bug prior to 0.3.6 – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 29 July 2010: Actually, it works well to just PM me. I&#x27;m the one who&#x27;s going to be fixing it. If you find a security flaw, I would…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p146-implementation-bug-prior-to-0-3-6/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Implementation bug prior to 0.3.6 – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 29 July 2010: Actually, it works well to just PM me. I&#x27;m the one who&#x27;s going to be fixing it. If you find a security flaw, I would…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Implementation bug prior to 0.3.6", "url": "https://satoshimail.pages.dev/conversations/p146-implementation-bug-prior-to-0-3-6/", "author": {"@type": "Person", "name": "Anonymous"}, "datePublished": "2010-07-29T20:03:07Z", "text": "adg", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T20:12:02Z", "text": "In this forum, I don't see why not. Basically, the implementation bug means that the client wasn't following it's own rules. Someone may have found a way to double-spend coin for example that the Client doesn't catch because of how it processes the rules to counter this kind of action."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T20:12:14Z", "text": "I am interested in the meta-discussion, about security policy. In other open source projects, representatives of \"key parties\" tend to gather on a \"vendor security\" mailing list that is closed to the public. Vulnerabilities that might have real world consequences are discussed there, and then a coordinated release occurs, where all key players publish the security fixes at the same time."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T20:13:57Z", "text": "Since we mostly communicate by forum here, the closest would be a member group that has access to a special forum here just for that issue that the public can't normally see. I'm fairly certain the simple machines forum supports that feature?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-07-29T20:19:16Z", "text": "Both can work, but a members forum would help to keep out the noise; otherwise everyone will end up messaging the lead developer with every possible thing they here in the news and end up taking his/her time to filter it out on whether it's really a risk or not."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-07-29T20:22:59Z", "text": "BTW, an important feature of these mailing lists is that anyone can post... but only the \"vendor security\" group can read the posts. Thus, it is easy for an outsider with a real security issue to provide detailed information to vendor-sec@myopensourceproject.org <mailto:vendor-sec@myopensourceproject.org>, while preventing unscrupulous people from reading the sensitive information. I suppose a PM to <somebody>, plus discussion on a closed forum, is the best this forum software can handle."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T22:04:15Z", "text": "Actually, it works well to just PM me. I'm the one who's going to be fixing it. If you find a security flaw, I would definitely like to hear from you privately to fix it before it goes public."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Implementation bug prior to 0.3.6", "item": "https://satoshimail.pages.dev/conversations/p146-implementation-bug-prior-to-0-3-6/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p146">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Implementation bug prior to 0.3.6</span></div></nav>
+<main class="in">
+<h1>Implementation bug prior to 0.3.6</h1>
+<p class="lead">BitcoinTalk forum · 7 messages · from 29 July 2010 · with Anonymous, Satoshi Nakamoto, jgarzik, knightmb</p>
+<p class="actions"><a class="btn" href="../../#t-p146">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/146/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-07-29T20:03:07Z">29 July 2010, 20:03 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6470#msg6470" rel="nofollow noopener">original</a></span></header>
+<div class="t">adg</div></article><article class="msg" id="m1">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T20:12:02Z">29 July 2010, 20:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6472#msg6472" rel="nofollow noopener">original</a></span></header>
+<div class="t">In this forum, I don&#x27;t see why not. Basically, the implementation bug means that the client wasn&#x27;t following it&#x27;s own rules. Someone may have found a way to double-spend coin for example that the Client doesn&#x27;t catch because of how it processes the rules to counter this kind of action.</div></article><article class="msg" id="m2">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T20:12:14Z">29 July 2010, 20:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6473#msg6473" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on July 29, 2010, 08:03:07 PM</div><div class="t">Is it too early to discuss what happened until more users upgrade?</div></blockquote><div class="t">I am interested in the meta-discussion, about security policy.
+
+In other open source projects, representatives of &quot;key parties&quot; tend to gather on a &quot;vendor security&quot; mailing list that is closed to the public.  Vulnerabilities that might have real world consequences are discussed there, and then a coordinated release occurs, where all key players publish the security fixes at the same time.</div></article><article class="msg" id="m3">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T20:13:57Z">29 July 2010, 20:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6474#msg6474" rel="nofollow noopener">original</a></span></header>
+<div class="t">Since we mostly communicate by forum here, the closest would be a member group that has access to a special forum here just for that issue that the public can&#x27;t normally see. I&#x27;m fairly certain the simple machines forum supports that feature?</div></article><article class="msg" id="m4">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-07-29T20:19:16Z">29 July 2010, 20:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6476#msg6476" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on July 29, 2010, 08:17:31 PM</div><div class="t">I&#x27;d support the idea. More trusted members and programmers could post security risks or exploits. Maybe the better way is just to message the developer if they are discovered.</div></blockquote><div class="t">Both can work, but a members forum would help to keep out the noise; otherwise everyone will end up messaging the lead developer with every possible thing they here in the news and end up taking his/her time to filter it out on whether it&#x27;s really a risk or not.</div></article><article class="msg" id="m5">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-07-29T20:22:59Z">29 July 2010, 20:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6478#msg6478" rel="nofollow noopener">original</a></span></header>
+<div class="t">BTW, an important feature of these mailing lists is that anyone can post...  but only the &quot;vendor security&quot; group can read the posts.
+
+Thus, it is easy for an outsider with a real security issue to provide detailed information to vendor-sec@myopensourceproject.org &lt;mailto:vendor-sec@myopensourceproject.org&gt;, while preventing unscrupulous people from reading the sensitive information.
+
+I suppose a PM to &lt;somebody&gt;, plus discussion on a closed forum, is the best this forum software can handle.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T22:04:15Z">29 July 2010, 22:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=628.msg6508#msg6508" rel="nofollow noopener">original</a></span></header>
+<div class="t">Actually, it works well to just PM me.  I&#x27;m the one who&#x27;s going to be fixing it.  If you find a security flaw, I would definitely like to hear from you privately to fix it before it goes public.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p145-alert-upgrade-to-0-3-6/">← *** ALERT *** Upgrade to 0.3.6</a><a rel="next" href="../../conversations/p147-protocol-buffers-for-bitcoin/">Protocol Buffers for Bitcoin →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

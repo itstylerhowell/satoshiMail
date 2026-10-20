@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>reorganize BitcoinMiner to make… (r154) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 September 2010: reorganize BitcoinMiner to make it easier to add different SHA256 routines. 4 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/3df6287/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="reorganize BitcoinMiner to make… (r154) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 September 2010: reorganize BitcoinMiner to make it easier to add different SHA256 routines. 4 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/3df6287/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="reorganize BitcoinMiner to make… (r154) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 September 2010: reorganize BitcoinMiner to make it easier to add different SHA256 routines. 4 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reorganize BitcoinMiner to make it easier to add different SHA256 routines", "url": "https://satoshimail.pages.dev/commits/71cc095/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-13T22:14:24Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/71cc095cb26c4967ed9e9ebf89b6eb1e685c3844"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "reorganize BitcoinMiner to make it…", "item": "https://satoshimail.pages.dev/commits/71cc095/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c71cc095cb2">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">reorganize BitcoinMiner to make it…</span></div></nav>
+<main class="in">
+<h1>reorganize BitcoinMiner to make it easier to add different SHA256 routines</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 13 September 2010 · SVN r154 · release v0.3.20 · 4 files, +175 −113</p>
+<p class="actions"><a class="btn" href="../../#t-c71cc095cb2">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/71cc095cb26c4967ed9e9ebf89b6eb1e685c3844" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -2392,13 +2392,11 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ 
+     else if (strCommand == &quot;getaddr&quot;)
+     {
+-        // This includes all nodes that are currently online,
+-        // since they rebroadcast an addr every 24 hours
++        // Nodes rebroadcast an addr every 24 hours
+         pfrom-&gt;vAddrToSend.clear();
+-        int64 nSince = GetAdjustedTime() - 12 * 60 * 60; // in the last 12 hours
++        int64 nSince = GetAdjustedTime() - 6 * 60 * 60; // in the last 6 hours
+         CRITICAL_BLOCK(cs_mapAddresses)
+         {
+-            unsigned int nSize = mapAddresses.size();
+             foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+             {
+                 if (fShutdown)
+@@ -2738,35 +2736,6 @@ void ThreadBitcoinMiner(void* parg)
+     printf(&quot;ThreadBitcoinMiner exiting, %d threads remaining\n&quot;, vnThreadsRunning[3]);
+ }
+ 
+-int FormatHashBlocks(void* pbuffer, unsigned int len)
+-{
+-    unsigned char* pdata = (unsigned char*)pbuffer;
+-    unsigned int blocks = 1 + ((len + 8) / 64);
+-    unsigned char* pend = pdata + 64 * blocks;
+-    memset(pdata + len, 0, 64 * blocks - len);
+-    pdata[len] = 0x80;
+-    unsigned int bits = len * 8;
+-    pend[-1] = (bits &gt;&gt; 0) &amp; 0xff;
+-    pend[-2] = (bits &gt;&gt; 8) &amp; 0xff;
+-    pend[-3] = (bits &gt;&gt; 16) &amp; 0xff;
+-    pend[-4] = (bits &gt;&gt; 24) &amp; 0xff;
+-    return blocks;
+-}
+-
+-using CryptoPP::ByteReverse;
+-
+-static const unsigned int pSHA256InitState[8] =
+-{0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
+-
+-inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
+-{
+-    memcpy(pstate, pinit, 32);
+-    CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
+-}
+-
+-static const int NPAR = 32;
+-extern void Double_BlockSHA256(const void* pin, void* pout, const void* pinit, unsigned int hash[8][NPAR], const void* init2);
+-
+ #if defined(__GNUC__) &amp;&amp; defined(CRYPTOPP_X86_ASM_AVAILABLE)
+ void CallCPUID(int in, int&amp; aret, int&amp; cret)
+ {
+@@ -2829,6 +2798,67 @@ bool Detect128BitSSE2()
+ bool Detect128BitSSE2() { return false; }
+ #endif
+ 
++int FormatHashBlocks(void* pbuffer, unsigned int len)
++{
++    unsigned char* pdata = (unsigned char*)pbuffer;
++    unsigned int blocks = 1 + ((len + 8) / 64);
++    unsigned char* pend = pdata + 64 * blocks;
++    memset(pdata + len, 0, 64 * blocks - len);
++    pdata[len] = 0x80;
++    unsigned int bits = len * 8;
++    pend[-1] = (bits &gt;&gt; 0) &amp; 0xff;
++    pend[-2] = (bits &gt;&gt; 8) &amp; 0xff;
++    pend[-3] = (bits &gt;&gt; 16) &amp; 0xff;
++    pend[-4] = (bits &gt;&gt; 24) &amp; 0xff;
++    return blocks;
++}
++
++using CryptoPP::ByteReverse;
++
++static const unsigned int pSHA256InitState[8] =
++{0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
++
++inline void SHA256Transform(void* pstate, void* pinput, const void* pinit)
++{
++    memcpy(pstate, pinit, 32);
++    CryptoPP::SHA256::Transform((CryptoPP::word32*)pstate, (CryptoPP::word32*)pinput);
++}
++
++//
++// ScanHash scans nonces looking for a hash with at least some zero bits.
++// It operates on big endian data.  Caller does the byte reversing.
++// All input buffers are 16-byte aligned.  nNonce is usually preserved
++// between calls, but periodically or if nNonce is above 0xff000000,
++// the block is rebuilt and nNonce starts over at zero.
++//
++unsigned int ScanHash_CryptoPP(char* pmidstate, char* pblock, char* phash1, char* phash, unsigned int&amp; nHashesDone)
++{
++    unsigned int&amp; nNonce = *(unsigned int*)(pblock + 12);
++    for (;;)
++    {
++        // Crypto++ SHA-256
++        // Hash pblock using pmidstate as the starting state into
++        // preformatted buffer phash1, then hash phash1 into phash
++        nNonce++;
++        SHA256Transform(phash1, pblock, pmidstate);
++        SHA256Transform(phash, phash1, pSHA256InitState);
++
++        // Return the nonce if the hash has at least some zero bits,
++        // caller will check if it has enough to reach the target
++        if (((unsigned short*)phash)[14] == 0)
++            return nNonce;
++
++        // If nothing found after trying for a while, return -1
++        if ((nNonce &amp; 0xffff) == 0)
++        {
++            nHashesDone = 0xffff+1;
++            return -1;
++        }
++    }
++}
++
++extern unsigned int ScanHash_4WaySSE2(char* pmidstate, char* pblock, char* phash1, char* phash, unsigned int&amp; nHashesDone);
++
+ 
+ 
+ 
+@@ -2883,7 +2913,7 @@ void BitcoinMiner()
+         // Add our coinbase tx as first transaction
+         pblock-&gt;vtx.push_back(txNew);
+ 
+-        // Collect the latest transactions into the block
++        // Collect memory pool transactions into the block
+         int64 nFees = 0;
+         CRITICAL_BLOCK(cs_main)
+         CRITICAL_BLOCK(cs_mapTransactions)
+@@ -2891,9 +2921,9 @@ void BitcoinMiner()
+             CTxDB txdb(&quot;r&quot;);
+             map&lt;uint256, CTxIndex&gt; mapTestPool;
+             vector&lt;char&gt; vfAlreadyAdded(mapTransactions.size());
+-            bool fFoundSomething = true;
+             uint64 nBlockSize = 10000;
+             int nBlockSigOps = 100;
++            bool fFoundSomething = true;
+             while (fFoundSomething)
+             {
+                 fFoundSomething = false;
+@@ -2984,46 +3014,28 @@ void BitcoinMiner()
+         uint256&amp; hash = *alignup&lt;16&gt;(hashbuf);
+         loop
+         {
++            unsigned int nHashesDone = 0;
++            unsigned int nNonceFound;
++
+ #ifdef FOURWAYSSE2
+             if (f4WaySSE2)
+-            {
+-                // tcatm&#x27;s 4-way SSE2 SHA-256
+-                tmp.block.nNonce += NPAR;
+-                unsigned int thashbuf[9][NPAR];
+-                unsigned int (&amp;thash)[9][NPAR] = *alignup&lt;16&gt;(&amp;thashbuf);
+-                Double_BlockSHA256((char*)&amp;tmp.block + 64, &amp;tmp.hash1, &amp;midstate, thash, pSHA256InitState);
+-                ((unsigned short*)&amp;hash)[14] = 0xffff;
+-                for (int j = 0; j &lt; NPAR; j++)
+-                {
+-                    if (thash[7][j] == 0)
+-                    {
+-                        for (int i = 0; i &lt; sizeof(hash)/4; i++)
+-                            ((unsigned int*)&amp;hash)[i] = thash[i][j];
+-                        pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce + j);
+-                    }
+-                }
+-            }
++                // tcatm&#x27;s 4-way 128-bit SSE2 SHA-256
++                nNonceFound = ScanHash_4WaySSE2((char*)&amp;midstate, (char*)&amp;tmp.block + 64, (char*)&amp;tmp.hash1, (char*)&amp;hash, nHashesDone);
+             else
+ #endif
+-            {
+                 // Crypto++ SHA-256
+-                tmp.block.nNonce++;
+-                SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
+-                SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
+-            }
++                nNonceFound = ScanHash_CryptoPP((char*)&amp;midstate, (char*)&amp;tmp.block + 64, (char*)&amp;tmp.hash1, (char*)&amp;hash, nHashesDone);
+ 
+-            if (((unsigned short*)&amp;hash)[14] == 0)
++            // Check if something found
++            if (nNonceFound != -1)
+             {
+-                // Byte swap the result after preliminary check
+                 for (int i = 0; i &lt; sizeof(hash)/4; i++)
+                     ((unsigned int*)&amp;hash)[i] = ByteReverse(((unsigned int*)&amp;hash)[i]);
+ 
+                 if (hash &lt;= hashTarget)
+                 {
+-#ifdef FOURWAYSSE2
+-                    if (!f4WaySSE2)
+-#endif
+-                        pblock-&gt;nNonce = ByteReverse(tmp.block.nNonce);
++                    // Found a solution
++                    pblock-&gt;nNonce = ByteReverse(nNonceFound);
+                     assert(hash == pblock-&gt;GetHash());
+ 
+                         //// debug print
+@@ -3059,62 +3071,57 @@ void BitcoinMiner()
+                 }
+             }
+ 
+-            // Update nTime every few seconds
+-            const unsigned int nMask = 0xffff;
+-            const int nHashesPerCycle = (nMask+1);
+-            if ((tmp.block.nNonce &amp; nMask) == 0)
++            // Meter hashes/sec
++            static int64 nHashCounter;
++            if (nHPSTimerStart == 0)
+             {
+-                // Meter hashes/sec
+-                static int nCycleCounter;
+-                if (nHPSTimerStart == 0)
+-                {
+-                    nHPSTimerStart = GetTimeMillis();
+-                    nCycleCounter = 0;
+-                }
+-                else
+-                    nCycleCounter++;
+-                if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
++                nHPSTimerStart = GetTimeMillis();
++                nHashCounter = 0;
++            }
++            else
++                nHashCounter += nHashesDone;
++            if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
++            {
++                static CCriticalSection cs;
++                CRITICAL_BLOCK(cs)
+                 {
+-                    static CCriticalSection cs;
+-                    CRITICAL_BLOCK(cs)
++                    if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
+                     {
+-                        if (GetTimeMillis() - nHPSTimerStart &gt; 4000)
++                        dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
++                        nHPSTimerStart = GetTimeMillis();
++                        nHashCounter = 0;
++                        string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
++                        UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                        static int64 nLogTime;
++                        if (GetTime() - nLogTime &gt; 30 * 60)
+                         {
+-                            dHashesPerSec = 1000.0 * nHashesPerCycle * nCycleCounter / (GetTimeMillis() - nHPSTimerStart);
+-                            nHPSTimerStart = GetTimeMillis();
+-                            nCycleCounter = 0;
+-                            string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+-                            UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
+-                            static int64 nLogTime;
+-                            if (GetTime() - nLogTime &gt; 30 * 60)
+-                            {
+-                                nLogTime = GetTime();
+-                                printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
+-                                printf(&quot;hashmeter %3d CPUs %6.0f khash/s\n&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
+-                            }
++                            nLogTime = GetTime();
++                            printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M&quot;, GetTime()).c_str());
++                            printf(&quot;hashmeter %3d CPUs %6.0f khash/s\n&quot;, vnThreadsRunning[3], dHashesPerSec/1000.0);
+                         }
+                     }
+                 }
++            }
+ 
+-                // Check for stop or if block needs to be rebuilt
+-                if (fShutdown)
+-                    return;
+-                if (!fGenerateBitcoins)
+-                    return;
+-                if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
+-                    return;
+-                if (vNodes.empty())
+-                    break;
+-                if (tmp.block.nNonce == 0)
+-                    break;
+-                if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
+-                    break;
+-                if (pindexPrev != pindexBest)
+-                    break;
++            // Check for stop or if block needs to be rebuilt
++            if (fShutdown)
++                return;
++            if (!fGenerateBitcoins)
++                return;
++            if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
++                return;
++            if (vNodes.empty())
++                break;
++            if (tmp.block.nNonce &gt;= 0xff000000)
++                break;
++            if (nTransactionsUpdated != nTransactionsUpdatedLast &amp;&amp; GetTime() - nStart &gt; 60)
++                break;
++            if (pindexPrev != pindexBest)
++                break;
+ 
+-                pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+-                tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
+-            }
++            // Update nTime every few seconds
++            pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
++            tmp.block.nTime = ByteReverse(pblock-&gt;nTime);
+         }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -15,6 +15,7 @@ class CWalletTx;
+ class CKeyItem;
+ 
+ static const unsigned int MAX_BLOCK_SIZE = 1000000;
++static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
+ static const int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
+@@ -475,7 +476,7 @@ public:
+             return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
+ 
+         // Size limits
+-        if (::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_SIZE)
++        if (::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
+             return error(&quot;CTransaction::CheckTransaction() : size limits failed&quot;);
+ 
+         // Check for negative or overflow output values</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -23,7 +23,7 @@ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+ static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.4&quot;;
++static const char* pszSubVer = &quot;.5&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -2,6 +2,8 @@
+ // Distributed under the MIT/X11 software license, see the accompanying
+ // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+ 
++// tcatm&#x27;s 4-way 128-bit SSE2 SHA-256
++
+ #ifdef FOURWAYSSE2
+ 
+ #include &lt;string.h&gt;
+@@ -13,6 +15,8 @@
+ 
+ #define NPAR 32
+ 
++extern void DoubleBlockSHA256(const void* pin, void* pout, const void* pinit, unsigned int hash[8][NPAR], const void* init2);
++
+ static const unsigned int sha256_consts[] = {
+     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, /*  0 */
+     0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+@@ -88,8 +92,54 @@ static inline void dumpreg(__m128i x, char *msg) {
+ #define dumpstate()
+ #endif
+ 
++// Align by increasing pointer, must have extra space at end of buffer
++template &lt;size_t nBytes, typename T&gt;
++T* alignup(T* p)
++{
++    union
++    {
++        T* ptr;
++        size_t n;
++    } u;
++    u.ptr = p;
++    u.n = (u.n + (nBytes-1)) &amp; ~(nBytes-1);
++    return u.ptr;
++}
++
++static const unsigned int pSHA256InitState[8] =
++{0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
++
++
++unsigned int ScanHash_4WaySSE2(char* pmidstate, char* pblock, char* phash1, char* phash, unsigned int&amp; nHashesDone)
++{
++    unsigned int&amp; nNonce = *(unsigned int*)(pblock + 12);
++    for (;;)
++    {
++        nNonce += NPAR;
++        unsigned int thashbuf[9][NPAR];
++        unsigned int (&amp;thash)[9][NPAR] = *alignup&lt;16&gt;(&amp;thashbuf);
++        DoubleBlockSHA256(pblock, phash1, pmidstate, thash, pSHA256InitState);
++
++        for (int j = 0; j &lt; NPAR; j++)
++        {
++            if (thash[7][j] == 0)
++            {
++                for (int i = 0; i &lt; 32/4; i++)
++                    ((unsigned int*)phash)[i] = thash[i][j];
++                return nNonce + j;
++            }
++        }
++
++        if ((nNonce &amp; 0xffff) == 0)
++        {
++            nHashesDone = 0xffff+1;
++            return -1;
++        }
++    }
++}
++
+ 
+-void Double_BlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[9][NPAR], const void *init)
++void DoubleBlockSHA256(const void* pin, void* pad, const void *pre, unsigned int thash[9][NPAR], const void *init)
+ {
+     unsigned int* In = (unsigned int*)pin;
+     unsigned int* Pad = (unsigned int*)pad;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/3df6287/">← reorganize BitcoinMiner to make it easier to add different…</a><a rel="next" href="../../commits/efae3da/">config option -rpcallowip= to accept json-rpc connections… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

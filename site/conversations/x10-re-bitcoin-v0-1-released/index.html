@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Bitcoin v0.1 released – Satoshi Nakamoto, Dustin Trammell</title>
+<meta name="description" content="Satoshi Nakamoto, 12 January 2009: Thanks, I hadn&#x27;t seen that yet. It looks very well presented. There was an older one that&#x27;s been running for a long…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x10-re-bitcoin-v0-1-released/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Bitcoin v0.1 released – Satoshi Nakamoto, Dustin Trammell">
+<meta property="og:description" content="Satoshi Nakamoto, 12 January 2009: Thanks, I hadn&#x27;t seen that yet. It looks very well presented. There was an older one that&#x27;s been running for a long…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x10-re-bitcoin-v0-1-released/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Bitcoin v0.1 released – Satoshi Nakamoto, Dustin Trammell">
+<meta name="twitter:description" content="Satoshi Nakamoto, 12 January 2009: Thanks, I hadn&#x27;t seen that yet. It looks very well presented. There was an older one that&#x27;s been running for a long…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Bitcoin v0.1 released", "url": "https://satoshimail.pages.dev/conversations/x10-re-bitcoin-v0-1-released/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2009-01-12T05:14:04Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-12T05:14:04Z", "text": "I'm currently reading through your paper. At the timestamp server section you mention newspapers and usenet, so I thought you might be interested in this if you have not seen it already: http://www.publictimestamp.org/ By the way, I'm also currently running the alpha code on one of my workstations. So far it has two \"Generated\" messages, however the \"Credit\" field for those is 0.00 and the balance hasn't changed. Is this due to the age/maturity requirement for a coin to be valid? Cheers, --…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-12T05:14:04Z", "text": "I'm currently reading through your paper. At the timestamp server section you mention newspapers and usenet, so I thought you might be interested in this if you have not seen it already: http://www.publictimestamp.org/ By the way, I'm also currently running the alpha code on one of my workstations. So far it has two \"Generated\" messages, however the \"Credit\" field for those is 0.00 and the balance hasn't changed. Is this due to the age/maturity requirement for a coin to be valid? Cheers, --…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-12T18:33:28Z", "text": "Thanks, I hadn't seen that yet. It looks very well presented. There was an older one that's been running for a long time that publishes its hashes to Usenet. I'm surprised this one isn't using Usenet, although it is kind of difficult to get access to post to Usenet in an automated way these days. If they can get a magazine or newspaper to publish their hashes, it would work a lot easier in court for their purposes. Bitcoin and all timestamp servers share the basic functionality of periodically…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-13T03:29:52Z", "text": "It actually posts the hash blocks to a Google Group called 'proof-hashes', so similar result as if it were posting to Usenet. http://groups.google.com/group/proof-hashes Since I run that group, and it's sole purpose is to archive proof-of-work hashes, feel free to join an account to have your system post there as well if you like. No, I think having $0.00 there is more appropriate than being blank. The entries in my BitCoin software (4 of them now) all say 'unconfirmed' however, so I'm not…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-13T03:40:58Z", "text": "Two issues with upgrading: When closing my previous version (help said 0.1.1 but I think it was really 0.1.0), the process did not exit. The UI exited but the process remained. I had to manually kill the process before I was able to start version 0.1.3. Upon opening version 0.1.3, all four of my transaction entries still say 'unconfirmed', but now the Descriptions say 'Generated (not accepted)'. Does this mean that some other node had extended the chain first and my coins were generated in a…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-13T07:39:31Z", "text": "Sweet, I was looking for a group like that on Usenet at one point to see what I would use if I needed, and nothing really fit. I'm sure Google groups is a lot easier to post to. There are some scenarios where a Usenet or Google group could be used as a supplemental defence. Bitcoin is at its most vulnerable in the beginning when the total network CPU power is small. That's offset by the fact that the incentive to attack it is also low when it's small. Hopefully the easy solution of just…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-14T00:40:28Z", "text": "Yea, that particular group is completely open, you don't have to join to post (in fact I think I made it difficult for people to actually join), you just email proof-hashes@googlegroups.com and the content of the email gets posted to the group. Yea, I was thinking you could have a client post the current block chain every 10k blocks or something, just to occasionally document the current winning proof-of-work chain. Indeed. Yea, that was the primary feature that caught my eye. The real trick…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-15T19:10:44Z", "text": "There's at least one node who's inbound IP keeps changing all the time within the same class B. Maybe every time the program is run. I wasn't expecting that. Do you mind if I CC the rest of this to bitcoin-list or Cryptography? BTW, bitcoin-list is: bitcoin-list@lists.sourceforge.net Subscribe/unsubscribe page: http://lists.sourceforge.net/mailman/listinfo/bitcoin-list Archives: http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-list Hal sort of alluded to the possibility that it…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Dustin D. Trammell"}, "dateSent": "2009-01-16T01:14:27Z", "text": "Pretty sure that's not me. My BitCoin application at work should be coming from our static NAT address and my connection at home has had the IP that I gave you for at least 3 days now (that I've been transferring coins between them for test purposes). Sure, no problem. I'll join right now, thanks (: Yes, I saw that message and was one of the other reasons I started up a node so quickly. My systems aren't doing much of anything else while idle, so why not create BitCoins? And if they're worth…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-16T16:03:14Z", "text": "I would be surprised if 10 years from now we're not using electronic currency in some way, now that we know a way to do it that won't inevitably get dumbed down when the trusted third party gets cold feet. It could get started in a narrow niche like reward points, donation tokens, currency for a game or micropayments for adult sites. Initially it can be used in proof-of-work applications for services that could almost be free but not quite. It can already be used for pay-to-send e-mail. The…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-16T16:03:14Z", "text": "I would be surprised if 10 years from now we're not using electronic currency in some way, now that we know a way to do it that won't inevitably get dumbed down when the trusted third party gets cold feet. It could get started in a narrow niche like reward points, donation tokens, currency for a game or micropayments for adult sites. Initially it can be used in proof-of-work applications for services that could almost be free but not quite. It can already be used for pay-to-send e-mail. The…"}, {"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2009-01-25T15:47:10Z", "text": "Another factor that would mitigate spam if POW tokens have value: there would be a profit motive for people to set up massive quantities of fake e-mail accounts to harvest POW tokens from spam. They'd essentially be reverse-spamming the spammers with automated mailboxes that collect their POW and don't read the message. The ratio of fake mailboxes to real people could become too high for spam to be cost effective. The process has the potential to establish the POW token's value in the first…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Dustin Trammell", "item": "https://satoshimail.pages.dev/conversations/dustin-trammell/"}, {"@type": "ListItem", "position": 4, "name": "Re: Bitcoin v0.1 released", "item": "https://satoshimail.pages.dev/conversations/x10-re-bitcoin-v0-1-released/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x10">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/dustin-trammell/">Private email with Dustin Trammell</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Bitcoin v0.1 released</span></div></nav>
+<main class="in">
+<h1>Re: Bitcoin v0.1 released</h1>
+<p class="lead">Private email with Dustin Trammell · 12 messages · from 12 January 2009 · with Dustin D. Trammell, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x10">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/Satoshi_Nakamoto.zip" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-12T05:14:04Z">12 January 2009, 05:14 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Fri, 2009-01-09 at 03:27 +0800, Satoshi Nakamoto wrote:</div><div class="t">Announcing the first release of Bitcoin, a new electronic cash
+system that uses a peer-to-peer network to prevent double-spending.
+It&#x27;s completely decentralized with no server or central authority.</div></blockquote><div class="t">
+I&#x27;m currently reading through your paper.  At the timestamp server
+section you mention newspapers and usenet, so I thought you might be
+interested in this if you have not seen it already:
+
+<a href="http://www.publictimestamp.org/" rel="nofollow noopener">http://www.publictimestamp.org/</a>
+
+By the way, I&#x27;m also currently running the alpha code on one of my
+workstations.  So far it has two &quot;Generated&quot; messages, however the
+&quot;Credit&quot; field for those is 0.00 and the balance hasn&#x27;t changed.  Is
+this due to the age/maturity requirement for a coin to be valid?
+
+Cheers,
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg" id="m1">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-12T05:14:04Z">12 January 2009, 05:14 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Fri, 2009-01-09 at 03:27 +0800, Satoshi Nakamoto wrote:</div><div class="t">Announcing the first release of Bitcoin, a new electronic cash
+system that uses a peer-to-peer network to prevent double-spending.
+It&#x27;s completely decentralized with no server or central authority.</div></blockquote><div class="t">
+I&#x27;m currently reading through your paper.  At the timestamp server
+section you mention newspapers and usenet, so I thought you might be
+interested in this if you have not seen it already:
+
+<a href="http://www.publictimestamp.org/" rel="nofollow noopener">http://www.publictimestamp.org/</a>
+
+By the way, I&#x27;m also currently running the alpha code on one of my
+workstations.  So far it has two &quot;Generated&quot; messages, however the
+&quot;Credit&quot; field for those is 0.00 and the balance hasn&#x27;t changed.  Is
+this due to the age/maturity requirement for a coin to be valid?
+
+Cheers,
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-12T18:33:28Z">12 January 2009, 18:33 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">I&#x27;m currently reading through your paper.  At the timestamp server
+section you mention newspapers and usenet, so I thought you might be
+interested in this if you have not seen it already:
+
+<a href="http://www.publictimestamp.org/" rel="nofollow noopener">http://www.publictimestamp.org/</a></div></blockquote><div class="t">Thanks, I hadn&#x27;t seen that yet.  It looks very well presented.
+There was an older one that&#x27;s been running for a long time that
+publishes its hashes to Usenet.  I&#x27;m surprised this one isn&#x27;t
+using Usenet, although it is kind of difficult to get access to
+post to Usenet in an automated way these days.  If they can get a
+magazine or newspaper to publish their hashes, it would work a lot
+easier in court for their purposes.  Bitcoin and all timestamp
+servers share the basic functionality of periodically collecting
+things into blocks and hashing them into a chain.</div><blockquote><div class="t">By the way, I&#x27;m also currently running the alpha code on one of my
+workstations.  So far it has two &quot;Generated&quot; messages, however the
+&quot;Credit&quot; field for those is 0.00 and the balance hasn&#x27;t changed.  Is
+this due to the age/maturity requirement for a coin to be valid?</div></blockquote><div class="t">Right, the credit field stays 0.00 until it matures, then it&#x27;ll be
+50.00.  Do you think it would be clearer if I left the credit
+field blank until it matures?  I should put some text in the
+transaction details (when you double click on it) explaining how
+it works.  (was it obvious you can doubleclick on a line for
+details?)
+
+Be sure to upgrade to v0.1.3 if you haven&#x27;t already.  This version
+has really stabilized things.
+
+Satoshi</div></article><article class="msg" id="m3">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-13T03:29:52Z">13 January 2009, 03:29 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Tue, 2009-01-13 at 02:33 +0800, Satoshi Nakamoto wrote:</div><div class="t">Thanks, I hadn&#x27;t seen that yet.  It looks very well presented.
+There was an older one that&#x27;s been running for a long time that
+publishes its hashes to Usenet.  I&#x27;m surprised this one isn&#x27;t
+using Usenet, although it is kind of difficult to get access to
+post to Usenet in an automated way these days.  If they can get a
+magazine or newspaper to publish their hashes, it would work a lot
+easier in court for their purposes.  Bitcoin and all timestamp
+servers share the basic functionality of periodically collecting
+things into blocks and hashing them into a chain.</div></blockquote><div class="t">
+It actually posts the hash blocks to a Google Group called
+&#x27;proof-hashes&#x27;, so similar result as if it were posting to Usenet.
+
+<a href="http://groups.google.com/group/proof-hashes" rel="nofollow noopener">http://groups.google.com/group/proof-hashes</a>
+
+Since I run that group, and it&#x27;s sole purpose is to archive
+proof-of-work hashes, feel free to join an account to have your system
+post there as well if you like.
+</div><blockquote><div class="t">Right, the credit field stays 0.00 until it matures, then it&#x27;ll be
+50.00.  Do you think it would be clearer if I left the credit
+field blank until it matures?  I should put some text in the
+transaction details (when you double click on it) explaining how
+it works.  (was it obvious you can doubleclick on a line for
+details?)</div></blockquote><div class="t">
+No, I think having $0.00 there is more appropriate than being blank.
+The entries in my BitCoin software (4 of them now) all say &#x27;unconfirmed&#x27;
+however, so I&#x27;m not sure what that means, but I did grok that the coins
+were generated and just not &#x27;mature&#x27; yet, but I had also read your
+whitepaper so I may have understood that concept from there.  When the
+coins mature, will that generate a new &#x27;credit&#x27; transaction, or will the
+existing generation transaction line&#x27;s credit field be updated?
+
+No, I was unaware that you could double-click a transaction line for
+further details...  I just did that and it currently just has the same
+information there that is in the transaction line.  Putting more
+information there would definitely be useful.
+</div><blockquote><div class="t">Be sure to upgrade to v0.1.3 if you haven&#x27;t already.  This version
+has really stabilized things.</div></blockquote><div class="t">
+I was running 0.1.1... I will update now.  Perhaps a new version
+notification or auto-update feature is in order? (:
+
+Electronic currency and cryptography are two things that I am very
+interested in so as you would assume I was drawn to this project
+immediately when I saw it posted to the Cryptography email list.  Feel
+free to ping me for feedback or to test out new features, I&#x27;ll be happy
+to help out.
+
+Cheers,
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg" id="m4">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-13T03:40:58Z">13 January 2009, 03:40 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Tue, 2009-01-13 at 02:33 +0800, Satoshi Nakamoto wrote:</div><div class="t">Be sure to upgrade to v0.1.3 if you haven&#x27;t already.  This version
+has really stabilized things.</div></blockquote><div class="t">
+Two issues with upgrading:
+
+When closing my previous version (help said 0.1.1 but I think it was
+really 0.1.0), the process did not exit.  The UI exited but the process
+remained.  I had to manually kill the process before I was able to start
+version 0.1.3.
+
+Upon opening version 0.1.3, all four of my transaction entries still say
+&#x27;unconfirmed&#x27;, but now the Descriptions say &#x27;Generated (not accepted)&#x27;.
+Does this mean that some other node had extended the chain first and my
+coins were generated in a dead branch?  If so, why did the previous
+instance of the software not detect this immediately and begin
+generating coins in the winning branch?  Bug in 0.1.0?
+
+I&#x27;ll watch this instance and see how it goes...
+
+Thanks,
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-13T07:39:31Z">13 January 2009, 07:39 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">It actually posts the hash blocks to a Google Group called
+&#x27;proof-hashes&#x27;, so similar result as if it were posting to Usenet.
+
+<a href="http://groups.google.com/group/proof-hashes" rel="nofollow noopener">http://groups.google.com/group/proof-hashes</a>
+
+Since I run that group, and it&#x27;s sole purpose is to archive
+proof-of-work hashes, feel free to join an account to have your system
+post there as well if you like.</div></blockquote><div class="t">Sweet, I was looking for a group like that on Usenet at one point to see
+what I would use if I needed, and nothing really fit.  I&#x27;m sure Google
+groups is a lot easier to post to.
+
+There are some scenarios where a Usenet or Google group could be used as
+a supplemental defence.  Bitcoin is at its most vulnerable in the
+beginning when the total network CPU power is small.  That&#x27;s offset by
+the fact that the incentive to attack it is also low when it&#x27;s small.
+Hopefully the easy solution of just growing up and getting past that
+stage will work.  If not, there are ways a Google group could help, if
+it really came to that.</div><blockquote><div class="t">Electronic currency and cryptography are two things that I am very
+interested in so as you would assume I was drawn to this project
+immediately when I saw it posted to the Cryptography email list. Feel
+free to ping me for feedback or to test out new features, I&#x27;ll be happy
+to help out.</div></blockquote><div class="t">We definitely have similar interests!
+
+You know, I think there were a lot more people interested in the 90&#x27;s,
+but after more than a decade of failed Trusted Third Party based systems
+(Digicash, etc), they see it as a lost cause.  I hope they can make the
+distinction, that this is the first time I know of that we&#x27;re trying a
+non-trust based system.</div><blockquote><div class="t">When the
+coins mature, will that generate a new &#x27;credit&#x27; transaction, or will the
+existing generation transaction line&#x27;s credit field be updated?</div></blockquote><div class="t">The existing transaction line will change.</div><blockquote><div class="t">Upon opening version 0.1.3, all four of my transaction entries still say
+&#x27;unconfirmed&#x27;, but now the Descriptions say &#x27;Generated (not accepted)&#x27;.
+Does this mean that some other node had extended the chain first and my
+coins were generated in a dead branch? If so, why did the previous
+instance of the software not detect this immediately and begin
+generating coins in the winning branch? Bug in 0.1.0?</div></blockquote><div class="t">You&#x27;re right, sorry about that.  It&#x27;s the bug that was fixed in 0.1.3.
+The communications thread would get blocked, so you would make
+connections, but they would go silent after a while.  When you found a
+block, you couldn&#x27;t broadcast it to the network, so it didn&#x27;t get into
+the chain.  You weren&#x27;t receiving anything either to know that the
+network had gone on without you, until you restarted it.
+
+The bug is also what caused bitcoin.exe to fail to exit.  The
+communications thread was blocked and failed to exit.  Bitcoin does a
+careful shutdown in case it might be in the middle of an important
+transaction, but actually it&#x27;s completely safe to kill it.
+
+This is all fixed in 0.1.3.  If you give me your IP, I&#x27;ll send you some
+coins.</div><blockquote><div class="t">One other question I had... What prevents the single node with the most
+CPU power from generating and retaining the majority of the BitCoins?
+If every node is working independently of all others, if one is
+significantly more powerful than the others, isn&#x27;t it probable that this
+node will reach the proper conclusion before other nodes? An
+underpowered node may get lucky once in a while, but if they are at a
+significant horsepower advantage I would expect the majority of BitCoins
+to be generated by the most powerful node.</div></blockquote><div class="t">It&#x27;s not like a race where if one car is twice as fast, it&#x27;ll always
+win.  It&#x27;s an SHA-256 that takes less than a microsecond, and each guess
+has an independent chance of success.  Each computer&#x27;s chance of finding
+a hash collision is linearly proportional to it&#x27;s CPU power.  A computer
+that&#x27;s half as fast would get half as many coins.</div><blockquote><div class="t">I&#x27;ll watch this instance and see how it goes...</div></blockquote><div class="t">Let me know how it goes.  If you have any trouble with it, send me your
+debug.log file.  I can often figure out what went wrong just from that.
+
+Satoshi</div></article><article class="msg" id="m6">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-14T00:40:28Z">14 January 2009, 00:40 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Tue, 2009-01-13 at 15:39 +0800, Satoshi Nakamoto wrote:</div><div class="t">Sweet, I was looking for a group like that on Usenet at one point to see
+what I would use if I needed, and nothing really fit.  I&#x27;m sure Google
+groups is a lot easier to post to.</div></blockquote><div class="t">
+Yea, that particular group is completely open, you don&#x27;t have to join to
+post (in fact I think I made it difficult for people to actually join),
+you just email proof-hashes@googlegroups.com and the content of the
+email gets posted to the group.
+</div><blockquote><div class="t">There are some scenarios where a Usenet or Google group could be used as
+a supplemental defence.  Bitcoin is at its most vulnerable in the
+beginning when the total network CPU power is small.  That&#x27;s offset by
+the fact that the incentive to attack it is also low when it&#x27;s small.
+Hopefully the easy solution of just growing up and getting past that
+stage will work.  If not, there are ways a Google group could help, if
+it really came to that.</div></blockquote><div class="t">
+Yea, I was thinking you could have a client post the current block chain
+every 10k blocks or something, just to occasionally document the current
+winning proof-of-work chain.
+</div><blockquote><div class="t">We definitely have similar interests!</div></blockquote><div class="t">
+Indeed.
+</div><blockquote><div class="t">You know, I think there were a lot more people interested in the 90&#x27;s,
+but after more than a decade of failed Trusted Third Party based systems
+(Digicash, etc), they see it as a lost cause.  I hope they can make the
+distinction, that this is the first time I know of that we&#x27;re trying a
+non-trust based system. </div></blockquote><div class="t">
+Yea, that was the primary feature that caught my eye.  The real trick
+will be to get people to actually value the BitCoins so that they become
+currency.  Currently, they&#x27;re just collections of bits...
+</div><blockquote><div class="t">This is all fixed in 0.1.3.  If you give me your IP, I&#x27;ll send you some
+coins.</div></blockquote><div class="t">
+I&#x27;m currently at 24.28.79.95, but that&#x27;s dynamic so it may change.  I&#x27;ve
+had that address for a while though so hopefully my dhcp client is being
+successful at renewing and not losing my address.  It does change from
+time to time, but that address should be good for a while.
+</div><blockquote><div class="t">It&#x27;s not like a race where if one car is twice as fast, it&#x27;ll always
+win.  It&#x27;s an SHA-256 that takes less than a microsecond, and each guess
+has an independent chance of success.  Each computer&#x27;s chance of finding
+a hash collision is linearly proportional to it&#x27;s CPU power.  A computer
+that&#x27;s half as fast would get half as many coins.</div></blockquote><div class="t">
+Ahh I see... So each guess is like the spin of a roulette wheel,
+completely independent from all other guesses and the extra CPU power
+just translates to more successful guesses than anyone else.
+Unfortunately my ability to understand complex mathematics is conversely
+proportional to how interested I am in cryptography (:
+</div><blockquote><div class="t">Let me know how it goes.  If you have any trouble with it, send me your
+debug.log file.  I can often figure out what went wrong just from that.</div></blockquote><div class="t">
+Will do...
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-15T19:10:44Z">15 January 2009, 19:10 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">I&#x27;ve had that address for a while though so hopefully my dhcp
+client is being successful at renewing and not losing my address.
+It does change from time to time, but that address should be good
+for a while.</div></blockquote><div class="t">There&#x27;s at least one node who&#x27;s inbound IP keeps changing all the
+time within the same class B.  Maybe every time the program is
+run.  I wasn&#x27;t expecting that.
+
+Do you mind if I CC the rest of this to bitcoin-list or
+Cryptography?
+
+BTW, bitcoin-list is:
+bitcoin-list@lists.sourceforge.net
+Subscribe/unsubscribe page:
+<a href="http://lists.sourceforge.net/mailman/listinfo/bitcoin-list" rel="nofollow noopener">http://lists.sourceforge.net/mailman/listinfo/bitcoin-list</a>
+Archives:
+<a href="http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-list" rel="nofollow noopener">http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-list</a></div><blockquote><div class="t">Dustin D. Trammell wrote:
+&gt; Satoshi Nakamoto wrote:
+&gt; You know, I think there were a lot more people interested in the 90&#x27;s,
+&gt; but after more than a decade of failed Trusted Third Party based systems
+&gt; (Digicash, etc), they see it as a lost cause. I hope they can make the
+&gt; distinction that this is the first time I know of that we&#x27;re trying a
+&gt; non-trust-based system.
+
+Yea, that was the primary feature that caught my eye. The real trick
+will be to get people to actually value the BitCoins so that they become
+currency.</div></blockquote><div class="t">Hal sort of alluded to the possibility that it could be seen as a
+long-odds investment.  I would be surprised if 10 years from now
+we&#x27;re not using electronic currency in some way, now that we know
+a way to do it that won&#x27;t inevitably get dumbed down when the TTP
+gets cold feet.
+
+Even if it doesn&#x27;t take off straight away, it&#x27;s now available for
+use by the next guy who comes up with a plan that needs some kind
+of token or electronic currency.  It could get started in a closed
+system or narrow niche like reward points, donation tokens,
+currency for a game or micropayments for adult sites.  Once it
+gets bootstrapped, there are so many applications if you could
+effortlessly pay a few cents to a website as easily as dropping
+coins in a vending machine.
+
+It can already be used for pay-to-send e-mail.  The send dialog is
+resizeable and you can enter as long of a message as you like.
+It&#x27;s sent directly when it connects.  The recipient doubleclicks
+on the transaction to see the full message.  If someone famous is
+getting more e-mail than they can read, but would still like to
+have a way for fans to contact them, they could set up Bitcoin and
+give out the IP address on their website.  &quot;Send X bitcoins to my
+priority hotline at this IP and I&#x27;ll read the message personally.&quot;
+
+Subscription sites that need some extra proof-of-work for their
+free trial so it doesn&#x27;t cannibalize subscriptions could charge
+bitcoins for the trial.
+
+Satoshi</div></article><article class="msg" id="m8">
+<header><b>Dustin D. Trammell</b> <span class="muted">to satoshi@vistomail.com</span><span class="muted"> · <time datetime="2009-01-16T01:14:27Z">16 January 2009, 01:14 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Fri, 2009-01-16 at 03:10 +0800, Satoshi Nakamoto wrote:</div><div class="t">There&#x27;s at least one node who&#x27;s inbound IP keeps changing all the
+time within the same class B.  Maybe every time the program is
+run.  I wasn&#x27;t expecting that.</div></blockquote><div class="t">
+Pretty sure that&#x27;s not me.  My BitCoin application at work should be
+coming from our static NAT address and my connection at home has had the
+IP that I gave you for at least 3 days now (that I&#x27;ve been transferring
+coins between them for test purposes).
+</div><blockquote><div class="t">Do you mind if I CC the rest of this to bitcoin-list or
+Cryptography?</div></blockquote><div class="t">
+Sure, no problem.
+</div><blockquote><div class="t">BTW, bitcoin-list is:
+bitcoin-list@lists.sourceforge.net
+Subscribe/unsubscribe page:
+<a href="http://lists.sourceforge.net/mailman/listinfo/bitcoin-list" rel="nofollow noopener">http://lists.sourceforge.net/mailman/listinfo/bitcoin-list</a>
+Archives:
+<a href="http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-list" rel="nofollow noopener">http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-list</a></div></blockquote><div class="t">
+I&#x27;ll join right now, thanks (:
+</div><blockquote><div class="t">Hal sort of alluded to the possibility that it could be seen as a
+long-odds investment.  I would be surprised if 10 years from now
+we&#x27;re not using electronic currency in some way, now that we know
+a way to do it that won&#x27;t inevitably get dumbed down when the TTP
+gets cold feet.</div></blockquote><div class="t">
+Yes, I saw that message and was one of the other reasons I started up a
+node so quickly.  My systems aren&#x27;t doing much of anything else while
+idle, so why not create BitCoins?  And if they&#x27;re worth something
+someday...? Bonus!
+</div><blockquote><div class="t">Even if it doesn&#x27;t take off straight away, it&#x27;s now available for
+use by the next guy who comes up with a plan that needs some kind
+of token or electronic currency.  It could get started in a closed
+system or narrow niche like reward points, donation tokens,
+currency for a game or micropayments for adult sites.  Once it
+gets bootstrapped, there are so many applications if you could
+effortlessly pay a few cents to a website as easily as dropping
+coins in a vending machine. </div></blockquote><div class="t">
+I can see how various types of sites that have a need for micropayments
+could use them, however I also see an impedement to adoption if they
+want to use an existing BitCoin peer group rather than a closed system
+since they would first have to generate enough coins to support what
+they intend to do (or buy them from someone else).  A closed system
+obviously doesn&#x27;t have that problem.
+</div><blockquote><div class="t">It can already be used for pay-to-send e-mail.  The send dialog is
+resizeable and you can enter as long of a message as you like.
+It&#x27;s sent directly when it connects.  The recipient doubleclicks
+on the transaction to see the full message.  If someone famous is
+getting more e-mail than they can read, but would still like to
+have a way for fans to contact them, they could set up Bitcoin and
+give out the IP address on their website.  &quot;Send X bitcoins to my
+priority hotline at this IP and I&#x27;ll read the message personally.&quot;</div></blockquote><div class="t">
+Interesting application (:
+</div><blockquote><div class="t">Subscription sites that need some extra proof-of-work for their
+free trial so it doesn&#x27;t cannibalize subscriptions could charge
+bitcoins for the trial.</div></blockquote><div class="t">
+Another good idea.
+
+-- 
+Dustin D. Trammell
+dtrammell@dustintrammell.com
+<a href="http://www.dustintrammell.com" rel="nofollow noopener">http://www.dustintrammell.com</a></div></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-16T16:03:14Z">16 January 2009, 16:03 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Dustin D. Trammell wrote:
+&gt; Satoshi Nakamoto wrote:
+&gt; You know, I think there were a lot more people interested in the 90&#x27;s,
+&gt; but after more than a decade of failed Trusted Third Party based systems
+&gt; (Digicash, etc), they see it as a lost cause. I hope they can make the
+&gt; distinction that this is the first time I know of that we&#x27;re trying a
+&gt; non-trust-based system.
+
+Yea, that was the primary feature that caught my eye. The real trick
+will be to get people to actually value the BitCoins so that they become
+currency.</div></blockquote><div class="t">I would be surprised if 10 years from now we&#x27;re not using
+electronic currency in some way, now that we know a way to do it
+that won&#x27;t inevitably get dumbed down when the trusted third party
+gets cold feet.
+
+It could get started in a narrow niche like reward points,
+donation tokens, currency for a game or micropayments for adult
+sites.  Initially it can be used in proof-of-work applications
+for services that could almost be free but not quite.
+
+It can already be used for pay-to-send e-mail.  The send dialog is
+resizeable and you can enter as long of a message as you like.
+It&#x27;s sent directly when it connects.  The recipient doubleclicks
+on the transaction to see the full message.  If someone famous is
+getting more e-mail than they can read, but would still like to
+have a way for fans to contact them, they could set up Bitcoin and
+give out the IP address on their website.  &quot;Send X bitcoins to my
+priority hotline at this IP and I&#x27;ll read the message personally.&quot;
+
+Subscription sites that need some extra proof-of-work for their
+free trial so it doesn&#x27;t cannibalize subscriptions could charge
+bitcoins for the trial.
+
+It might make sense just to get some in case it catches on.  If
+enough people think the same way, that becomes a self fulfilling
+prophecy.  Once it gets bootstrapped, there are so many
+applications if you could effortlessly pay a few cents to a
+website as easily as dropping coins in a vending machine.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-16T16:03:14Z">16 January 2009, 16:03 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">Dustin D. Trammell wrote:
+&gt; Satoshi Nakamoto wrote:
+&gt; You know, I think there were a lot more people interested in the 90&#x27;s,
+&gt; but after more than a decade of failed Trusted Third Party based systems
+&gt; (Digicash, etc), they see it as a lost cause. I hope they can make the
+&gt; distinction that this is the first time I know of that we&#x27;re trying a
+&gt; non-trust-based system.
+
+Yea, that was the primary feature that caught my eye. The real trick
+will be to get people to actually value the BitCoins so that they become
+currency.</div></blockquote><div class="t">I would be surprised if 10 years from now we&#x27;re not using
+electronic currency in some way, now that we know a way to do it
+that won&#x27;t inevitably get dumbed down when the trusted third party
+gets cold feet.
+
+It could get started in a narrow niche like reward points,
+donation tokens, currency for a game or micropayments for adult
+sites.  Initially it can be used in proof-of-work applications
+for services that could almost be free but not quite.
+
+It can already be used for pay-to-send e-mail.  The send dialog is
+resizeable and you can enter as long of a message as you like.
+It&#x27;s sent directly when it connects.  The recipient doubleclicks
+on the transaction to see the full message.  If someone famous is
+getting more e-mail than they can read, but would still like to
+have a way for fans to contact them, they could set up Bitcoin and
+give out the IP address on their website.  &quot;Send X bitcoins to my
+priority hotline at this IP and I&#x27;ll read the message personally.&quot;
+
+Subscription sites that need some extra proof-of-work for their
+free trial so it doesn&#x27;t cannibalize subscriptions could charge
+bitcoins for the trial.
+
+It might make sense just to get some in case it catches on.  If
+enough people think the same way, that becomes a self fulfilling
+prophecy.  Once it gets bootstrapped, there are so many
+applications if you could effortlessly pay a few cents to a
+website as easily as dropping coins in a vending machine.
+
+Satoshi Nakamoto
+<a href="http://www.bitcoin.org" rel="nofollow noopener">http://www.bitcoin.org</a></div><div class="t small">The Cryptography Mailing List
+Unsubscribe by sending &quot;unsubscribe cryptography&quot; to majordomo@metzdowd.com</div></article><article class="msg sat" id="m11">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to dtrammell@dustintrammell.com</span><span class="muted"> · <time datetime="2009-01-25T15:47:10Z">25 January 2009, 15:47 UTC</time> · <a href="https://www.dustintrammell.com/s/Satoshi_Nakamoto.zip" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Hal Finney wrote:</div><div class="t">&gt; * Spammer botnets could burn through pay-per-send email filters
+&gt;   trivially
+If POW tokens do become useful, and especially if they become money,
+machines will no longer sit idle. Users will expect their computers to
+be earning them money (assuming the reward is greater than the cost to
+operate). A computer whose earnings are being stolen by a botnet will
+be more noticeable to its owner than is the case today, hence we might
+expect that in that world, users will work harder to maintain their
+computers and clean them of botnet infestations.</div></blockquote><div class="t">Another factor that would mitigate spam if POW tokens have value:
+there would be a profit motive for people to set up massive
+quantities of fake e-mail accounts to harvest POW tokens from
+spam.  They&#x27;d essentially be reverse-spamming the spammers with
+automated mailboxes that collect their POW and don&#x27;t read the
+message.  The ratio of fake mailboxes to real people could become
+too high for spam to be cost effective.
+
+The process has the potential to establish the POW token&#x27;s value
+in the first place, since spammers that don&#x27;t have a botnet could
+buy tokens from harvesters.  While the buying back would
+temporarily let more spam through, it would only hasten the
+self-defeating cycle leading to too many harvesters exploiting the
+spammers.
+
+Interestingly, one of the e-gold systems already has a form of
+spam called &quot;dusting&quot;.  Spammers send a tiny amount of gold dust
+in order to put a spam message in the transaction&#x27;s comment field.
+ If the system let users configure the minimum payment they&#x27;re
+willing to receive, or at least the minimum that can have a
+message with it, users could set how much they&#x27;re willing to get
+paid to receive spam.
+
+Satoshi Nakamoto</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/dustin-trammell/">Dustin Trammell</a> <span class="muted">Early user who emailed Satoshi in the first weeks of Bitcoin.</span></li><li><a href="../../satoshipedia/genesis-block/">Genesis block</a> <span class="muted">The first block of the Bitcoin blockchain, carrying a Times headline.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><span></span><a rel="next" href="../../conversations/x13-one-other-question/">One Other Question →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

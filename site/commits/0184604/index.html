@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/0184604/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/0184604/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "transaction filter tabs instead of view->show generated -- version 0.2.5", "url": "https://satoshimail.pages.dev/commits/0184604/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-21T21:42:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/0184604aaf21f8279df9ecbee7be4fbf0bbf99c1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "transaction filter tabs instead of…", "item": "https://satoshimail.pages.dev/commits/0184604/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c0184604aaf">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">transaction filter tabs instead of…</span></div></nav>
+<main class="in">
+<h1>transaction filter tabs instead of view-&gt;show generated -- version 0.2.5</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 21 February 2010 · SVN r69 · release v0.2.5 · 9 files, +693 −132</p>
+<p class="actions"><a class="btn" href="../../#t-c0184604aaf">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/0184604aaf21f8279df9ecbee7be4fbf0bbf99c1" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -70,7 +70,7 @@ ldconfig
+ Boost
+ -----
+ If you want to build Boost yourself,
+-cd /usr/local/boost_1_42_0
++cd /usr/local/boost_1_38_0
+ su
+ ./bootstrap.sh
+ ./bjam install</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -599,7 +599,6 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+                 ssKey &gt;&gt; strKey;
+ 
+                 // Menu state
+-                if (strKey == &quot;fShowGenerated&quot;)     ssValue &gt;&gt; fShowGenerated;
+                 if (strKey == &quot;fGenerateBitcoins&quot;)  ssValue &gt;&gt; fGenerateBitcoins;
+ 
+                 // Options
+@@ -618,7 +617,6 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+     }
+ 
+     printf(&quot;nFileVersion = %d\n&quot;, nFileVersion);
+-    printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
+     printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
+     printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);
+     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1335,7 +1335,9 @@ bool CBlock::AcceptBlock()
+     if (!AddToBlockIndex(nFile, nBlockPos))
+         return error(&quot;AcceptBlock() : AddToBlockIndex failed&quot;);
+ 
+-    if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 28000)
++    // Don&#x27;t relay old inventory during initial block download.
++    // Please keep this constant updated to a few thousand below current block count.
++    if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 40000)
+         RelayInventory(CInv(MSG_BLOCK, hash));
+ 
+     // // Add atoms to user reviews for coins created</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 204;
++static const int VERSION = 205;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -20,7 +20,6 @@ extern int g_isPainting;
+ bool fClosedToTray = false;
+ 
+ // Settings
+-int fShowGenerated = true;
+ int fMinimizeToTray = true;
+ int fMinimizeOnClose = true;
+ 
+@@ -282,6 +281,12 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ {
+     Connect(wxEVT_UITHREADCALL, wxCommandEventHandler(CMainFrame::OnUIThreadCall), NULL, this);
+ 
++    // Set initially selected page
++    wxNotebookEvent event;
++    event.SetSelection(0);
++    OnNotebookPageChanged(event);
++    m_notebook-&gt;ChangeSelection(0);
++
+     // Init
+     fRefreshListCtrl = false;
+     fRefreshListCtrlRunning = false;
+@@ -298,8 +303,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     m_staticTextBalance-&gt;SetFont(fontTmp);
+     m_staticTextBalance-&gt;SetSize(140, 17);
+     // resize to fit ubuntu&#x27;s huge default font
+-    dResize = 1.20;
+-    SetSize((dResize + 0.02) * GetSize().GetWidth(), 1.09 * GetSize().GetHeight());
++    dResize = 1.22;
++    SetSize(dResize * GetSize().GetWidth(), 1.09 * GetSize().GetHeight());
+ #endif
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+@@ -309,13 +314,17 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
+     if (!strstr(DateTimeStr(1229413914).c_str(), &quot;2008&quot;))
+         nDateWidth += 12;
+-    m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
+-    m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
+-    m_listCtrl-&gt;InsertColumn(2, _(&quot;Status&quot;),      wxLIST_FORMAT_LEFT,  dResize * 110);
+-    m_listCtrl-&gt;InsertColumn(3, _(&quot;Date&quot;),        wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(4, _(&quot;Description&quot;), wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
+-    m_listCtrl-&gt;InsertColumn(5, _(&quot;Debit&quot;),       wxLIST_FORMAT_RIGHT, dResize * 79);
+-    m_listCtrl-&gt;InsertColumn(6, _(&quot;Credit&quot;),      wxLIST_FORMAT_RIGHT, dResize * 79);
++    wxListCtrl* pplistCtrl[] = {m_listCtrlAll, m_listCtrlSentReceived, m_listCtrlSent, m_listCtrlReceived};
++    foreach(wxListCtrl* p, pplistCtrl)
++    {
++        p-&gt;InsertColumn(0, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
++        p-&gt;InsertColumn(1, &quot;&quot;,               wxLIST_FORMAT_LEFT,  dResize * 0);
++        p-&gt;InsertColumn(2, _(&quot;Status&quot;),      wxLIST_FORMAT_LEFT,  dResize * 112);
++        p-&gt;InsertColumn(3, _(&quot;Date&quot;),        wxLIST_FORMAT_LEFT,  dResize * nDateWidth);
++        p-&gt;InsertColumn(4, _(&quot;Description&quot;), wxLIST_FORMAT_LEFT,  dResize * 409 - nDateWidth);
++        p-&gt;InsertColumn(5, _(&quot;Debit&quot;),       wxLIST_FORMAT_RIGHT, dResize * 79);
++        p-&gt;InsertColumn(6, _(&quot;Credit&quot;),      wxLIST_FORMAT_RIGHT, dResize * 79);
++    }
+ 
+     // Init status bar
+     int pnWidths[3] = { -100, 88, 290 };
+@@ -341,6 +350,42 @@ CMainFrame::~CMainFrame()
+     ptaskbaricon = NULL;
+ }
+ 
++void CMainFrame::OnNotebookPageChanged(wxNotebookEvent&amp; event)
++{
++    event.Skip();
++    nPage = event.GetSelection();
++    if (nPage == ALL)
++    {
++        m_listCtrl = m_listCtrlAll;
++        fShowGenerated = true;
++        fShowSent = true;
++        fShowReceived = true;
++    }
++    else if (nPage == SENTRECEIVED)
++    {
++        m_listCtrl = m_listCtrlSentReceived;
++        fShowGenerated = false;
++        fShowSent = true;
++        fShowReceived = true;
++    }
++    else if (nPage == SENT)
++    {
++        m_listCtrl = m_listCtrlSent;
++        fShowGenerated = false;
++        fShowSent = true;
++        fShowReceived = false;
++    }
++    else if (nPage == RECEIVED)
++    {
++        m_listCtrl = m_listCtrlReceived;
++        fShowGenerated = false;
++        fShowSent = false;
++        fShowReceived = true;
++    }
++    RefreshListCtrl();
++    m_listCtrl-&gt;SetFocus();
++}
++
+ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+ {
+     if (fMinimizeOnClose &amp;&amp; event.CanVeto() &amp;&amp; !IsIconized())
+@@ -547,7 +592,6 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             return false;
+         }
+ 
+-        // View-&gt;Show Generated
+         if (!fShowGenerated)
+             return false;
+     }
+@@ -571,7 +615,6 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         // Credit
+         //
+         string strDescription;
+-
+         if (wtx.IsCoinBase())
+         {
+             // Generated
+@@ -598,6 +641,8 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         else if (!mapValue[&quot;from&quot;].empty() || !mapValue[&quot;message&quot;].empty())
+         {
+             // Received by IP connection
++            if (!fShowReceived)
++                return false;
+             if (!mapValue[&quot;from&quot;].empty())
+                 strDescription += _(&quot;From: &quot;) + mapValue[&quot;from&quot;];
+             if (!mapValue[&quot;message&quot;].empty())
+@@ -610,6 +655,8 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+         else
+         {
+             // Received by Bitcoin Address
++            if (!fShowReceived)
++                return false;
+             foreach(const CTxOut&amp; txout, wtx.vout)
+             {
+                 if (txout.IsMine())
+@@ -675,6 +722,9 @@ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+             //
+             // Debit
+             //
++            if (!fShowSent)
++                return false;
++
+             int64 nTxFee = nDebit - wtx.GetValueOut();
+             wtx.nLinesDisplayed = 0;
+             for (int nOut = 0; nOut &lt; wtx.vout.size(); nOut++)
+@@ -1035,19 +1085,6 @@ void CMainFrame::OnMenuFileExit(wxCommandEvent&amp; event)
+     Close(true);
+ }
+ 
+-void CMainFrame::OnMenuViewShowGenerated(wxCommandEvent&amp; event)
+-{
+-    // View-&gt;Show Generated
+-    fShowGenerated = event.IsChecked();
+-    CWalletDB().WriteSetting(&quot;fShowGenerated&quot;, fShowGenerated);
+-    RefreshListCtrl();
+-}
+-
+-void CMainFrame::OnUpdateUIViewShowGenerated(wxUpdateUIEvent&amp; event)
+-{
+-    event.Check(fShowGenerated);
+-}
+-
+ void CMainFrame::OnMenuOptionsGenerate(wxCommandEvent&amp; event)
+ {
+     // Options-&gt;Generate Coins</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -8,7 +8,6 @@ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+ extern map&lt;string, string&gt; mapArgs;
+ 
+ // Settings
+-extern int fShowGenerated;
+ extern int fMinimizeToTray;
+ extern int fMinimizeOnClose;
+ 
+@@ -31,6 +30,7 @@ class CMainFrame : public CMainFrameBase
+ {
+ protected:
+     // Event handlers
++    void OnNotebookPageChanged(wxNotebookEvent&amp; event);
+     void OnClose(wxCloseEvent&amp; event);
+     void OnIconize(wxIconizeEvent&amp; event);
+     void OnMouseEvents(wxMouseEvent&amp; event);
+@@ -39,8 +39,6 @@ protected:
+     void OnPaint(wxPaintEvent&amp; event);
+     void OnPaintListCtrl(wxPaintEvent&amp; event);
+     void OnMenuFileExit(wxCommandEvent&amp; event);
+-    void OnMenuViewShowGenerated(wxCommandEvent&amp; event);
+-    void OnUpdateUIViewShowGenerated(wxUpdateUIEvent&amp; event);
+     void OnMenuOptionsGenerate(wxCommandEvent&amp; event);
+     void OnUpdateUIOptionsGenerate(wxUpdateUIEvent&amp; event);
+     void OnMenuOptionsChangeYourAddress(wxCommandEvent&amp; event);
+@@ -64,6 +62,18 @@ public:
+     ~CMainFrame();
+ 
+     // Custom
++    enum
++    {
++        ALL = 0,
++        SENTRECEIVED = 1,
++        SENT = 2,
++        RECEIVED = 3,
++    };
++    int nPage;
++    wxListCtrl* m_listCtrl;
++    bool fShowGenerated;
++    bool fShowSent;
++    bool fShowReceived;
+     bool fRefreshListCtrl;
+     bool fRefreshListCtrlRunning;
+     bool fOnSetFocusAddress;</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -29,13 +29,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	m_menubar-&gt;Append( m_menuFile, _(&quot;&amp;File&quot;) );
+ 	
+-	m_menuView = new wxMenu();
+-	wxMenuItem* m_menuViewShowGenerated;
+-	m_menuViewShowGenerated = new wxMenuItem( m_menuView, wxID_VIEWSHOWGENERATED, wxString( _(&quot;&amp;Show Generated Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
+-	m_menuView-&gt;Append( m_menuViewShowGenerated );
+-	
+-	m_menubar-&gt;Append( m_menuView, _(&quot;&amp;View&quot;) );
+-	
+ 	m_menuOptions = new wxMenu();
+ 	wxMenuItem* m_menuOptionsGenerateBitcoins;
+ 	m_menuOptionsGenerateBitcoins = new wxMenuItem( m_menuOptions, wxID_OPTIONSGENERATEBITCOINS, wxString( _(&quot;&amp;Generate Coins&quot;) ) , wxEmptyString, wxITEM_CHECK );
+@@ -135,8 +128,53 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	bSizer2-&gt;Add( bSizer3, 0, wxEXPAND, 5 );
+ 	
+-	m_listCtrl = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
+-	bSizer2-&gt;Add( m_listCtrl, 1, wxEXPAND, 5 );
++	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
++	m_panel9 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
++	wxBoxSizer* bSizer11;
++	bSizer11 = new wxBoxSizer( wxVERTICAL );
++	
++	m_listCtrlAll = new wxListCtrl( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	bSizer11-&gt;Add( m_listCtrlAll, 1, wxEXPAND, 5 );
++	
++	m_panel9-&gt;SetSizer( bSizer11 );
++	m_panel9-&gt;Layout();
++	bSizer11-&gt;Fit( m_panel9 );
++	m_notebook-&gt;AddPage( m_panel9, _(&quot;All Transactions&quot;), true );
++	m_panel91 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
++	wxBoxSizer* bSizer111;
++	bSizer111 = new wxBoxSizer( wxVERTICAL );
++	
++	m_listCtrlSentReceived = new wxListCtrl( m_panel91, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	bSizer111-&gt;Add( m_listCtrlSentReceived, 1, wxEXPAND, 5 );
++	
++	m_panel91-&gt;SetSizer( bSizer111 );
++	m_panel91-&gt;Layout();
++	bSizer111-&gt;Fit( m_panel91 );
++	m_notebook-&gt;AddPage( m_panel91, _(&quot;Sent/Received&quot;), false );
++	m_panel92 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
++	wxBoxSizer* bSizer112;
++	bSizer112 = new wxBoxSizer( wxVERTICAL );
++	
++	m_listCtrlSent = new wxListCtrl( m_panel92, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	bSizer112-&gt;Add( m_listCtrlSent, 1, wxEXPAND, 5 );
++	
++	m_panel92-&gt;SetSizer( bSizer112 );
++	m_panel92-&gt;Layout();
++	bSizer112-&gt;Fit( m_panel92 );
++	m_notebook-&gt;AddPage( m_panel92, _(&quot;Sent&quot;), false );
++	m_panel93 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
++	wxBoxSizer* bSizer113;
++	bSizer113 = new wxBoxSizer( wxVERTICAL );
++	
++	m_listCtrlReceived = new wxListCtrl( m_panel93, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING|wxVSCROLL );
++	bSizer113-&gt;Add( m_listCtrlReceived, 1, wxEXPAND, 5 );
++	
++	m_panel93-&gt;SetSizer( bSizer113 );
++	m_panel93-&gt;Layout();
++	bSizer113-&gt;Fit( m_panel93 );
++	m_notebook-&gt;AddPage( m_panel93, _(&quot;Received&quot;), false );
++	
++	bSizer2-&gt;Add( m_notebook, 1, wxEXPAND, 5 );
+ 	
+ 	this-&gt;SetSizer( bSizer2 );
+ 	this-&gt;Layout();
+@@ -160,8 +198,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	this-&gt;Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEvents ) );
+ 	this-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaint ) );
+ 	this-&gt;Connect( m_menuFileExit-&gt;GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuFileExit ) );
+-	this-&gt;Connect( m_menuViewShowGenerated-&gt;GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuViewShowGenerated ) );
+-	this-&gt;Connect( m_menuViewShowGenerated-&gt;GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CMainFrameBase::OnUpdateUIViewShowGenerated ) );
+ 	this-&gt;Connect( m_menuOptionsGenerateBitcoins-&gt;GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuOptionsGenerate ) );
+ 	this-&gt;Connect( m_menuOptionsGenerateBitcoins-&gt;GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CMainFrameBase::OnUpdateUIOptionsGenerate ) );
+ 	this-&gt;Connect( m_menuOptionsChangeYourAddress-&gt;GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuOptionsChangeYourAddress ) );
+@@ -186,9 +222,19 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_textCtrlAddress-&gt;Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
+ 	m_buttonNew-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonNew ), NULL, this );
+ 	m_buttonCopy-&gt;Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_notebook-&gt;Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( CMainFrameBase::OnNotebookPageChanged ), NULL, this );
++	m_listCtrlAll-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlAll-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlAll-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlSentReceived-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlSentReceived-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSentReceived-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlSent-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlSent-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSent-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlReceived-&gt;Connect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlReceived-&gt;Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlReceived-&gt;Connect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+ }
+ 
+ CMainFrameBase::~CMainFrameBase()
+@@ -212,8 +258,6 @@ CMainFrameBase::~CMainFrameBase()
+ 	this-&gt;Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( CMainFrameBase::OnMouseEvents ) );
+ 	this-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaint ) );
+ 	this-&gt;Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuFileExit ) );
+-	this-&gt;Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuViewShowGenerated ) );
+-	this-&gt;Disconnect( wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CMainFrameBase::OnUpdateUIViewShowGenerated ) );
+ 	this-&gt;Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuOptionsGenerate ) );
+ 	this-&gt;Disconnect( wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CMainFrameBase::OnUpdateUIOptionsGenerate ) );
+ 	this-&gt;Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CMainFrameBase::OnMenuOptionsChangeYourAddress ) );
+@@ -238,9 +282,19 @@ CMainFrameBase::~CMainFrameBase()
+ 	m_textCtrlAddress-&gt;Disconnect( wxEVT_SET_FOCUS, wxFocusEventHandler( CMainFrameBase::OnSetFocusAddress ), NULL, this );
+ 	m_buttonNew-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonNew ), NULL, this );
+ 	m_buttonCopy-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CMainFrameBase::OnButtonCopy ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
+-	m_listCtrl-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_notebook-&gt;Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( CMainFrameBase::OnNotebookPageChanged ), NULL, this );
++	m_listCtrlAll-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlAll-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlAll-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlSentReceived-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlSentReceived-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSentReceived-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlSent-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlSent-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlSent-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
++	m_listCtrlReceived-&gt;Disconnect( wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEventHandler( CMainFrameBase::OnListColBeginDrag ), NULL, this );
++	m_listCtrlReceived-&gt;Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CMainFrameBase::OnListItemActivated ), NULL, this );
++	m_listCtrlReceived-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
+ }
+ 
+ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -28,6 +28,7 @@
+ #include &lt;wx/panel.h&gt;
+ #include &lt;wx/choice.h&gt;
+ #include &lt;wx/listctrl.h&gt;
++#include &lt;wx/notebook.h&gt;
+ #include &lt;wx/frame.h&gt;
+ #include &lt;wx/html/htmlwin.h&gt;
+ #include &lt;wx/dialog.h&gt;
+@@ -36,36 +37,34 @@
+ #include &lt;wx/spinctrl.h&gt;
+ #include &lt;wx/scrolwin.h&gt;
+ #include &lt;wx/statbmp.h&gt;
+-#include &lt;wx/notebook.h&gt;
+ 
+ ///////////////////////////////////////////////////////////////////////////
+ 
+ #define wxID_MAINFRAME 1000
+-#define wxID_VIEWSHOWGENERATED 1001
+-#define wxID_OPTIONSGENERATEBITCOINS 1002
+-#define wxID_MENUOPTIONSOPTIONS 1003
+-#define wxID_BUTTONSEND 1004
+-#define wxID_BUTTONRECEIVE 1005
+-#define wxID_TEXTCTRLADDRESS 1006
+-#define wxID_BUTTONNEW 1007
+-#define wxID_BUTTONCOPY 1008
+-#define wxID_TRANSACTIONFEE 1009
+-#define wxID_PROXYIP 1010
+-#define wxID_PROXYPORT 1011
+-#define wxID_TEXTCTRLPAYTO 1012
+-#define wxID_BUTTONPASTE 1013
+-#define wxID_BUTTONADDRESSBOOK 1014
+-#define wxID_TEXTCTRLAMOUNT 1015
+-#define wxID_CHOICETRANSFERTYPE 1016
+-#define wxID_LISTCTRL 1017
+-#define wxID_BUTTONRENAME 1018
+-#define wxID_PANELSENDING 1019
+-#define wxID_LISTCTRLSENDING 1020
+-#define wxID_PANELRECEIVING 1021
+-#define wxID_LISTCTRLRECEIVING 1022
+-#define wxID_BUTTONDELETE 1023
+-#define wxID_BUTTONEDIT 1024
+-#define wxID_TEXTCTRL 1025
++#define wxID_OPTIONSGENERATEBITCOINS 1001
++#define wxID_MENUOPTIONSOPTIONS 1002
++#define wxID_BUTTONSEND 1003
++#define wxID_BUTTONRECEIVE 1004
++#define wxID_TEXTCTRLADDRESS 1005
++#define wxID_BUTTONNEW 1006
++#define wxID_BUTTONCOPY 1007
++#define wxID_TRANSACTIONFEE 1008
++#define wxID_PROXYIP 1009
++#define wxID_PROXYPORT 1010
++#define wxID_TEXTCTRLPAYTO 1011
++#define wxID_BUTTONPASTE 1012
++#define wxID_BUTTONADDRESSBOOK 1013
++#define wxID_TEXTCTRLAMOUNT 1014
++#define wxID_CHOICETRANSFERTYPE 1015
++#define wxID_LISTCTRL 1016
++#define wxID_BUTTONRENAME 1017
++#define wxID_PANELSENDING 1018
++#define wxID_LISTCTRLSENDING 1019
++#define wxID_PANELRECEIVING 1020
++#define wxID_LISTCTRLRECEIVING 1021
++#define wxID_BUTTONDELETE 1022
++#define wxID_BUTTONEDIT 1023
++#define wxID_TEXTCTRL 1024
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ /// Class CMainFrameBase
+@@ -77,7 +76,6 @@ class CMainFrameBase : public wxFrame
+ 	protected:
+ 		wxMenuBar* m_menubar;
+ 		wxMenu* m_menuFile;
+-		wxMenu* m_menuView;
+ 		wxMenu* m_menuHelp;
+ 		wxToolBar* m_toolBar;
+ 		wxStatusBar* m_statusBar;
+@@ -91,6 +89,11 @@ class CMainFrameBase : public wxFrame
+ 		wxStaticText* m_staticTextBalance;
+ 		
+ 		wxChoice* m_choiceFilter;
++		wxNotebook* m_notebook;
++		wxPanel* m_panel9;
++		wxPanel* m_panel91;
++		wxPanel* m_panel92;
++		wxPanel* m_panel93;
+ 		
+ 		// Virtual event handlers, overide them in your derived class
+ 		virtual void OnClose( wxCloseEvent&amp; event ){ event.Skip(); }
+@@ -99,8 +102,6 @@ class CMainFrameBase : public wxFrame
+ 		virtual void OnMouseEvents( wxMouseEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnPaint( wxPaintEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnMenuFileExit( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnMenuViewShowGenerated( wxCommandEvent&amp; event ){ event.Skip(); }
+-		virtual void OnUpdateUIViewShowGenerated( wxUpdateUIEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnMenuOptionsGenerate( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnUpdateUIOptionsGenerate( wxUpdateUIEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnMenuOptionsChangeYourAddress( wxCommandEvent&amp; event ){ event.Skip(); }
+@@ -113,6 +114,7 @@ class CMainFrameBase : public wxFrame
+ 		virtual void OnSetFocusAddress( wxFocusEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonNew( wxCommandEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnButtonCopy( wxCommandEvent&amp; event ){ event.Skip(); }
++		virtual void OnNotebookPageChanged( wxNotebookEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListColBeginDrag( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnListItemActivated( wxListEvent&amp; event ){ event.Skip(); }
+ 		virtual void OnPaintListCtrl( wxPaintEvent&amp; event ){ event.Skip(); }
+@@ -121,8 +123,11 @@ class CMainFrameBase : public wxFrame
+ 	public:
+ 		wxMenu* m_menuOptions;
+ 		wxTextCtrl* m_textCtrlAddress;
+-		wxListCtrl* m_listCtrl;
+-		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = _(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 712,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
++		wxListCtrl* m_listCtrlAll;
++		wxListCtrl* m_listCtrlSentReceived;
++		wxListCtrl* m_listCtrlSent;
++		wxListCtrl* m_listCtrlReceived;
++		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = _(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 723,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
+ 		~CMainFrameBase();
+ 	
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
+         &lt;property name=&quot;relative_path&quot;&gt;1&lt;/property&gt;
+         &lt;property name=&quot;use_enum&quot;&gt;0&lt;/property&gt;
+         &lt;property name=&quot;use_microsoft_bom&quot;&gt;0&lt;/property&gt;
+-        &lt;object class=&quot;Frame&quot; expanded=&quot;0&quot;&gt;
++        &lt;object class=&quot;Frame&quot; expanded=&quot;1&quot;&gt;
+             &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_BTNFACE&lt;/property&gt;
+             &lt;property name=&quot;center&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -32,7 +32,7 @@
+             &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
+             &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-            &lt;property name=&quot;size&quot;&gt;712,484&lt;/property&gt;
++            &lt;property name=&quot;size&quot;&gt;723,484&lt;/property&gt;
+             &lt;property name=&quot;style&quot;&gt;wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER&lt;/property&gt;
+             &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+             &lt;property name=&quot;title&quot;&gt;Bitcoin&lt;/property&gt;
+@@ -134,26 +134,6 @@
+                         &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+-                &lt;object class=&quot;wxMenu&quot; expanded=&quot;1&quot;&gt;
+-                    &lt;property name=&quot;label&quot;&gt;&amp;amp;View&lt;/property&gt;
+-                    &lt;property name=&quot;name&quot;&gt;m_menuView&lt;/property&gt;
+-                    &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                    &lt;object class=&quot;wxMenuItem&quot; expanded=&quot;1&quot;&gt;
+-                        &lt;property name=&quot;bitmap&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
+-                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                        &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;id&quot;&gt;wxID_VIEWSHOWGENERATED&lt;/property&gt;
+-                        &lt;property name=&quot;kind&quot;&gt;wxITEM_CHECK&lt;/property&gt;
+-                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Show Generated Coins&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_menuViewShowGenerated&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+-                        &lt;property name=&quot;shortcut&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;unchecked_bitmap&quot;&gt;&lt;/property&gt;
+-                        &lt;event name=&quot;OnMenuSelection&quot;&gt;OnMenuViewShowGenerated&lt;/event&gt;
+-                        &lt;event name=&quot;OnUpdateUI&quot;&gt;OnUpdateUIViewShowGenerated&lt;/event&gt;
+-                    &lt;/object&gt;
+-                &lt;/object&gt;
+                 &lt;object class=&quot;wxMenu&quot; expanded=&quot;1&quot;&gt;
+                     &lt;property name=&quot;label&quot;&gt;&amp;amp;Settings&lt;/property&gt;
+                     &lt;property name=&quot;name&quot;&gt;m_menuOptions&lt;/property&gt;
+@@ -346,7 +326,7 @@
+                 &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                 &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+             &lt;/object&gt;
+-            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
++            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;name&quot;&gt;bSizer2&lt;/property&gt;
+                 &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
+@@ -824,8 +804,9 @@
+                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+                     &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
+                     &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
+-                    &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
++                    &lt;object class=&quot;wxNotebook&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                        &lt;property name=&quot;bitmapsize&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+@@ -834,16 +815,16 @@
+                         &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
+                         &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;name&quot;&gt;m_listCtrl&lt;/property&gt;
+-                        &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
++                        &lt;property name=&quot;name&quot;&gt;m_notebook&lt;/property&gt;
++                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                         &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING&lt;/property&gt;
++                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                        &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+                         &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+@@ -854,39 +835,513 @@
+                         &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColBeginDrag&quot;&gt;OnListColBeginDrag&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivated&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListItemSelected&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                        &lt;event name=&quot;OnPaint&quot;&gt;OnPaintListCtrl&lt;/event&gt;
++                        &lt;event name=&quot;OnNotebookPageChanged&quot;&gt;OnNotebookPageChanged&lt;/event&gt;
++                        &lt;event name=&quot;OnNotebookPageChanging&quot;&gt;&lt;/event&gt;
++                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+                         &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                        &lt;object class=&quot;notebookpage&quot; expanded=&quot;1&quot;&gt;
++                            &lt;property name=&quot;bitmap&quot;&gt;&lt;/property&gt;
++                            &lt;property name=&quot;label&quot;&gt;All Transactions&lt;/property&gt;
++                            &lt;property name=&quot;select&quot;&gt;1&lt;/property&gt;
++                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
++                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;name&quot;&gt;m_panel9&lt;/property&gt;
++                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
++                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                    &lt;property name=&quot;name&quot;&gt;bSizer11&lt;/property&gt;
++                                    &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                        &lt;property name=&quot;flag&quot;&gt;wxEXPAND&lt;/property&gt;
++                                        &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
++                                        &lt;object class=&quot;wxListCtrl&quot; expanded=&quot;1&quot;&gt;
++                                            &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                            &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                            &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                            &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;name&quot;&gt;m_listCtrlAll&lt;/property&gt;
++                                            &lt;property name=&quot;permission&quot;&gt;public&lt;/property&gt;
++                                            &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;style&quot;&gt;wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING&lt;/property&gt;
++                                            &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                            &lt;property name=&quot;window_style&quot;&gt;wxVSCROLL&lt;/property&gt;
++                                            &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListBeginDrag&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListBeginLabelEdit&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListBeginRDrag&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListCacheHint&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListColBeginDrag&quot;&gt;OnListColBeginDrag&lt;/event&gt;
++                                            &lt;event name=&quot;OnListColClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListColDragging&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListColEndDrag&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListColRightClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListDeleteAllItems&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListDeleteItem&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListEndLabelEdit&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListInsertItem&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemActivated&quot;&gt;OnListItemActivated&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemDeselected&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemFocused&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemMiddleClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemRightClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListItemSelected&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnListKeyDown&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnPaint&quot;&gt;OnPaintListCtrl&lt;/event&gt;
++                                            &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                            &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                        &lt;/object&gt;
++                                    &lt;/object&gt;
++                                &lt;/object&gt;
++                            &lt;/object&gt;
++                        &lt;/object&gt;
++                        &lt;object class=&quot;notebookpage&quot; expanded=&quot;1&quot;&gt;
++                            &lt;property name=&quot;bitmap&quot;&gt;&lt;/property&gt;
++                            &lt;property name=&quot;label&quot;&gt;Sent/Received&lt;/property&gt;
++                            &lt;property name=&quot;select&quot;&gt;0&lt;/property&gt;
++                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
++                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
++                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;name&quot;&gt;m_panel91&lt;/property&gt;
++                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                &lt;property name=&quot;window_style&quot;&gt;wxTAB_TRAVERSAL&lt;/property&gt;
++                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
++                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                    &lt;property name=&quot;name&quot;&gt;bSizer111&lt;/property&gt;
++                                    &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/75199de/">← Address Book with tabs instead of separate Your Address…</a><a rel="next" href="../../commits/cb420a1/">run as daemon without GUI, hooked wxApp::Initialize to… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

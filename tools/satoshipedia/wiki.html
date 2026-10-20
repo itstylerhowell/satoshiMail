@@ -1,0 +1,60 @@
+<div class="wk-winscrim" id="wkscrim" data-wkwin="min" hidden></div>
+<div class="wk-win" id="wkwin" role="dialog" aria-label="Satoshipedia" hidden>
+<div class="wiki" id="wiki" tabindex="-1">
+  <header class="wk-top">
+    <button class="ib wk-menu" type="button" data-wk="menu" aria-label="Open Satoshipedia menu"><span class="ms">menu</span></button>
+    <a class="wk-brand" href="#wiki" aria-label="Satoshipedia main page">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M4 9.5c5.5-2.2 10.6-2 16 1.2v24c-5.4-3.2-10.5-3.4-16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M36 9.5c-5.5-2.2-10.6-2-16 1.2v24c5.4-3.2 10.5-3.4 16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="20" cy="12.5" r="9.2" fill="#f7931a"/>
+        <g transform="translate(0 -4.5) rotate(14 20 17)" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.2 12.2v9.6M17.2 12.2h3.1a2.35 2.35 0 0 1 0 4.7h-3.1M17.2 16.9h3.6a2.45 2.45 0 0 1 0 4.9h-3.6"/>
+          <path d="M18.5 10.7v1.5M20.4 10.7v1.5M18.5 21.8v1.5M20.4 21.8v1.5"/>
+        </g>
+      </svg>
+      <span><b>Satoshipedia</b><small>The Satoshi Mail Encyclopedia</small></span>
+    </a>
+    <button class="beta-pill" type="button" data-act="beta" title="Satoshipedia is in beta and still in development">Beta</button>
+    <form class="wk-search" id="wksearch" role="search" autocomplete="off">
+      <label><span class="ms" aria-hidden="true">search</span>
+        <input id="wkq" type="search" spellcheck="false" placeholder="Search Satoshipedia" aria-label="Search Satoshipedia" role="combobox" aria-autocomplete="list" aria-controls="wksug" aria-expanded="false">
+        <button class="go" type="submit">Search</button>
+      </label>
+      <div class="wk-sug" id="wksug" role="listbox" aria-label="Article suggestions" hidden></div>
+    </form>
+    <span class="grow"></span>
+    <div class="wk-ctl">
+      <button class="ib" type="button" data-wkwin="min" aria-label="Minimize Satoshipedia" title="Minimize"><span class="ms" aria-hidden="true">minimize</span></button>
+      <button class="ib wk-maxbtn" type="button" data-wkwin="max" aria-label="Full screen" title="Full screen"><span class="ms" aria-hidden="true">open_in_full</span></button>
+      <button class="ib" type="button" data-wkwin="close" aria-label="Close Satoshipedia" title="Close"><span class="ms" aria-hidden="true">close</span></button>
+    </div>
+  </header>
+  <div class="wk-body">
+    <nav class="wk-nav" id="wknav" aria-label="Satoshipedia navigation"></nav>
+    <div class="wk-scrim" data-wk="menu" aria-hidden="true"></div>
+    <main class="wk-main" id="wkmain"></main>
+  </div>
+  <footer class="wk-foot" id="wkfoot"></footer>
+</div>
+</div>
+<div class="wk-prev" id="wkprev" hidden></div>
+<div class="wk-minbar" id="wkminbar" hidden>
+  <button class="wk-restore" type="button" data-wkwin="restore" aria-label="Restore Satoshipedia"><svg viewBox="0 0 40 40" aria-hidden="true"> <path d="M4 9.5c5.5-2.2 10.6-2 16 1.2v24c-5.4-3.2-10.5-3.4-16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/> <path d="M36 9.5c-5.5-2.2-10.6-2-16 1.2v24c5.4-3.2 10.5-3.4 16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/> <circle cx="20" cy="12.5" r="9.2" fill="#f7931a"/> <g transform="translate(0 -4.5) rotate(14 20 17)" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> <path d="M17.2 12.2v9.6M17.2 12.2h3.1a2.35 2.35 0 0 1 0 4.7h-3.1M17.2 16.9h3.6a2.45 2.45 0 0 1 0 4.9h-3.6"/> <path d="M18.5 10.7v1.5M20.4 10.7v1.5M18.5 21.8v1.5M20.4 21.8v1.5"/> </g> </svg><span><b>Satoshipedia</b><small id="wkmint">Main page</small></span></button>
+  <button class="ib sm" type="button" data-wkwin="max-restore" aria-label="Open Satoshipedia full screen" title="Full screen"><span class="ms" aria-hidden="true">open_in_full</span></button>
+  <button class="ib sm" type="button" data-wkwin="close" aria-label="Close Satoshipedia" title="Close"><span class="ms" aria-hidden="true">close</span></button>
+</div>
+<nav class="dock" id="dock" aria-label="Apps">
+  <a class="dk" href="#inbox" data-dock="mail"><span class="tile"><svg viewBox="0 0 40 30" aria-hidden="true"><rect x="1" y="3" width="38" height="24" rx="4" fill="#f7931a"/><path d="M3.5 6 20 17.5 36.5 6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="20" cy="17" r="8.6" fill="#fff"/><circle cx="20" cy="17" r="8.6" fill="none" stroke="#f7931a" stroke-width="1.4"/><g transform="rotate(14 20 17)" fill="none" stroke="#f7931a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.2 12.2v9.6M17.2 12.2h3.1a2.35 2.35 0 0 1 0 4.7h-3.1M17.2 16.9h3.6a2.45 2.45 0 0 1 0 4.9h-3.6"/><path d="M18.5 10.7v1.5M20.4 10.7v1.5M18.5 21.8v1.5M20.4 21.8v1.5"/></g></svg></span><span class="lb">Mail</span></a>
+  <button class="dk" type="button" data-dock="wiki" aria-haspopup="dialog"><span class="tile"><svg viewBox="0 0 40 40" aria-hidden="true"> <path d="M4 9.5c5.5-2.2 10.6-2 16 1.2v24c-5.4-3.2-10.5-3.4-16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/> <path d="M36 9.5c-5.5-2.2-10.6-2-16 1.2v24c5.4-3.2 10.5-3.4 16-1.2z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.6" stroke-linejoin="round"/> <circle cx="20" cy="12.5" r="9.2" fill="#f7931a"/> <g transform="translate(0 -4.5) rotate(14 20 17)" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> <path d="M17.2 12.2v9.6M17.2 12.2h3.1a2.35 2.35 0 0 1 0 4.7h-3.1M17.2 16.9h3.6a2.45 2.45 0 0 1 0 4.9h-3.6"/> <path d="M18.5 10.7v1.5M20.4 10.7v1.5M18.5 21.8v1.5M20.4 21.8v1.5"/> </g> </svg></span><span class="lb">Satoshipedia</span><i class="new" id="wknew">New</i></button>
+  <a class="dk" href="#map" data-dock="map"><span class="tile map"><svg viewBox="0 0 40 40" aria-hidden="true"><g stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"><path d="M20 20 8 9M20 20l13-9M20 20 9 31M20 20l12 11"/></g><circle cx="8" cy="9" r="4" fill="var(--ch-e)"/><circle cx="33" cy="11" r="3.4" fill="var(--ch-p)"/><circle cx="9" cy="31" r="3.6" fill="var(--ch-x)"/><circle cx="32" cy="31" r="4.4" fill="var(--ch-p)"/><circle cx="20" cy="20" r="7.5" fill="#f7931a"/></svg></span><span class="lb">Map</span></a>
+  <a class="dk" href="#activity" data-dock="activity"><span class="tile cal"><small id="dkmon">OCT</small><b id="dkday">20</b></span><span class="lb">Activity</span></a>
+  <a class="dk" href="#commits" data-dock="commits"><span class="tile code"><span class="ms" aria-hidden="true">commit</span></span><span class="lb">Commits</span></a>
+  <a class="dk" href="#people" data-dock="people"><span class="tile ppl"><span class="ms" aria-hidden="true">group</span></span><span class="lb">People</span></a>
+  <button class="dk" type="button" data-dock="more" aria-haspopup="menu"><span class="tile more"><span class="ms" aria-hidden="true">apps</span></span><span class="lb">More</span></button>
+</nav>
+<div class="beta-note" id="betanote" role="status" hidden>
+  <span class="beta-pill static" aria-hidden="true">Beta</span>
+  <p><b>Satoshi Mail is in beta.</b> It's still in development, so features may change, move or not work yet.</p>
+  <div class="acts"><button class="linkbtn" type="button" data-act="beta">Learn more</button><button class="pillbtn" type="button" data-act="beta-ok">Got it</button></div>
+</div>

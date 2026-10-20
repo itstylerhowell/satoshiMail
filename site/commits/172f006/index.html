@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>only accept transactions sent by… (r156) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 September 2010: only accept transactions sent by IP address if -allowreceivebyip is specified. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/172f006/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="only accept transactions sent by… (r156) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 September 2010: only accept transactions sent by IP address if -allowreceivebyip is specified. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/172f006/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="only accept transactions sent by… (r156) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 19 September 2010: only accept transactions sent by IP address if -allowreceivebyip is specified. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "only accept transactions sent by IP address if -allowreceivebyip is specified", "url": "https://satoshimail.pages.dev/commits/172f006/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-19T21:20:34Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/172f006020965ae8763a0610845c051ed1e3b522"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "only accept transactions sent by IP…", "item": "https://satoshimail.pages.dev/commits/172f006/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c172f006020">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">only accept transactions sent by IP…</span></div></nav>
+<main class="in">
+<h1>only accept transactions sent by IP address if -allowreceivebyip is specified</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 19 September 2010 · SVN r156 · release v0.3.13 · 3 files, +30 −18</p>
+<p class="actions"><a class="btn" href="../../#t-c172f006020">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/172f006020965ae8763a0610845c051ed1e3b522" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1374,9 +1374,13 @@ bool CBlock::CheckBlock() const
+     // that can be verified before saving an orphan block.
+ 
+     // Size limits
+-    if (vtx.empty() || vtx.size() &gt; MAX_SIZE || ::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_SIZE)
++    if (vtx.empty() || vtx.size() &gt; MAX_BLOCK_SIZE || ::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
+         return error(&quot;CheckBlock() : size limits failed&quot;);
+ 
++    // Check proof of work matches claimed amount
++    if (!CheckProofOfWork(GetHash(), nBits))
++        return error(&quot;CheckBlock() : proof of work failed&quot;);
++
+     // Check timestamp
+     if (GetBlockTime() &gt; GetAdjustedTime() + 2 * 60 * 60)
+         return error(&quot;CheckBlock() : block timestamp too far in the future&quot;);
+@@ -1393,9 +1397,9 @@ bool CBlock::CheckBlock() const
+         if (!tx.CheckTransaction())
+             return error(&quot;CheckBlock() : CheckTransaction failed&quot;);
+ 
+-    // Check proof of work matches claimed amount
+-    if (!CheckProofOfWork(GetHash(), nBits))
+-        return error(&quot;CheckBlock() : proof of work failed&quot;);
++    // Check that it&#x27;s not full of nonstandard transactions
++    if (GetSigOpCount() &gt; MAX_BLOCK_SIGOPS)
++        return error(&quot;CheckBlock() : too many nonstandard transactions&quot;);
+ 
+     // Check merkleroot
+     if (hashMerkleRoot != BuildMerkleTree())
+@@ -1418,13 +1422,9 @@ bool CBlock::AcceptBlock()
+     CBlockIndex* pindexPrev = (*mi).second;
+     int nHeight = pindexPrev-&gt;nHeight+1;
+ 
+-    // Check size
+-    if (nHeight &gt; 79400 &amp;&amp; ::GetSerializeSize(*this, SER_NETWORK) &gt; MAX_BLOCK_SIZE)
+-        return error(&quot;AcceptBlock() : over size limit&quot;);
+-
+-    // Check that it&#x27;s not full of nonstandard transactions
+-    if (nHeight &gt; 79400 &amp;&amp; GetSigOpCount() &gt; MAX_BLOCK_SIGOPS)
+-        return error(&quot;AcceptBlock() : too many nonstandard transactions&quot;);
++    // Check proof of work
++    if (nBits != GetNextWorkRequired(pindexPrev))
++        return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+ 
+     // Check timestamp against prev
+     if (GetBlockTime() &lt;= pindexPrev-&gt;GetMedianTimePast())
+@@ -1435,10 +1435,6 @@ bool CBlock::AcceptBlock()
+         if (!tx.IsFinal(nHeight, GetBlockTime()))
+             return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+-    // Check proof of work
+-    if (nBits != GetNextWorkRequired(pindexPrev))
+-        return error(&quot;AcceptBlock() : incorrect proof of work&quot;);
+-
+     // Check that the block chain matches the known block chain up to a checkpoint
+     if ((nHeight == 11111 &amp;&amp; hash != uint256(&quot;0x0000000069e244f73d78e8fd29ba2fd2ed618bd6fa2ee92559f542fdb26e7c1d&quot;)) ||
+         (nHeight == 33333 &amp;&amp; hash != uint256(&quot;0x000000002dd5588a74784eaa7ab0507a18ad16a236e7b1ce69f00d7ddfb5d0a6&quot;)) ||
+@@ -2415,6 +2411,12 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         CWalletTx order;
+         vRecv &gt;&gt; hashReply &gt;&gt; order;
+ 
++        if (!mapArgs.count(&quot;-allowreceivebyip&quot;) || mapArgs[&quot;-allowreceivebyip&quot;] == &quot;0&quot;)
++        {
++            pfrom-&gt;PushMessage(&quot;reply&quot;, hashReply, (int)2, string(&quot;&quot;));
++            return true;
++        }
++
+         /// we have a chance to check the order here
+ 
+         // Keep giving the same key to the same ip until they use it
+@@ -2435,6 +2437,12 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+         vRecv &gt;&gt; hashReply &gt;&gt; wtxNew;
+         wtxNew.fFromMe = false;
+ 
++        if (!mapArgs.count(&quot;-allowreceivebyip&quot;) || mapArgs[&quot;-allowreceivebyip&quot;] == &quot;0&quot;)
++        {
++            pfrom-&gt;PushMessage(&quot;reply&quot;, hashReply, (int)2);
++            return true;
++        }
++
+         // Broadcast
+         if (!wtxNew.AcceptWalletTransaction())
+         {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -23,7 +23,7 @@ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+ static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.6&quot;;
++static const char* pszSubVer = &quot;.7&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -2186,8 +2186,12 @@ void CSendingDialog::OnReply2(CDataStream&amp; vRecv)
+         if (nRet &gt; 0)
+         {
+             string strMessage;
+-            vRecv &gt;&gt; strMessage;
+-            Error(_(&quot;Transfer was not accepted&quot;));
++            if (!vRecv.empty())
++                vRecv &gt;&gt; strMessage;
++            if (nRet == 2)
++                Error(_(&quot;Recipient is not accepting transactions sent by IP address&quot;));
++            else
++                Error(_(&quot;Transfer was not accepted&quot;));
+             //// todo: enlarge the window and enable a hidden white box to put seller&#x27;s message
+             return;
+         }</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/fe37c35/">← config option -rpcallowip= to accept json-rpc connections…</a><a rel="next" href="../../commits/6aeb451/">only accept transactions sent by IP address if… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

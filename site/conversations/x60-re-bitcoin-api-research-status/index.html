@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re: Bitcoin API research status – Satoshi Nakamoto, Martti Malmi</title>
+<meta name="description" content="Satoshi Nakamoto, 5 February 2010: I noticed this in the docs for wxSocketServer::Accept(bool wait = true): &quot;If wait is true and there are no pending…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/x60-re-bitcoin-api-research-status/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Re: Bitcoin API research status – Satoshi Nakamoto, Martti Malmi">
+<meta property="og:description" content="Satoshi Nakamoto, 5 February 2010: I noticed this in the docs for wxSocketServer::Accept(bool wait = true): &quot;If wait is true and there are no pending…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/x60-re-bitcoin-api-research-status/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Re: Bitcoin API research status – Satoshi Nakamoto, Martti Malmi">
+<meta name="twitter:description" content="Satoshi Nakamoto, 5 February 2010: I noticed this in the docs for wxSocketServer::Accept(bool wait = true): &quot;If wait is true and there are no pending…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Re: Bitcoin API research status", "url": "https://satoshimail.pages.dev/conversations/x60-re-bitcoin-api-research-status/", "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": "2010-02-05T04:08:54Z", "hasPart": [{"@type": "EmailMessage", "sender": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateSent": "2010-02-05T04:08:54Z", "text": "I noticed this in the docs for wxSocketServer::Accept(bool wait = true): \"If wait is true and there are no pending connections to be accepted, it will wait for the next incoming connection to arrive. **Warning: This will block the GUI.\" wxWidgets is pathologically single-threaded. Not only single-threaded, but must-be-the-GUI-thread-ed. Even for something as non-UI as wxStandardPaths I got nailed. All this is fine for UI code, since this is the same constraint placed by Windows anyway, but for…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "Private email with Martti Malmi (sirius-m)", "item": "https://satoshimail.pages.dev/conversations/martti-malmi/"}, {"@type": "ListItem", "position": 4, "name": "Re: Bitcoin API research status", "item": "https://satoshimail.pages.dev/conversations/x60-re-bitcoin-api-research-status/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-x60">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/martti-malmi/">Private email with Martti Malmi (sirius-m)</a> <span aria-hidden="true">›</span> <span aria-current="page">Re: Bitcoin API research status</span></div></nav>
+<main class="in">
+<h1>Re: Bitcoin API research status</h1>
+<p class="lead">Private email with Martti Malmi (sirius-m) · 1 message · from 5 February 2010 · with Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-x60">Read in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/lugaxker/nakamoto-archive/blob/8405b13482ae1a1bc55d6fe5bb3a5f2f46a58ffc/src/mmalmi-satoshi.html" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b> <span class="muted">to Martti Malmi &lt;mmalmi@cc.hut.fi&gt;</span><span class="muted"> · <time datetime="2010-02-05T04:08:54Z">5 February 2010, 04:08 UTC</time> · <a href="https://mmalmi.github.io/satoshi/#email-148" rel="nofollow noopener">original</a></span></header>
+<div class="t">I noticed this in the docs for wxSocketServer::Accept(bool wait = true):
+&quot;If wait is true and there are no pending connections to be accepted, it
+will wait for the next incoming connection to arrive.  **Warning: This
+will block the GUI.&quot;
+
+wxWidgets is pathologically single-threaded.  Not only single-threaded,
+but must-be-the-GUI-thread-ed.  Even for something as non-UI as
+wxStandardPaths I got nailed.  All this is fine for UI code, since this
+is the same constraint placed by Windows anyway, but for UI-less server
+daemon code, wx calls are uncertain.
+
+Status of my research currently:
+
+For PHP, Python, etc to access the server, we need to use regular
+sockets.  I think we can make it local-only by binding to localhost
+only, so it can only be accessed through the loopback.  They say it&#x27;s
+also watertight to simply check the IP of connections received and
+disconnect anything not 127.0.0.1.  May as well do both.
+
+XML-RPC is a bit fat.  There are 4 libraries for C++ but they&#x27;re all big
+and hard to build, dependencies, license issues.  Some posters complain
+all the C++ and PHP XML-RPC libraries are buggy.
+
+JSON-RPC is a simpler more elegant standard.  It&#x27;s simple enough I could
+use a generic JSON parser.
+
+PHP, Python and Java all have good implementations of JSON-RPC.
+
+I&#x27;m currently leaning towards JSON-RPC.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/x59-utf-8-to-ansi-hack-in-caboutdialog/">← UTF-8 to ANSI hack in CAboutDialog</a><a rel="next" href="../../conversations/x61-json-rpc-status/">JSON-RPC status →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

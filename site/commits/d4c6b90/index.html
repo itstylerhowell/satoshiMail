@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fix for block 74638 overflow… (r132) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: fix for block 74638 overflow output transaction. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/d4c6b90/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fix for block 74638 overflow… (r132) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: fix for block 74638 overflow output transaction. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/d4c6b90/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fix for block 74638 overflow… (r132) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 August 2010: fix for block 74638 overflow output transaction. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix for block 74638 overflow output transaction", "url": "https://satoshimail.pages.dev/commits/d4c6b90/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T21:35:24Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d4c6b90ca3f9b47adb1b2724a0c3514f80635c84"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix for block 74638 overflow output…", "item": "https://satoshimail.pages.dev/commits/d4c6b90/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cd4c6b90ca3">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fix for block 74638 overflow output…</span></div></nav>
+<main class="in">
+<h1>fix for block 74638 overflow output transaction</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 August 2010 · SVN r132 · release v0.3.10 · 3 files, +19 −2</p>
+<p class="actions"><a class="btn" href="../../#t-cd4c6b90ca3">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/d4c6b90ca3f9b47adb1b2724a0c3514f80635c84" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1006,6 +1006,14 @@ bool CTransaction::ConnectInputs(CTxDB&amp; txdb, map&lt;uint256, CTxIndex&gt;&amp; mapTestPoo
+                 mapTestPool[prevout.hash] = txindex;
+ 
+             nValueIn += txPrev.vout[prevout.n].nValue;
++
++            // Check for negative or overflow input values
++            if (txPrev.vout[prevout.n].nValue &lt; 0)
++                return error(&quot;ConnectInputs() : txin.nValue negative&quot;);
++            if (txPrev.vout[prevout.n].nValue &gt; MAX_MONEY)
++                return error(&quot;ConnectInputs() : txin.nValue too high&quot;);
++            if (nValueIn &gt; MAX_MONEY)
++                return error(&quot;ConnectInputs() : txin total too high&quot;);
+         }
+ 
+         // Tally transaction fees</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -18,6 +18,7 @@ static const unsigned int MAX_SIZE = 0x02000000;
+ static const unsigned int MAX_BLOCK_SIZE = 1000000;
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
++static const int64 MAX_MONEY = 21000000 * COIN;
+ static const int COINBASE_MATURITY = 100;
+ 
+ static const CBigNum bnProofOfWorkLimit(~uint256(0) &gt;&gt; 32);
+@@ -471,10 +472,18 @@ public:
+         if (vin.empty() || vout.empty())
+             return error(&quot;CTransaction::CheckTransaction() : vin or vout empty&quot;);
+ 
+-        // Check for negative values
++        // Check for negative or overflow output values
++        int64 nValueOut = 0;
+         foreach(const CTxOut&amp; txout, vout)
++        {
+             if (txout.nValue &lt; 0)
+                 return error(&quot;CTransaction::CheckTransaction() : txout.nValue negative&quot;);
++            if (txout.nValue &gt; MAX_MONEY)
++                return error(&quot;CTransaction::CheckTransaction() : txout.nValue too high&quot;);
++            nValueOut += txout.nValue;
++            if (nValueOut &gt; MAX_MONEY)
++                return error(&quot;CTransaction::CheckTransaction() : txout total too high&quot;);
++        }
+ 
+         if (IsCoinBase())
+         {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 309;
++static const int VERSION = 310;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/4bd188c/">← misc changes</a><a rel="next" href="../../commits/85de7d7/">scanback check to prevent adding to the 74638 overflow chain →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

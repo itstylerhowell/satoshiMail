@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/cb420a1/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/cb420a1/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI, fork to daemonize, rpc getinfo, getconnectioncount, getbalance, getgenerate, setgenerate, -- version 0.2.6", "url": "https://satoshimail.pages.dev/commits/cb420a1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-23T22:01:39Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/cb420a1dfc23d3c11c5281ed8f7ae003c2f61594"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "run as daemon without GUI, hooked…", "item": "https://satoshimail.pages.dev/commits/cb420a1/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ccb420a1dfc">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">run as daemon without GUI, hooked…</span></div></nav>
+<main class="in">
+<h1>run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI, fork to daemonize, rpc getinfo, getconnectioncount, getbalance, getgenerate, setgenerate, -- version 0.2.6</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 23 February 2010 · SVN r70 · release v0.2.6 · 7 files, +207 −47</p>
+<p class="actions"><a class="btn" href="../../#t-ccb420a1dfc">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/cb420a1dfc23d3c11c5281ed8f7ae003c2f61594" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -1315,11 +1315,10 @@ bool CBlock::AcceptBlock()
+     if (nTime &lt;= pindexPrev-&gt;GetMedianTimePast())
+         return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);
+ 
+-    // Check that all transactions are finalized (starting around Mar 2010)
+-    if (nBestHeight &gt; 36000)
+-        foreach(const CTransaction&amp; tx, vtx)
+-            if (!tx.IsFinal(nTime))
+-                return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
++    // Check that all transactions are finalized
++    foreach(const CTransaction&amp; tx, vtx)
++        if (!tx.IsFinal(nTime))
++            return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+     // Check proof of work
+     if (nBits != GetNextWorkRequired(pindexPrev))
+@@ -1336,7 +1335,7 @@ bool CBlock::AcceptBlock()
+         return error(&quot;AcceptBlock() : AddToBlockIndex failed&quot;);
+ 
+     // Don&#x27;t relay old inventory during initial block download.
+-    // Please keep this constant updated to a few thousand below current block count.
++    // Please keep this number updated to a few thousand below current block count.
+     if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 40000)
+         RelayInventory(CInv(MSG_BLOCK, hash));
+ 
+@@ -1556,8 +1555,8 @@ bool LoadBlockIndex(bool fAllowNew)
+         CTransaction txNew;
+         txNew.vin.resize(1);
+         txNew.vout.resize(1);
+-        txNew.vin[0].scriptSig     = CScript() &lt;&lt; 486604799 &lt;&lt; CBigNum(4) &lt;&lt; vector&lt;unsigned char&gt;((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+-        txNew.vout[0].nValue       = 50 * COIN;
++        txNew.vin[0].scriptSig = CScript() &lt;&lt; 486604799 &lt;&lt; CBigNum(4) &lt;&lt; vector&lt;unsigned char&gt;((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
++        txNew.vout[0].nValue = 50 * COIN;
+         CBigNum bnPubKey;
+         bnPubKey.SetHex(&quot;0x5F1DF16B2B704C8A578D0BBAF74D385CDE12C11EE50455F3C438EF4C3FBCF649B6DE611FEAE06279A60939E028A8D65C10B73071A6F16719274855FEB0FD8A6704&quot;);
+         txNew.vout[0].scriptPubKey = CScript() &lt;&lt; bnPubKey &lt;&lt; OP_CHECKSIG;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1384,6 +1384,9 @@ public:
+     CPrivKey vchPrivKey;
+     int64 nTimeCreated;
+     int64 nTimeExpires;
++    string strComment;
++    //// todo: add something to note what created it (user, getnewaddress, change)
++    ////   maybe should have a map&lt;string, string&gt; property map
+ 
+     CWalletKey(int64 nTimeExpiresIn=0)
+     {
+@@ -1398,6 +1401,7 @@ public:
+         READWRITE(vchPrivKey);
+         READWRITE(nTimeCreated);
+         READWRITE(nTimeExpires);
++        READWRITE(strComment);
+     )
+ };
+ </code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -66,6 +66,17 @@ Value getblocknumber(const Array&amp; params)
+ }
+ 
+ 
++Value getconnectioncount(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getconnectioncount (no parameters)\n&quot;
++            &quot;Returns the number of connections to other nodes.&quot;);
++
++    return (int)vNodes.size();
++}
++
++
+ Value getdifficulty(const Array&amp; params)
+ {
+     if (params.size() != 0)
+@@ -85,6 +96,71 @@ Value getdifficulty(const Array&amp; params)
+ }
+ 
+ 
++Value getbalance(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getbalance (no parameters)\n&quot;
++            &quot;Returns the server&#x27;s available balance.&quot;);
++
++    return ((double)GetBalance() / (double)COIN);
++}
++
++
++Value getgenerate(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getgenerate (no parameters)\n&quot;
++            &quot;Returns true or false.&quot;);
++
++    return (bool)fGenerateBitcoins;
++}
++
++
++Value setgenerate(const Array&amp; params)
++{
++    if (params.size() &lt; 1 || params.size() &gt; 2)
++        throw runtime_error(
++            &quot;setgenerate &lt;generate&gt; [genproclimit]\n&quot;
++            &quot;&lt;generate&gt; is true or false to turn generation on or off.\n&quot;
++            &quot;Generation is limited to [genproclimit] processors, -1 is unlimited.&quot;);
++
++    bool fGenerate = true;
++    if (params.size() &gt; 0)
++        fGenerate = params[0].get_bool();
++
++    if (params.size() &gt; 1)
++    {
++        int nGenProcLimit = params[1].get_int();
++        fLimitProcessors = (nGenProcLimit != -1);
++        CWalletDB().WriteSetting(&quot;fLimitProcessors&quot;, fLimitProcessors);
++        if (nGenProcLimit != -1)
++            CWalletDB().WriteSetting(&quot;nLimitProcessors&quot;, nLimitProcessors = nGenProcLimit);
++    }
++
++    GenerateBitcoins(fGenerate);
++    return Value::null;
++}
++
++
++Value getinfo(const Array&amp; params)
++{
++    if (params.size() != 0)
++        throw runtime_error(
++            &quot;getinfo (no parameters)&quot;);
++
++    Object obj;
++    obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
++    obj.push_back(Pair(&quot;blocks&quot;,        (int)nBestHeight + 1));
++    obj.push_back(Pair(&quot;connections&quot;,   (int)vNodes.size()));
++    obj.push_back(Pair(&quot;proxy&quot;,         (fUseProxy ? addrProxy.ToStringIPPort() : string())));
++    obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));
++    obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
++    return obj;
++}
++
++
+ Value getnewaddress(const Array&amp; params)
+ {
+     if (params.size() &gt; 1)
+@@ -102,8 +178,7 @@ Value getnewaddress(const Array&amp; params)
+     // Generate a new key that is added to wallet
+     string strAddress = PubKeyToAddress(GenerateNewKey());
+ 
+-    if (params.size() &gt; 0)
+-        SetAddressBookName(strAddress, strLabel);
++    SetAddressBookName(strAddress, strLabel);
+     return strAddress;
+ }
+ 
+@@ -214,10 +289,10 @@ Value getallreceived(const Array&amp; params)
+             &quot;getallreceived [minconf=1]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+             &quot;Returns an array of objects containing:\n&quot;
+-            &quot;  \&quot;address\&quot; : bitcoin address\n&quot;
++            &quot;  \&quot;address\&quot; : receiving address\n&quot;
+             &quot;  \&quot;amount\&quot; : total amount received by the address\n&quot;
+-            &quot;  \&quot;conf\&quot; : number of confirmations\n&quot;
+-            &quot;  \&quot;label\&quot; : the label set for this address when it was created by getnewaddress&quot;);
++            &quot;  \&quot;confirmations\&quot; : number of confirmations of the most recent transaction included\n&quot;
++            &quot;  \&quot;label\&quot; : the label of the receiving address&quot;);
+ 
+     // Minimum confirmations
+     int nMinDepth = 1;
+@@ -235,18 +310,26 @@ Value getallreceived(const Array&amp; params)
+                 continue;
+ 
+             int nDepth = wtx.GetDepthInMainChain();
+-            if (nDepth &gt;= nMinDepth)
++            if (nDepth &lt; nMinDepth)
++                continue;
++
++            // Filter out debits and payments to self, which may have change return
++            // we don&#x27;t want to count.
++            int64 nCredit = wtx.GetCredit(true);
++            int64 nDebit = wtx.GetDebit();
++            int64 nNet = nCredit - nDebit;
++            if (nNet &lt;= 0)
++                continue;
++
++            foreach(const CTxOut&amp; txout, wtx.vout)
+             {
+-                foreach(const CTxOut&amp; txout, wtx.vout)
+-                {
+-                    uint160 hash160 = txout.scriptPubKey.GetBitcoinAddressHash160();
+-                    if (hash160 == 0 || !mapPubKeys.count(hash160))
+-                        continue;
+-
+-                    tallyitem&amp; item = mapTally[hash160];
+-                    item.nAmount += txout.nValue;
+-                    item.nConf = min(item.nConf, nDepth);
+-                }
++                uint160 hash160 = txout.scriptPubKey.GetBitcoinAddressHash160();
++                if (hash160 == 0 || !mapPubKeys.count(hash160))
++                    continue;
++
++                tallyitem&amp; item = mapTally[hash160];
++                item.nAmount += txout.nValue;
++                item.nConf = min(item.nConf, nDepth);
+             }
+         }
+     }
+@@ -264,10 +347,10 @@ Value getallreceived(const Array&amp; params)
+                 strLabel = (*mi).second;
+ 
+             Object obj;
+-            obj.push_back(Pair(&quot;address&quot;, strAddress));
+-            obj.push_back(Pair(&quot;amount&quot;,  (double)(*it).second.nAmount / (double)COIN));
+-            obj.push_back(Pair(&quot;conf&quot;,    (*it).second.nConf));
+-            obj.push_back(Pair(&quot;label&quot;,   strLabel));
++            obj.push_back(Pair(&quot;address&quot;,       strAddress));
++            obj.push_back(Pair(&quot;amount&quot;,        (double)(*it).second.nAmount / (double)COIN));
++            obj.push_back(Pair(&quot;confirmations&quot;, (*it).second.nConf));
++            obj.push_back(Pair(&quot;label&quot;,         strLabel));
+             ret.push_back(obj);
+         }
+     }
+@@ -290,7 +373,12 @@ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+     make_pair(&quot;stop&quot;,               &amp;stop),
+     make_pair(&quot;getblockcount&quot;,      &amp;getblockcount),
+     make_pair(&quot;getblocknumber&quot;,     &amp;getblocknumber),
++    make_pair(&quot;getconnectioncount&quot;, &amp;getconnectioncount),
+     make_pair(&quot;getdifficulty&quot;,      &amp;getdifficulty),
++    make_pair(&quot;getbalance&quot;,         &amp;getbalance),
++    make_pair(&quot;getgenerate&quot;,        &amp;getgenerate),
++    make_pair(&quot;setgenerate&quot;,        &amp;setgenerate),
++    make_pair(&quot;getinfo&quot;,            &amp;getinfo),
+     make_pair(&quot;getnewaddress&quot;,      &amp;getnewaddress),
+     make_pair(&quot;sendtoaddress&quot;,      &amp;sendtoaddress),
+     make_pair(&quot;listtransactions&quot;,   &amp;listtransactions),
+@@ -568,9 +656,13 @@ int CommandLineRPC(int argc, char *argv[])
+         Array params;
+         for (int i = 2; i &lt; argc; i++)
+             params.push_back(argv[i]);
++        int n = params.size();
+ 
++        //
+         // Special case other types
+-        int n = params.size();
++        //
++        if (strMethod == &quot;setgenerate&quot;       &amp;&amp; n &gt; 0) ConvertTo&lt;bool&gt;(params[0]);
++        if (strMethod == &quot;setgenerate&quot;       &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
+         if (strMethod == &quot;sendtoaddress&quot;     &amp;&amp; n &gt; 1) ConvertTo&lt;double&gt;(params[1]);
+         if (strMethod == &quot;listtransactions&quot;  &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
+         if (strMethod == &quot;listtransactions&quot;  &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 205;
++static const int VERSION = 206;
+ static const char* pszSubVer = &quot;.0&quot;;
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -26,6 +26,20 @@ int fMinimizeOnClose = true;
+ 
+ 
+ 
++int MyMessageBox(const wxString&amp; message, const wxString&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1)
++{
++    if (fDaemon)
++    {
++        printf(&quot;wxMessageBox %s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
++        fprintf(stderr, &quot;%s: %s\n&quot;, string(caption).c_str(), string(message).c_str());
++        return wxOK;
++    }
++    return wxMessageBox(message, caption, style, parent, x, y);
++}
++#define wxMessageBox  MyMessageBox
++
++
++
+ 
+ 
+ 
+@@ -209,16 +223,10 @@ void CalledMessageBox(const string&amp; message, const string&amp; caption, int style, w
+ 
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
+ {
+-    if (fDaemon)
+-    {
+-        printf(&quot;wxMessageBox %s: %s\n&quot;, caption.c_str(), message.c_str());
+-        return wxOK;
+-    }
+-
+ #ifdef __WXMSW__
+     return wxMessageBox(message, caption, style, parent, x, y);
+ #else
+-    if (wxThread::IsMain())
++    if (wxThread::IsMain() || fDaemon)
+     {
+         return wxMessageBox(message, caption, style, parent, x, y);
+     }
+@@ -563,7 +571,7 @@ string SingleLine(const string&amp; strIn)
+ bool CMainFrame::InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex)
+ {
+     int64 nTime = wtx.nTimeDisplayed = wtx.GetTxTime();
+-    int64 nCredit = wtx.GetCredit();
++    int64 nCredit = wtx.GetCredit(true);
+     int64 nDebit = wtx.GetDebit();
+     int64 nNet = nCredit - nDebit;
+     uint256 hash = wtx.GetHash();
+@@ -2571,6 +2579,9 @@ public:
+     bool OnInit2();
+     int OnExit();
+ 
++    // Hook Initialize so we can start without GUI
++    virtual bool Initialize(int&amp; argc, wxChar** argv);
++
+     // 2nd-level exception handling: we get all the exceptions occurring in any
+     // event handler here
+     virtual bool OnExceptionInMainLoop();
+@@ -2586,6 +2597,64 @@ public:
+ 
+ IMPLEMENT_APP(CMyApp)
+ 
++bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
++{
++    if (argc &gt; 1 &amp;&amp; argv[1][0] != &#x27;-&#x27; &amp;&amp; (!fWindows || argv[1][0] != &#x27;/&#x27;) &amp;&amp;
++        wxString(argv[1]) != &quot;start&quot;)
++    {
++        fCommandLine = true;
++    }
++    else
++    {
++        // wxApp::Initialize will remove environment-specific parameters,
++        // so it&#x27;s too early to call ParseParameters yet
++        for (int i = 1; i &lt; argc; i++)
++        {
++            wxString str = argv[i];
++            #ifdef __WXMSW__
++            if (str.size() &gt;= 1 &amp;&amp; str[0] == &#x27;/&#x27;)
++                str[0] = &#x27;-&#x27;;
++            str = str.MakeLower();
++            #endif
++            // haven&#x27;t decided which argument to use for this yet
++            if (str == &quot;-daemon&quot; || str == &quot;-d&quot; || str == &quot;start&quot;)
++                fDaemon = true;
++        }
++    }
++
++#ifdef __WXGTK__
++    if (fDaemon || fCommandLine)
++    {
++        // Call the original Initialize while suppressing error messages
++        // and ignoring failure.  If unable to initialize GTK, it fails
++        // near the end so hopefully the last few things don&#x27;t matter.
++        {
++            wxLogNull logNo;
++            wxApp::Initialize(argc, argv);
++        }
++
++        if (fDaemon)
++        {
++            fprintf(stdout, &quot;bitcoin server starting\n&quot;);
++
++            // Daemonize
++            pid_t pid = fork();
++            if (pid &lt; 0)
++            {
++                fprintf(stderr, &quot;Error: fork() returned %d errno %d\n&quot;, pid, errno);
++                return false;
++            }
++            if (pid &gt; 0)
++                pthread_exit((void*)0);
++        }
++
++        return true;
++    }
++#endif
++
++    return wxApp::Initialize(argc, argv);
++}
++
+ bool CMyApp::OnInit()
+ {
+     bool fRet = false;
+@@ -2650,7 +2719,7 @@ bool CMyApp::OnInit2()
+     //
+     // Parameters
+     //
+-    if (argc &gt; 1 &amp;&amp; argv[1][0] != &#x27;-&#x27; &amp;&amp; argv[1][0] != &#x27;/&#x27;)
++    if (fCommandLine)
+     {
+         int ret = CommandLineRPC(argc, argv);
+         exit(ret);
+@@ -2696,13 +2765,6 @@ bool CMyApp::OnInit2()
+     if (mapArgs.count(&quot;-printtodebugger&quot;))
+         fPrintToDebugger = true;
+ 
+-    if (mapArgs.count(&quot;-daemon&quot;) || mapArgs.count(&quot;-d&quot;))
+-    {
+-        fDaemon = true;
+-        /// todo: need to fork
+-        ///  should it fork after the bind/single instance stuff?
+-    }
+-
+     if (!fDebug &amp;&amp; !pszSetDataDir[0])
+         ShrinkDebugFile();
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,6 +13,7 @@ bool fPrintToDebugger = false;
+ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
+ bool fShutdown = false;
+ bool fDaemon = false;
++bool fCommandLine = false;
+ 
+ 
+ 
+@@ -500,7 +501,8 @@ void PrintException(std::exception* pex, const char* pszThread)
+     char pszMessage[1000];
+     FormatException(pszMessage, pex, pszThread);
+     printf(&quot;\n\n************************\n%s\n&quot;, pszMessage);
+-    if (wxTheApp)
++    fprintf(stderr, &quot;\n\n************************\n%s\n&quot;, pszMessage);
++    if (wxTheApp &amp;&amp; !fDaemon)
+         wxMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
+     throw;
+     //DebugBreak();</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -121,6 +121,7 @@ extern bool fPrintToDebugger;
+ extern char pszSetDataDir[MAX_PATH];
+ extern bool fShutdown;
+ extern bool fDaemon;
++extern bool fCommandLine;
+ 
+ void RandAddSeed();
+ void RandAddSeedPerfmon();</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0184604/">← transaction filter tabs instead of view-&gt;show generated --…</a><a rel="next" href="../../commits/c243012/">GUI-less build target bitcoind that links to wxBase and… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

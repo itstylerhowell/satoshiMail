@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/dc73b32/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/dc73b32/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "CCriticalSection using wxWidgets instead of Windows OS calls", "url": "https://satoshimail.pages.dev/commits/dc73b32/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T05:55:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dc73b326f97f2ed7ec7b7e8485ebc9eb46e05ddb"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "CCriticalSection using wxWidgets…", "item": "https://satoshimail.pages.dev/commits/dc73b32/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cdc73b326f9">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">CCriticalSection using wxWidgets…</span></div></nav>
+<main class="in">
+<h1>CCriticalSection using wxWidgets instead of Windows OS calls</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 29 October 2009 · SVN r19 · release v0.2.0 · 3 files, +35 −22</p>
+<p class="actions"><a class="btn" href="../../#t-cdc73b326f9">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/dc73b326f97f2ed7ec7b7e8485ebc9eb46e05ddb" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>net.h</code></summary><pre><code>@@ -604,7 +604,7 @@ public:
+ 
+     void BeginMessage(const char* pszCommand)
+     {
+-        EnterCriticalSection(&amp;cs_vSend);
++        cs_vSend.Enter();
+         if (nPushPos != -1)
+             AbortMessage();
+         nPushPos = vSend.size();
+@@ -618,7 +618,7 @@ public:
+             return;
+         vSend.resize(nPushPos);
+         nPushPos = -1;
+-        LeaveCriticalSection(&amp;cs_vSend);
++        cs_vSend.Leave();
+         printf(&quot;(aborted)\n&quot;);
+     }
+ 
+@@ -643,7 +643,7 @@ public:
+         printf(&quot;\n&quot;);
+ 
+         nPushPos = -1;
+-        LeaveCriticalSection(&amp;cs_vSend);
++        cs_vSend.Leave();
+     }
+ 
+     void EndMessageAbortIfEmpty()</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,14 +13,14 @@ bool fPrintToConsole = false;
+ 
+ 
+ // Init openssl library multithreading support
+-static HANDLE* lock_cs;
++static wxMutex** ppmutexOpenSSL;
+ 
+-void win32_locking_callback(int mode, int type, const char* file, int line)
++void win32_locking_callback(int mode, int i, const char* file, int line)
+ {
+     if (mode &amp; CRYPTO_LOCK)
+-        WaitForSingleObject(lock_cs[type], INFINITE);
++        ppmutexOpenSSL[i]-&gt;Lock();
+     else
+-        ReleaseMutex(lock_cs[type]);
++        ppmutexOpenSSL[i]-&gt;Unlock();
+ }
+ 
+ // Init
+@@ -30,9 +30,9 @@ public:
+     CInit()
+     {
+         // Init openssl library multithreading support
+-        lock_cs = (HANDLE*)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(HANDLE));
++        ppmutexOpenSSL = (wxMutex**)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(wxMutex*));
+         for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+-            lock_cs[i] = CreateMutex(NULL,FALSE,NULL);
++            ppmutexOpenSSL[i] = new wxMutex();
+         CRYPTO_set_locking_callback(win32_locking_callback);
+ 
+         // Seed random number generator with screen scrape and other hardware sources
+@@ -46,8 +46,8 @@ public:
+         // Shutdown openssl library multithreading support
+         CRYPTO_set_locking_callback(NULL);
+         for (int i =0 ; i &lt; CRYPTO_num_locks(); i++)
+-            CloseHandle(lock_cs[i]);
+-        OPENSSL_free(lock_cs);
++            delete ppmutexOpenSSL[i];
++        OPENSSL_free(ppmutexOpenSSL);
+     }
+ }
+ instance_of_cinit;
+@@ -55,6 +55,10 @@ instance_of_cinit;
+ 
+ 
+ 
++
++
++
++
+ void RandAddSeed()
+ {
+     // Seed with CPU performance counter</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -106,28 +106,38 @@ void AddTimeData(unsigned int ip, int64 nTime);
+ // Could use wxCriticalSection for portability, but it doesn&#x27;t support TryEnterCriticalSection
+ class CCriticalSection
+ {
++#ifdef __WXMSW__
+ protected:
+     CRITICAL_SECTION cs;
+ public:
+-    char* pszFile;
+-    int nLine;
+     explicit CCriticalSection() { InitializeCriticalSection(&amp;cs); }
+     ~CCriticalSection() { DeleteCriticalSection(&amp;cs); }
+     void Enter() { EnterCriticalSection(&amp;cs); }
+     void Leave() { LeaveCriticalSection(&amp;cs); }
+     bool TryEnter() { return TryEnterCriticalSection(&amp;cs); }
+-    CRITICAL_SECTION* operator&amp;() { return &amp;cs; }
++#else
++protected:
++    wxMutex mutex;
++public:
++    explicit CCriticalSection() { }
++    ~CCriticalSection() { }
++    void Enter() { mutex.Lock(); }
++    void Leave() { mutex.Unlock(); }
++    bool TryEnter() { return mutex.TryLock() == wxMUTEX_NO_ERROR; }
++#endif
++public:
++    char* pszFile;
++    int nLine;
+ };
+ 
+ // Automatically leave critical section when leaving block, needed for exception safety
+ class CCriticalBlock
+ {
+ protected:
+-    CRITICAL_SECTION* pcs;
++    CCriticalSection* pcs;
+ public:
+-    CCriticalBlock(CRITICAL_SECTION&amp; csIn) { pcs = &amp;csIn; EnterCriticalSection(pcs); }
+-    CCriticalBlock(CCriticalSection&amp; csIn) { pcs = &amp;csIn; EnterCriticalSection(pcs); }
+-    ~CCriticalBlock() { LeaveCriticalSection(pcs); }
++    CCriticalBlock(CCriticalSection&amp; csIn) { pcs = &amp;csIn; pcs-&gt;Enter(); }
++    ~CCriticalBlock() { pcs-&gt;Leave(); }
+ };
+ 
+ // WARNING: This will catch continue and break!
+@@ -141,11 +151,10 @@ public:
+ class CTryCriticalBlock
+ {
+ protected:
+-    CRITICAL_SECTION* pcs;
++    CCriticalSection* pcs;
+ public:
+-    CTryCriticalBlock(CRITICAL_SECTION&amp; csIn) { pcs = (TryEnterCriticalSection(&amp;csIn) ? &amp;csIn : NULL); }
+-    CTryCriticalBlock(CCriticalSection&amp; csIn) { pcs = (TryEnterCriticalSection(&amp;csIn) ? &amp;csIn : NULL); }
+-    ~CTryCriticalBlock() { if (pcs) LeaveCriticalSection(pcs); }
++    CTryCriticalBlock(CCriticalSection&amp; csIn) { pcs = (csIn.TryEnter() ? &amp;csIn : NULL); }
++    ~CTryCriticalBlock() { if (pcs) pcs-&gt;Leave(); }
+     bool Entered() { return pcs != NULL; }
+ };
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/dd51920/">← addr relaying fixes, proxy option and privacy patches…</a><a rel="next" href="../../commits/e8474be/">better wallet.dat flush, consolidated… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

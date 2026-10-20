@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Does Bitcoin Crash in Windows? – Satoshi Nakamoto, bitcoin-list</title>
+<meta name="description" content="Satoshi Nakamoto, 23 October 2009: I haven&#x27;t had any reports of crashes in v0.1.5. It&#x27;s been rock solid for me on Windows. I think it must be Wine…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/e10-bitcoin-list-does-bitcoin-crash-in-windows/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Does Bitcoin Crash in Windows? – Satoshi Nakamoto, bitcoin-list">
+<meta property="og:description" content="Satoshi Nakamoto, 23 October 2009: I haven&#x27;t had any reports of crashes in v0.1.5. It&#x27;s been rock solid for me on Windows. I think it must be Wine…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/e10-bitcoin-list-does-bitcoin-crash-in-windows/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Does Bitcoin Crash in Windows? – Satoshi Nakamoto, bitcoin-list">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 October 2009: I haven&#x27;t had any reports of crashes in v0.1.5. It&#x27;s been rock solid for me on Windows. I think it must be Wine…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "[bitcoin-list] Does Bitcoin Crash in Windows?", "url": "https://satoshimail.pages.dev/conversations/e10-bitcoin-list-does-bitcoin-crash-in-windows/", "author": {"@type": "Person", "name": "Liberty Standard"}, "datePublished": "2009-10-23T11:50:10Z", "text": "Do you Windows users experience occasional Bitcoin crashes? Lately Bitcoin running in wine-1.0.1 has been crashing frequently. I was just wondering whether this is a Wine issue or a Bitcoin issue. I speculate it might have something to do with how many Bitcoins I have since it would crash less when I had less bitcoins and now crashes more now that I have more bitcoins. It makes me hesitant to send my balance of bitcoins to my fresh Bitcoin installation. But this might just be my imagination since it has crashed a few times after installing Bitcoin afresh. The following four lines print from the terminal when I start Bitcoin. fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot fixme:toolhelp:Heap32ListFirst : stub fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot fixme:toolhelp:Heap32ListFirst : stub I previously wasn't starting Bitcoin from the terminal, so I don't know what gets printed out when it crashes, but I'll reply with the results the next time it crashes. While Bitcoin first downloads previously completed blocks, the file debug.log grows grows to 17.4 MB and then stops growing. I imagine it will continue to grow as more bitcoins are completed. ~NewLibertyStandard~", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2009-10-23T23:57:51Z", "text": "I haven't had any reports of crashes in v0.1.5. It's been rock solid for me on Windows. I think it must be Wine related. If you get another crash in Wine and it prints anything on the terminal, e-mail me and I may be able to figure out what happened, maybe something I can work around. Martti and I have been working on a new version to release soon and it would be nice to get any Wine fixes in there. Those don't look like anything to worry about. Probably functions unimplemented by Wine that…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Mike Hearn"}, "datePublished": "2009-10-24T15:05:07Z", "text": "That just means it failed to create a minidump, so yeah, not the cause of the crash. To find the cause of the crash you'd need to run it with a +seh,+relay trace and find out what the app was doing before it crashed, or look in the bitcoin logs."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Eugen Leitl"}, "datePublished": "2009-10-26T12:46:27Z", "text": "Doesn't work right now. Still no .deb packages for Bitcoin? -- Eugen* Leitl leitl; http://leitl.org ______________________________________________________________ ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org 8B29F6BE: 099D 78BA 2FD3 B014 B08A 7779 75B0 2443 8B29 F6BE"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "bitcoin-list (SourceForge)", "item": "https://satoshimail.pages.dev/conversations/bitcoin-list/"}, {"@type": "ListItem", "position": 4, "name": "[bitcoin-list] Does Bitcoin Crash in Windows?", "item": "https://satoshimail.pages.dev/conversations/e10-bitcoin-list-does-bitcoin-crash-in-windows/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-e10">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcoin-list/">bitcoin-list (SourceForge)</a> <span aria-hidden="true">›</span> <span aria-current="page">[bitcoin-list] Does Bitcoin Crash in Windows?</span></div></nav>
+<main class="in">
+<h1>[bitcoin-list] Does Bitcoin Crash in Windows?</h1>
+<p class="lead">bitcoin-list (SourceForge) · 4 messages · from 23 October 2009 · with Eugen Leitl, Liberty Standard, Mike Hearn, Satoshi Nakamoto</p>
+<p class="actions"><a class="btn" href="../../#t-e10">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/emails/bitcoin-list/threads/10/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>Liberty Standard</b><span class="muted"> · <time datetime="2009-10-23T11:50:10Z">23 October 2009, 11:50 UTC</time> · <a href="https://sourceforge.net/p/bitcoin/mailman/message/23818861/" rel="nofollow noopener">original</a></span></header>
+<div class="t"> Do you Windows users experience occasional Bitcoin crashes?
+
+Lately Bitcoin running in wine-1.0.1 has been crashing frequently. I was
+just wondering whether this is a Wine issue or a Bitcoin issue. I speculate
+it might have something to do with how many Bitcoins I have since it would
+crash less when I had less bitcoins and now crashes more now that I have
+more bitcoins. It makes me hesitant to send my balance of bitcoins to my
+fresh Bitcoin installation. But this might just be my imagination since it
+has crashed a few times after installing Bitcoin afresh.
+
+The following four lines print from the terminal when I start Bitcoin.
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub
+
+I previously wasn&#x27;t starting Bitcoin from the terminal, so I don&#x27;t know what
+gets printed out when it crashes, but I&#x27;ll reply with the results the next
+time it crashes.
+
+While Bitcoin first downloads previously completed blocks, the file
+debug.log grows grows to 17.4 MB and then stops growing. I imagine it will
+continue to grow as more bitcoins are completed.
+
+~NewLibertyStandard~</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2009-10-23T23:57:51Z">23 October 2009, 23:57 UTC</time> · <a href="https://sourceforge.net/p/bitcoin/mailman/message/23824064/" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Liberty Standard wrote:</div><div class="t"> Do you Windows users experience occasional Bitcoin crashes?
+Lately Bitcoin running in wine-1.0.1 has been crashing frequently. I was
+just wondering whether this is a Wine issue or a Bitcoin issue. </div></blockquote><div class="t">I haven&#x27;t had any reports of crashes in v0.1.5.  It&#x27;s been rock solid
+for me on Windows.  I think it must be Wine related.  If you get another
+crash in Wine and it prints anything on the terminal, e-mail me and I
+may be able to figure out what happened, maybe something I can work
+around.  Martti and I have been working on a new version to release soon
+and it would be nice to get any Wine fixes in there.</div><blockquote><div class="t">The following four lines print from the terminal when I start Bitcoin.
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub</div></blockquote><div class="t">Those don&#x27;t look like anything to worry about.  Probably functions
+unimplemented by Wine that are harmlessly stubbed out.</div><blockquote><div class="t">I previously wasn&#x27;t starting Bitcoin from the terminal, so I don&#x27;t know what
+gets printed out when it crashes, but I&#x27;ll reply with the results the next
+time it crashes.
+
+While Bitcoin first downloads previously completed blocks, the file
+debug.log grows grows to 17.4 MB and then stops growing. I imagine it will
+continue to grow as more bitcoins are completed.</div></blockquote><div class="t">You can delete debug.log occasionally if you don&#x27;t want to take the disk
+space.  It&#x27;s just status messages that help with debugging.
+
+bitcoin.sourceforge.net looks fine now.  Maybe sourceforge was doing
+some maintenance.
+
+Satoshi</div></article><article class="msg" id="m2">
+<header><b>Mike Hearn</b><span class="muted"> · <time datetime="2009-10-24T15:05:07Z">24 October 2009, 15:05 UTC</time> · <a href="https://sourceforge.net/p/bitcoin/mailman/message/23827020/" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class="t">The following four lines print from the terminal when I start Bitcoin.
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub
+fixme:toolhelp:CreateToolhelp32Snapshot Unimplemented: heap list snapshot
+fixme:toolhelp:Heap32ListFirst : stub</div></blockquote><div class="t">That just means it failed to create a minidump, so yeah, not the cause of
+the crash.
+
+To find the cause of the crash you&#x27;d need to run it with a +seh,+relay trace
+and find out what the app was doing before it crashed, or look in the
+bitcoin logs.</div></article><article class="msg" id="m3">
+<header><b>Eugen Leitl</b><span class="muted"> · <time datetime="2009-10-26T12:46:27Z">26 October 2009, 12:46 UTC</time> · <a href="https://sourceforge.net/p/bitcoin/mailman/message/23838155/" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>On Sat, Oct 24, 2009 at 12:55:06AM +0100, Satoshi Nakamoto wrote:</div><div class="t">bitcoin.sourceforge.net looks fine now.  Maybe sourceforge was doing </div></blockquote><div class="t">Doesn&#x27;t work right now.</div><blockquote><div class="t">some maintenance.</div></blockquote><div class="t">Still no .deb packages for Bitcoin?
+
+--
+Eugen* Leitl leitl; <a href="http://leitl.org" rel="nofollow noopener">http://leitl.org</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820 <a href="http://www.ativel.com" rel="nofollow noopener">http://www.ativel.com</a> <a href="http://postbiota.org" rel="nofollow noopener">http://postbiota.org</a>
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/mike-hearn/">Mike Hearn</a> <span class="muted">Developer who corresponded with Satoshi from 2009 to 2011 and wrote bitcoinj.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/e9-bitcoin-list-bitcoin-v0-1-5-released/">← [bitcoin-list] Bitcoin v0.1.5 released</a><a rel="next" href="../../conversations/e11-bitcoin-list-bitcoin-0-2-released/">[bitcoin-list] Bitcoin 0.2 released →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Faster SHA-256, MSVC build – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 18 July 2010: OpenSSL doesn&#x27;t have any interface for doing just the low level raw block hash part of SHA256. SHA256 begins by wrapping…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p120-faster-sha-256-msvc-build/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Faster SHA-256, MSVC build – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 18 July 2010: OpenSSL doesn&#x27;t have any interface for doing just the low level raw block hash part of SHA256. SHA256 begins by wrapping…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p120-faster-sha-256-msvc-build/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Faster SHA-256, MSVC build – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 18 July 2010: OpenSSL doesn&#x27;t have any interface for doing just the low level raw block hash part of SHA256. SHA256 begins by wrapping…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Faster SHA-256, MSVC build ", "url": "https://satoshimail.pages.dev/conversations/p120-faster-sha-256-msvc-build/", "author": {"@type": "Person", "name": "dkaparis"}, "datePublished": "2010-07-18T13:28:50Z", "text": "I've managed to set up dependencies and build bitcoin with MS Visual C++ 2008 Express Edition. I'll give 2010 a try at some time. There is a custom allocator class in serialize.h, secure_allocator, that fails to build with non-debug runtime selected. It is my understanding allocator classes require a template copy constructor, I've attached a small patch that solves the problem. As Satoshi noted elsewhere, the MSVC build is indeed significantly slower khash/s-wise (more than twice) than the prebuilt one (MinGW?), even though I enabled the highest optimization level options and also global optimization with link-time code generation. I find that result strange, since MSVC is not known to have significantly worse optimizer than GCC's. Most probably the problem can be traced to the sha module that is extracted from Crypto++. I find in Crypto++ SVN there are revised versions of the module, including x86/x64 assembly for SHA-256. Using the newer versions would involve reintegrating their dependencies, though. On that note, why aren't we using OpenSSL's SHA-2 hashing functions instead? Since we already use OpenSSL, this would be a better solution than to manually support a SHA module from another library.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-18T21:24:09Z", "text": "OpenSSL doesn't have any interface for doing just the low level raw block hash part of SHA256. SHA256 begins by wrapping your data in a specially formatted buffer. Setting up the buffer takes an order of magnitude longer than the actual hashing if you're only hashing one or two blocks like we do. It's intended that the time is amortised if you were hashing many KB or MB of data. In BitcoinMiner, we format the buffer once and keep reusing it. If you can find SHA256 code that's faster (with…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Faster SHA-256, MSVC build", "item": "https://satoshimail.pages.dev/conversations/p120-faster-sha-256-msvc-build/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p120">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Faster SHA-256, MSVC build</span></div></nav>
+<main class="in">
+<h1>Faster SHA-256, MSVC build </h1>
+<p class="lead">BitcoinTalk forum · 2 messages · from 18 July 2010 · with Satoshi Nakamoto, dkaparis</p>
+<p class="actions"><a class="btn" href="../../#t-p120">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/120/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>dkaparis</b><span class="muted"> · <time datetime="2010-07-18T13:28:50Z">18 July 2010, 13:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=453.msg3986#msg3986" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve managed to set up dependencies and build bitcoin with MS Visual C++ 2008 Express Edition. I&#x27;ll give 2010 a try at some time.
+
+There is a custom allocator class in serialize.h, secure_allocator, that fails to build with non-debug runtime selected. It is my understanding allocator classes require a template copy constructor, I&#x27;ve attached a small patch that solves the problem.
+
+As Satoshi noted elsewhere, the MSVC build is indeed significantly slower khash/s-wise (more than twice) than the prebuilt one (MinGW?), even though I enabled the highest optimization level options and also global optimization with link-time code generation. I find that result strange, since MSVC is not known to have significantly worse optimizer than GCC&#x27;s. Most probably the problem can be traced to the sha module that is extracted from Crypto++. I find in Crypto++ SVN there are revised versions of the module, including x86/x64 assembly for SHA-256. Using the newer versions would involve reintegrating their dependencies, though. On that note, why aren&#x27;t we using OpenSSL&#x27;s SHA-2 hashing functions instead? Since we already use OpenSSL, this would be a better solution than to manually support a SHA module from another library.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-18T21:24:09Z">18 July 2010, 21:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=453.msg4068#msg4068" rel="nofollow noopener">original</a></span></header>
+<div class="t">OpenSSL doesn&#x27;t have any interface for doing just the low level raw block hash part of SHA256.  SHA256 begins by wrapping your data in a specially formatted buffer.  Setting up the buffer takes an order of magnitude longer than the actual hashing if you&#x27;re only hashing one or two blocks like we do.  It&#x27;s intended that the time is amortised if you were hashing many KB or MB of data.  In BitcoinMiner, we format the buffer once and keep reusing it.
+
+If you can find SHA256 code that&#x27;s faster (with MinGW/GCC) than what we&#x27;ve got, that would be really great!  (although, keep licensing in mind)  The one we have is the only one I tried, so there&#x27;s significant chance for improvement.
+
+When I wrote it more than 2 years ago, there were screaming hot SHA1 implementations but minimal attention to SHA256.  That&#x27;s a lot of time for them to come up with better stuff.  SHA256 was a lot slower than the fastest SHA1 at the time than I thought it should be.  Obviously SHA256 should be slower than SHA1 by a certain amount, but not by as much as I saw.
+
+(hope you don&#x27;t mind I renamed your thread, SHA-256 optimisation is something important that I keep forgetting about)</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p119-did-block-generation-crawl-to-a-halt/">← Did block generation crawl to a halt?</a><a rel="next" href="../../conversations/p121-builds-for-ubuntu/">Builds for Ubuntu? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

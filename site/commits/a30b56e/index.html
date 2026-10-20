@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fix openssl linkage problems… (r103) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/a30b56e/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fix openssl linkage problems… (r103) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/a30b56e/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fix openssl linkage problems… (r103) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems including a CPU peg bug", "url": "https://satoshimail.pages.dev/commits/a30b56e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-15T00:18:45Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a30b56ebe76ffff9f9cc8a6667186179413c6349"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix openssl linkage problems, disable…", "item": "https://satoshimail.pages.dev/commits/a30b56e/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ca30b56ebe7">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fix openssl linkage problems, disable…</span></div></nav>
+<main class="in">
+<h1>fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems including a CPU peg bug</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 July 2010 · SVN r103 · release v0.3.10 · 7 files, +26 −5</p>
+<p class="actions"><a class="btn" href="../../#t-ca30b56ebe7">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/a30b56ebe76ffff9f9cc8a6667186179413c6349" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -592,6 +592,8 @@ bool CWalletDB::LoadWallet()
+             else if (strType == &quot;version&quot;)
+             {
+                 ssValue &gt;&gt; nFileVersion;
++                if (nFileVersion == 10300)
++                    nFileVersion = 300;
+             }
+             else if (strType == &quot;setting&quot;)
+             {</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -158,6 +158,10 @@ bool Wait(int nSeconds)
+ 
+ void ThreadIRCSeed(void* parg)
+ {
++    if (mapArgs.count(&quot;-connect&quot;))
++        return;
++    if (mapArgs.count(&quot;-noirc&quot;))
++        return;
+     printf(&quot;ThreadIRCSeed started\n&quot;);
+     int nErrorWait = 10;
+     int nRetryWait = 10;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2610,6 +2610,9 @@ void BitcoinMiner()
+                     CTransaction&amp; tx = (*mi).second;
+                     if (tx.IsCoinBase() || !tx.IsFinal())
+                         continue;
++                    unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
++                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE - 10000)
++                        continue;
+ 
+                     // Transaction fee based on block size
+                     int64 nMinFee = tx.GetMinFee(nBlockSize);
+@@ -2620,7 +2623,7 @@ void BitcoinMiner()
+                     swap(mapTestPool, mapTestPoolTmp);
+ 
+                     pblock-&gt;vtx.push_back(tx);
+-                    nBlockSize += ::GetSerializeSize(tx, SER_NETWORK);
++                    nBlockSize += nTxSize;
+                     vfAlreadyAdded[n] = true;
+                     fFoundSomething = true;
+                 }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -15,6 +15,7 @@ class CWalletTx;
+ class CKeyItem;
+ 
+ static const unsigned int MAX_SIZE = 0x02000000;
++static const unsigned int MAX_BLOCK_SIZE = 1000000;
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
+ static const int COINBASE_MATURITY = 100;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -23,8 +23,8 @@ LIBS= \
+  -Wl,-Bstatic \
+    -l boost_system -l boost_filesystem \
+    -l db_cxx \
+- -Wl,-Bdynamic \
+    -l crypto \
++ -Wl,-Bdynamic \
+    -l gthread-2.0
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 301;
+-static const char* pszSubVer = &quot;.0&quot;;
++static const char* pszSubVer = &quot;.1&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -375,13 +375,12 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+     // to get rid of the deprecated warning.  Just ignore it.
+     if (!event.Iconized())
+         fClosedToTray = false;
+-//#ifdef __WXMSW__
+     // The tray icon sometimes disappears on ubuntu karmic
+     // Hiding the taskbar button doesn&#x27;t work cleanly on ubuntu lucid
++    // Reports of CPU peg on 64-bit linux
+     if (fMinimizeToTray &amp;&amp; event.Iconized())
+         fClosedToTray = true;
+     Show(!fClosedToTray);
+-//#endif
+     ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
+ }
+ 
+@@ -1446,6 +1445,14 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     SelectPage(0);
+ #ifdef __WXGTK__
+     m_checkBoxStartOnSystemStartup-&gt;SetLabel(_(&quot;&amp;Start Bitcoin on window system startup&quot;));
++    if (!mapArgs.count(&quot;-minimizetotray&quot;))
++    {
++        // Minimize to tray is just too buggy on Linux
++        fMinimizeToTray = false;
++        m_checkBoxMinimizeToTray-&gt;SetValue(false);
++        m_checkBoxMinimizeToTray-&gt;Enable(false);
++        m_checkBoxMinimizeOnClose-&gt;SetLabel(_(&quot;&amp;Minimize on close&quot;));
++    }
+ #endif
+ #ifdef __WXMAC_OSX__
+     m_checkBoxStartOnSystemStartup-&gt;Enable(false); // not implemented yet
+@@ -2536,6 +2543,10 @@ void CreateMainWindow()
+     pframeMain = new CMainFrame(NULL);
+     if (mapArgs.count(&quot;-min&quot;))
+         pframeMain-&gt;Iconize(true);
++#ifdef __WXGTK__
++    if (!mapArgs.count(&quot;-minimizetotray&quot;))
++        fMinimizeToTray = false;
++#endif
+     pframeMain-&gt;Show(true);  // have to show first to get taskbar button to hide
+     if (fMinimizeToTray &amp;&amp; pframeMain-&gt;IsIconized())
+         fClosedToTray = true;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6e5d67e/">← switched from wxStandardPaths to GetDefaultDataDir, fixes…</a><a rel="next" href="../../commits/d01eaf0/">version 0.3.1 rc1 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

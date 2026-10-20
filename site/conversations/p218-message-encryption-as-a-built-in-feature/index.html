@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Message Encryption as a built-in feature? – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 19 September 2010: Theymos already said this... ECDSA does not support encrypting messages. Only digital signatures.">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p218-message-encryption-as-a-built-in-feature/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Message Encryption as a built-in feature? – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 19 September 2010: Theymos already said this... ECDSA does not support encrypting messages. Only digital signatures.">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p218-message-encryption-as-a-built-in-feature/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Message Encryption as a built-in feature? – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 19 September 2010: Theymos already said this... ECDSA does not support encrypting messages. Only digital signatures.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Message Encryption as a built-in feature?", "url": "https://satoshimail.pages.dev/conversations/p218-message-encryption-as-a-built-in-feature/", "author": {"@type": "Person", "name": "BrightAnarchist"}, "datePublished": "2010-09-14T05:44:11Z", "text": "Bitcoin clients should have a built in simple message encryption/decryption system, perhaps based off of your actual Bitcoin addresses themselves. This would make doing trades on sites like biddingpond much easier, since you don't need to both agree on a separate app like PGP before communicating over email. Most of the time I bet people don't even bother to use encryption, but I think it's a good idea to use it when doing trades in Bitcoins. Thoughts?", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "em3rgentOrdr"}, "datePublished": "2010-09-14T05:56:05Z", "text": "I like that idea! Simply integrate an opensource library library like pgp into bitcoin. BTW, are the messages attached when sending bitcoins to ip addresses currently clear text or encrypted?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-09-14T12:42:04Z", "text": "They're not encrypted, and there's no authentication, so you shouldn't send to an IP over the Internet."}, {"@type": "Comment", "author": {"@type": "Person", "name": "BioMike"}, "datePublished": "2010-09-14T16:54:29Z", "text": "You could attach an already encrypted text to it, right?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-09-14T17:56:43Z", "text": "You could, but any MITM could modify it / steal your coins..."}, {"@type": "Comment", "author": {"@type": "Person", "name": "jgarzik"}, "datePublished": "2010-09-14T18:58:21Z", "text": "There should be a UTF8 text field \"memo\" attached to each transaction. • encrypt by default, with payee's public key • limit to 256 chars or so • optionally disable encryption (similar to Pecunix feature which makes a single transaction publicly visible)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-09-14T19:04:39Z", "text": "You could use your Bitcoin keys for authentication, but ECDSA doesn't support encryption."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Gavin Andresen"}, "datePublished": "2010-09-14T19:35:34Z", "text": "... but a payer typically has only the bitcoin address, and not the payee's full public key. There'd have to be some way to get the full public key for a bitcoin address. I like the idea of being able to send encrypted messages to \"whoever has bitcoin address BLAH\", but I'm not sure that functionality should be piggybacked on the \"send BLAH X.YZ bitcoins\". If they were implemented under the covers as separate functions, then a \"Send a message along with payment\" could easily be implemented as…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "teppy"}, "datePublished": "2010-09-15T14:09:55Z", "text": "I've been wanting something like this since day 1. A Tale in the Desert V accepts Bitcoins now. Each month, the procedure is: 1. Player clicks an in-game menu item \"Pay for my subscription using Bitcoins.\" A unique address is created. 2. The game says \"Send 150BTC to this address: xxxxxxx\" (There's a \"Copy to Clipboard\" button on the dialog.) 3. The player sends the BTC 4. The player clicks \"I have sent the Bitcoins.\" (System then verifies and activates account.) The procedure only takes 15-30…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-09-15T15:55:42Z", "text": "If you don't cheat and leave out steps the procedure is: 1. Player finds the standard ATITD Bitcoin address somehow. (and still needs to copy/paste it.) 2. The player enters his username. 3. The player sends the BTC 4. Player clicks \"I have sent the Bitcoins.\" (System then verifies and activates account.) I don't see how this is an improvement. (Step 4 in both cases would seem to be redundant if your system is watching bitcoin transactions.) Edit: I'm not sure what is so great about having a…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "teppy"}, "datePublished": "2010-09-15T18:08:46Z", "text": "It's an improvement because payments can be made without running the game software, or made on behalf of other players (which is common in our game at least), or made for several secondary accounts quickly (also which is common in our game.) Though it doesn't apply to ATITD, it would also strengthen anonymity for those who need it: A website could be set up on a static datastore like Freenet, rather than requiring a live network like Tor."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Anonymous"}, "datePublished": "2010-09-16T01:26:38Z", "text": "A secure messaging system could have other benefits. The problem of spam is increased because it costs nothing to send email. A short message service that you needed to pay a few bitcoins for to send a message might revolutionise sms or email for those who are tired of sorting viagra and nigerian scam emails all day long. Cheesy"}, {"@type": "Comment", "author": {"@type": "Person", "name": "em3rgentOrdr"}, "datePublished": "2010-09-16T01:37:43Z", "text": "Great point...I've heard something called hashcash does this for email. But with bitcoin, one can additionally prioritize messages: .g. the message with 10 BTC attached to it is probably more important than the message with .01 BTC attached."}, {"@type": "Comment", "author": {"@type": "Person", "name": "LZ"}, "datePublished": "2010-09-16T01:50:47Z", "text": "Hey, I just thought about it yesterday! Shocked"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Anonymous"}, "datePublished": "2010-09-16T01:56:43Z", "text": "People think nothing of sending text messages or mms that costs .50c each. Shocked"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Anonymous"}, "datePublished": "2010-09-16T01:57:38Z", "text": "pwned! Cheesy"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Anonymous"}, "datePublished": "2010-09-16T02:08:50Z", "text": "Something like this combined with the pay it forward project http://bitcointalk.org/index.php?topic=922.msg12917#msg12917 would really increase the hardness of the network to attacks? Half your fee would go to the person you sent the message to and the other half would go to 3 randomn people -or split equally to increase anonymity Cheesy As an extra security measure you could also send 3 dummy messages or however many you decided so the real message was hidden.The fee you sent would then be…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "em3rgentOrdr"}, "datePublished": "2010-09-16T09:14:09Z", "text": "Very clever!!! I like that idea... Plus, with bitcoin, you can customize your level of security: pay more bitcoins and you can send more false messages and have more security splits... Haha! Well, that's partially true. Ususally they have a fixed amount of pre-paid text messages that they can send each month which if the don't use are simply wasted. But they tend to forget that I still have to pay 25 cents whenever they send me a lousy spam text message!!! Angry A smartphone bitcoin client…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-19T22:47:00Z", "text": "Theymos already said this... ECDSA does not support encrypting messages. Only digital signatures."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Message Encryption as a built-in feature?", "item": "https://satoshimail.pages.dev/conversations/p218-message-encryption-as-a-built-in-feature/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p218">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Message Encryption as a built-in feature?</span></div></nav>
+<main class="in">
+<h1>Message Encryption as a built-in feature?</h1>
+<p class="lead">BitcoinTalk forum · 19 messages · from 14 September 2010 · with Anonymous, BioMike, BrightAnarchist, Gavin Andresen, Insti, LZ…</p>
+<p class="actions"><a class="btn" href="../../#t-p218">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/218/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>BrightAnarchist</b><span class="muted"> · <time datetime="2010-09-14T05:44:11Z">14 September 2010, 05:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12686#msg12686" rel="nofollow noopener">original</a></span></header>
+<div class="t">Bitcoin clients should have a built in simple message encryption/decryption system, perhaps based off of your actual Bitcoin addresses themselves.
+
+This would make doing trades on sites like biddingpond much easier, since you don&#x27;t need to both agree on a separate app like PGP before communicating over email.
+
+Most of the time I bet people don&#x27;t even bother to use encryption, but I think it&#x27;s a good idea to use it when doing trades in Bitcoins.
+
+Thoughts?</div></article><article class="msg" id="m1">
+<header><b>em3rgentOrdr</b><span class="muted"> · <time datetime="2010-09-14T05:56:05Z">14 September 2010, 05:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12689#msg12689" rel="nofollow noopener">original</a></span></header>
+<div class="t">I like that idea!  Simply integrate an opensource library library like pgp into bitcoin. 
+
+BTW, are the messages attached when sending bitcoins to ip addresses currently clear text or encrypted?</div></article><article class="msg" id="m2">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-09-14T12:42:04Z">14 September 2010, 12:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12750#msg12750" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: em3rgentOrdr on September 14, 2010, 05:56:05 AM</div><div class="t">BTW, are the messages attached when sending bitcoins to ip addresses currently clear text or encrypted?</div></blockquote><div class="t">They&#x27;re not encrypted, and there&#x27;s no authentication, so you shouldn&#x27;t send to an IP over the Internet.</div></article><article class="msg" id="m3">
+<header><b>BioMike</b><span class="muted"> · <time datetime="2010-09-14T16:54:29Z">14 September 2010, 16:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12777#msg12777" rel="nofollow noopener">original</a></span></header>
+<div class="t">You could attach an already encrypted text to it, right?</div></article><article class="msg" id="m4">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-09-14T17:56:43Z">14 September 2010, 17:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12782#msg12782" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: BioMike on September 14, 2010, 04:54:29 PM</div><div class="t">You could attach an already encrypted text to it, right?</div></blockquote><div class="t">You could, but any MITM could modify it / steal your coins...</div></article><article class="msg" id="m5">
+<header><b>jgarzik</b><span class="muted"> · <time datetime="2010-09-14T18:58:21Z">14 September 2010, 18:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12787#msg12787" rel="nofollow noopener">original</a></span></header>
+<div class="t">There should be a UTF8 text field &quot;memo&quot; attached to each transaction.
+
+• encrypt by default, with payee&#x27;s public key
+
+• limit to 256 chars or so
+
+• optionally disable encryption (similar to Pecunix feature which makes a single transaction publicly visible)</div></article><article class="msg" id="m6">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-09-14T19:04:39Z">14 September 2010, 19:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12789#msg12789" rel="nofollow noopener">original</a></span></header>
+<div class="t">You could use your Bitcoin keys for authentication, but ECDSA doesn&#x27;t support encryption.</div></article><article class="msg" id="m7">
+<header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-09-14T19:35:34Z">14 September 2010, 19:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12792#msg12792" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: jgarzik on September 14, 2010, 06:58:21 PM</div><div class="t">encrypt by default, with payee&#x27;s public key</div></blockquote><div class="t">... but a payer typically has only the bitcoin address, and not the payee&#x27;s full public key.  There&#x27;d have to be some way to get the full public key for a bitcoin address.
+
+I like the idea of being able to send encrypted messages to &quot;whoever has bitcoin address BLAH&quot;, but I&#x27;m not sure that functionality should be piggybacked on the &quot;send BLAH X.YZ bitcoins&quot;.
+
+If they were implemented under the covers as separate functions, then a &quot;Send a message along with payment&quot; could easily be implemented as:
+  1. Send BLAH X.YZ bitcoins, and note the transaction ID.
+  2. Send BLAH an encrypted message:   &quot;txid:{transaction_id}:Please send the sixteen My Little Pony DVDs to...&quot;</div></article><article class="msg" id="m8">
+<header><b>teppy</b><span class="muted"> · <time datetime="2010-09-15T14:09:55Z">15 September 2010, 14:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12873#msg12873" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve been wanting something like this since day 1.
+
+A Tale in the Desert V accepts Bitcoins now. Each month, the procedure is:
+
+1. Player clicks an in-game menu item &quot;Pay for my subscription using Bitcoins.&quot; A unique address is created.
+2. The game says &quot;Send 150BTC to this address: xxxxxxx&quot; (There&#x27;s a &quot;Copy to Clipboard&quot; button on the dialog.)
+3. The player sends the BTC
+4. The player clicks &quot;I have sent the Bitcoins.&quot; (System then verifies and activates account.)
+
+The procedure only takes 15-30 seconds total - probably quicker than typing in a credit card number. However, with the ability to attach a message, the procedure becomes:
+
+1. Player sends 150BTC to the standard ATITD Bitcoin address with his character name in the message field.
+2. Player clicks &quot;I have sent the Bitcoins.&quot; (System then verifies and activates account.)
+
+We already have a couple players using Bitcoins to pay for subscriptions. One has generated his BTC, and the other has purchased some on one of the markets.</div></article><article class="msg" id="m9">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-09-15T15:55:42Z">15 September 2010, 15:55 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12883#msg12883" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: teppy on September 15, 2010, 02:09:55 PM</div><div class="t">However, with the ability to attach a message, the procedure becomes:
+
+1. Player sends 150BTC to the standard ATITD Bitcoin address with his character name in the message field.
+2. Player clicks &quot;I have sent the Bitcoins.&quot; (System then verifies and activates account.)
+
+We already have a couple players using Bitcoins to pay for subscriptions. One has generated his BTC, and the other has purchased some on one of the markets.</div></blockquote><div class="t">If you don&#x27;t cheat and leave out steps the procedure is:
+
+1. Player finds the standard ATITD Bitcoin address somehow. (and still needs to copy/paste it.)
+2. The player enters his username.
+3. The player sends the BTC
+4. Player clicks &quot;I have sent the Bitcoins.&quot; (System then verifies and activates account.)
+
+I don&#x27;t see how this is an improvement.
+
+(Step 4 in both cases would seem to be redundant if your system is watching bitcoin transactions.)
+
+Edit:
+I&#x27;m not sure what is so great about having a single Bitcoin address to receive payments from everybody, since you still need a reference ID of some kind. When individual Bitcoin addresses are trivial to generate. (But you are actually running a service that accepts Bitcoins, so you probably know more than I do.)</div></article><article class="msg" id="m10">
+<header><b>teppy</b><span class="muted"> · <time datetime="2010-09-15T18:08:46Z">15 September 2010, 18:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12902#msg12902" rel="nofollow noopener">original</a></span></header>
+<div class="t">It&#x27;s an improvement because payments can be made without running the game software, or made on behalf of other players (which is common in our game at least), or made for several secondary accounts quickly (also which is common in our game.)
+
+Though it doesn&#x27;t apply to ATITD, it would also strengthen anonymity for those who need it: A website could be set up on a static datastore like Freenet, rather than requiring a live network like Tor.</div></article><article class="msg" id="m11">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-09-16T01:26:38Z">16 September 2010, 01:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12935#msg12935" rel="nofollow noopener">original</a></span></header>
+<div class="t">    A secure messaging system could have other benefits. The problem of spam is increased because it costs nothing to send email. A short message service that you needed to pay a few bitcoins for to send a message might revolutionise sms or email for those who are tired of sorting viagra and nigerian scam emails all day long.
+
+ Cheesy</div></article><article class="msg" id="m12">
+<header><b>em3rgentOrdr</b><span class="muted"> · <time datetime="2010-09-16T01:37:43Z">16 September 2010, 01:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12937#msg12937" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Anonymous on September 16, 2010, 01:26:38 AM</div><div class="t">    A secure messaging system could have other benefits. The problem of spam is increased because it costs nothing to send email. A short message service that you needed to pay a few bitcoins for to send a message might revolutionise sms or email for those who are tired of sorting viagra and nigerian scam emails all day long.
+
+ Cheesy</div></blockquote><div class="t">Great point...I&#x27;ve heard something called hashcash does this for email.  But with bitcoin, one can additionally prioritize messages: .g. the message with 10 BTC attached to it is probably more important than the message with .01 BTC attached.</div></article><article class="msg" id="m13">
+<header><b>LZ</b><span class="muted"> · <time datetime="2010-09-16T01:50:47Z">16 September 2010, 01:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12938#msg12938" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hey, I just thought about it yesterday! Shocked</div></article><article class="msg" id="m14">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-09-16T01:56:43Z">16 September 2010, 01:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12941#msg12941" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: em3rgentOrdr on September 16, 2010, 01:37:43 AM</div><div class="t">&gt; Quote from: Anonymous on September 16, 2010, 01:26:38 AM
+&gt;     A secure messaging system could have other benefits. The problem of spam is increased because it costs nothing to send email. A short message service that you needed to pay a few bitcoins for to send a message might revolutionise sms or email for those who are tired of sorting viagra and nigerian scam emails all day long.
+&gt;
+&gt;  Cheesy
+
+Great point...I&#x27;ve heard something called hashcash does this for email.  But with bitcoin, one can additionally prioritize messages: .g. the message with 10 BTC attached to it is probably more important than the message with .01 BTC attached.</div></blockquote><div class="t">  People think nothing of sending text messages or mms that costs .50c each.  Shocked</div></article><article class="msg" id="m15">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-09-16T01:57:38Z">16 September 2010, 01:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12942#msg12942" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lzsaver on September 16, 2010, 01:50:47 AM</div><div class="t">Hey, I just thought about it yesterday! Shocked</div></blockquote><div class="t">pwned!
+
+ Cheesy</div></article><article class="msg" id="m16">
+<header><b>Anonymous</b><span class="muted"> · <time datetime="2010-09-16T02:08:50Z">16 September 2010, 02:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12944#msg12944" rel="nofollow noopener">original</a></span></header>
+<div class="t">Something like this combined with the pay it forward project <a href="http://bitcointalk.org/index.php?topic=922.msg12917#msg12917" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=922.msg12917#msg12917</a> would really increase the hardness of the network to attacks? Half your fee would go to the person you sent the message to and the other half would go to 3 randomn people -or split equally to increase anonymity Cheesy
+
+As an extra security measure you could also send 3 dummy messages or however many you decided so the real message was hidden.The fee you sent would then be divided by however many security splits you decided on.  This could mean you might get randomn bitcoin payments all day just for having a bitcoin message address. Think of twitter crossed with hashcash and email. To the outside world there would be no difference from a message to a payment you made.
+
+19tq9NYFsSCMRUkc12v363tHgAeUokoVam just made a peanut butter sandwich!
+
+ Cheesy</div></article><article class="msg" id="m17">
+<header><b>em3rgentOrdr</b><span class="muted"> · <time datetime="2010-09-16T09:14:09Z">16 September 2010, 09:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg12976#msg12976" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Anonymous on September 16, 2010, 02:08:50 AM</div><div class="t">Something like this combined with the pay it forward project <a href="http://bitcointalk.org/index.php?topic=922.msg12917#msg12917" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=922.msg12917#msg12917</a> would really increase the hardness of the network to attacks? Half your fee would go to the person you sent the message to and the other half would go to 3 randomn people -or split equally to increase anonymity Cheesy
+
+As an extra security measure you could also send 3 dummy messages or however many you decided so the real message was hidden.The fee you sent would then be divided by however many security splits you decided on.  This could mean you might get randomn bitcoin payments all day just for having a bitcoin message address. Think of twitter crossed with hashcash and email. To the outside world there would be no difference from a message to a payment you made.</div></blockquote><div class="t">Very clever!!!  I like that idea...  Plus, with bitcoin, you can customize your level of security: pay more bitcoins and you can send more false messages and have more security splits...</div><blockquote><div class=qh>Quote from: Anonymous on September 16, 2010, 01:56:43 AM</div><div class="t">&gt; Quote from: em3rgentOrdr on September 16, 2010, 01:37:43 AM
+&gt; &gt; Quote from: Anonymous on September 16, 2010, 01:26:38 AM
+&gt; &gt;     A secure messaging system could have other benefits. The problem of spam is increased because it costs nothing to send email. A short message service that you needed to pay a few bitcoins for to send a message might revolutionise sms or email for those who are tired of sorting viagra and nigerian scam emails all day long.
+&gt; &gt;
+&gt; &gt;  Cheesy
+&gt;
+&gt; Great point...I&#x27;ve heard something called hashcash does this for email.  But with bitcoin, one can additionally prioritize messages: .g. the message with 10 BTC attached to it is probably more important than the message with .01 BTC attached.
+
+  People think nothing of sending text messages or mms that costs .50c each.  Shocked</div></blockquote><div class="t">Haha!  Well, that&#x27;s partially true.  Ususally they have a fixed amount of pre-paid text messages that they can send each month which if the don&#x27;t use are simply wasted.  But they tend to forget that I still have to pay 25 cents whenever they send me a lousy spam text message!!!   Angry
+
+A smartphone bitcoin client with options for encrypted messaging would make for a great alternative text/sms system compared to the high fees charged by most wireless carriers for text messaging.  Now, of course, I know of free text messaging apps, but they tend to contain ads.  But with bitcoin, the small transaction fees for passing the message along would work as a great incentive instead...</div></article><article class="msg sat" id="m18">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-19T22:47:00Z">19 September 2010, 22:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1032.msg13221#msg13221" rel="nofollow noopener">original</a></span></header>
+<div class="t">Theymos already said this...  ECDSA does not support encrypting messages.  Only digital signatures.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li><li><a href="../../satoshipedia/jeff-garzik/">Jeff Garzik</a> <span class="muted">Developer active in Satoshi&#x27;s forum threads in 2010.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p217-memory-leak/">← Memory leak</a><a rel="next" href="../../conversations/p219-issues-building-bitcoin-on-windows-7/">Issues building bitcoin on Windows 7 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

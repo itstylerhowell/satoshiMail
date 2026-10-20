@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convert Bitcoin to GTK: Yes? No? wx is better? – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 19 August 2010: wxWidgets 2.9 is their first UTF-8 version. We are UTF-8 on all platforms including Windows. The distro packages of 2.8…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p196-convert-bitcoin-to-gtk-yes-no-wx-is-better/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Convert Bitcoin to GTK: Yes? No? wx is better? – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 19 August 2010: wxWidgets 2.9 is their first UTF-8 version. We are UTF-8 on all platforms including Windows. The distro packages of 2.8…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p196-convert-bitcoin-to-gtk-yes-no-wx-is-better/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Convert Bitcoin to GTK: Yes? No? wx is better? – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 19 August 2010: wxWidgets 2.9 is their first UTF-8 version. We are UTF-8 on all platforms including Windows. The distro packages of 2.8…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Convert Bitcoin to GTK: Yes?  No?  wx is better?", "url": "https://satoshimail.pages.dev/conversations/p196-convert-bitcoin-to-gtk-yes-no-wx-is-better/", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-08-19T07:23:53Z", "text": "Who is skilled enough to convert official Linux Bitcoin client to use GTK instead of wx? Is this development worthy or desirable enough to pursue or is wx acceptable? q: let me get this straight. You're asking if someone will put up a bounty for a conversion that you want? (bounty idea dismissed due to seeming weird/strange to some) a: I don't want it. Is GTK better than QT or anytihng else? I'm not familiar. \"I would like it if Bitcoin used GTK instead of wxWidgets but I won't pretend that I have a clue about how hard or easy that change might be\" someone: wx seems to work now as far as I can tell someone else: wx is an utter nightmare q: why \"convert\" Satoshi's front end? Why not just build a new one that uses the rpc calls? there actually isn't much that needs to be done to make bitcoind's methods useful enough to do the same things the GUI does: in particular: * list sending addresses * show unaccepted blocks in listtransactions (maybe) * select a range of transactions to show", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-08-19T07:30:57Z", "text": "Hmm... would it run on Maemo with the same code then? Any other advantages?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-08-19T07:34:48Z", "text": "bitcoind's commands should be expanded and binaries for it should be released so that third-party UI development can be made easier. Like Tor."}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-08-19T07:39:06Z", "text": "It would be interesting for bitcoin to be designed in a way that an ncurses ui could be designed. \"you certainly can build a ncurses front end to the deamon now. Its not a problem for bitcoin\""}, {"@type": "Comment", "author": {"@type": "Person", "name": "Olipro"}, "datePublished": "2010-08-19T07:51:13Z", "text": "Yeah, my opinion on this is that the GUI should be separated from the underlying code. BUT... there's no need to throw the baby out with the bathwater and I firmly believe that the current wxWidgets interface should be maintained until such a time as something superior comes along. My personal feeling is that whilst separate daemon/GUI binaries can work, it also tends to be messy, I'd be far more in favour of having the core code and then separate source that you compile with it according to…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "BioMike"}, "datePublished": "2010-08-19T08:05:18Z", "text": "WxWidgets is not really a problem. My problem is the version that is used (2.9), which is considered unstable by many distro packagers (although the WxWidgets devs say it isn't). On the other side, as far as I know WxWidgets uses gtk under Linux for drawing the whole stuff and makes it for the bitcoins devs easy to make things cross platform. I think I would go with theymos in that the gui and daemon should be separated (or put the whole protocols and stuff in a library with bindings for…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-19T10:28:19Z", "text": "So what do you mean the gui and the daemon should be separated? They already are. You can build the separate daemon. Do you need a separate build of only the gui? I can't see why."}, {"@type": "Comment", "author": {"@type": "Person", "name": "teknohog"}, "datePublished": "2010-08-19T14:59:59Z", "text": "Bitcoin is a P2P network, so the program should be running all the time. However, I don't need to be looking at a GUI all that time, so it makes sense to have a daemon. Currently, you have to stop the daemon when you want to start the GUI version, which breaks the network for a moment. Some P2P applications like aMule do this properly. The daemon is running all the time, and when you want to interact with it, you start the separate GUI, which connects to the daemon. Most importantly, the GUI…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-19T18:44:36Z", "text": "wxWidgets 2.9 is their first UTF-8 version. We are UTF-8 on all platforms including Windows. The distro packages of 2.8 are UTF-16, so they just trip people up. People had endless build problems with 2.8 and its wxString UTF-16/ANSI conditional build options until we standardized on 2.9. Also, to use 2.8, we were using ANSI, which was just a temporary stopgap until wxWidgets supported UTF-8. This is a problem that will solve itself. With time, 2.9 will become a more mainline release."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Convert Bitcoin to GTK: Yes? No? wx is better?", "item": "https://satoshimail.pages.dev/conversations/p196-convert-bitcoin-to-gtk-yes-no-wx-is-better/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p196">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Convert Bitcoin to GTK: Yes? No? wx is better?</span></div></nav>
+<main class="in">
+<h1>Convert Bitcoin to GTK: Yes?  No?  wx is better?</h1>
+<p class="lead">BitcoinTalk forum · 9 messages · from 19 August 2010 · with BioMike, Olipro, Satoshi Nakamoto, lfm, mizerydearia, sirius…</p>
+<p class="actions"><a class="btn" href="../../#t-p196">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/196/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-08-19T07:23:53Z">19 August 2010, 07:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10216#msg10216" rel="nofollow noopener">original</a></span></header>
+<div class="t">Who is skilled enough to convert official Linux Bitcoin client to use GTK instead of wx?
+
+Is this development worthy or desirable enough to pursue or is wx acceptable?
+
+q: let me get this straight. You&#x27;re asking if someone will put up a bounty for a conversion that you want? (bounty idea dismissed due to seeming weird/strange to some)
+a: I don&#x27;t want it. Is GTK better than QT or anytihng else?  I&#x27;m not familiar.
+
+&quot;I would like it if Bitcoin used GTK instead of wxWidgets but I won&#x27;t pretend that I have a clue about how hard or easy that change might be&quot;
+
+someone: wx seems to work now as far as I can tell
+someone else: wx is an utter nightmare
+
+q: why &quot;convert&quot; Satoshi&#x27;s front end? Why not just build a new one that uses the rpc calls?
+
+there actually isn&#x27;t much that needs to be done to make bitcoind&#x27;s methods useful enough to do the same things the GUI does:
+in particular:
+ * list sending addresses
+ * show unaccepted blocks in listtransactions (maybe)
+ * select a range of transactions to show</div></article><article class="msg" id="m1">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-08-19T07:30:57Z">19 August 2010, 07:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10218#msg10218" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hmm... would it run on Maemo with the same code then? Any other advantages?</div></article><article class="msg" id="m2">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-08-19T07:34:48Z">19 August 2010, 07:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10219#msg10219" rel="nofollow noopener">original</a></span></header>
+<div class="t">bitcoind&#x27;s commands should be expanded and binaries for it should be released so that third-party UI development can be made easier. Like Tor.</div></article><article class="msg" id="m3">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-08-19T07:39:06Z">19 August 2010, 07:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10220#msg10220" rel="nofollow noopener">original</a></span></header>
+<div class="t">It would be interesting for bitcoin to be designed in a way that an ncurses ui could be designed.
+ &quot;you certainly can build a ncurses front end to the deamon now. Its not a problem for bitcoin&quot;</div></article><article class="msg" id="m4">
+<header><b>Olipro</b><span class="muted"> · <time datetime="2010-08-19T07:51:13Z">19 August 2010, 07:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10223#msg10223" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, my opinion on this is that the GUI should be separated from the underlying code. BUT... there&#x27;s no need to throw the baby out with the bathwater and I firmly believe that the current wxWidgets interface should be maintained until such a time as something superior comes along.
+
+My personal feeling is that whilst separate daemon/GUI binaries can work, it also tends to be messy, I&#x27;d be far more in favour of having the core code and then separate source that you compile with it according to your target OS, that way everything is still a single binary and can be integrated as idealistically as possible.
+
+To put this in practice, imagine 3 SVN trunks; the first is BitCoin core, the other two are LINGUI and WINGUI - the latter two being dependant on code from the first.</div></article><article class="msg" id="m5">
+<header><b>BioMike</b><span class="muted"> · <time datetime="2010-08-19T08:05:18Z">19 August 2010, 08:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10226#msg10226" rel="nofollow noopener">original</a></span></header>
+<div class="t">WxWidgets is not really a problem. My problem is the version that is used (2.9), which is considered unstable by many distro packagers (although the WxWidgets devs say it isn&#x27;t). On the other side, as far as I know WxWidgets uses gtk under Linux for drawing the whole stuff and makes it for the bitcoins devs easy to make things cross platform.
+
+I think I would go with theymos in that the gui and daemon should be separated (or put the whole protocols and stuff in a library with bindings for different languages for that matter). I&#x27;ve already gotten my own &quot;client&quot; running (see <a href="http://bitcointalk.org/index.php?topic=851.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=851.0</a>) with the daemon (who doesn&#x27;t need WxWidgets anymore) and it works very nicely. So, in my case I don&#x27;t have any dependency on WxWidgets any more.</div></article><article class="msg" id="m6">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-19T10:28:19Z">19 August 2010, 10:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10228#msg10228" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: BioMike on August 19, 2010, 08:05:18 AM</div><div class="t">I think I would go with theymos in that the gui and daemon should be separated (or put the whole protocols and stuff in a library with bindings for different languages for that matter). I&#x27;ve already gotten my own &quot;client&quot; running (see <a href="http://bitcointalk.org/index.php?topic=851.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=851.0</a>) with the daemon ...</div></blockquote><div class="t">So what do you mean the gui and the daemon should be separated? They already are. You can build the separate daemon. Do you need a separate build of only the gui? I can&#x27;t see why.</div></article><article class="msg" id="m7">
+<header><b>teknohog</b><span class="muted"> · <time datetime="2010-08-19T14:59:59Z">19 August 2010, 14:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10250#msg10250" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 19, 2010, 10:28:19 AM</div><div class="t">So what do you mean the gui and the daemon should be separated? They already are. You can build the separate daemon. Do you need a separate build of only the gui? I can&#x27;t see why.</div></blockquote><div class="t">Bitcoin is a P2P network, so the program should be running all the time. However, I don&#x27;t need to be looking at a GUI all that time, so it makes sense to have a daemon. Currently, you have to stop the daemon when you want to start the GUI version, which breaks the network for a moment.
+
+Some P2P applications like aMule do this properly. The daemon is running all the time, and when you want to interact with it, you start the separate GUI, which connects to the daemon. Most importantly, the GUI can run on a different machine from the daemon.
+
+Such a setup would be great for mobile Bitcoin usage. You run the daemon on your &quot;server&quot; machine, and you connect to it with a GUI on your mobile device. I think this has been already discussed in a different context, but the same mechanism applies.
+
+However, you can already use the JSON-RPC mechanism to build a separate GUI, so there is no immediate need to change the mainline client. </div></article><article class="msg sat" id="m8">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-19T18:44:36Z">19 August 2010, 18:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=867.msg10272#msg10272" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: BioMike on August 19, 2010, 08:05:18 AM</div><div class="t">WxWidgets is not really a problem. My problem is the version that is used (2.9), which is considered unstable by many distro packagers (although the WxWidgets devs say it isn&#x27;t). On the other side, as far as I know WxWidgets uses gtk under Linux for drawing the whole stuff and makes it for the bitcoins devs easy to make things cross platform.</div></blockquote><div class="t">wxWidgets 2.9 is their first UTF-8 version.  We are UTF-8 on all platforms including Windows.
+
+The distro packages of 2.8 are UTF-16, so they just trip people up.  People had endless build problems with 2.8 and its wxString UTF-16/ANSI conditional build options until we standardized on 2.9.  Also, to use 2.8, we were using ANSI, which was just a temporary stopgap until wxWidgets supported UTF-8.
+
+This is a problem that will solve itself.  With time, 2.9 will become a more mainline release.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p195-28-days-without-generation-i-have-4200khash-s/">← 28 days without generation, i have 4200khash/s</a><a rel="next" href="../../conversations/p197-howto-compiling-bitcoin-on-ubuntu-10-04-karmic/">HOWTO: Compiling Bitcoin on Ubuntu 10.04 (Karmic) →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

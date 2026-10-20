@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suggestion: Allow short messages to be sent… – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 23 October 2010: ECDSA can&#x27;t encrypt messages, only sign signatures. It would be unwise to have permanently recorded plaintext messages…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p239-suggestion-allow-short-messages-to-be-sent-together-with-bit/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Suggestion: Allow short messages to be sent… – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 23 October 2010: ECDSA can&#x27;t encrypt messages, only sign signatures. It would be unwise to have permanently recorded plaintext messages…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p239-suggestion-allow-short-messages-to-be-sent-together-with-bit/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Suggestion: Allow short messages to be sent… – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 October 2010: ECDSA can&#x27;t encrypt messages, only sign signatures. It would be unwise to have permanently recorded plaintext messages…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Suggestion: Allow short messages to be sent together with bitcoins ?", "url": "https://satoshimail.pages.dev/conversations/p239-suggestion-allow-short-messages-to-be-sent-together-with-bit/", "author": {"@type": "Person", "name": "ShadowOfHarbringer"}, "datePublished": "2010-10-23T15:11:17Z", "text": "Bitcoin is great, but it misses one thing that usual bank transfers have: payment title. Perhaps it should be possible to include short (<=512 bytes) message for each transaction. The message could be encrypted with public/private keys so only the receiver can see its contents. What do You think ? PS. I might be wrong, but the messages could also be used to increase randomness of hashing process by the way, couldn't they ? If not, never mind.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "grondilu"}, "datePublished": "2010-10-23T15:28:34Z", "text": "I red somewhere that the kind of keys used in the software supports signature, but not encryption. Since it is very easy to create a new bitcoin address for each transaction, a paiement label is not necessary. Just use the bitcoin address as a reference for your message, and transmit it via email or any other way of communication."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ShadowOfHarbringer"}, "datePublished": "2010-10-23T15:45:45Z", "text": "Sure it is \"not necessary\" but still would be useful for people. Perhaps some people would like to keep one BTC address for some reasons. Also bigger financial institutions won't really like the idea of different account number for each transation."}, {"@type": "Comment", "author": {"@type": "Person", "name": "grondilu"}, "datePublished": "2010-10-23T16:09:48Z", "text": "What about the increase of the block size, then ? Even if 512o per transaction is small, it might represent a significative amount since all has to be stored in the block chain."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ShadowOfHarbringer"}, "datePublished": "2010-10-23T17:13:01Z", "text": "I will tell You what have i just done. I clicked \"quote\", copied the message and pasted it in a text file. Then, i have truncated the file to 512 bytes, and EDIT: GZIPPED it. It now takes 329 bytes. Next, i have bzipped it. Now it takes 288 bytes. Of course, there is no need for such a long message. Let's try 384 bytes. I used lorem ipsum generator from here: http://lipsum.com/ Results: -rw-r--r-- 1 user user 384 2010-10-23 19:09 ipsum.txt (uncompressed) -rw-r--r-- 1 user user 274 2010-10-23…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-10-23T17:56:04Z", "text": "Like grondilu said, encryption isn't possible. It's possible to modify Bitcoin to send messages. Just create transactions that start with something like this: BTCMESSAGEv1--This is a message OP_DROP The network will accept these, but I don't think your recipient will recognize them unless he is also using your modified Bitcoin."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ShadowOfHarbringer"}, "datePublished": "2010-10-23T17:59:43Z", "text": "I found something interesting. http://stackoverflow.com/questions/1138345/best-compression-algorithm-for-short-text-strings There is a small OS project on github, which does good compression of short text strings. http://github.com/antirez/smaz So we could further get the 384 bytes down to <200 or <175 bytes."}, {"@type": "Comment", "author": {"@type": "Person", "name": "grondilu"}, "datePublished": "2010-10-23T18:07:41Z", "text": "I also wonder if the message has to be taken into account for the hash computation. Not doing so would allow to delete it later. I very much don't like this idea of a message. Since it is not necessary to the protocol, I'm not sure if it would be easy to find a place where it really fits. I'm not a programmer though. I'd be curious to have Satoshi's thought on this. Edit. I have a funny idea. Imagine that numeric precision is increased way beyond 8 decimals, say 128 decimals for instance. What…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "ShadowOfHarbringer"}, "datePublished": "2010-10-23T18:33:56Z", "text": "Yeah, I'm curious of that too."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-10-23T19:02:57Z", "text": "ECDSA can't encrypt messages, only sign signatures. It would be unwise to have permanently recorded plaintext messages for everyone to see. It would be an accident waiting to happen. If there's going to be a message system, it should be a separate system parallel to the bitcoin network. Messages should not be recorded in the block chain. The messages could be signed with the bitcoin address keypairs to prove who they're from."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Suggestion: Allow short messages to be sent…", "item": "https://satoshimail.pages.dev/conversations/p239-suggestion-allow-short-messages-to-be-sent-together-with-bit/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p239">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Suggestion: Allow short messages to be sent…</span></div></nav>
+<main class="in">
+<h1>Suggestion: Allow short messages to be sent together with bitcoins ?</h1>
+<p class="lead">BitcoinTalk forum · 10 messages · from 23 October 2010 · with Satoshi Nakamoto, ShadowOfHarbringer, grondilu, theymos</p>
+<p class="actions"><a class="btn" href="../../#t-p239">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/239/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>ShadowOfHarbringer</b><span class="muted"> · <time datetime="2010-10-23T15:11:17Z">23 October 2010, 15:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18205#msg18205" rel="nofollow noopener">original</a></span></header>
+<div class="t">Bitcoin is great, but it misses one thing that usual bank transfers have: payment title.
+
+Perhaps it should be possible to include short (&lt;=512 bytes) message for each transaction.
+The message could be encrypted with public/private keys so only the receiver can see its contents.
+
+What do You think ?
+
+PS.
+I might be wrong, but the messages could also be used to increase randomness of hashing process by the way, couldn&#x27;t they ? If not, never mind.</div></article><article class="msg" id="m1">
+<header><b>grondilu</b><span class="muted"> · <time datetime="2010-10-23T15:28:34Z">23 October 2010, 15:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18208#msg18208" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: ShadowOfHarbringer on October 23, 2010, 03:11:17 PM</div><div class="t">Bitcoin is great, but it misses one thing that usual bank transfers have: payment title.
+
+Perhaps it should be possible to include short (&lt;=512 bytes) message for each transaction.
+The message could be encrypted with public/private keys so only the receiver can see its contents.
+
+What do You think ?</div></blockquote><div class="t">I red somewhere that the kind of keys used in the software supports signature, but not encryption.
+
+Since it is very easy to create a new bitcoin address for each transaction, a paiement label is not necessary.  Just use the bitcoin address as a reference for your message, and transmit it via email or any other way of communication.</div></article><article class="msg" id="m2">
+<header><b>ShadowOfHarbringer</b><span class="muted"> · <time datetime="2010-10-23T15:45:45Z">23 October 2010, 15:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18211#msg18211" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: grondilu on October 23, 2010, 03:28:34 PM</div><div class="t">a paiement label is not necessary.</div></blockquote><div class="t">Sure it is &quot;not necessary&quot; but still would be useful for people.
+
+Perhaps some people would like to keep one BTC address for some reasons.
+Also bigger financial institutions won&#x27;t really like the idea of different account number for each transation.</div></article><article class="msg" id="m3">
+<header><b>grondilu</b><span class="muted"> · <time datetime="2010-10-23T16:09:48Z">23 October 2010, 16:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18215#msg18215" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: davidonpda on October 23, 2010, 04:03:03 PM</div><div class="t">&gt; Quote from: ShadowOfHarbringer on October 23, 2010, 03:45:45 PM
+&gt; &gt; Quote from: grondilu on October 23, 2010, 03:28:34 PM
+&gt; &gt; a paiement label is not necessary.
+&gt;
+&gt; Sure it is &quot;not necessary&quot; but still would be useful for people.
+&gt;
+&gt; Perhaps some people would like to keep one BTC address for some reasons.
+&gt; Also bigger financial institutions won&#x27;t really like the idea of different account number for each transation.
+
+I don&#x27;t think the keys should really be thought of as an account number per transaction. That logic I think is misleading. You can have millions of keys associated to one wallet / account.</div></blockquote><div class="t">What about the increase of the block size, then ?
+
+Even if 512o per transaction is small, it might represent a significative amount since all has to be stored in the block chain.</div></article><article class="msg" id="m4">
+<header><b>ShadowOfHarbringer</b><span class="muted"> · <time datetime="2010-10-23T17:13:01Z">23 October 2010, 17:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18228#msg18228" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: grondilu on October 23, 2010, 04:09:48 PM</div><div class="t">What about the increase of the block size, then ?
+Even if 512o per transaction is small, it might represent a significative amount since all has to be stored in the block chain.</div></blockquote><div class="t">I will tell You what have i just done.
+I clicked &quot;quote&quot;, copied the message and pasted it in a text file.
+
+Then, i have truncated the file to 512 bytes, and EDIT: GZIPPED  it. It now takes 329 bytes.
+Next, i have bzipped it. Now it takes 288 bytes.
+
+Of course, there is no need for such a long message. Let&#x27;s try 384 bytes. I used lorem ipsum generator from here: <a href="http://lipsum.com/" rel="nofollow noopener">http://lipsum.com/</a>
+Results:</div><pre><code>-rw-r--r--  1 user user  384 2010-10-23 19:09 ipsum.txt (uncompressed)
+-rw-r--r--  1 user user  274 2010-10-23 19:08 ipsum.txt.bz2 (bzip2)
+-rw-r--r--  1 user user  268 2010-10-23 19:10 ipsum.txt.gz (gzip)</code></pre><div class="t">I think that maximum ~260-280 bytes per transaction is not bad.</div></article><article class="msg" id="m5">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-10-23T17:56:04Z">23 October 2010, 17:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18231#msg18231" rel="nofollow noopener">original</a></span></header>
+<div class="t">Like grondilu said, encryption isn&#x27;t possible.
+
+It&#x27;s possible to modify Bitcoin to send messages. Just create transactions that start with something like this:</div><pre><code>BTCMESSAGEv1--This is a message OP_DROP </code></pre><div class="t">The network will accept these, but I don&#x27;t think your recipient will recognize them unless he is also using your modified Bitcoin.</div></article><article class="msg" id="m6">
+<header><b>ShadowOfHarbringer</b><span class="muted"> · <time datetime="2010-10-23T17:59:43Z">23 October 2010, 17:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18233#msg18233" rel="nofollow noopener">original</a></span></header>
+<div class="t">I found something interesting.
+
+<a href="http://stackoverflow.com/questions/1138345/best-compression-algorithm-for-short-text-strings" rel="nofollow noopener">http://stackoverflow.com/questions/1138345/best-compression-algorithm-for-short-text-strings</a>
+
+There is a small OS project on github, which does good compression of short text strings.
+<a href="http://github.com/antirez/smaz" rel="nofollow noopener">http://github.com/antirez/smaz</a></div><blockquote><div class=qh>Quote</div><div class="t">&#x27;This is a small string&#x27; compressed by 50%
+&#x27;foobar&#x27; compressed by 34%
+&#x27;the end&#x27; compressed by 58%
+&#x27;not-a-g00d-Exampl333&#x27; enlarged by 15%
+&#x27;Smaz is a simple compression library&#x27; compressed by 39%
+&#x27;Nothing is more difficult, and therefore more precious, than to be able to decide&#x27; compressed by 49%
+&#x27;this is an example of what works very well with smaz&#x27; compressed by 49%
+&#x27;1000 numbers 2000 will 10 20 30 compress very little&#x27; compressed by 10%
+
+In general, lowercase English will work very well. It will suck with a lot
+of numbers inside the strings. Other languages are compressed pretty well too,
+the following is Italian, not very similar to English but still compressible
+by smaz:
+
+&#x27;Nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura&#x27; compressed by 33%
+&#x27;Mi illumino di immenso&#x27; compressed by 37%
+&#x27;L&#x27;autore di questa libreria vive in Sicilia&#x27; compressed by 28%
+
+It can compress URLS pretty well:
+
+&#x27;<a href="http://google.com" rel="nofollow noopener">http://google.com</a>&#x27; compressed by 59%
+&#x27;<a href="http://programming.reddit.com" rel="nofollow noopener">http://programming.reddit.com</a>&#x27; compressed by 52%
+&#x27;<a href="http://github.com/antirez/smaz/tree/master" rel="nofollow noopener">http://github.com/antirez/smaz/tree/master</a>&#x27; compressed by 46%</div></blockquote><div class="t">So we could further get the 384 bytes down to &lt;200 or &lt;175 bytes.</div></article><article class="msg" id="m7">
+<header><b>grondilu</b><span class="muted"> · <time datetime="2010-10-23T18:07:41Z">23 October 2010, 18:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18237#msg18237" rel="nofollow noopener">original</a></span></header>
+<div class="t">I also wonder if the message has to be taken into account for the hash computation.  Not doing so would allow to delete it later.
+
+I very much don&#x27;t like this idea of a message.  Since it is not necessary to the protocol, I&#x27;m not sure if it would be easy to find a place where it really fits.  I&#x27;m not a programmer though.  I&#x27;d be curious to have Satoshi&#x27;s thought on this.
+
+Edit.  I have a funny idea.  Imagine that numeric precision is increased way beyond 8 decimals, say 128 decimals for instance.
+
+What about using those decimals to code your message ?  Somehow you would have a &quot;natural fee&quot; for this service, and we won&#x27;t have to modify anything from the protocol.
+
+Edit #2.  Gosh I LOVE this idea Smiley
+
+Edit #3.  We don&#x27;t need 128 decimals.  Correct me if I&#x27;m wrong, but with 32 decimals you can code a 17 characters-longed uncompressed message in a 64 characters set.  (32*log(10)/log(64)  = 7.717)</div></article><article class="msg" id="m8">
+<header><b>ShadowOfHarbringer</b><span class="muted"> · <time datetime="2010-10-23T18:33:56Z">23 October 2010, 18:33 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18244#msg18244" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: grondilu on October 23, 2010, 06:07:41 PM</div><div class="t">I very much don&#x27;t like this idea of a message.  Since it is not necessary to the protocol, I&#x27;m not sure if it would be easy to find a place where it really fits.  I&#x27;m not a programmer though.  I&#x27;d be curious to have Satoshi&#x27;s thought on this.</div></blockquote><div class="t">Yeah, I&#x27;m curious of that too.</div></article><article class="msg sat" id="m9">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-23T19:02:57Z">23 October 2010, 19:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1545.msg18250#msg18250" rel="nofollow noopener">original</a></span></header>
+<div class="t">ECDSA can&#x27;t encrypt messages, only sign signatures.
+
+It would be unwise to have permanently recorded plaintext messages for everyone to see.  It would be an accident waiting to happen.
+
+If there&#x27;s going to be a message system, it should be a separate system parallel to the bitcoin network.  Messages should not be recorded in the block chain.  The messages could be signed with the bitcoin address keypairs to prove who they&#x27;re from.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p238-win7-64bit-since-last-patch-tues-now-crashes/">← Win7 64bit since last patch Tues now crashes</a><a rel="next" href="../../conversations/p240-some-testing-that-i-did-on-the-testnetwork-my-findings/">Some testing that I did on the testnetwork, my findings. →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

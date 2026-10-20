@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dkaparis: boost::bind build fix… (r164) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 October 2010: dkaparis: boost::bind build fix for c++0x. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/83082f0/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="dkaparis: boost::bind build fix… (r164) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 October 2010: dkaparis: boost::bind build fix for c++0x. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/83082f0/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="dkaparis: boost::bind build fix… (r164) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 11 October 2010: dkaparis: boost::bind build fix for c++0x. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "dkaparis: boost::bind build fix for c++0x", "url": "https://satoshimail.pages.dev/commits/83082f0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-10-11T15:12:17Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/83082f04a47d6540f40dd656d1baed54eb17e76b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "dkaparis: boost::bind build fix for…", "item": "https://satoshimail.pages.dev/commits/83082f0/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c83082f04a4">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">dkaparis: boost::bind build fix for…</span></div></nav>
+<main class="in">
+<h1>dkaparis: boost::bind build fix for c++0x</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 11 October 2010 · SVN r164 · release v0.3.14 · 2 files, +12 −7</p>
+<p class="actions"><a class="btn" href="../../#t-c83082f04a4">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/83082f04a47d6540f40dd656d1baed54eb17e76b" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -2433,15 +2433,20 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     {
+         // Nodes rebroadcast an addr every 24 hours
+         pfrom-&gt;vAddrToSend.clear();
+-        int64 nSince = GetAdjustedTime() - 6 * 60 * 60; // in the last 6 hours
++        int64 nSince = GetAdjustedTime() - 3 * 60 * 60; // in the last 3 hours
+         CRITICAL_BLOCK(cs_mapAddresses)
+         {
++            unsigned int nCount = 0;
+             foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
+             {
+-                if (fShutdown)
+-                    return true;
+                 const CAddress&amp; addr = item.second;
+                 if (addr.nTime &gt; nSince)
++                    nCount++;
++            }
++            foreach(const PAIRTYPE(vector&lt;unsigned char&gt;, CAddress)&amp; item, mapAddresses)
++            {
++                const CAddress&amp; addr = item.second;
++                if (addr.nTime &gt; nSince &amp;&amp; GetRand(nCount) &lt; 2000)
+                     pfrom-&gt;PushAddress(addr);
+             }
+         }
+@@ -2780,7 +2785,7 @@ void ThreadBitcoinMiner(void* parg)
+         vnThreadsRunning[3]--;
+         PrintException(NULL, &quot;ThreadBitcoinMiner()&quot;);
+     }
+-    UIThreadCall(bind(CalledSetStatusBar, &quot;&quot;, 0));
++    UIThreadCall(boost::bind(CalledSetStatusBar, &quot;&quot;, 0));
+     nHPSTimerStart = 0;
+     if (vnThreadsRunning[3] == 0)
+         dHashesPerSec = 0;
+@@ -3143,7 +3148,7 @@ void BitcoinMiner()
+                         nHPSTimerStart = GetTimeMillis();
+                         nHashCounter = 0;
+                         string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
+-                        UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
++                        UIThreadCall(boost::bind(CalledSetStatusBar, strStatus, 0));
+                         static int64 nLogTime;
+                         if (GetTime() - nLogTime &gt; 30 * 60)
+                         {</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -572,7 +572,7 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
+     strMiscWarning = pszMessage;
+ #ifdef GUI
+     if (wxTheApp &amp;&amp; !fDaemon)
+-        boost::thread(bind(ThreadOneMessageBox, string(pszMessage)));
++        boost::thread(boost::bind(ThreadOneMessageBox, string(pszMessage)));
+ #endif
+ }
+ 
+@@ -807,7 +807,7 @@ void AddTimeData(unsigned int ip, int64 nTime)
+                 string strMessage = _(&quot;Warning: Please check that your computer&#x27;s date and time are correct.  If your clock is wrong Bitcoin will not work properly.&quot;);
+                 strMiscWarning = strMessage;
+                 printf(&quot;*** %s\n&quot;, strMessage.c_str());
+-                boost::thread(bind(ThreadSafeMessageBox, strMessage+&quot; &quot;, string(&quot;Bitcoin&quot;), wxOK | wxICON_EXCLAMATION, (wxWindow*)NULL, -1, -1));
++                boost::thread(boost::bind(ThreadSafeMessageBox, strMessage+&quot; &quot;, string(&quot;Bitcoin&quot;), wxOK | wxICON_EXCLAMATION, (wxWindow*)NULL, -1, -1));
+             }
+         }
+         foreach(int64 n, vTimeOffsets)</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/1038494/">← key pool for safer wallet backup</a><a rel="next" href="../../commits/5cbf753/">Gavin&#x27;s TEST network as -testnet switch, misc fixes →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

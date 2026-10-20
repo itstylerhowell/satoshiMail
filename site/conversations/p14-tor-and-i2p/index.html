@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TOR and I2P – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 20 January 2010: I&#x27;ve been thinking about that for a while. I want to add the backend support for .onion addresses and connecting to…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p14-tor-and-i2p/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="TOR and I2P – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 20 January 2010: I&#x27;ve been thinking about that for a while. I want to add the backend support for .onion addresses and connecting to…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p14-tor-and-i2p/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="TOR and I2P – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 20 January 2010: I&#x27;ve been thinking about that for a while. I want to add the backend support for .onion addresses and connecting to…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "TOR and I2P", "url": "https://satoshimail.pages.dev/conversations/p14-tor-and-i2p/", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-01-16T23:22:55Z", "text": "Hello, I have had another idea. Tongue It would be very cool to be able to have TOR and I2P seeds. For example: I could run BT within TOR-land on a .onion address. A client could connect their BT to TOR and have it seed from a .onion address and use it as a connected peer. (Likewise for I2P: someone could run a .i2p service that is -- well -- BC). I might setup a couple of nodes in this fashion and post the tunnels on this forum. I already run a lot of I2P and TOR nodes so adding BC to the mix is quite trivial. I support the idea of making BC compatible with TOR and I2P to increase the privacy of the system. I mean: why re-invent the wheel? There are thousands of mix network nodes just sitting there that can be used to enhance BC. Cheesy Cheers!", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-01-20T22:05:28Z", "text": "I've been thinking about that for a while. I want to add the backend support for .onion addresses and connecting to them, then go from there. There aren't many .onion addresses in use for anything because the user has to go through a number of steps to create one. Configure TOR to generate a .onion address, restart TOR, configure it with the generated address. Perhaps this is intentional to keep TOR so it can't be integrated into file sharing programs in any sufficiently automated way."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-01-24T20:52:59Z", "text": "Yeah, I2P is much easier to automate in that regard. I could setup some .onions manually and post them to the list to be used as seeds. I have always-on nodes that can just be tied to Tor with minimal effort. I used to be a big advocate of Tor, but after I started using I2P I found it to be much, much better in a lot of ways. Biggest improvement is speed. Wink Too bad they wrote it in Java."}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitcoinFX"}, "datePublished": "2010-02-01T21:36:47Z", "text": "I also run a Tor relay and exit node and had similar ideas for Tor integration with Bitcoin. Tor can be very fast if you edit your config correctly. You just need to limit the connectivity with slow servers and only use the fastest nodes where possible. I also like to block any nodes in 'problem' internet countries, which also tend to have slower connectivity, this also increases overall privacy somewhat. I also block Unnamed, ididnteditheconfig, any servers that I don't like the name of and…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitcoinFX"}, "datePublished": "2010-02-01T22:08:54Z", "text": "OK So, I tried to set-up a sudo-anonymous crypto 'Bitcoin Bank' experiment using Tor. Grin Whilst it was mostly successful using the standard 9050 socks port 'default setup' i.e. I got connectivity to other Bitcoin nodes through Tor; I did encounter various issues and multiple Warning messages. \"Your application (using socks5 on port xxxx) is giving Tor only an IP address. Applications that do DNS resolves themselves may leak information. Consider using Socks4A (e.g. via polipo or socat)…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "riX"}, "datePublished": "2010-02-02T22:36:56Z", "text": "Bitcoin is using ip-adresses, not hostnames, so there's no need for dns. Tor thinks that since bitcoin is trying to connect to an ip without looking it up through tors internal dns, it's using a regular dns. Bitcoin is using port 8333, even though it's relaying it through tor on port 9050.. Tongue 6667 is irc, bitcoin uses an irc-server to distribute the nodelist. (If you know the ip of another computer running bitcoin, you can specify the -connect option to avoid using the nodelist). No, it's…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "BitcoinFX"}, "datePublished": "2010-02-03T15:31:33Z", "text": "OK thanks riX. So, once Bitcoin has connected to at least one node then the -connect option will eliminate the 6667 warnings. Is Bitcoin using any kind of 'peer exchange' or DHT because this still does not seem to prevent the constant Tor 'exit' warnings and therefore Tor's requirement to try a new 'exit' node for connection. (which is problematic ! For Tor anyway, not Bitcoin Wink ) This is really what I meant by \"However, Bitcoin must try to connect with all nodes to check its not missing…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-04T00:30:50Z", "text": "When using proxy port 9050, it will only make one attempt to connect to IRC, then give up, since it knows it will probably always fail because IRC servers ban all the TOR exit nodes. If you're using another port, it would assume it might be a regular old normal proxy and would keep retrying IRC at longer and longer intervals. You should not use Polipo or Privoxy as those are http filters and caches that would corrupt Bitcoin's messages if they make any changes. Bitcoin might be trying to…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "TOR and I2P", "item": "https://satoshimail.pages.dev/conversations/p14-tor-and-i2p/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p14">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">TOR and I2P</span></div></nav>
+<main class="in">
+<h1>TOR and I2P</h1>
+<p class="lead">BitcoinTalk forum · 8 messages · from 16 January 2010 · with BitcoinFX, Satoshi Nakamoto, The Madhatter, riX</p>
+<p class="actions"><a class="btn" href="../../#t-p14">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/14/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-01-16T23:22:55Z">16 January 2010, 23:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg104#msg104" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hello,
+
+I have had another idea. Tongue
+
+It would be very cool to be able to have TOR and I2P seeds. For example: I could run BT within TOR-land on a .onion address. A client could connect their BT to TOR and have it seed from a .onion address and use it as a connected peer. (Likewise for I2P: someone could run a .i2p service that is -- well -- BC).
+
+I might setup a couple of nodes in this fashion and post the tunnels on this forum. I already run a lot of I2P and TOR nodes so adding BC to the mix is quite trivial.
+
+I support the idea of making BC compatible with TOR and I2P to increase the privacy of the system. I mean: why re-invent the wheel? There are thousands of mix network nodes just sitting there that can be used to enhance BC. Cheesy
+
+Cheers!</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-20T22:05:28Z">20 January 2010, 22:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg113#msg113" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve been thinking about that for a while.  I want to add the backend support for .onion addresses and connecting to them, then go from there.
+
+There aren&#x27;t many .onion addresses in use for anything because the user has to go through a number of steps to create one.  Configure TOR to generate a .onion address, restart TOR, configure it with the generated address.  Perhaps this is intentional to keep TOR so it can&#x27;t be integrated into file sharing programs in any sufficiently automated way.</div></article><article class="msg" id="m2">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-01-24T20:52:59Z">24 January 2010, 20:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg120#msg120" rel="nofollow noopener">original</a></span></header>
+<div class="t">Yeah, I2P is much easier to automate in that regard. I could setup some .onions manually and post them to the list to be used as seeds. I have always-on nodes that can just be tied to Tor with minimal effort.
+
+I used to be a big advocate of Tor, but after I started using I2P I found it to be much, much better in a lot of ways. Biggest improvement is speed. Wink  Too bad they wrote it in Java.</div><blockquote><div class=qh>Quote from: satoshi on January 20, 2010, 10:05:28 PM</div><div class="t">I&#x27;ve been thinking about that for a while.  I want to add the backend support for .onion addresses and connecting to them, then go from there.
+
+There aren&#x27;t many .onion addresses in use for anything because the user has to go through a number of steps to create one.  Configure TOR to generate a .onion address, restart TOR, configure it with the generated address.  Perhaps this is intentional to keep TOR so it can&#x27;t be integrated into file sharing programs in any sufficiently automated way.</div></blockquote></article><article class="msg" id="m3">
+<header><b>BitcoinFX</b><span class="muted"> · <time datetime="2010-02-01T21:36:47Z">1 February 2010, 21:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg191#msg191" rel="nofollow noopener">original</a></span></header>
+<div class="t">I also run a Tor relay and exit node and had similar ideas for Tor integration with Bitcoin.
+
+Tor can be very fast if you edit your config correctly. You just need to limit the connectivity with slow servers and only use the fastest nodes where possible. I also like to block any nodes in &#x27;problem&#x27; internet countries, which also tend to have slower connectivity, this also increases overall privacy somewhat. I also block Unnamed, ididnteditheconfig, any servers that I don&#x27;t like the name of and unstable servers.
+
+This config. example is only good for non-relay / non-exit personal use. Although its great for P2P Smiley
+
+AvoidDiskWrites 1
+
+ExcludeNodes SlowServer,{sd},{pk},{tn},{ae},{by},{in},{bh},{th},{ye},{mm},{eg},{sg},{ma},{cu},{qa},{sa},{by},{md},{tm},{tr},{et},{jo},{sy},{om},{ir},{az},{uz},{kz},{kg},{af},{cn},{bd},{vn},{ng},{gh},{ro},{lb},{ru},{iq},{ly},{ve},{zw},{my},{mo},{kr},unnamed,ididnteditheconfig ...etc.
+
+StrictEntryNodes 1
+
+EntryNodes (Select Fast Entry and Authority Servers from <a href="http://trunk.torstatus.kgprog.com/index.php?Fast=0" rel="nofollow noopener">http://trunk.torstatus.kgprog.com/index.php?Fast=0</a> )
+
+StrictExitNodes 1
+
+ExitNodes (Select Fast Exit Only from <a href="http://trunk.torstatus.kgprog.com/index.php?Fast=0" rel="nofollow noopener">http://trunk.torstatus.kgprog.com/index.php?Fast=0</a> )
+
+It&#x27;s also a good idea to alter the time which Tor takes to automatically switch circuits and some other custom settings <a href="https://www.torproject.org/tor-manual.html" rel="nofollow noopener">https://www.torproject.org/tor-manual.html</a>
+
+Hope this helps Wink</div></article><article class="msg" id="m4">
+<header><b>BitcoinFX</b><span class="muted"> · <time datetime="2010-02-01T22:08:54Z">1 February 2010, 22:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg192#msg192" rel="nofollow noopener">original</a></span></header>
+<div class="t">OK So, I tried to set-up a sudo-anonymous crypto &#x27;Bitcoin Bank&#x27; experiment using Tor. Grin
+
+Whilst it was mostly successful using the standard 9050 socks port &#x27;default setup&#x27; i.e. I got connectivity to other Bitcoin nodes through Tor; I did encounter various issues and multiple Warning messages.
+
+&quot;Your application (using socks5 on port xxxx) is giving Tor only an IP address. Applications that do DNS resolves themselves may leak information. Consider
+using Socks4A (e.g. via polipo or socat) instead.&quot;
+
+<a href="https://wiki.torproject.org/noreply/TheOnionRouter/TorFAQ#IkeepseeingthesewarningsaboutSOCKSandDNSandinformationleaks.ShouldIworry.3F" rel="nofollow noopener">https://wiki.torproject.org/noreply/TheOnionRouter/TorFAQ#IkeepseeingthesewarningsaboutSOCKSandDNSandinformationleaks.ShouldIworry.3F</a>
+
+I eventually fixed this using Privoxy and Stunnel (because i&#x27;m more familiar with those) However, you could use polipo and Stunnel.
+
+However, I still get occasional warnings for these ports 8333 (expected Bitcoin &#x27;default&#x27;) and 6667 (which if i&#x27;m not mistaken is an IRC port !?)
+
+Connecting Bitcoin through Tor also makes Tor repeatedly change exit nodes looking to establish &#x27;missing&#x27; connections to a [scrubbed] address. At first I assumed that this was because Tor exits might be blocking port 8333 or 6667, but that is mostly not the case !
+
+Other P2P applications through Tor can &#x27;ignore&#x27; IP addresses that they cannot connect to and the application can still get the job done without &#x27;warning&#x27;. However, Bitcoin must try to connect with all nodes to check its not missing any blocks ! So, if an IP range where only 1 Bitcoin node is running is blocking Tor exit nodes, then presumably this will always be the case ?
+
+This is problematic for many reasons. Huh</div></article><article class="msg" id="m5">
+<header><b>riX</b><span class="muted"> · <time datetime="2010-02-02T22:36:56Z">2 February 2010, 22:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg205#msg205" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: BitcoinFX on February 01, 2010, 10:08:54 PM</div><div class="t">&quot;Your application (using socks5 on port xxxx) is giving Tor only an IP address. Applications that do DNS resolves themselves may leak information. Consider
+using Socks4A (e.g. via polipo or socat) instead.&quot;</div></blockquote><div class="t">Bitcoin is using ip-adresses, not hostnames, so there&#x27;s no need for dns. Tor thinks that since bitcoin is trying to connect to an ip without looking it up through tors internal dns, it&#x27;s using a regular dns.</div><blockquote><div class=qh>Quote from: BitcoinFX on February 01, 2010, 10:08:54 PM</div><div class="t">However, I still get occasional warnings for these ports 8333 (expected Bitcoin &#x27;default&#x27;) and 6667 (which if i&#x27;m not mistaken is an IRC port !?)</div></blockquote><div class="t">Bitcoin is using port 8333, even though it&#x27;s relaying it through tor on port 9050..  Tongue
+6667 is irc, bitcoin uses an irc-server to distribute the nodelist. (If you know the ip of another computer running bitcoin, you can specify the -connect option to avoid using the nodelist).</div><blockquote><div class=qh>Quote from: BitcoinFX on February 01, 2010, 10:08:54 PM</div><div class="t">However, Bitcoin must try to connect with all nodes to check its not missing any blocks !</div></blockquote><div class="t">No, it&#x27;s enough if you&#x27;re just connected to one single node, as long as it&#x27;s got a copy of the longest block-chain.</div></article><article class="msg" id="m6">
+<header><b>BitcoinFX</b><span class="muted"> · <time datetime="2010-02-03T15:31:33Z">3 February 2010, 15:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg207#msg207" rel="nofollow noopener">original</a></span></header>
+<div class="t">OK thanks riX.
+
+So, once Bitcoin has connected to at least one node then the -connect option will eliminate the 6667 warnings.
+
+Is Bitcoin using any kind of &#x27;peer exchange&#x27; or DHT because this still does not seem to prevent the constant Tor &#x27;exit&#x27; warnings and therefore Tor&#x27;s requirement to try a new &#x27;exit&#x27; node for connection. (which is problematic ! For Tor anyway, not Bitcoin Wink ) This is really what I meant by &quot;However, Bitcoin must try to connect with all nodes to check its not missing any blocks ?&quot; I just communicated it incorrectly.
+
+I2P would seem to be a much easier solution to implement to increase a Bitcoins users anonymity.
+<a href="http://forum.i2p2.de/viewtopic.php?t=3946" rel="nofollow noopener">http://forum.i2p2.de/viewtopic.php?t=3946</a>&amp;sid=213e3cd998db98c4511675ecbba17af4
+
+I&#x27;m also testing JonDonym <a href="http://anonymous-proxy-servers.net/" rel="nofollow noopener">http://anonymous-proxy-servers.net/</a> (only the paid services support socks !) However, they do accept paysafecards which can currently be brought in exchange for Bitcoins. Grin</div></article><article class="msg sat" id="m7">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-04T00:30:50Z">4 February 2010, 00:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=22.msg223#msg223" rel="nofollow noopener">original</a></span></header>
+<div class="t">When using proxy port 9050, it will only make one attempt to connect to IRC, then give up, since it knows it will probably always fail because IRC servers ban all the TOR exit nodes.  If you&#x27;re using another port, it would assume it might be a regular old normal proxy and would keep retrying IRC at longer and longer intervals.  You should not use Polipo or Privoxy as those are http filters and caches that would corrupt Bitcoin&#x27;s messages if they make any changes.  Bitcoin might be trying to overcome it by reconnecting.  You should use port 9050.
+
+As riX says, the &quot;is giving Tor only an IP address. Apps that do DNS...&quot; warnings are nothing to worry about.  Bitcoin doesn&#x27;t use DNS at all in proxy mode.
+
+Since Bitcoin can&#x27;t get through to IRC through Tor, it doesn&#x27;t know which nodes are currently online, so it has to try all the recently seen nodes.  It tries to conserve connection attempts as much as possible, but also people want it to connect quickly when they start it up and reconnect quickly if disconnected.  It uses an algorithm where it tries an IP less and less frequently the longer ago it was successful connected.  For example, for a node it saw 24 hours ago, it would wait 5 hours between connection attempts.  Once it has at least 2 connections, it won&#x27;t try anything over a week old, and 5 connections it won&#x27;t try anything over 24 hours old.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p13-number-of-connections/">← Number of connections?</a><a rel="next" href="../../conversations/p15-a-newb-s-test-anyone-want-to-buy-a-picture-for-1/">A newb&#x27;s test - anyone want to buy a picture for $1? →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

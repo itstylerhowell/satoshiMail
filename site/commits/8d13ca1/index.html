@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>changed free transactions per… (r157) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 September 2010: changed free transactions per block threshold. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/9b8eb4d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="changed free transactions per… (r157) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 September 2010: changed free transactions per block threshold. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/9b8eb4d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="changed free transactions per… (r157) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 23 September 2010: changed free transactions per block threshold. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "changed free transactions per block threshold", "url": "https://satoshimail.pages.dev/commits/8d13ca1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-23T16:01:44Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8d13ca1f11c206188e016546e5ebf7c18c884021"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "changed free transactions per block…", "item": "https://satoshimail.pages.dev/commits/8d13ca1/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c8d13ca1f11">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">changed free transactions per block…</span></div></nav>
+<main class="in">
+<h1>changed free transactions per block threshold</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 23 September 2010 · SVN r157 · release v0.3.20 · 3 files, +23 −16</p>
+<p class="actions"><a class="btn" href="../../#t-c8d13ca1f11">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/8d13ca1f11c206188e016546e5ebf7c18c884021" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>main.cpp</code></summary><pre><code>@@ -2929,7 +2929,7 @@ void BitcoinMiner()
+             CTxDB txdb(&quot;r&quot;);
+             map&lt;uint256, CTxIndex&gt; mapTestPool;
+             vector&lt;char&gt; vfAlreadyAdded(mapTransactions.size());
+-            uint64 nBlockSize = 10000;
++            uint64 nBlockSize = 1000;
+             int nBlockSigOps = 100;
+             bool fFoundSomething = true;
+             while (fFoundSomething)
+@@ -2944,7 +2944,7 @@ void BitcoinMiner()
+                     if (tx.IsCoinBase() || !tx.IsFinal())
+                         continue;
+                     unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK);
+-                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE)
++                    if (nBlockSize + nTxSize &gt;= MAX_BLOCK_SIZE_GEN)
+                         continue;
+                     int nTxSigOps = tx.GetSigOpCount();
+                     if (nBlockSigOps + nTxSigOps &gt;= MAX_BLOCK_SIGOPS)</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -565,15 +565,16 @@ public:
+     {
+         // Base fee is 1 cent per kilobyte
+         unsigned int nBytes = ::GetSerializeSize(*this, SER_NETWORK);
++        unsigned int nNewBlockSize = nBlockSize + nBytes;
+         int64 nMinFee = (1 + (int64)nBytes / 1000) * CENT;
+ 
+-        // Transactions under 60K are free as long as block size is under 80K
+-        // (about 27,000bc if made of 50bc inputs)
+-        if (nBytes &lt; 60000 &amp;&amp; nBlockSize &lt; 80000)
++        // Transactions under 25K are free as long as block size is under 40K
++        // (about 11,000bc if made of 50bc inputs)
++        if (nBytes &lt; 25000 &amp;&amp; nNewBlockSize &lt; 40000)
+             nMinFee = 0;
+ 
+-        // Transactions under 3K are free as long as block size is under 200K
+-        if (nBytes &lt; 3000 &amp;&amp; nBlockSize &lt; 200000)
++        // Transactions under 3K are free as long as block size is under 50K
++        if (nBytes &lt; 3000 &amp;&amp; nNewBlockSize &lt; 50000)
+             nMinFee = 0;
+ 
+         // To limit dust spam, require a 0.01 fee if any output is less than 0.01
+@@ -583,11 +584,15 @@ public:
+                     nMinFee = CENT;
+ 
+         // Raise the price as the block approaches full
+-        if (MAX_BLOCK_SIZE/2 &lt;= nBlockSize &amp;&amp; nBlockSize &lt; MAX_BLOCK_SIZE)
+-            nMinFee *= MAX_BLOCK_SIZE / (MAX_BLOCK_SIZE - nBlockSize);
++        if (nBlockSize != 1 &amp;&amp; nNewBlockSize &gt;= MAX_BLOCK_SIZE_GEN/2)
++        {
++            if (nNewBlockSize &gt;= MAX_BLOCK_SIZE_GEN)
++                return MAX_MONEY;
++            nMinFee *= MAX_BLOCK_SIZE_GEN / (MAX_BLOCK_SIZE_GEN - nNewBlockSize);
++        }
++
+         if (!MoneyRange(nMinFee))
+             nMinFee = MAX_MONEY;
+-
+         return nMinFee;
+     }
+ 
+@@ -1186,9 +1191,11 @@ public:
+ 
+     CBigNum GetBlockWork() const
+     {
+-        if (CBigNum().SetCompact(nBits) &lt;= 0)
++        CBigNum bnTarget;
++        bnTarget.SetCompact(nBits);
++        if (bnTarget &lt;= 0)
+             return 0;
+-        return (CBigNum(1)&lt;&lt;256) / (CBigNum().SetCompact(nBits)+1);
++        return (CBigNum(1)&lt;&lt;256) / (bnTarget+1);
+     }
+ 
+     bool IsInMainChain() const
+@@ -1470,10 +1477,10 @@ public:
+     //// todo: add something to note what created it (user, getnewaddress, change)
+     ////   maybe should have a map&lt;string, string&gt; property map
+ 
+-    CWalletKey(int64 nTimeExpiresIn=0)
++    CWalletKey(int64 nExpires=0)
+     {
+-        nTimeCreated = (nTimeExpiresIn ? GetTime() : 0);
+-        nTimeExpires = nTimeExpiresIn;
++        nTimeCreated = (nExpires ? GetTime() : 0);
++        nTimeExpires = nExpires;
+     }
+ 
+     IMPLEMENT_SERIALIZE</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -23,7 +23,7 @@ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+ static const int VERSION = 312;
+-static const char* pszSubVer = &quot;.7&quot;;
++static const char* pszSubVer = &quot;.8&quot;;
+ 
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/9b8eb4d/">← changed free transactions per block threshold</a><a rel="next" href="../../commits/a790fa4/">don&#x27;t count or spend payments until they have 1… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

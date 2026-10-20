@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>minor UI tweaks, removed some… (r108) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 July 2010: minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we&#x27;re…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e8bff10/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="minor UI tweaks, removed some… (r108) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 July 2010: minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we&#x27;re…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e8bff10/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="minor UI tweaks, removed some… (r108) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 18 July 2010: minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we&#x27;re…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we're going to revert)", "url": "https://satoshimail.pages.dev/commits/e8bff10/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-18T20:47:29Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e8bff10f07b80d820545661cee9337d8664a64cb"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "minor UI tweaks, removed some outdated…", "item": "https://satoshimail.pages.dev/commits/e8bff10/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce8bff10f07">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">minor UI tweaks, removed some outdated…</span></div></nav>
+<main class="in">
+<h1>minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we&#x27;re going to revert)</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 18 July 2010 · SVN r108 · release v0.3.10 · 19 files, +71 −46</p>
+<p class="actions"><a class="btn" href="../../#t-ce8bff10f07">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e8bff10f07b80d820545661cee9337d8664a64cb" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>bugs.txt</code></summary><pre><code>@@ -1,2 +0,0 @@
+-Known bugs:
+-- Window flickers when blocks are added (problem with repainting?)
+\ No newline at end of file</code></pre></details><details><summary><code>changelog.txt</code></summary><pre><code>@@ -1,7 +0,0 @@
+-Changes after 0.1.5:
+---------------------
+-+ Options dialog layout changed - added the UI options panel
+-+ Minimize to tray feature
+-+ Startup on system boot feature
+-+ Ask before closing
+-+ NSIS installer
+\ No newline at end of file</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -389,7 +389,7 @@ bool CMyApp::OnInit2()
+             &quot;  bitcoin [options]       \t&quot; + &quot;\n&quot; +
+             &quot;  bitcoin [command]       \t&quot; + _(&quot;Send command to bitcoin running with -server or -daemon\n&quot;) +
+             &quot;  bitcoin [command] -?    \t&quot; + _(&quot;Get help for a command\n&quot;) +
+-            &quot;  bitcoin help            \t&quot; + _(&quot;List commands\n&quot;) +
++            &quot;  bitcoin help &lt;pw&gt;       \t&quot; + _(&quot;List commands\n&quot;) +
+           _(&quot;Options:\n&quot;) +
+             &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +
+             &quot;  -gen=0          \t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
+@@ -398,7 +398,7 @@ bool CMyApp::OnInit2()
+             &quot;  -proxy=&lt;ip:port&gt;\t  &quot; + _(&quot;Connect through socks4 proxy\n&quot;) +
+             &quot;  -addnode=&lt;ip&gt;   \t  &quot; + _(&quot;Add a node to connect to\n&quot;) +
+             &quot;  -connect=&lt;ip&gt;   \t  &quot; + _(&quot;Connect only to the specified node\n&quot;) +
+-            &quot;  -server         \t  &quot; + _(&quot;Accept command line and JSON-RPC commands\n&quot;) +
++            &quot;  -rpcpw=&lt;pw&gt;     \t  &quot; + _(&quot;Accept command line and JSON-RPC commands with the given password\n&quot;) +
+             &quot;  -daemon         \t  &quot; + _(&quot;Run in the background as a daemon and accept commands\n&quot;) +
+             &quot;  -?              \t  &quot; + _(&quot;This help message\n&quot;);
+ 
+@@ -611,7 +611,7 @@ bool CMyApp::OnInit2()
+     if (!CreateThread(StartNode, NULL))
+         wxMessageBox(&quot;Error: CreateThread(StartNode) failed&quot;, &quot;Bitcoin&quot;);
+ 
+-    if (mapArgs.count(&quot;-server&quot;) || fDaemon)
++    if (mapArgs.count(&quot;-server&quot;) || mapArgs.count(&quot;-rpcpw&quot;) || fDaemon)
+         CreateThread(ThreadRPCServer, NULL);
+ 
+     if (fFirstRun)</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;&amp;Neue Empfangs-Adresse&quot;
+ #: ../../../ui.cpp:1124
+ #: ../../../ui.cpp:2352
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/es/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -242,7 +242,7 @@ msgstr &quot;Nueva direccion de recepcion&quot;
+ #: ../../../ui.cpp:1129
+ #: ../../../ui.cpp:2369
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/fr/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -242,7 +242,7 @@ msgstr &quot;Nouvelle adresse de reception&quot;
+ #: ../../../ui.cpp:1129
+ #: ../../../ui.cpp:2369
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/it/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;Nuovo indirizzo ricevente&quot;
+ #: ../../../ui.cpp:1124
+ #: ../../../ui.cpp:2352
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/nl/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;Nieuw Ontvangings Adres&quot;
+ #: ../../../ui.cpp:1124
+ #: ../../../ui.cpp:2352
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/pt/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;Novo Endereço de Recepção&quot;
+ #: ../../../ui.cpp:1124
+ #: ../../../ui.cpp:2352
+ msgid &quot;&quot;
+-&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
+ &quot;\n&quot;
+ &quot;Label&quot;
+ msgstr &quot;&quot;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,6 +21,8 @@ void ThreadRPCServer2(void* parg);
+ typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
+ extern map&lt;string, rpcfn_type&gt; mapCallTable;
+ 
++static string strRPCPassword;
++
+ 
+ 
+ 
+@@ -37,16 +39,24 @@ Value help(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;help\n&quot;
++            &quot;help &lt;pw&gt;\n&quot;
+             &quot;List commands.&quot;);
+ 
+     string strRet;
++    set&lt;rpcfn_type&gt; setDone;
+     for (map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.begin(); mi != mapCallTable.end(); ++mi)
+     {
++        string strMethod = (*mi).first;
++        // We already filter duplicates, but these deprecated screw up the sort order
++        if (strMethod == &quot;getamountreceived&quot; ||
++            strMethod == &quot;getallreceived&quot;)
++            continue;
+         try
+         {
+             Array params;
+-            (*(*mi).second)(params, true);
++            rpcfn_type pfn = (*mi).second;
++            if (setDone.insert(pfn).second)
++                (*pfn)(params, true);
+         }
+         catch (std::exception&amp; e)
+         {
+@@ -66,7 +76,7 @@ Value stop(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;stop\n&quot;
++            &quot;stop &lt;pw&gt;\n&quot;
+             &quot;Stop bitcoin server.&quot;);
+ 
+     // Shutdown will take long enough that the response should get back
+@@ -79,7 +89,7 @@ Value getblockcount(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblockcount\n&quot;
++            &quot;getblockcount &lt;pw&gt;\n&quot;
+             &quot;Returns the number of blocks in the longest block chain.&quot;);
+ 
+     return nBestHeight + 1;
+@@ -90,7 +100,7 @@ Value getblocknumber(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getblocknumber\n&quot;
++            &quot;getblocknumber &lt;pw&gt;\n&quot;
+             &quot;Returns the block number of the latest block in the longest block chain.&quot;);
+ 
+     return nBestHeight;
+@@ -101,7 +111,7 @@ Value getconnectioncount(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getconnectioncount\n&quot;
++            &quot;getconnectioncount &lt;pw&gt;\n&quot;
+             &quot;Returns the number of connections to other nodes.&quot;);
+ 
+     return (int)vNodes.size();
+@@ -124,7 +134,7 @@ Value getdifficulty(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getdifficulty\n&quot;
++            &quot;getdifficulty &lt;pw&gt;\n&quot;
+             &quot;Returns the proof-of-work difficulty as a multiple of the minimum difficulty.&quot;);
+ 
+     return GetDifficulty();
+@@ -135,7 +145,7 @@ Value getbalance(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getbalance\n&quot;
++            &quot;getbalance &lt;pw&gt;\n&quot;
+             &quot;Returns the server&#x27;s available balance.&quot;);
+ 
+     return ((double)GetBalance() / (double)COIN);
+@@ -146,7 +156,7 @@ Value getgenerate(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getgenerate\n&quot;
++            &quot;getgenerate &lt;pw&gt;\n&quot;
+             &quot;Returns true or false.&quot;);
+ 
+     return (bool)fGenerateBitcoins;
+@@ -157,7 +167,7 @@ Value setgenerate(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;setgenerate &lt;generate&gt; [genproclimit]\n&quot;
++            &quot;setgenerate &lt;pw&gt; &lt;generate&gt; [genproclimit]\n&quot;
+             &quot;&lt;generate&gt; is true or false to turn generation on or off.\n&quot;
+             &quot;Generation is limited to [genproclimit] processors, -1 is unlimited.&quot;);
+ 
+@@ -183,7 +193,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 0)
+         throw runtime_error(
+-            &quot;getinfo&quot;);
++            &quot;getinfo &lt;pw&gt;&quot;);
+ 
+     Object obj;
+     obj.push_back(Pair(&quot;balance&quot;,       (double)GetBalance() / (double)COIN));
+@@ -201,7 +211,7 @@ Value getnewaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 1)
+         throw runtime_error(
+-            &quot;getnewaddress [label]\n&quot;
++            &quot;getnewaddress &lt;pw&gt; [label]\n&quot;
+             &quot;Returns a new bitcoin address for receiving payments.  &quot;
+             &quot;If [label] is specified (recommended), it is added to the address book &quot;
+             &quot;so payments received with the address will be labeled.&quot;);
+@@ -223,7 +233,7 @@ Value setlabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;setlabel &lt;bitcoinaddress&gt; &lt;label&gt;\n&quot;
++            &quot;setlabel &lt;pw&gt; &lt;bitcoinaddress&gt; &lt;label&gt;\n&quot;
+             &quot;Sets the label associated with the given address.&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -240,7 +250,7 @@ Value getlabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 1)
+         throw runtime_error(
+-            &quot;getlabel &lt;bitcoinaddress&gt;\n&quot;
++            &quot;getlabel &lt;pw&gt; &lt;bitcoinaddress&gt;\n&quot;
+             &quot;Returns the label associated with the given address.&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -260,7 +270,7 @@ Value getaddressesbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() != 1)
+         throw runtime_error(
+-            &quot;getaddressesbylabel &lt;label&gt;\n&quot;
++            &quot;getaddressesbylabel &lt;pw&gt; &lt;label&gt;\n&quot;
+             &quot;Returns the list of addresses with the given label.&quot;);
+ 
+     string strLabel = params[0].get_str();
+@@ -290,7 +300,7 @@ Value sendtoaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 2 || params.size() &gt; 4)
+         throw runtime_error(
+-            &quot;sendtoaddress &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
++            &quot;sendtoaddress &lt;pw&gt; &lt;bitcoinaddress&gt; &lt;amount&gt; [comment] [comment-to]\n&quot;
+             &quot;&lt;amount&gt; is a real and is rounded to the nearest 0.01&quot;);
+ 
+     string strAddress = params[0].get_str();
+@@ -318,7 +328,7 @@ Value listtransactions(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listtransactions [count=10] [includegenerated=false]\n&quot;
++            &quot;listtransactions &lt;pw&gt; [count=10] [includegenerated=false]\n&quot;
+             &quot;Returns up to [count] most recent transactions.&quot;);
+ 
+     int64 nCount = 10;
+@@ -339,7 +349,7 @@ Value getreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;getreceivedbyaddress &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
++            &quot;getreceivedbyaddress &lt;pw&gt; &lt;bitcoinaddress&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by &lt;bitcoinaddress&gt; in transactions with at least [minconf] confirmations.&quot;);
+ 
+     // Bitcoin address
+@@ -380,7 +390,7 @@ Value getreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &lt; 1 || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;getreceivedbylabel &lt;label&gt; [minconf=1]\n&quot;
++            &quot;getreceivedbylabel &lt;pw&gt; &lt;label&gt; [minconf=1]\n&quot;
+             &quot;Returns the total amount received by addresses with &lt;label&gt; in transactions with at least [minconf] confirmations.&quot;);
+ 
+     // Get the set of pub keys that have the label
+@@ -543,7 +553,7 @@ Value listreceivedbyaddress(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listreceivedbyaddress [minconf=1] [includeempty=false]\n&quot;
++            &quot;listreceivedbyaddress &lt;pw&gt; [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+             &quot;[includeempty] whether to include addresses that haven&#x27;t received any payments.\n&quot;
+             &quot;Returns an array of objects containing:\n&quot;
+@@ -559,7 +569,7 @@ Value listreceivedbylabel(const Array&amp; params, bool fHelp)
+ {
+     if (fHelp || params.size() &gt; 2)
+         throw runtime_error(
+-            &quot;listreceivedbylabel [minconf=1] [includeempty=false]\n&quot;
++            &quot;listreceivedbylabel &lt;pw&gt; [minconf=1] [includeempty=false]\n&quot;
+             &quot;[minconf] is the minimum number of confirmations before payments are included.\n&quot;
+             &quot;[includeempty] whether to include labels that haven&#x27;t received any payments.\n&quot;
+             &quot;Returns an array of objects containing:\n&quot;
+@@ -603,7 +613,6 @@ pair&lt;string, rpcfn_type&gt; pCallTable[] =
+     make_pair(&quot;getlabel&quot;,              &amp;getlabel),
+     make_pair(&quot;getaddressesbylabel&quot;,   &amp;getaddressesbylabel),
+     make_pair(&quot;sendtoaddress&quot;,         &amp;sendtoaddress),
+-    make_pair(&quot;listtransactions&quot;,      &amp;listtransactions),
+     make_pair(&quot;getamountreceived&quot;,     &amp;getreceivedbyaddress), // deprecated, renamed to getreceivedbyaddress
+     make_pair(&quot;getallreceived&quot;,        &amp;listreceivedbyaddress), // deprecated, renamed to listreceivedbyaddress
+     make_pair(&quot;getreceivedbyaddress&quot;,  &amp;getreceivedbyaddress),
+@@ -742,6 +751,17 @@ void ThreadRPCServer2(void* parg)
+ {
+     printf(&quot;ThreadRPCServer started\n&quot;);
+ 
++    if (mapArgs.count(&quot;-rpcpw&quot;))
++        strRPCPassword = mapArgs[&quot;-rpcpw&quot;];
++    if (strRPCPassword == &quot;&quot;)
++    {
++#if defined(__WXMSW__) &amp;&amp; wxUSE_GUI
++        MyMessageBox(&quot;Warning: rpc password is blank, use -rpcpw=&lt;password&gt;\n&quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
++#else
++        fprintf(stdout, &quot;Warning: rpc password is blank, use -rpcpw=&lt;password&gt;\n&quot;);
++#endif
++    }
++
+     // Bind to loopback 127.0.0.1 so the socket can only be accessed locally
+     boost::asio::io_service io_service;
+     tcp::endpoint endpoint(boost::asio::ip::address_v4::loopback(), 8332);
+@@ -764,7 +784,6 @@ void ThreadRPCServer2(void* parg)
+ 
+         // Receive request
+         string strRequest = ReadHTTP(stream);
+-        printf(&quot;ThreadRPCServer request=%s&quot;, strRequest.c_str());
+ 
+         // Handle multiple invocations per request
+         string::iterator begin = strRequest.begin();
+@@ -787,11 +806,25 @@ void ThreadRPCServer2(void* parg)
+                 const Array&amp; params = find_value(request, &quot;params&quot;).get_array();
+                 id                  = find_value(request, &quot;id&quot;);
+ 
++                printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
++
++                // Check password
++                if (params.size() &lt; 1 || params[0].type() != str_type)
++                    throw runtime_error(&quot;First parameter must be the password.&quot;);
++                if (params[0].get_str() != strRPCPassword)
++                {
++                    if (strRPCPassword.size() &lt; 15)
++                        Sleep(50);
++                    begin = strRequest.end();
++                    printf(&quot;ThreadRPCServer incorrect password attempt\n&quot;);
++                    throw runtime_error(&quot;Incorrect password.&quot;);
++                }
++
+                 // Execute
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+                 if (mi == mapCallTable.end())
+                     throw runtime_error(&quot;Method not found.&quot;);
+-                Value result = (*(*mi).second)(params, false);
++                Value result = (*(*mi).second)(Array(params.begin()+1, params.end()), false);
+ 
+                 // Send reply
+                 string strReply = JSONRPCReply(result, Value::null, id);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CAutoFile;
+ 
+ static const int VERSION = 302;
+-static const char* pszSubVer = &quot;&quot;;
++static const char* pszSubVer = &quot;.2&quot;;
+ 
+ 
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1132,7 +1132,7 @@ void CMainFrame::OnButtonNew(wxCommandEvent&amp; event)
+     // Ask name
+     CGetTextFromUserDialog dialog(this,
+         _(&quot;New Receiving Address&quot;),
+-        _(&quot;It&#x27;s good policy to use a new address for each payment you receive.\n\nLabel&quot;),
++        _(&quot;You should use a new address for each payment you receive.\n\nLabel&quot;),
+         &quot;&quot;);
+     if (!dialog.ShowModal())
+         return;
+@@ -2372,7 +2372,7 @@ void CAddressBookDialog::OnButtonNew(wxCommandEvent&amp; event)
+         // Ask name
+         CGetTextFromUserDialog dialog(this,
+             _(&quot;New Receiving Address&quot;),
+-            _(&quot;It&#x27;s good policy to use a new address for each payment you receive.\n\nLabel&quot;),
++            _(&quot;You should use a new address for each payment you receive.\n\nLabel&quot;),
+             &quot;&quot;);
+         if (!dialog.ShowModal())
+             return;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -701,12 +701,13 @@ void AddTimeData(unsigned int ip, int64 nTime)
+         sort(vTimeOffsets.begin(), vTimeOffsets.end());
+         int64 nMedian = vTimeOffsets[vTimeOffsets.size()/2];
+         nTimeOffset = nMedian;
+-        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 5 * 60)
++        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 36 * 60 * 60)
+         {
+             // Only let other nodes change our clock so far before we
+             // go to the NTP servers
+             /// todo: Get time from NTP servers, then set a flag
+             ///    to make sure it doesn&#x27;t get changed again
++            nTimeOffset = 0;
+         }
+         foreach(int64 n, vTimeOffsets)
+             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/ae922a3/">← security safeguards, limited addr messages -- version 0.3.2</a><a rel="next" href="../../commits/3b7cd5d/">Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

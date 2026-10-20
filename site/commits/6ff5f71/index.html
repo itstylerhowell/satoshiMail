@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fixed segfault in bignum.h… (r121) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/6ff5f71/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="fixed segfault in bignum.h… (r121) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/6ff5f71/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="fixed segfault in bignum.h… (r121) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7", "url": "https://satoshimail.pages.dev/commits/6ff5f71/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-31T19:15:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6ff5f718b6a67797b2b3bab8905d607ad216ee21"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed segfault in bignum.h, additional…", "item": "https://satoshimail.pages.dev/commits/6ff5f71/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c6ff5f718b6">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">fixed segfault in bignum.h, additional…</span></div></nav>
+<main class="in">
+<h1>fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 31 July 2010 · SVN r121 · release v0.3.10 · 6 files, +39 −24</p>
+<p class="actions"><a class="btn" href="../../#t-c6ff5f718b6">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/6ff5f718b6a67797b2b3bab8905d607ad216ee21" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>bignum.h</code></summary><pre><code>@@ -401,8 +401,16 @@ public:
+ 
+     CBigNum&amp; operator&gt;&gt;=(unsigned int shift)
+     {
+-        // Note: BN_rshift segfaults on 64-bit ubuntu 9.10 if 2^shift is greater than the number,
+-        //       tested OK on 64-bit ubuntu 10.4
++        // Note: BN_rshift segfaults on 64-bit if 2^shift is greater than the number
++        //   if built on ubuntu 9.04 or 9.10, probably depends on version of openssl
++        CBigNum a = 1;
++        a &lt;&lt;= shift;
++        if (BN_cmp(&amp;a, this) &gt; 0)
++        {
++            *this = 0;
++            return *this;
++        }
++
+         if (!BN_rshift(this, this, shift))
+             throw bignum_error(&quot;CBigNum:operator&gt;&gt;= : BN_rshift failed&quot;);
+         return *this;
+@@ -511,10 +519,8 @@ inline const CBigNum operator&lt;&lt;(const CBigNum&amp; a, unsigned int shift)
+ 
+ inline const CBigNum operator&gt;&gt;(const CBigNum&amp; a, unsigned int shift)
+ {
+-    CBigNum r;
+-    // Note: BN_rshift segfaults on 64-bit ubuntu 9.10 if 2^shift is greater than the number
+-    if (!BN_rshift(&amp;r, &amp;a, shift))
+-        throw bignum_error(&quot;CBigNum:operator&gt;&gt; : BN_rshift failed&quot;);
++    CBigNum r = a;
++    r &gt;&gt;= shift;
+     return r;
+ }
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -3036,7 +3036,8 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+                 foreach(CWalletTx* pcoin, setCoins)
+                     for (int nOut = 0; nOut &lt; pcoin-&gt;vout.size(); nOut++)
+                         if (pcoin-&gt;vout[nOut].IsMine())
+-                            SignSignature(*pcoin, wtxNew, nIn++);
++                            if (!SignSignature(*pcoin, wtxNew, nIn++))
++                                return false;
+ 
+                 // Check that enough fee is included
+                 if (nFee &lt; wtxNew.GetMinFee())</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -42,20 +42,17 @@ void MakeSameSize(valtype&amp; vch1, valtype&amp; vch2)
+ #define stacktop(i)  (stack.at(stack.size()+(i)))
+ #define altstacktop(i)  (altstack.at(altstack.size()+(i)))
+ 
+-bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nIn, int nHashType,
+-                vector&lt;vector&lt;unsigned char&gt; &gt;* pvStackRet)
++bool EvalScript(vector&lt;vector&lt;unsigned char&gt; &gt;&amp; stack, const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nIn, int nHashType)
+ {
+     CAutoBN_CTX pctx;
+     CScript::const_iterator pc = script.begin();
+     CScript::const_iterator pend = script.end();
+     CScript::const_iterator pbegincodehash = script.begin();
+     vector&lt;bool&gt; vfExec;
+-    vector&lt;valtype&gt; stack;
+     vector&lt;valtype&gt; altstack;
+-    if (pvStackRet)
+-        pvStackRet-&gt;clear();
+-    if (script.size() &gt; 20000)
++    if (script.size() &gt; 10000)
+         return false;
++    int nOpCount = 0;
+ 
+ 
+     try
+@@ -73,6 +70,8 @@ bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nI
+                 return false;
+             if (vchPushValue.size() &gt; 5000)
+                 return false;
++            if (opcode &gt; OP_16 &amp;&amp; nOpCount++ &gt; 200)
++                return false;
+ 
+             if (fExec &amp;&amp; opcode &lt;= OP_PUSHDATA4)
+                 stack.push_back(vchPushValue);
+@@ -828,9 +827,7 @@ bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nI
+     if (!vfExec.empty())
+         return false;
+ 
+-    if (pvStackRet)
+-        *pvStackRet = stack;
+-    return (stack.empty() ? false : CastToBool(stack.back()));
++    return true;
+ }
+ 
+ #undef top
+@@ -1114,6 +1111,19 @@ bool ExtractHash160(const CScript&amp; scriptPubKey, uint160&amp; hash160Ret)
+ }
+ 
+ 
++bool VerifyScript(const CScript&amp; scriptSig, const CScript&amp; scriptPubKey, const CTransaction&amp; txTo, unsigned int nIn, int nHashType)
++{
++    vector&lt;vector&lt;unsigned char&gt; &gt; stack;
++    if (!EvalScript(stack, scriptSig, txTo, nIn, nHashType))
++        return false;
++    if (!EvalScript(stack, scriptPubKey, txTo, nIn, nHashType))
++        return false;
++    if (stack.empty())
++        return false;
++    return CastToBool(stack.back());
++}
++
++
+ bool SignSignature(const CTransaction&amp; txFrom, CTransaction&amp; txTo, unsigned int nIn, int nHashType, CScript scriptPrereq)
+ {
+     assert(nIn &lt; txTo.vin.size());
+@@ -1132,7 +1142,7 @@ bool SignSignature(const CTransaction&amp; txFrom, CTransaction&amp; txTo, unsigned int
+ 
+     // Test solution
+     if (scriptPrereq.empty())
+-        if (!EvalScript(txin.scriptSig + CScript(OP_CODESEPARATOR) + txout.scriptPubKey, txTo, nIn))
++        if (!VerifyScript(txin.scriptSig, txout.scriptPubKey, txTo, nIn, 0))
+             return false;
+ 
+     return true;
+@@ -1150,7 +1160,7 @@ bool VerifySignature(const CTransaction&amp; txFrom, const CTransaction&amp; txTo, unsig
+     if (txin.prevout.hash != txFrom.GetHash())
+         return false;
+ 
+-    if (!EvalScript(txin.scriptSig + CScript(OP_CODESEPARATOR) + txout.scriptPubKey, txTo, nIn, nHashType))
++    if (!VerifyScript(txin.scriptSig, txout.scriptPubKey, txTo, nIn, nHashType))
+         return false;
+ 
+     // Anytime a signature is successfully verified, it&#x27;s proof the outpoint is spent,</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -657,8 +657,6 @@ public:
+ 
+ 
+ 
+-bool EvalScript(const CScript&amp; script, const CTransaction&amp; txTo, unsigned int nIn, int nHashType=0,
+-                vector&lt;vector&lt;unsigned char&gt; &gt;* pvStackRet=NULL);
+ uint256 SignatureHash(CScript scriptCode, const CTransaction&amp; txTo, unsigned int nIn, int nHashType);
+ bool IsMine(const CScript&amp; scriptPubKey);
+ bool ExtractPubKey(const CScript&amp; scriptPubKey, bool fMineOnly, vector&lt;unsigned char&gt;&amp; vchPubKeyRet);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 306;
++static const int VERSION = 307;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.6
++!define VERSION 0.3.7
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.6-win32-setup.exe
++OutFile bitcoin-0.3.7-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.6.0
++VIProductVersion 0.3.7.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e1cb7ce/">← simplified makefile.unix, updated build-unix.txt…</a><a rel="next" href="../../commits/73aa262/">fixed segfault in bignum.h, additional security limits… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

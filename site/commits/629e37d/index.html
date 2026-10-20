@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>get external ip from irc (r202) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 December 2010: get external ip from irc. 5 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/629e37d/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="get external ip from irc (r202) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 December 2010: get external ip from irc. 5 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/629e37d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="get external ip from irc (r202) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 15 December 2010: get external ip from irc. 5 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "get external ip from irc", "url": "https://satoshimail.pages.dev/commits/629e37d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-12-15T22:43:51Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/629e37dde1fa93f6ce31544d1ebb5ee5c19052cb"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "get external ip from irc", "item": "https://satoshimail.pages.dev/commits/629e37d/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c629e37dde1">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">get external ip from irc</span></div></nav>
+<main class="in">
+<h1>get external ip from irc</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 15 December 2010 · SVN r202 · release v0.3.20 · 5 files, +48 −16</p>
+<p class="actions"><a class="btn" href="../../#t-c629e37dde1">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/629e37dde1fa93f6ce31544d1ebb5ee5c19052cb" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>irc.cpp</code></summary><pre><code>@@ -5,6 +5,7 @@
+ #include &quot;headers.h&quot;
+ 
+ int nGotIRCAddresses = 0;
++bool fGotExternalIP = false;
+ 
+ void ThreadIRCSeed2(void* parg);
+ 
+@@ -223,6 +224,8 @@ bool GetIPFromIRC(SOCKET hSocket, string strMyName, unsigned int&amp; ipRet)
+     }
+     else
+     {
++        // Hybrid IRC used by lfnet always returns IP when you userhost yourself,
++        // but in case another IRC is ever used this should work.
+         printf(&quot;GetIPFromIRC() got userhost %s\n&quot;, strHost.c_str());
+         if (fUseProxy)
+             return false;
+@@ -327,14 +330,15 @@ void ThreadIRCSeed2(void* parg)
+         }
+         Sleep(500);
+ 
+-        // Get my external IP from IRC server
++        // Get our external IP from the IRC server and re-nick before joining the channel
+         CAddress addrFromIRC;
+         if (GetIPFromIRC(hSocket, strMyName, addrFromIRC.ip))
+         {
+-            // Just using it as a backup for now
+             printf(&quot;GetIPFromIRC() returned %s\n&quot;, addrFromIRC.ToStringIP().c_str());
+-            if (addrFromIRC.IsRoutable() &amp;&amp; !fUseProxy &amp;&amp; !addrLocalHost.IsRoutable())
++            if (!fUseProxy &amp;&amp; addrFromIRC.IsRoutable())
+             {
++                // IRC lets you to re-nick
++                fGotExternalIP = true;
+                 addrLocalHost.ip = addrFromIRC.ip;
+                 strMyName = EncodeAddress(addrLocalHost);
+                 Send(hSocket, strprintf(&quot;NICK %s\r&quot;, strMyName.c_str()).c_str());</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -6,3 +6,4 @@ bool RecvLine(SOCKET hSocket, string&amp; strLine);
+ void ThreadIRCSeed(void* parg);
+ 
+ extern int nGotIRCAddresses;
++extern bool fGotExternalIP;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1733,6 +1733,8 @@ public:
+ 
+ 
+ //
++// Alerts are for notifying old versions if they become too obsolete and
++// need to upgrade.  The message is displayed in the status bar.
+ // Alert messages are broadcast as a vector of signed data.  Unserializing may
+ // not read the entire buffer if the alert is for a newer version, but older
+ // versions can still relay the original data.</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -163,7 +163,7 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+     return error(&quot;GetMyExternalIP() : connection closed&quot;);
+ }
+ 
+-
++// We now get our external IP from the IRC server first and only use this as a backup
+ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ {
+     CAddress addrConnect;
+@@ -176,6 +176,10 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+     for (int nLookup = 0; nLookup &lt;= 1; nLookup++)
+     for (int nHost = 1; nHost &lt;= 2; nHost++)
+     {
++        // We should be phasing out our use of sites like these.  If we need
++        // replacements, we should ask for volunteers to put this simple
++        // php file on their webserver that prints the client IP:
++        //  &lt;?php echo $_SERVER[&quot;REMOTE_ADDR&quot;]; ?&gt;
+         if (nHost == 1)
+         {
+             addrConnect = CAddress(&quot;91.198.22.70:80&quot;); // checkip.dyndns.org
+@@ -222,6 +226,36 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+     return false;
+ }
+ 
++void ThreadGetMyExternalIP(void* parg)
++{
++    // Wait for IRC to get it first
++    if (!GetBoolArg(&quot;-noirc&quot;))
++    {
++        for (int i = 0; i &lt; 2 * 60; i++)
++        {
++            Sleep(1000);
++            if (fGotExternalIP || fShutdown)
++                return;
++        }
++    }
++
++    // Fallback in case IRC fails to get it
++    if (GetMyExternalIP(addrLocalHost.ip))
++    {
++        printf(&quot;GetMyExternalIP() returned %s\n&quot;, addrLocalHost.ToStringIP().c_str());
++        if (addrLocalHost.IsRoutable())
++        {
++            // If we already connected to a few before we had our IP, go back and addr them.
++            // setAddrKnown automatically filters any duplicate sends.
++            CAddress addr(addrLocalHost);
++            addr.nTime = GetAdjustedTime();
++            CRITICAL_BLOCK(cs_vNodes)
++                foreach(CNode* pnode, vNodes)
++                    pnode-&gt;PushAddress(addr);
++        }
++    }
++}
++
+ 
+ 
+ 
+@@ -1310,8 +1344,7 @@ void StartNode(void* parg)
+ #endif
+     printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
+ 
+-    // Get our external IP address for incoming connections
+-    if (fUseProxy)
++    if (fUseProxy || mapArgs.count(&quot;-connect&quot;))
+     {
+         // Proxies can&#x27;t take incoming connections
+         addrLocalHost.ip = CAddress(&quot;0.0.0.0&quot;).ip;
+@@ -1319,15 +1352,7 @@ void StartNode(void* parg)
+     }
+     else
+     {
+-        if (addrIncoming.IsValid())
+-            addrLocalHost.ip = addrIncoming.ip;
+-
+-        if (GetMyExternalIP(addrLocalHost.ip))
+-        {
+-            addrIncoming = addrLocalHost;
+-            CWalletDB().WriteSetting(&quot;addrIncoming&quot;, addrIncoming);
+-            printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
+-        }
++        CreateThread(ThreadGetMyExternalIP, NULL);
+     }
+ 
+     //</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -25,7 +25,7 @@ class CDataStream;
+ class CAutoFile;
+ static const unsigned int MAX_SIZE = 0x02000000;
+ 
+-static const int VERSION = 31900;
++static const int VERSION = 31901;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/fc73ad6/">← -- version 0.3.19 release</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

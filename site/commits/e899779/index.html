@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>restrict file permissions on linux… (r47) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e899779/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="restrict file permissions on linux… (r47) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e899779/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="restrict file permissions on linux… (r47) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "restrict file permissions on linux to the user only", "url": "https://satoshimail.pages.dev/commits/e899779/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-13T02:13:43Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e899779450bcd940dcdb0108d27c35eae92cc1e1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "restrict file permissions on linux to…", "item": "https://satoshimail.pages.dev/commits/e899779/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-ce899779450">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">restrict file permissions on linux to…</span></div></nav>
+<main class="in">
+<h1>restrict file permissions on linux to the user only</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 13 December 2009 · SVN r47 · release v0.2.0 · 2 files, +2 −1</p>
+<p class="actions"><a class="btn" href="../../#t-ce899779450">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/e899779450bcd940dcdb0108d27c35eae92cc1e1" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -79,7 +79,7 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+                              DB_THREAD     |
+                              DB_PRIVATE    |
+                              DB_RECOVER,
+-                             0);
++                             S_IRUSR | S_IWUSR);
+             if (ret &gt; 0)
+                 throw runtime_error(strprintf(&quot;CDB() : error %d opening database environment\n&quot;, ret));
+             fDbEnvInit = true;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3494,6 +3494,7 @@ bool CMyApp::OnInit2()
+     SetAppName(&quot;Bitcoin&quot;);
+ #else
+     SetAppName(&quot;bitcoin&quot;);
++    umask(077);
+ #endif
+ 
+     //</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e39bc50/">← misc exit code, updated setup.nsi</a><a rel="next" href="../../commits/adb50ff/">misc →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

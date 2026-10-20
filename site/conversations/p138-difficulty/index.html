@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Difficulty – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 29 July 2010: You were looking at the wrong code. Here&#x27;s the code that applies: bool CBlock::CheckBlock() const { ... // Check…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p138-difficulty/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Difficulty – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 29 July 2010: You were looking at the wrong code. Here&#x27;s the code that applies: bool CBlock::CheckBlock() const { ... // Check…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p138-difficulty/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Difficulty – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 29 July 2010: You were looking at the wrong code. Here&#x27;s the code that applies: bool CBlock::CheckBlock() const { ... // Check…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Difficulty", "url": "https://satoshimail.pages.dev/conversations/p138-difficulty/", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-07-27T10:11:51Z", "text": "http://nullvoid.org/bitcoin/difficultiez.php <? header(\"Content-type: text/html\"); require_once 'jsonRPCClient.php'; $data=new jsonRPCClient('http://127.0.0.1:8332'); $blockcount = $data->getblockcount(); $now = date(\"U\"); $blockfile = \"blockdata\"; $data = file($blockfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); array_pop($data); ?><html> <head> <meta http-equiv=\"refresh\" content=\"100000\"> <\/head> <body> <pre> <? function humantime($secs) { if ($secs<0) return false; $m = (int)($secs / 60); $s = $secs % 60; $s = ($s <= 9) ? \"0$s\" : $s; $h = (int)($m / 60); $m = $m % 60; $m = ($m <= 9) ? \"0$m\" : $m; $d = (int)($h / 24); $h = $h % 24; $h = ($h <= 9) ? \"0$h\" : $h; $d = ($d <= 9) ? \"0$d\" : $d; return $d.\"d $h:$m:$s\"; } // Converted from ArtForz's python code http://bitcointalk.org/index.php?topic=464.msg4080#msg4080 function uint256_from_compact($c) { $nbytes = ($c >> 24) & 0xFF; return bcmul($c & 0xFFFFFF,bcpow(2,8 * ($nbytes - 3))); } $tblock = 0; $nTargetTimespan = 60 * 60 * 24 * 14; bcscale(256); foreach ($data as $line) { $blocks = strtok($line, \" \"); $date = strtok(\" \"); $avghash = strtok(\" \"); $bits = strtok(\" \"); if ($blocks == 0 || $blocks == $tblock) { $tblock = $blocks + 2016; $blocknum = str_repeat(\" \", 6 - strlen($blocks)).$blocks; echo \"Block $blocknum was generated at $date (\".date(\"r\", $date).\")\"; if ($blocks != 0) { $intervalnum = $date - $lastdate; $interval = str_repeat(\" \", 9 - strlen($intervalnum)).$intervalnum; echo \" $interval seconds interval (\".humantime($intervalnum).\")\"; echo \" Difficulty: \".bcdiv(bcdiv(bcmul(uint256_from_compact(0x1D00FFFF),1000), uint256_from_compact($bits)), 1000); $lastdate = $date; } echo \"<br>\"; } } ?> <\/pre> <\/body> <\/html>", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "mpkomara"}, "datePublished": "2010-07-27T14:32:42Z", "text": "nice precision! latest difficulty = 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 17840402922938076799906"}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-07-27T14:52:04Z", "text": "Hehe, thanks. I could provide more accurate precision, but I think that is good enough."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Insti"}, "datePublished": "2010-07-27T15:45:03Z", "text": "I'm just thankful the difficulty isn't 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 17840402922938076799907 Just imagine how hard it would be to win a block then!!!!!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-07-28T00:31:31Z", "text": "Actually, calculating with another digit comes out to 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 178404029229380767999068 and thus could be rounded up to the value you suggested Insti."}, {"@type": "Comment", "author": {"@type": "Person", "name": "mizerydearia"}, "datePublished": "2010-07-28T01:44:28Z", "text": "It appears that block 70718 was found two hours in the future and followed with block 70719 being found about two hours in the past (from the future date of previous block). -7017 seconds to find block 70719 8153 seconds to find block 70718 49 seconds to find block 70717 524 seconds to find block 70716 block timestamp 70715 1280275621 70716 1280276145 70717 1280276194 70718 1280284347 70719 1280277330 This doesn't seem to have any effect on things so much other than providing a kind of…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-29T01:16:23Z", "text": "You were looking at the wrong code. Here's the code that applies: bool CBlock::CheckBlock() const { ... // Check timestamp if (nTime > GetAdjustedTime() + 2 * 60 * 60) return error(\"CheckBlock() : block timestamp too far in the future\"); ... bool CBlock::AcceptBlock() { ... // Check timestamp against prev if (nTime <= pindexPrev->GetMedianTimePast()) return error(\"AcceptBlock() : block's timestamp is too early\"); The timestamp is limited to up to 2 hours in the future. It can be earlier than…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Difficulty", "item": "https://satoshimail.pages.dev/conversations/p138-difficulty/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p138">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Difficulty</span></div></nav>
+<main class="in">
+<h1>Difficulty</h1>
+<p class="lead">BitcoinTalk forum · 7 messages · from 27 July 2010 · with Insti, Satoshi Nakamoto, mizerydearia, mpkomara</p>
+<p class="actions"><a class="btn" href="../../#t-p138">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/138/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-07-27T10:11:51Z">27 July 2010, 10:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6018#msg6018" rel="nofollow noopener">original</a></span></header>
+<div class="t"><a href="http://nullvoid.org/bitcoin/difficultiez.php" rel="nofollow noopener">http://nullvoid.org/bitcoin/difficultiez.php</a></div><pre><code>&lt;?
+ header(&quot;Content-type: text/html&quot;);
+ require_once &#x27;jsonRPCClient.php&#x27;;
+ $data=new jsonRPCClient(&#x27;http://127.0.0.1:8332&#x27;);
+ $blockcount = $data-&gt;getblockcount();
+ $now = date(&quot;U&quot;);
+ $blockfile = &quot;blockdata&quot;;
+ $data = file($blockfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); array_pop($data);
+?&gt;&lt;html&gt;
+ &lt;head&gt;
+  &lt;meta http-equiv=&quot;refresh&quot; content=&quot;100000&quot;&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;pre&gt;
+&lt;?
+ function humantime($secs) {
+  if ($secs&lt;0) return false;
+  $m = (int)($secs / 60); $s = $secs % 60; $s = ($s &lt;= 9) ? &quot;0$s&quot; : $s;
+  $h = (int)($m / 60); $m = $m % 60; $m = ($m &lt;= 9) ? &quot;0$m&quot; : $m;
+  $d = (int)($h / 24); $h = $h % 24; $h = ($h &lt;= 9) ? &quot;0$h&quot; : $h;
+  $d = ($d &lt;= 9) ? &quot;0$d&quot; : $d;
+  return $d.&quot;d $h:$m:$s&quot;;
+ }
+
+ // Converted from ArtForz&#x27;s python code http://bitcointalk.org/index.php?topic=464.msg4080#msg4080
+ function uint256_from_compact($c) {
+  $nbytes = ($c &gt;&gt; 24) &amp; 0xFF;
+  return bcmul($c &amp; 0xFFFFFF,bcpow(2,8 * ($nbytes - 3)));
+ }
+
+ $tblock = 0;
+ $nTargetTimespan = 60 * 60 * 24 * 14;
+ bcscale(256);
+ foreach ($data as $line) {
+  $blocks = strtok($line, &quot; &quot;);
+  $date = strtok(&quot; &quot;);
+  $avghash = strtok(&quot; &quot;);
+  $bits = strtok(&quot; &quot;);
+  if ($blocks == 0 || $blocks == $tblock) {
+   $tblock = $blocks + 2016;
+   $blocknum = str_repeat(&quot; &quot;, 6 - strlen($blocks)).$blocks;
+   echo &quot;Block $blocknum was generated at $date (&quot;.date(&quot;r&quot;, $date).&quot;)&quot;;
+   if ($blocks != 0) {
+    $intervalnum = $date - $lastdate;
+    $interval = str_repeat(&quot; &quot;, 9 - strlen($intervalnum)).$intervalnum;
+    echo &quot;    $interval seconds interval (&quot;.humantime($intervalnum).&quot;)&quot;;
+    echo &quot;   Difficulty: &quot;.bcdiv(bcdiv(bcmul(uint256_from_compact(0x1D00FFFF),1000), uint256_from_compact($bits)), 1000);
+    $lastdate = $date;
+   }
+   echo &quot;&lt;br&gt;&quot;;
+  }
+ }
+?&gt;
+  &lt;/pre&gt;
+ &lt;/body&gt;
+&lt;/html&gt;</code></pre></article><article class="msg" id="m1">
+<header><b>mpkomara</b><span class="muted"> · <time datetime="2010-07-27T14:32:42Z">27 July 2010, 14:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6036#msg6036" rel="nofollow noopener">original</a></span></header>
+<div class="t">nice precision! latest difficulty = 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 17840402922938076799906
+  </div></article><article class="msg" id="m2">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-07-27T14:52:04Z">27 July 2010, 14:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6040#msg6040" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hehe, thanks. I could provide more accurate precision, but I think that is good enough.</div></article><article class="msg" id="m3">
+<header><b>Insti</b><span class="muted"> · <time datetime="2010-07-27T15:45:03Z">27 July 2010, 15:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6048#msg6048" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m just thankful the difficulty isn&#x27;t 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 17840402922938076799907
+
+Just imagine how hard it would be to win a block then!!!!!</div></article><article class="msg" id="m4">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-07-28T00:31:31Z">28 July 2010, 00:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6122#msg6122" rel="nofollow noopener">original</a></span></header>
+<div class="t">Actually, calculating with another digit comes out to 244.213223092375323881335701184896212407930361873708113773326734402748260502489 1554339282075169582811726687822061777635447902413461818393548574922122914786456 6654051064077556842993973623686279076537890477160907158869253835628402573582928 178404029229380767999068 and thus could be rounded up to the value you suggested Insti.</div></article><article class="msg" id="m5">
+<header><b>mizerydearia</b><span class="muted"> · <time datetime="2010-07-28T01:44:28Z">28 July 2010, 01:44 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6130#msg6130" rel="nofollow noopener">original</a></span></header>
+<div class="t">It appears that block 70718 was found two hours in the future and followed with block 70719 being found about two hours in the past (from the future date of previous block).</div><pre><code> -7017 seconds to find block 70719
+  8153 seconds to find block 70718
+    49 seconds to find block 70717
+   524 seconds to find block 70716</code></pre><pre><code>block timestamp
+70715 1280275621
+70716 1280276145
+70717 1280276194
+70718 1280284347
+70719 1280277330</code></pre><div class="t">This doesn&#x27;t seem to have any effect on things so much other than providing a kind of inaccurate depiction of statistical results every now and then (when a block is claimed to be from the future or the past), however what would happen if either the first or second (whichever one triggers new difficulty being established) of a new set of 2016 blocks is generated  to have a timestamp 2+ weeks in the past or the future?  If in the past, I presume according to the code in main.cpp: GetNextWorkRequired function that the lowest accepted interval is 3.5 days.  And if in the future I presume according to the code the lowest accepted interval is 56 days.</div></article><article class="msg sat" id="m6">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T01:16:23Z">29 July 2010, 01:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6301#msg6301" rel="nofollow noopener">original</a></span></header>
+<div class="t">You were looking at the wrong code.  Here&#x27;s the code that applies:</div><pre><code>bool CBlock::CheckBlock() const
+{
+...
+    // Check timestamp
+    if (nTime &gt; GetAdjustedTime() + 2 * 60 * 60)
+        return error(&quot;CheckBlock() : block timestamp too far in the future&quot;);
+...
+
+bool CBlock::AcceptBlock()
+{
+   ...
+    // Check timestamp against prev
+    if (nTime &lt;= pindexPrev-&gt;GetMedianTimePast())
+        return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);</code></pre><div class="t">The timestamp is limited to up to 2 hours in the future.  It can be earlier than the previous block, but it must be greater than the median of the last 11 blocks.  The reason for doing it that way is so the time can get corrected in the next block if the previous block had the time too far in the future, like what happened.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p137-bitcoin-does-not-violate-mises-regression-theorem/">← Bitcoin does NOT violate Mises&#x27; Regression Theorem</a><a rel="next" href="../../conversations/p139-running-on-a-port-other-than-8333/">Running on a port other than 8333 →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

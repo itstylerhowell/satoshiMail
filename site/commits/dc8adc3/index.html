@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Russian translation by eurekafag (r160) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 October 2010: Russian translation by eurekafag. 3 files changed.">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/dc8adc3/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Russian translation by eurekafag (r160) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 October 2010: Russian translation by eurekafag. 3 files changed.">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/dc8adc3/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Russian translation by eurekafag (r160) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 October 2010: Russian translation by eurekafag. 3 files changed.">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Russian translation by eurekafag", "url": "https://satoshimail.pages.dev/commits/dc8adc3/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-10-04T01:40:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dc8adc3b48bb2201f2bd796a5ffa0733c30aa6e1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Russian translation by eurekafag", "item": "https://satoshimail.pages.dev/commits/dc8adc3/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cdc8adc3b48">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">Russian translation by eurekafag</span></div></nav>
+<main class="in">
+<h1>Russian translation by eurekafag</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 4 October 2010 · SVN r160 · release v0.3.14 · 3 files, +849 −0</p>
+<p class="actions"><a class="btn" href="../../#t-cdc8adc3b48">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/dc8adc3b48bb2201f2bd796a5ffa0733c30aa6e1" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>locale/ru/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/ru/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -0,0 +1,845 @@
++#, fuzzy
++msgid &quot;&quot;
++msgstr &quot;&quot;
++&quot;Project-Id-Version: \n&quot;
++&quot;Report-Msgid-Bugs-To: \n&quot;
++&quot;POT-Creation-Date: 2010-07-15 19:15-0000\n&quot;
++&quot;PO-Revision-Date: 2010-07-16 22:24+0400\n&quot;
++&quot;Last-Translator: eurekafag\n&quot;
++&quot;Language-Team: \n&quot;
++&quot;MIME-Version: 1.0\n&quot;
++&quot;Content-Type: text/plain; charset=UTF-8\n&quot;
++&quot;Content-Transfer-Encoding: 8bit\n&quot;
++&quot;X-Poedit-KeywordsList: _;gettext;gettext_noop\n&quot;
++&quot;X-Poedit-Basepath: .\n&quot;
++&quot;X-Poedit-SearchPath-0: ../../..\n&quot;
++
++#: ../../../init.cpp:174
++msgid &quot;Cannot write autostart/bitcoin.desktop file&quot;
++msgstr &quot;Не удаётся записать файл autostart/bitcoin.desktop&quot;
++
++#: ../../../init.cpp:388
++msgid &quot;Usage:&quot;
++msgstr &quot;Использование&quot;
++
++#: ../../../init.cpp:390
++msgid &quot;Send command to bitcoin running with -server or -daemon\n&quot;
++msgstr &quot;Отправить команды bitcoin, запущенному с -server или -daemon\n&quot;
++
++#: ../../../init.cpp:391
++msgid &quot;Get help for a command\n&quot;
++msgstr &quot;Получить помощь для команды\n&quot;
++
++#: ../../../init.cpp:392
++msgid &quot;List commands\n&quot;
++msgstr &quot;Список команд\n&quot;
++
++#: ../../../init.cpp:393
++msgid &quot;Options:\n&quot;
++msgstr &quot;Параметры:\n&quot;
++
++#: ../../../init.cpp:394
++msgid &quot;Generate coins\n&quot;
++msgstr &quot;Генерировать монеты\n&quot;
++
++#: ../../../init.cpp:395
++msgid &quot;Don&#x27;t generate coins\n&quot;
++msgstr &quot;Не генерировать монеты\n&quot;
++
++#: ../../../init.cpp:396
++msgid &quot;Start minimized\n&quot;
++msgstr &quot;Запускать свёрнутым\n&quot;
++
++#: ../../../init.cpp:397
++msgid &quot;Specify data directory\n&quot;
++msgstr &quot;Указать каталог данных\n&quot;
++
++#: ../../../init.cpp:398
++msgid &quot;Connect through socks4 proxy\n&quot;
++msgstr &quot;Подключаться через socks4 прокси\n&quot;
++
++#: ../../../init.cpp:399
++msgid &quot;Add a node to connect to\n&quot;
++msgstr &quot;Добавить узел для подключения\n&quot;
++
++#: ../../../init.cpp:400
++msgid &quot;Connect only to the specified node\n&quot;
++msgstr &quot;Подключаться только к указанному узлу\n&quot;
++
++#: ../../../init.cpp:401
++msgid &quot;Accept command line and JSON-RPC commands\n&quot;
++msgstr &quot;Принимать команды из командной строки и через JSON-RPC\n&quot;
++
++#: ../../../init.cpp:402
++msgid &quot;Run in the background as a daemon and accept commands\n&quot;
++msgstr &quot;Запустить в фоне как демон и принимать команды\n&quot;
++
++#: ../../../init.cpp:403
++msgid &quot;This help message\n&quot;
++msgstr &quot;Эта справка\n&quot;
++
++#: ../../../init.cpp:503
++msgid &quot;Error loading addr.dat      \n&quot;
++msgstr &quot;Ошибка загрузки addr.dat      \n&quot;
++
++#: ../../../init.cpp:509
++msgid &quot;Error loading blkindex.dat      \n&quot;
++msgstr &quot;Ошибка загрузки blkindex.dat      \n&quot;
++
++#: ../../../init.cpp:516
++msgid &quot;Error loading wallet.dat      \n&quot;
++msgstr &quot;Ошибка загрузки wallet.dat      \n&quot;
++
++#: ../../../init.cpp:584
++msgid &quot;Invalid -proxy address&quot;
++msgstr &quot;Неверный адрес -proxy&quot;
++
++#: ../../../init.cpp:677
++msgid &quot;Program has crashed and will terminate.  &quot;
++msgstr &quot;Сбой программы, завершение.  &quot;
++
++#: ../../../main.cpp:1480
++#: ../../../main.cpp:1482
++msgid &quot;Warning: Disk space is low  &quot;
++msgstr &quot;Внимание: мало места на диске  &quot;
++
++#: ../../../main.cpp:3094
++#, c-format
++msgid &quot;Error: This is an oversized transaction that requires a transaction fee of %s  &quot;
++msgstr &quot;Ошибка: этот перевод слишком большого размера, который требует комиссию %s  &quot;
++
++#: ../../../main.cpp:3096
++msgid &quot;Error: Transaction creation failed  &quot;
++msgstr &quot;Ошибка: не удалось создать перевод  &quot;
++
++#: ../../../main.cpp:3101
++#: ../../../ui.cpp:1776
++#: ../../../ui.cpp:1778
++#: ../../../ui.cpp:1919
++#: ../../../ui.cpp:2068
++msgid &quot;Sending...&quot;
++msgstr &quot;Отправка...&quot;
++
++#: ../../../main.cpp:3105
++msgid &quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;
++msgstr &quot;Перевод был отклонен. Это могло произойти, если некоторые из монет в вашем кошельке уже были потрачены, например, если вы использовали копию wallet.dat, и монеты были потрачены в копии, но не отмечены израсходованными здесь.&quot;
++
++#: ../../../main.cpp:3117
++msgid &quot;Invalid amount&quot;
++msgstr &quot;Неверное количество&quot;
++
++#: ../../../main.cpp:3119
++#: ../../../ui.cpp:1986
++#: ../../../ui.cpp:2053
++msgid &quot;Insufficient funds&quot;
++msgstr &quot;Недостаточно средств&quot;
++
++#: ../../../main.cpp:3124
++msgid &quot;Invalid bitcoin address&quot;
++msgstr &quot;Неверный адрес bitcoin&quot;
++
++#: ../../../ui.cpp:189
++#, c-format
++msgid &quot;This transaction is over the size limit.  You can still send it for a fee of %s, which goes to the nodes that process your transaction and helps to support the network.  Do you want to pay the fee?&quot;
++msgstr &quot;Этот перевод превышает допустимый лимит. Вы можете провести его с комиссией %s, которая пойдёт узлам, обрабатывающим перевод, и поможет поддерживать сеть. Вы хотите заплатить комиссию?&quot;
++
++#: ../../../ui.cpp:286
++msgid &quot;Status&quot;
++msgstr &quot;Статус&quot;
++
++#: ../../../ui.cpp:287
++msgid &quot;Date&quot;
++msgstr &quot;Дата&quot;
++
++#: ../../../ui.cpp:288
++msgid &quot;Description&quot;
++msgstr &quot;Описание&quot;
++
++#: ../../../ui.cpp:289
++msgid &quot;Debit&quot;
++msgstr &quot;Дебет&quot;
++
++#: ../../../ui.cpp:290
++msgid &quot;Credit&quot;
++msgstr &quot;Кредит&quot;
++
++#: ../../../ui.cpp:489
++#, c-format
++msgid &quot;Open for %d blocks&quot;
++msgstr &quot;Открыто для %d блоков&quot;
++
++#: ../../../ui.cpp:491
++#, c-format
++msgid &quot;Open until %s&quot;
++msgstr &quot;Открыто до %s&quot;
++
++#: ../../../ui.cpp:497
++#, c-format
++msgid &quot;%d/offline?&quot;
++msgstr &quot;%d/оффлайн?&quot;
++
++#: ../../../ui.cpp:499
++#, c-format
++msgid &quot;%d/unconfirmed&quot;
++msgstr &quot;%d/не подтверждено&quot;
++
++#: ../../../ui.cpp:501
++#, c-format
++msgid &quot;%d confirmations&quot;
++msgstr &quot;%d подтверждений&quot;
++
++#: ../../../ui.cpp:584
++msgid &quot;Generated&quot;
++msgstr &quot;Сгенерировано&quot;
++
++#: ../../../ui.cpp:592
++#, c-format
++msgid &quot;Generated (%s matures in %d more blocks)&quot;
++msgstr &quot;Сгенерировано (%s станет доступно через %d блоков)&quot;
++
++#: ../../../ui.cpp:596
++msgid &quot;Generated - Warning: This block was not received by any other nodes and will probably not be accepted!&quot;
++msgstr &quot;Сгенерировано - Внимание: этот блок не был получен ни одним узлом и, скорее всего, не будет принят!&quot;
++
++#: ../../../ui.cpp:600
++msgid &quot;Generated (not accepted)&quot;
++msgstr &quot;Сгенерировано (не принято)&quot;
++
++#: ../../../ui.cpp:610
++msgid &quot;From: &quot;
++msgstr &quot;От: &quot;
++
++#: ../../../ui.cpp:634
++msgid &quot;Received with: &quot;
++msgstr &quot;Получено для: &quot;
++
++#: ../../../ui.cpp:676
++msgid &quot;Payment to yourself&quot;
++msgstr &quot;Платёж самому себе&quot;
++
++#: ../../../ui.cpp:713
++msgid &quot;To: &quot;
++msgstr &quot;Кому: &quot;
++
++#: ../../../ui.cpp:1009
++msgid &quot;    Generating&quot;
++msgstr &quot;    Генерация&quot;
++
++#: ../../../ui.cpp:1011
++msgid &quot;(not connected)&quot;
++msgstr &quot;(не подключен)&quot;
++
++#: ../../../ui.cpp:1014
++#, c-format
++msgid &quot;     %d connections     %d blocks     %d transactions&quot;
++msgstr &quot;     %d подключений     %d блоков     %d переводов&quot;
++
++#: ../../../ui.cpp:1128
++#: ../../../ui.cpp:2368
++msgid &quot;New Receiving Address&quot;
++msgstr &quot;Новый адрес получения&quot;
++
++#: ../../../ui.cpp:1129
++#: ../../../ui.cpp:2369
++msgid &quot;&quot;
++&quot;It&#x27;s good policy to use a new address for each payment you receive.\n&quot;
++&quot;\n&quot;
++&quot;Label&quot;
++msgstr &quot;&quot;
++&quot;Неплохо будет использовать новый адрес для каждого получаемого платежа.\n&quot;
++&quot;\n&quot;
++&quot;Метка&quot;
++
++#: ../../../ui.cpp:1129
++#: ../../../ui.cpp:2369
++msgid &quot;&quot;
++&quot;You should use a new address for each payment you receive.\n&quot;
++&quot;\n&quot;
++&quot;Label&quot;
++msgstr &quot;&quot;
++&quot;Неплохо будет использовать новый адрес для каждого получаемого платежа.\n&quot;
++&quot;\n&quot;
++&quot;Метка&quot;
++
++#: ../../../ui.cpp:1198
++msgid &quot;&lt;b&gt;Status:&lt;/b&gt; &quot;
++msgstr &quot;&lt;b&gt;Статус:&lt;/b&gt; &quot;
++
++#: ../../../ui.cpp:1203
++msgid &quot;, has not been successfully broadcast yet&quot;
++msgstr &quot;, ещё не был успешно разослан&quot;
++
++#: ../../../ui.cpp:1205
++#, c-format
++msgid &quot;, broadcast through %d node&quot;
++msgstr &quot;, рассылка через %d узел&quot;
++
++#: ../../../ui.cpp:1207
++#, c-format
++msgid &quot;, broadcast through %d nodes&quot;
++msgstr &quot;, рассылка через %d узлов&quot;
++
++#: ../../../ui.cpp:1211
++msgid &quot;&lt;b&gt;Date:&lt;/b&gt; &quot;
++msgstr &quot;&lt;b&gt;Дата:&lt;/b&gt; &quot;
++
++#: ../../../ui.cpp:1219
++msgid &quot;&lt;b&gt;Source:&lt;/b&gt; Generated&lt;br&gt;&quot;
++msgstr &quot;&lt;b&gt;Источник:&lt;/b&gt; Сгенерировано&lt;br&gt;&quot;
++
++#: ../../../ui.cpp:1225
++#: ../../../ui.cpp:1243
++msgid &quot;&lt;b&gt;From:&lt;/b&gt; &quot;
++msgstr &quot;&lt;b&gt;От:&lt;/b&gt; &quot;
++
++#: ../../../ui.cpp:1243
++msgid &quot;unknown&quot;
++msgstr &quot;аноним&quot;
++
++#: ../../../ui.cpp:1244</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2831,6 +2831,10 @@ bool Detect128BitSSE2()
+     bool fUseSSE2 = ((fIntel &amp;&amp; nFamily * 10000 + nModel &gt;=  60026) ||
+                      (fAMD   &amp;&amp; nFamily * 10000 + nModel &gt;= 160010));
+ 
++    // AMD reports a lower model number in 64-bit mode
++    if (fAMD &amp;&amp; sizeof(void*) &gt; 4 &amp;&amp; nFamily * 10000 + nModel &gt;= 160000)
++        fUseSSE2 = true;
++
+     static bool fPrinted;
+     if (!fPrinted)
+     {</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/178152f/">← fixed linux build, dkaparis: _WIN32_WINNT 0x500 -- version…</a><a rel="next" href="../../commits/b22c884/">recursive function to determine if own unconfirmed… →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

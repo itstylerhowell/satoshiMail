@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>new safety feature displays a warning… – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem that may…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/b34e8c3/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="new safety feature displays a warning… – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem that may…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/b34e8c3/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="new safety feature displays a warning… – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 4 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem that may…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "new safety feature displays a warning message and locks down RPC if it detects a problem that may require an upgrade -- version 0.3.8", "url": "https://satoshimail.pages.dev/commits/b34e8c3/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-04T01:51:34Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/b34e8c3c369331189c01bcbb7682af9d7daa42cd"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "new safety feature displays a warning…", "item": "https://satoshimail.pages.dev/commits/b34e8c3/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-cb34e8c3c36">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">new safety feature displays a warning…</span></div></nav>
+<main class="in">
+<h1>new safety feature displays a warning message and locks down RPC if it detects a problem that may require an upgrade -- version 0.3.8</h1>
+<p class="lead">Commit by Satoshi Nakamoto (Satoshi Nakamoto) on 4 August 2010 · release v0.3.8 · 8 files, +81 −34</p>
+<p class="actions"><a class="btn" href="../../#t-cb34e8c3c36">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/b34e8c3c369331189c01bcbb7682af9d7daa42cd" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -342,6 +342,16 @@ bool CTxDB::WriteHashBestChain(uint256 hashBestChain)
+     return Write(string(&quot;hashBestChain&quot;), hashBestChain);
+ }
+ 
++bool CTxDB::ReadBestInvalidWork(CBigNum&amp; bnBestInvalidWork)
++{
++    return Read(string(&quot;bnBestInvalidWork&quot;), bnBestInvalidWork);
++}
++
++bool CTxDB::WriteBestInvalidWork(CBigNum bnBestInvalidWork)
++{
++    return Write(string(&quot;bnBestInvalidWork&quot;), bnBestInvalidWork);
++}
++
+ CBlockIndex* InsertBlockIndex(uint256 hash)
+ {
+     if (hash == 0)
+@@ -446,6 +456,9 @@ bool CTxDB::LoadBlockIndex()
+     bnBestChainWork = pindexBest-&gt;bnChainWork;
+     printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
+ 
++    // Load bnBestInvalidWork, OK if it doesn&#x27;t exist
++    ReadBestInvalidWork(bnBestInvalidWork);
++
+     return true;
+ }
+ </code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -280,6 +280,8 @@ public:
+     bool EraseBlockIndex(uint256 hash);
+     bool ReadHashBestChain(uint256&amp; hashBestChain);
+     bool WriteHashBestChain(uint256 hashBestChain);
++    bool ReadBestInvalidWork(CBigNum&amp; bnBestInvalidWork);
++    bool WriteBestInvalidWork(CBigNum bnBestInvalidWork);
+     bool LoadBlockIndex();
+ };
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6
+ CBlockIndex* pindexGenesisBlock = NULL;
+ int nBestHeight = -1;
+ CBigNum bnBestChainWork = 0;
++CBigNum bnBestInvalidWork = 0;
+ uint256 hashBestChain = 0;
+ CBlockIndex* pindexBest = NULL;
+ int64 nTimeBestReceived = 0;
+@@ -794,12 +795,12 @@ uint256 GetOrphanRoot(const CBlock* pblock)
+     return pblock-&gt;GetHash();
+ }
+ 
+-int64 CBlock::GetBlockValue(int64 nFees) const
++int64 CBlock::GetBlockValue(int nHeight, int64 nFees) const
+ {
+     int64 nSubsidy = 50 * COIN;
+ 
+     // Subsidy is cut in half every 4 years
+-    nSubsidy &gt;&gt;= (nBestHeight / 210000);
++    nSubsidy &gt;&gt;= (nHeight / 210000);
+ 
+     return nSubsidy + nFees;
+ }
+@@ -865,6 +866,28 @@ bool IsInitialBlockDownload()
+             pindexBest-&gt;nTime &lt; GetTime() - 24 * 60 * 60);
+ }
+ 
++bool IsLockdown()
++{
++    if (!pindexBest)
++        return false;
++    return (bnBestInvalidWork &gt; bnBestChainWork + pindexBest-&gt;GetBlockWork() * 6);
++}
++
++void Lockdown(CBlockIndex* pindexNew)
++{
++    if (pindexNew-&gt;bnChainWork &gt; bnBestInvalidWork)
++    {
++        bnBestInvalidWork = pindexNew-&gt;bnChainWork;
++        CTxDB().WriteBestInvalidWork(bnBestInvalidWork);
++        MainFrameRepaint();
++    }
++    printf(&quot;Lockdown: invalid block=%s  height=%d  work=%s\n&quot;, pindexNew-&gt;GetBlockHash().ToString().substr(0,22).c_str(), pindexNew-&gt;nHeight, pindexNew-&gt;bnChainWork.ToString().c_str());
++    printf(&quot;Lockdown:  current best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
++    printf(&quot;Lockdown: IsLockdown()=%d\n&quot;, (IsLockdown() ? 1 : 0));
++    if (IsLockdown())
++        printf(&quot;Lockdown: WARNING: Displayed transactions may not be correct!  You may need to upgrade.\n&quot;);
++}
++
+ 
+ 
+ 
+@@ -1086,7 +1109,7 @@ bool CBlock::ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex)
+             return false;
+     }
+ 
+-    if (vtx[0].GetValueOut() &gt; GetBlockValue(nFees))
++    if (vtx[0].GetValueOut() &gt; GetBlockValue(pindex-&gt;nHeight, nFees))
+         return false;
+ 
+     // Update block index on disk without changing it in memory.
+@@ -1116,11 +1139,13 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+     CBlockIndex* plonger = pindexNew;
+     while (pfork != plonger)
+     {
+-        if (!(pfork = pfork-&gt;pprev))
+-            return error(&quot;Reorganize() : pfork-&gt;pprev is null&quot;);
+         while (plonger-&gt;nHeight &gt; pfork-&gt;nHeight)
+             if (!(plonger = plonger-&gt;pprev))
+                 return error(&quot;Reorganize() : plonger-&gt;pprev is null&quot;);
++        if (pfork == plonger)
++            break;
++        if (!(pfork = pfork-&gt;pprev))
++            return error(&quot;Reorganize() : pfork-&gt;pprev is null&quot;);
+     }
+ 
+     // List of what to disconnect
+@@ -1160,16 +1185,8 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+             return error(&quot;Reorganize() : ReadFromDisk for connect failed&quot;);
+         if (!block.ConnectBlock(txdb, pindex))
+         {
+-            // Invalid block, delete the rest of this branch
++            // Invalid block
+             txdb.TxnAbort();
+-            for (int j = i; j &lt; vConnect.size(); j++)
+-            {
+-                CBlockIndex* pindex = vConnect[j];
+-                pindex-&gt;EraseBlockFromDisk();
+-                txdb.EraseBlockIndex(pindex-&gt;GetBlockHash());
+-                mapBlockIndex.erase(pindex-&gt;GetBlockHash());
+-                delete pindex;
+-            }
+             return error(&quot;Reorganize() : ConnectBlock failed&quot;);
+         }
+ 
+@@ -1227,12 +1244,12 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+     pindexNew-&gt;bnChainWork = (pindexNew-&gt;pprev ? pindexNew-&gt;pprev-&gt;bnChainWork : 0) + pindexNew-&gt;GetBlockWork();
+ 
+     CTxDB txdb;
+-    txdb.TxnBegin();
+     txdb.WriteBlockIndex(CDiskBlockIndex(pindexNew));
+ 
+     // New best
+     if (pindexNew-&gt;bnChainWork &gt; bnBestChainWork)
+     {
++        txdb.TxnBegin();
+         if (pindexGenesisBlock == NULL &amp;&amp; hash == hashGenesisBlock)
+         {
+             pindexGenesisBlock = pindexNew;
+@@ -1244,9 +1261,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+             if (!ConnectBlock(txdb, pindexNew) || !txdb.WriteHashBestChain(hash))
+             {
+                 txdb.TxnAbort();
+-                pindexNew-&gt;EraseBlockFromDisk();
+-                mapBlockIndex.erase(pindexNew-&gt;GetBlockHash());
+-                delete pindexNew;
++                Lockdown(pindexNew);
+                 return error(&quot;AddToBlockIndex() : ConnectBlock failed&quot;);
+             }
+             txdb.TxnCommit();
+@@ -1262,9 +1277,11 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+             if (!Reorganize(txdb, pindexNew))
+             {
+                 txdb.TxnAbort();
++                Lockdown(pindexNew);
+                 return error(&quot;AddToBlockIndex() : Reorganize failed&quot;);
+             }
+         }
++        txdb.TxnCommit();
+ 
+         // New best block
+         hashBestChain = hash;
+@@ -1273,10 +1290,9 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
+         bnBestChainWork = pindexNew-&gt;bnChainWork;
+         nTimeBestReceived = GetTime();
+         nTransactionsUpdated++;
+-        printf(&quot;AddToBlockIndex: new best=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
++        printf(&quot;AddToBlockIndex: new best=%s  height=%d  work=%s\n&quot;, hashBestChain.ToString().substr(0,22).c_str(), nBestHeight, bnBestChainWork.ToString().c_str());
+     }
+ 
+-    txdb.TxnCommit();
+     txdb.Close();
+ 
+     if (pindexNew == pindexBest)
+@@ -1352,7 +1368,7 @@ bool CBlock::AcceptBlock()
+ 
+     // Check that all transactions are finalized
+     foreach(const CTransaction&amp; tx, vtx)
+-        if (!tx.IsFinal(nTime))
++        if (!tx.IsFinal(pindexPrev-&gt;nHeight+1, nTime))
+             return error(&quot;AcceptBlock() : contains a non-final transaction&quot;);
+ 
+     // Check proof of work
+@@ -2648,7 +2664,7 @@ void BitcoinMiner()
+             }
+         }
+         pblock-&gt;nBits = nBits;
+-        pblock-&gt;vtx[0].vout[0].nValue = pblock-&gt;GetBlockValue(nFees);
++        pblock-&gt;vtx[0].vout[0].nValue = pblock-&gt;GetBlockValue(pindexPrev-&gt;nHeight+1, nFees);
+         printf(&quot;Running BitcoinMiner with %d transactions in block\n&quot;, pblock-&gt;vtx.size());
+ 
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -33,6 +33,7 @@ extern const uint256 hashGenesisBlock;
+ extern CBlockIndex* pindexGenesisBlock;
+ extern int nBestHeight;
+ extern CBigNum bnBestChainWork;
++extern CBigNum bnBestInvalidWork;
+ extern uint256 hashBestChain;
+ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
+@@ -80,6 +81,7 @@ void GenerateBitcoins(bool fGenerate);
+ void ThreadBitcoinMiner(void* parg);
+ void BitcoinMiner();
+ bool IsInitialBlockDownload();
++bool IsLockdown();
+ 
+ 
+ 
+@@ -410,15 +412,16 @@ public:
+         return SerializeHash(*this);
+     }
+ 
+-    bool IsFinal(int64 nBlockTime=0) const
++    bool IsFinal(int nBlockHeight=0, int64 nBlockTime=0) const
+     {
+-        // Time based nLockTime implemented in 0.1.6,
+-        // do not use time based until most 0.1.5 nodes have upgraded.
++        // Time based nLockTime implemented in 0.1.6
+         if (nLockTime == 0)
+             return true;
++        if (nBlockHeight == 0)
++            nBlockHeight = nBestHeight;
+         if (nBlockTime == 0)
+             nBlockTime = GetAdjustedTime();
+-        if (nLockTime &lt; (nLockTime &lt; 500000000 ? nBestHeight : nBlockTime))
++        if (nLockTime &lt; (nLockTime &lt; 500000000 ? nBlockHeight : nBlockTime))
+             return true;
+         foreach(const CTxIn&amp; txin, vin)
+             if (!txin.IsFinal())
+@@ -1046,7 +1049,7 @@ public:
+     }
+ 
+ 
+-    int64 GetBlockValue(int64 nFees) const;
++    int64 GetBlockValue(int nHeight, int64 nFees) const;
+     bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
+     bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -946,6 +946,10 @@ void ThreadRPCServer2(void* parg)
+ 
+                 printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
+ 
++                // Observe lockdown
++                if (IsLockdown() &amp;&amp; strMethod != &quot;help&quot; &amp;&amp; strMethod != &quot;stop&quot; &amp;&amp; strMethod != &quot;getgenerate&quot; &amp;&amp; strMethod != &quot;setgenerate&quot;)
++                    throw runtime_error(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade.&quot;);
++
+                 // Execute
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+                 if (mi == mapCallTable.end())</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ class CDataStream;
+ class CAutoFile;
+ 
+-static const int VERSION = 307;
++static const int VERSION = 308;
+ static const char* pszSubVer = &quot;&quot;;
+ 
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+ # General Symbol Definitions
+ !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
+-!define VERSION 0.3.7
++!define VERSION 0.3.8
+ !define COMPANY &quot;Bitcoin project&quot;
+ !define URL http://www.bitcoin.org/
+ 
+@@ -42,12 +42,12 @@ Var StartMenuGroup
+ !insertmacro MUI_LANGUAGE English
+ 
+ # Installer attributes
+-OutFile bitcoin-0.3.7-win32-setup.exe
++OutFile bitcoin-0.3.8-win32-setup.exe
+ InstallDir $PROGRAMFILES\Bitcoin
+ CRCCheck on
+ XPStyle on
+ ShowInstDetails show
+-VIProductVersion 0.3.7.0
++VIProductVersion 0.3.8.0
+ VIAddVersionKey ProductName Bitcoin
+ VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,6 +196,8 @@ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* pa
+ 
+ void CalledSetStatusBar(const string&amp; strText, int nField)
+ {
++    if (nField == 0 &amp;&amp; IsLockdown())
++        return;
+     if (pframeMain &amp;&amp; pframeMain-&gt;m_statusBar)
+         pframeMain-&gt;m_statusBar-&gt;SetStatusText(strText, nField);
+ }
+@@ -376,7 +378,7 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+     // to get rid of the deprecated warning.  Just ignore it.
+     if (!event.Iconized())
+         fClosedToTray = false;
+-#ifdef __WXGTK__
++#if defined(__WXGTK__) || defined(__WXMAC_OSX__)
+     if (mapArgs.count(&quot;-minimizetotray&quot;)) {
+ #endif
+     // The tray icon sometimes disappears on ubuntu karmic
+@@ -1011,6 +1013,13 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+     RefreshStatusColumn();
+ 
+     // Update status bar
++    static bool fPrevLockdown;
++    if (IsLockdown())
++        m_statusBar-&gt;SetStatusText(string(&quot;    &quot;) + _(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade.&quot;), 0);
++    else if (fPrevLockdown)
++        m_statusBar-&gt;SetStatusText(&quot;&quot;, 0);
++    fPrevLockdown = IsLockdown();
++
+     string strGen = &quot;&quot;;
+     if (fGenerateBitcoins)
+         strGen = _(&quot;    Generating&quot;);
+@@ -1598,7 +1607,7 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+     //m_listBox-&gt;Append(_(&quot;Test 2&quot;));
+     m_listBox-&gt;SetSelection(0);
+     SelectPage(0);
+-#ifdef __WXGTK__
++#if defined(__WXGTK__) || defined(__WXMAC_OSX__)
+     m_checkBoxStartOnSystemStartup-&gt;SetLabel(_(&quot;&amp;Start Bitcoin on window system startup&quot;));
+     if (!mapArgs.count(&quot;-minimizetotray&quot;))
+     {
+@@ -2697,7 +2706,7 @@ void CreateMainWindow()
+     pframeMain = new CMainFrame(NULL);
+     if (mapArgs.count(&quot;-min&quot;))
+         pframeMain-&gt;Iconize(true);
+-#ifdef __WXGTK__
++#if defined(__WXGTK__) || defined(__WXMAC_OSX__)
+     if (!mapArgs.count(&quot;-minimizetotray&quot;))
+         fMinimizeToTray = false;
+ #endif</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2c06be9/">← new safety feature displays a warning message and locks…</a><a rel="next" href="../../commits/e6b7ab5/">enable SSE2 in all builds to fix crypto++ SHA-256 on 64-bit →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

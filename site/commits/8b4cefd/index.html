@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit</title>
+<meta name="description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can…">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8b4cefd/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit">
+<meta property="og:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can…">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8b4cefd/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit">
+<meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can bind during TIME_WAIT after exit and restart", "url": "https://satoshimail.pages.dev/commits/8b4cefd/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-07T05:05:03Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8b4cefd3245c349cad14baaf2ba42380dcc88112"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "UI tweaks, use BindListenPort to…", "item": "https://satoshimail.pages.dev/commits/8b4cefd/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-c8b4cefd324">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../commits/">Commits</a> <span aria-hidden="true">›</span> <span aria-current="page">UI tweaks, use BindListenPort to…</span></div></nav>
+<main class="in">
+<h1>UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can bind during TIME_WAIT after exit and restart</h1>
+<p class="lead">Commit by Satoshi Nakamoto (s_nakamoto) on 7 November 2009 · SVN r35 · release v0.2.0 · 11 files, +346 −284</p>
+<p class="actions"><a class="btn" href="../../#t-c8b4cefd324">Open in Satoshi Mail</a> <a class="btn ghost" href="https://github.com/bitcoin/bitcoin/commit/8b4cefd3245c349cad14baaf2ba42380dcc88112" rel="noopener">View on GitHub</a></p>
+<h2>Files changed</h2><details><summary><code>db.cpp</code></summary><pre><code>@@ -139,7 +139,7 @@ void DBFlush(bool fShutdown)
+ {
+     // Flush log data to the actual data file
+     //  on all files that are not in use
+-    printf(&quot;DBFlush(%s)\n&quot;, fShutdown ? &quot;true&quot; : &quot;false&quot;);
++    printf(&quot;DBFlush(%s)%s\n&quot;, fShutdown ? &quot;true&quot; : &quot;false&quot;, fDbEnvInit ? &quot;&quot; : &quot; db not started&quot;);
+     if (!fDbEnvInit)
+         return;
+     CRITICAL_BLOCK(cs_db)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,8 +42,6 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
+ CCriticalSection cs_mapKeys;
+ CKey keyUser;
+ 
+-int nDropMessagesTest = 0;
+-
+ // Settings
+ int fGenerateBitcoins = false;
+ int64 nTransactionFee = 0;
+@@ -1721,9 +1719,9 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+     static map&lt;unsigned int, vector&lt;unsigned char&gt; &gt; mapReuseKey;
+     RandAddSeedPerfmon();
+     printf(&quot;received: %s (%d bytes)\n&quot;, strCommand.c_str(), vRecv.size());
+-    if (nDropMessagesTest &gt; 0 &amp;&amp; GetRand(nDropMessagesTest) == 0)
++    if (mapArgs.count(&quot;-dropmessagestest&quot;) &amp;&amp; GetRand(atoi(mapArgs[&quot;-dropmessagestest&quot;])) == 0)
+     {
+-        printf(&quot;dropmessages DROPPING RECV MESSAGE\n&quot;);
++        printf(&quot;dropmessagestest DROPPING RECV MESSAGE\n&quot;);
+         return true;
+     }
+ 
+@@ -2315,6 +2313,8 @@ void BitcoinMiner()
+             Sleep(1000);
+             if (fShutdown)
+                 return;
++            if (!fGenerateBitcoins)
++                return;
+         }
+ 
+         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,7 +34,6 @@ extern int nBestHeight;
+ extern uint256 hashBestChain;
+ extern CBlockIndex* pindexBest;
+ extern unsigned int nTransactionsUpdated;
+-extern int nDropMessagesTest;
+ 
+ // Settings
+ extern int fGenerateBitcoins;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -511,11 +511,6 @@ void ThreadSocketHandler(void* parg)
+         PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
+     }
+ 
+-    foreach(CNode* pnode, vNodes)
+-        closesocket(pnode-&gt;hSocket);
+-    if (closesocket(hListenSocket) == SOCKET_ERROR)
+-        printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
+-
+     printf(&quot;ThreadSocketHandler exiting\n&quot;);
+ }
+ 
+@@ -989,15 +984,13 @@ void ThreadMessageHandler2(void* parg)
+ 
+ 
+ 
+-
+-bool StartNode(string&amp; strError)
++bool BindListenPort(string&amp; strError)
+ {
+-    if (pnodeLocalHost == NULL)
+-        pnodeLocalHost = new CNode(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
+     strError = &quot;&quot;;
++    int nOne = 1;
+ 
+ #ifdef __WXMSW__
+-    // Sockets startup
++    // Initialize Windows Sockets
+     WSADATA wsadata;
+     int ret = WSAStartup(MAKEWORD(2,2), &amp;wsadata);
+     if (ret != NO_ERROR)
+@@ -1008,33 +1001,6 @@ bool StartNode(string&amp; strError)
+     }
+ #endif
+ 
+-    // Get local host ip
+-    char pszHostName[255];
+-    if (gethostname(pszHostName, sizeof(pszHostName)) == SOCKET_ERROR)
+-    {
+-        strError = strprintf(&quot;Error: Unable to get IP address of this computer (gethostname returned error %d)&quot;, WSAGetLastError());
+-        printf(&quot;%s\n&quot;, strError.c_str());
+-        return false;
+-    }
+-    struct hostent* phostent = gethostbyname(pszHostName);
+-    if (!phostent)
+-    {
+-        strError = strprintf(&quot;Error: Unable to get IP address of this computer (gethostbyname returned error %d)&quot;, WSAGetLastError());
+-        printf(&quot;%s\n&quot;, strError.c_str());
+-        return false;
+-    }
+-
+-    // Take the first IP that isn&#x27;t loopback 127.x.x.x
+-    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
+-        printf(&quot;host ip %d: %s\n&quot;, i, CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i]).ToStringIP().c_str());
+-    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
+-    {
+-        addrLocalHost = CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i], DEFAULT_PORT, nLocalServices);
+-        if (addrLocalHost.IsValid() &amp;&amp; addrLocalHost.GetByte(3) != 127)
+-            break;
+-    }
+-    printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
+-
+     // Create socket for listening for incoming connections
+     hListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+     if (hListenSocket == INVALID_SOCKET)
+@@ -1043,15 +1009,21 @@ bool StartNode(string&amp; strError)
+         printf(&quot;%s\n&quot;, strError.c_str());
+         return false;
+     }
++
+ #if defined(__BSD__) || defined(__WXOSX__)
+-    int set = 1;
+-    setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));
++    // Different way of disabling SIGPIPE on BSD
++    setsockopt(hListenSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;nOne, sizeof(int));
++#endif
++
++#ifndef __WXMSW__
++    // Allow binding if the port is still in TIME_WAIT state after
++    // the program was closed and restarted.  Not an issue on windows.
++    setsockopt(hListenSocket, SOL_SOCKET, SO_REUSEADDR, (void*)&amp;nOne, sizeof(int));
+ #endif
+ 
+-    // Set to nonblocking, incoming connections will also inherit this
+ #ifdef __WXMSW__
+-    u_long nOne = 1;
+-    if (ioctlsocket(hListenSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)
++    // Set to nonblocking, incoming connections will also inherit this
++    if (ioctlsocket(hListenSocket, FIONBIO, (u_long*)&amp;nOne) == SOCKET_ERROR)
+ #else
+     if (fcntl(hListenSocket, F_SETFL, O_NONBLOCK) == SOCKET_ERROR)
+ #endif
+@@ -1072,7 +1044,7 @@ bool StartNode(string&amp; strError)
+     {
+         int nErr = WSAGetLastError();
+         if (nErr == WSAEADDRINUSE)
+-            strError = strprintf(&quot;Error: Unable to bind to port %d on this computer. The program is probably already running.&quot;, ntohs(sockaddr.sin_port));
++            strError = strprintf(&quot;Unable to bind to port %d on this computer.  Bitcoin may be running already.&quot;, ntohs(sockaddr.sin_port));
+         else
+             strError = strprintf(&quot;Error: Unable to bind to port %d on this computer (bind returned error %d)&quot;, ntohs(sockaddr.sin_port), nErr);
+         printf(&quot;%s\n&quot;, strError.c_str());
+@@ -1088,6 +1060,42 @@ bool StartNode(string&amp; strError)
+         return false;
+     }
+ 
++    return true;
++}
++
++bool StartNode(string&amp; strError)
++{
++    strError = &quot;&quot;;
++    if (pnodeLocalHost == NULL)
++        pnodeLocalHost = new CNode(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
++
++    // Get local host ip
++    char pszHostName[255];
++    if (gethostname(pszHostName, sizeof(pszHostName)) == SOCKET_ERROR)
++    {
++        strError = strprintf(&quot;Error: Unable to get IP address of this computer (gethostname returned error %d)&quot;, WSAGetLastError());
++        printf(&quot;%s\n&quot;, strError.c_str());
++        return false;
++    }
++    struct hostent* phostent = gethostbyname(pszHostName);
++    if (!phostent)
++    {
++        strError = strprintf(&quot;Error: Unable to get IP address of this computer (gethostbyname returned error %d)&quot;, WSAGetLastError());
++        printf(&quot;%s\n&quot;, strError.c_str());
++        return false;
++    }
++
++    // Take the first IP that isn&#x27;t loopback 127.x.x.x
++    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
++        printf(&quot;host ip %d: %s\n&quot;, i, CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i]).ToStringIP().c_str());
++    for (int i = 0; phostent-&gt;h_addr_list[i] != NULL; i++)
++    {
++        addrLocalHost = CAddress(*(unsigned int*)phostent-&gt;h_addr_list[i], DEFAULT_PORT, nLocalServices);
++        if (addrLocalHost.IsValid() &amp;&amp; addrLocalHost.GetByte(3) != 127)
++            break;
++    }
++    printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
++
+     // Get our external IP address for incoming connections
+     if (fUseProxy)
+     {
+@@ -1158,9 +1166,5 @@ bool StopNode()
+         Sleep(20);
+     Sleep(50);
+ 
+-    // Sockets shutdown
+-#ifdef __WXMSW__
+-    WSACleanup();
+-#endif
+     return true;
+ }</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -28,6 +28,7 @@ CNode* FindNode(unsigned int ip);
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
+ bool AnySubscribed(unsigned int nChannel);
++bool BindListenPort(string&amp; strError=REF(string()));
+ bool StartNode(string&amp; strError=REF(string()));
+ bool StopNode();
+ 
+@@ -456,6 +457,8 @@ extern CNode* pnodeLocalHost;
+ extern uint64 nLocalHostNonce;
+ extern bool fShutdown;
+ extern array&lt;int, 10&gt; vnThreadsRunning;
++extern SOCKET hListenSocket;
++
+ extern vector&lt;CNode*&gt; vNodes;
+ extern CCriticalSection cs_vNodes;
+ extern map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapAddresses;
+@@ -647,8 +650,7 @@ public:
+ 
+     void EndMessage()
+     {
+-        extern int nDropMessagesTest;
+-        if (nDropMessagesTest &gt; 0 &amp;&amp; GetRand(nDropMessagesTest) == 0)
++        if (mapArgs.count(&quot;-dropmessagestest&quot;) &amp;&amp; GetRand(atoi(mapArgs[&quot;-dropmessagestest&quot;])) == 0)
+         {
+             printf(&quot;dropmessages DROPPING SEND MESSAGE\n&quot;);
+             AbortMessage();</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -181,17 +181,30 @@ void AddToMyProducts(CProduct product)
+                 &quot;&quot;);
+ }
+ 
+-void StringMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
++void CalledMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y, int* pnRet, bool* pfDone)
+ {
+-    wxMessageBox(message, caption, style, parent, x, y);
++    *pnRet = wxMessageBox(message, caption, style, parent, x, y);
++    *pfDone = true;
+ }
+ 
+ int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption, int style, wxWindow* parent, int x, int y)
+ {
+ #ifdef __WXMSW__
+-    wxMessageBox(message, caption, style, parent, x, y);
++    return wxMessageBox(message, caption, style, parent, x, y);
+ #else
+-    UIThreadCall(bind(StringMessageBox, message, caption, style, parent, x, y));
++    if (wxThread::IsMain())
++    {
++        return wxMessageBox(message, caption, style, parent, x, y);
++    }
++    else
++    {
++        int nRet = 0;
++        bool fDone = false;
++        UIThreadCall(bind(CalledMessageBox, message, caption, style, parent, x, y, &amp;nRet, &amp;fDone));
++        while (!fDone)
++            Sleep(100);
++        return nRet;
++    }
+ #endif
+ }
+ 
+@@ -303,6 +316,18 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     fOnSetFocusAddress = false;
+     fRefresh = false;
+     m_choiceFilter-&gt;SetSelection(0);
++#ifndef __WXMSW__
++    wxFont fontTmp = m_staticTextBalance-&gt;GetFont();
++    fontTmp.SetPointSize(10);
++    fontTmp.SetFamily(wxFONTFAMILY_TELETYPE);
++    m_staticTextBalance-&gt;SetFont(fontTmp);
++    m_staticTextBalance-&gt;SetSize(140, 17);
++    // ampersand underlines aren&#x27;t working on gtk
++    m_toolBar-&gt;ClearTools();
++    m_toolBar-&gt;AddTool(wxID_BUTTONSEND, &quot;Send Coins&quot;, wxBitmap(send20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
++    m_toolBar-&gt;AddTool(wxID_BUTTONRECEIVE, &quot;Address Book&quot;, wxBitmap(addressbook20_xpm), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
++    m_toolBar-&gt;Realize();
++#endif
+     m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
+     m_listCtrl-&gt;SetFocus();
+     SetIcon(wxICON(bitcoin));
+@@ -998,7 +1023,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ }
+ 
+ 
+-void UIThreadCall(boost::function&lt;void ()&gt; fn)
++void UIThreadCall(boost::function0&lt;void&gt; fn)
+ {
+     // Call this with a function object created with bind.
+     // bind needs all parameters to match the function&#x27;s expected types
+@@ -1009,14 +1034,14 @@ void UIThreadCall(boost::function&lt;void ()&gt; fn)
+     if (pframeMain)
+     {
+         wxCommandEvent event(wxEVT_UITHREADCALL);
+-        event.SetClientData((void*)new boost::function&lt;void ()&gt;(fn));
++        event.SetClientData((void*)new boost::function0&lt;void&gt;(fn));
+         pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event);
+     }
+ }
+ 
+ void CMainFrame::OnUIThreadCall(wxCommandEvent&amp; event)
+ {
+-    boost::function&lt;void ()&gt;* pfn = (boost::function&lt;void ()&gt;*)event.GetClientData();
++    boost::function0&lt;void&gt;* pfn = (boost::function0&lt;void&gt;*)event.GetClientData();
+     (*pfn)();
+     delete pfn;
+ }
+@@ -1630,7 +1655,14 @@ CSendDialog::CSendDialog(wxWindow* parent, const wxString&amp; strAddress) : CSendDi
+     m_choiceTransferType-&gt;SetSelection(0);
+     m_bitmapCheckMark-&gt;Show(false);
+     fEnabledPrev = true;
++    m_textCtrlAddress-&gt;SetFocus();
+     //// todo: should add a display of your balance for convenience
++#ifndef __WXMSW__
++    wxFont fontTmp = m_staticTextInstructions-&gt;GetFont();
++    fontTmp.SetPointSize(fontTmp.GetPointSize()-1);
++    m_staticTextInstructions-&gt;SetFont(fontTmp);
++    SetSize(725, wxDefaultCoord);
++#endif
+ 
+     // Set Icon
+     wxIcon iconSend;
+@@ -1801,7 +1833,7 @@ CSendingDialog::CSendingDialog(wxWindow* parent, const CAddress&amp; addrIn, int64 n
+     fUIDone = false;
+     fWorkDone = false;
+ 
+-    SetTitle(strprintf(&quot;Sending %s to %s...&quot;, FormatMoney(nPrice).c_str(), wtx.mapValue[&quot;to&quot;].c_str()));
++    SetTitle(strprintf(&quot;Sending %s to %s&quot;, FormatMoney(nPrice).c_str(), wtx.mapValue[&quot;to&quot;].c_str()));
+     m_textCtrlStatus-&gt;SetValue(&quot;&quot;);
+ 
+     _beginthread(SendingDialogStartTransfer, 0, this);
+@@ -3344,16 +3376,19 @@ IMPLEMENT_APP(CMyApp)
+ 
+ bool CMyApp::OnInit()
+ {
++    bool fRet = false;
+     try
+     {
+-        return OnInit2();
++        fRet = OnInit2();
+     }
+     catch (std::exception&amp; e) {
+         PrintException(&amp;e, &quot;OnInit()&quot;);
+     } catch (...) {
+         PrintException(NULL, &quot;OnInit()&quot;);
+     }
+-    return false;
++    if (!fRet)
++        Shutdown(NULL);
++    return fRet;
+ }
+ 
+ bool CMyApp::OnInit2()
+@@ -3374,6 +3409,9 @@ bool CMyApp::OnInit2()
+     SetAppName(&quot;bitcoin&quot;);
+ #endif
+ 
++    //
++    // Parameters
++    //
+     ParseParameters(argc, argv);
+     if (mapArgs.count(&quot;-?&quot;) || mapArgs.count(&quot;--help&quot;))
+     {
+@@ -3389,7 +3427,27 @@ bool CMyApp::OnInit2()
+             &quot;  -connect=&lt;ip&gt;\t  Connect only to the specified node\n&quot;
+             &quot;  -?\t\t  This help message\n&quot;;
+         wxMessageBox(strUsage, &quot;Bitcoin&quot;, wxOK);
+-        exit(0);
++        return false;
++    }
++
++    if (mapArgs.count(&quot;-datadir&quot;))
++        strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
++
++    if (mapArgs.count(&quot;-debug&quot;))
++        fDebug = true;
++
++    if (mapArgs.count(&quot;-printtodebugger&quot;))
++        fPrintToDebugger = true;
++
++    printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
++    printf(&quot;Bitcoin version %d, OS version %s\n&quot;, VERSION, wxGetOsDescription().mb_str());
++
++    if (mapArgs.count(&quot;-loadblockindextest&quot;))
++    {
++        CTxDB txdb(&quot;r&quot;);
++        txdb.LoadBlockIndex();
++        PrintBlockTree();
++        return false;
+     }
+ 
+     //
+@@ -3434,41 +3492,20 @@ bool CMyApp::OnInit2()
+     }
+ #endif
+ 
+-    //
+-    // Parameters
+-    //
+-    if (mapArgs.count(&quot;-datadir&quot;))
+-        strlcpy(pszSetDataDir, mapArgs[&quot;-datadir&quot;].c_str(), sizeof(pszSetDataDir));
+-
+-    if (mapArgs.count(&quot;-debug&quot;))
+-        fDebug = true;
+-
+-    if (mapArgs.count(&quot;-printtodebugger&quot;))
+-        fPrintToDebugger = true;
+-
+-    printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+-    printf(&quot;Bitcoin version %d, OS version %s\n&quot;, VERSION, wxGetOsDescription().mb_str());
+-
+-    if (mapArgs.count(&quot;-dropmessages&quot;))
+-    {
+-        nDropMessagesTest = atoi(mapArgs[&quot;-dropmessages&quot;]);
+-        if (nDropMessagesTest == 0)
+-            nDropMessagesTest = 20;
+-    }
+-
+-    if (mapArgs.count(&quot;-loadblockindextest&quot;))
++    // Bind to the port early so we can tell if another instance is already running.
++    // This is a backup to wxSingleInstanceChecker, which doesn&#x27;t work on Linux.
++    string strErrors;
++    if (!BindListenPort(strErrors))
+     {
+-        CTxDB txdb(&quot;r&quot;);
+-        txdb.LoadBlockIndex();
+-        PrintBlockTree();
+-        exit(0);
++        wxMessageBox(strErrors, &quot;Bitcoin&quot;);
++        return false;
+     }
+ 
+     //
+     // Load data files
+     //
+     bool fFirstRun;
+-    string strErrors;
++    strErrors = &quot;&quot;;
+     int64 nStart;
+ 
+     printf(&quot;Loading addresses...\n&quot;);
+@@ -3502,7 +3539,6 @@ bool CMyApp::OnInit2()
+     if (!strErrors.empty())
+     {
+         wxMessageBox(strErrors, &quot;Bitcoin&quot;);
+-        OnExit();
+         return false;
+     }
+ 
+@@ -3515,7 +3551,6 @@ bool CMyApp::OnInit2()
+     if (mapArgs.count(&quot;-printblockindex&quot;) || mapArgs.count(&quot;-printblocktree&quot;))
+     {
+         PrintBlockTree();
+-        OnExit();
+         return false;
+     }
+ 
+@@ -3539,7 +3574,6 @@ bool CMyApp::OnInit2()
+         }
+         if (nFound == 0)
+             printf(&quot;No blocks matching %s were found\n&quot;, strMatch.c_str());
+-        OnExit();
+         return false;
+     }
+ 
+@@ -3558,7 +3592,6 @@ bool CMyApp::OnInit2()
+         if (!addrProxy.IsValid())
+         {
+             wxMessageBox(&quot;Invalid -proxy address&quot;, &quot;Bitcoin&quot;);
+-            OnExit();
+             return false;
+         }
+     }
+@@ -3588,10 +3621,7 @@ bool CMyApp::OnInit2()
+     _beginthread(ThreadDelayedRepaint, 0, NULL);
+ 
+     if (!CheckDiskSpace())
+-    {
+-        OnExit();
+         return false;
+-    }
+ 
+     RandAddSeedPerfmon();
+ </code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -24,7 +24,7 @@ extern int fMinimizeOnClose;
+ 
+ extern void HandleCtrlA(wxKeyEvent&amp; event);
+ extern string FormatTxStatus(const CWalletTx&amp; wtx);
+-extern void UIThreadCall(boost::function&lt;void ()&gt;);
++extern void UIThreadCall(boost::function0&lt;void&gt;);
+ extern void MainFrameRepaint();
+ extern void Shutdown(void* parg);
+ extern int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -89,7 +89,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	
+ 	bSizer85-&gt;Add( m_textCtrlAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+ 	
+-	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot;&amp;Copy to Clipboard&quot;), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
++	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+ 	bSizer85-&gt;Add( m_buttonCopy, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+ 	
+ 	m_button91 = new wxButton( this, wxID_BUTTONCHANGE, wxT(&quot;C&amp;hange...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+@@ -116,7 +116,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 	m_staticTextBalance = new wxStaticText( m_panel14, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 120,15 ), wxALIGN_RIGHT|wxST_NO_AUTORESIZE );
+ 	m_staticTextBalance-&gt;Wrap( -1 );
+ 	m_staticTextBalance-&gt;SetFont( wxFont( 8, 70, 90, 90, false, wxEmptyString ) );
+-	m_staticTextBalance-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
++	m_staticTextBalance-&gt;SetBackgroundColour( wxColour( 255, 255, 255 ) );
+ 	
+ 	bSizer66-&gt;Add( m_staticTextBalance, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
+@@ -341,10 +341,10 @@ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, con
+ 	bSizer64-&gt;Add( bSizer66, 1, wxEXPAND, 5 );
+ 	
+ 	wxBoxSizer* bSizer65;
+-	bSizer65 = new wxBoxSizer( wxVERTICAL );
++	bSizer65 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer65-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer65-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer64-&gt;Add( bSizer65, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -521,13 +521,13 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	bSizer58 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer58-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer58-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer58-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer58-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonApply = new wxButton( this, wxID_APPLY, wxT(&quot;&amp;Apply&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer58-&gt;Add( m_buttonApply, 0, wxALL, 5 );
++	bSizer58-&gt;Add( m_buttonApply, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer55-&gt;Add( bSizer58, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -619,7 +619,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ 	bSizer61-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer61-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer61-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
+ 	
+@@ -655,9 +655,9 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	
+ 	fgSizer1-&gt;Add( 0, 0, 0, wxEXPAND, 5 );
+ 	
+-	m_staticText14 = new wxStaticText( this, wxID_ANY, wxT(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	m_staticText14-&gt;Wrap( -1 );
+-	fgSizer1-&gt;Add( m_staticText14, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
++	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, wxT(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	m_staticTextInstructions-&gt;Wrap( -1 );
++	fgSizer1-&gt;Add( m_staticTextInstructions, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+ 	
+ 	wxBoxSizer* bSizer47;
+ 	bSizer47 = new wxBoxSizer( wxHORIZONTAL );
+@@ -681,11 +681,16 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	m_textCtrlAddress = new wxTextCtrl( this, wxID_TEXTCTRLPAYTO, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+ 	bSizer19-&gt;Add( m_textCtrlAddress, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+ 	
++	wxBoxSizer* bSizer66;
++	bSizer66 = new wxBoxSizer( wxHORIZONTAL );
++	
+ 	m_buttonPaste = new wxButton( this, wxID_BUTTONPASTE, wxT(&quot;&amp;Paste&quot;), wxDefaultPosition, wxSize( -1,-1 ), wxBU_EXACTFIT );
+-	bSizer19-&gt;Add( m_buttonPaste, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
++	bSizer66-&gt;Add( m_buttonPaste, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND, 5 );
+ 	
+ 	m_buttonAddress = new wxButton( this, wxID_BUTTONADDRESSBOOK, wxT(&quot; Address &amp;Book...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer19-&gt;Add( m_buttonAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
++	bSizer66-&gt;Add( m_buttonAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND, 5 );
++	
++	bSizer19-&gt;Add( bSizer66, 0, wxALIGN_CENTER_VERTICAL, 5 );
+ 	
+ 	fgSizer1-&gt;Add( bSizer19, 1, wxEXPAND|wxRIGHT, 5 );
+ 	
+@@ -764,10 +769,10 @@ CSendDialogBase::CSendDialogBase( wxWindow* parent, wxWindowID id, const wxStrin
+ 	m_buttonSend = new wxButton( this, wxID_BUTTONSEND, wxT(&quot;&amp;Send&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	m_buttonSend-&gt;SetFont( wxFont( wxNORMAL_FONT-&gt;GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+ 	
+-	bSizer23-&gt;Add( m_buttonSend, 0, wxALL, 5 );
++	bSizer23-&gt;Add( m_buttonSend, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer23-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer23-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer21-&gt;Add( bSizer23, 0, wxEXPAND, 5 );
+ 	
+@@ -827,10 +832,10 @@ CSendingDialogBase::CSendingDialogBase( wxWindow* parent, wxWindowID id, const w
+ 	m_buttonOK = new wxButton( this, wxID_ANY, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_buttonOK-&gt;Enable( false );
+ 	
+-	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+ 	
+@@ -877,21 +882,21 @@ CYourAddressDialogBase::CYourAddressDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer69-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonRename = new wxButton( this, wxID_BUTTONRENAME, wxT(&quot;&amp;Edit...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonRename, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonRename, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot;&amp;New Address...&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer69-&gt;Add( m_buttonNew, 0, wxALL, 5 );
++	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot; &amp;New Address... &quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	bSizer69-&gt;Add( m_buttonNew, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot;&amp;Copy to Clipboard&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer69-&gt;Add( m_buttonCopy, 0, wxALL, 5 );
++	m_buttonCopy = new wxButton( this, wxID_BUTTONCOPY, wxT(&quot; &amp;Copy to Clipboard &quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
++	bSizer69-&gt;Add( m_buttonCopy, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+ 	m_buttonCancel-&gt;Hide();
+ 	
+-	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+ 	
+@@ -950,19 +955,19 @@ CAddressBookDialogBase::CAddressBookDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer69-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonEdit = new wxButton( this, wxID_BUTTONEDIT, wxT(&quot;&amp;Edit...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonEdit, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonEdit, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+-	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot;&amp;New Address...&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonNew, 0, wxALL, 5 );
++	m_buttonNew = new wxButton( this, wxID_BUTTONNEW, wxT(&quot; &amp;New Address... &quot;), wxDefaultPosition, wxDefaultSize, 0 );
++	bSizer69-&gt;Add( m_buttonNew, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonDelete = new wxButton( this, wxID_BUTTONDELETE, wxT(&quot;&amp;Delete&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer69-&gt;Add( m_buttonDelete, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonDelete, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer69-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer69-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer68-&gt;Add( bSizer69, 0, wxEXPAND, 5 );
+ 	
+@@ -1360,13 +1365,13 @@ CEditProductDialogBase::CEditProductDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer26 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_BUTTONSEND, wxT(&quot;&amp;Send&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonPreview = new wxButton( this, wxID_BUTTONPREVIEW, wxT(&quot;&amp;Preview&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonPreview, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonPreview, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -1551,10 +1556,10 @@ CViewProductDialogBase::CViewProductDialogBase( wxWindow* parent, wxWindowID id,
+ 	bSizer25 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonSubmitForm = new wxButton( m_scrolledWindow, wxID_BUTTONSAMPLE, wxT(&quot;&amp;Submit&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer25-&gt;Add( m_buttonSubmitForm, 0, wxALL, 5 );
++	bSizer25-&gt;Add( m_buttonSubmitForm, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancelForm = new wxButton( m_scrolledWindow, wxID_CANCEL2, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer25-&gt;Add( m_buttonCancelForm, 0, wxALL, 5 );
++	bSizer25-&gt;Add( m_buttonCancelForm, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer21-&gt;Add( bSizer25, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+ 	
+@@ -1571,13 +1576,13 @@ CViewProductDialogBase::CViewProductDialogBase( wxWindow* parent, wxWindowID id,
+ 	m_buttonBack = new wxButton( this, wxID_BUTTONBACK, wxT(&quot;&lt; &amp;Back  &quot;), wxDefaultPosition, wxDefaultSize, 0 );
+ 	m_buttonBack-&gt;Enable( false );
+ 	
+-	bSizer26-&gt;Add( m_buttonBack, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonBack, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonNext = new wxButton( this, wxID_BUTTONNEXT, wxT(&quot;  &amp;Next &gt;&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonNext, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonNext, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -1622,7 +1627,7 @@ CViewOrderDialogBase::CViewOrderDialogBase( wxWindow* parent, wxWindowID id, con
+ 	bSizer26 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer26-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer26-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer20-&gt;Add( bSizer26, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -1678,10 +1683,10 @@ CEditReviewDialogBase::CEditReviewDialogBase( wxWindow* parent, wxWindowID id, c
+ 	bSizer113 = new wxBoxSizer( wxHORIZONTAL );
+ 	
+ 	m_buttonSubmit = new wxButton( this, wxID_SUBMIT, wxT(&quot;&amp;Submit&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer113-&gt;Add( m_buttonSubmit, 0, wxALL, 5 );
++	bSizer113-&gt;Add( m_buttonSubmit, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer113-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer113-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer112-&gt;Add( bSizer113, 0, wxALIGN_RIGHT, 5 );
+ 	
+@@ -1745,10 +1750,10 @@ CGetTextFromUserDialogBase::CGetTextFromUserDialogBase( wxWindow* parent, wxWind
+ 	bSizer80-&gt;Add( 0, 0, 1, wxEXPAND, 5 );
+ 	
+ 	m_buttonOK = new wxButton( this, wxID_OK, wxT(&quot;OK&quot;), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+-	bSizer80-&gt;Add( m_buttonOK, 0, wxALL, 5 );
++	bSizer80-&gt;Add( m_buttonOK, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT(&quot;Cancel&quot;), wxDefaultPosition, wxDefaultSize, 0 );
+-	bSizer80-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
++	bSizer80-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+ 	
+ 	bSizer79-&gt;Add( bSizer80, 0, wxEXPAND, 5 );
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -277,7 +277,7 @@ class CSendDialogBase : public wxDialog
+ 	protected:
+ 		
+ 		
+-		wxStaticText* m_staticText14;
++		wxStaticText* m_staticTextInstructions;
+ 		
+ 		wxStaticBitmap* m_bitmapCheckMark;
+ 		wxStaticText* m_staticText36;</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
+                     &lt;/object&gt;
+                 &lt;/object&gt;
+             &lt;/object&gt;
+-            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;0&quot;&gt;
++            &lt;object class=&quot;wxToolBar&quot; expanded=&quot;1&quot;&gt;
+                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+                 &lt;property name=&quot;bitmapsize&quot;&gt;20,20&lt;/property&gt;
+                 &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+@@ -489,7 +489,7 @@
+                                 &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+                                 &lt;property name=&quot;id&quot;&gt;wxID_BUTTONCOPY&lt;/property&gt;
+-                                &lt;property name=&quot;label&quot;&gt;&amp;amp;Copy to Clipboard&lt;/property&gt;
++                                &lt;property name=&quot;label&quot;&gt; &amp;amp;Copy to Clipboard &lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;name&quot;&gt;m_buttonCopy&lt;/property&gt;
+@@ -708,7 +708,7 @@
+                                         &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxALL&lt;/property&gt;
+                                         &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                                         &lt;object class=&quot;wxStaticText&quot; expanded=&quot;1&quot;&gt;
+-                                            &lt;property name=&quot;bg&quot;&gt;wxSYS_COLOUR_WINDOW&lt;/property&gt;
++                                            &lt;property name=&quot;bg&quot;&gt;255,255,255&lt;/property&gt;
+                                             &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+                                             &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+                                             &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+@@ -1627,11 +1627,11 @@
+                     &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+                         &lt;property name=&quot;name&quot;&gt;bSizer65&lt;/property&gt;
+-                        &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
++                        &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -3014,7 +3014,7 @@
+                         &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -3066,7 +3066,7 @@
+                         &lt;/object&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -3118,7 +3118,7 @@
+                         &lt;/object&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -3476,7 +3476,7 @@
+                         &lt;/object&gt;
+                         &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                            &lt;property name=&quot;flag&quot;&gt;wxALL&lt;/property&gt;
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+                             &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+                             &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+                                 &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+@@ -3638,7 +3638,7 @@
+                                 &lt;property name=&quot;label&quot;&gt;Enter the recipient&amp;apos;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, &amp;#x0A;or Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&lt;/property&gt;
+                                 &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                &lt;property name=&quot;name&quot;&gt;m_staticText14&lt;/property&gt;
++                                &lt;property name=&quot;name&quot;&gt;m_staticTextInstructions&lt;/property&gt;
+                                 &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+                                 &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+                                 &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+@@ -3861,106 +3861,117 @@
+                                 &lt;/object&gt;
+                                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+                                     &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxRIGHT&lt;/property&gt;
++                                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL&lt;/property&gt;
+                                     &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                    &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+-                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;default&quot;&gt;0&lt;/property&gt;
+-                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                        &lt;property name=&quot;id&quot;&gt;wxID_BUTTONPASTE&lt;/property&gt;
+-                                        &lt;property name=&quot;label&quot;&gt;&amp;amp;Paste&lt;/property&gt;
+-                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;name&quot;&gt;m_buttonPaste&lt;/property&gt;
+-                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
+-                                        &lt;property name=&quot;style&quot;&gt;wxBU_EXACTFIT&lt;/property&gt;
+-                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                        &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonPaste&lt;/event&gt;
+-                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
+-                                    &lt;/object&gt;
+-                                &lt;/object&gt;
+-                                &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
+-                                    &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+-                                    &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxRIGHT&lt;/property&gt;
+-                                    &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
+-                                    &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
+-                                        &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;default&quot;&gt;0&lt;/property&gt;
+-                                        &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
+-                                        &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
+-                                        &lt;property name=&quot;id&quot;&gt;wxID_BUTTONADDRESSBOOK&lt;/property&gt;
+-                                        &lt;property name=&quot;label&quot;&gt; Address &amp;amp;Book...&lt;/property&gt;
+-                                        &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;1&quot;&gt;
+                                         &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;name&quot;&gt;m_buttonAddress&lt;/property&gt;
+-                                        &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
+-                                        &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
+-                                        &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
+-                                        &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonAddressBook&lt;/event&gt;
+-                                        &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
+-                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                        &lt;property name=&quot;name&quot;&gt;bSizer66&lt;/property&gt;
++                                        &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
++                                        &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
++                                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                            &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND&lt;/property&gt;
++                                            &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                            &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
++                                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;default&quot;&gt;0&lt;/property&gt;
++                                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                                &lt;property name=&quot;id&quot;&gt;wxID_BUTTONPASTE&lt;/property&gt;
++                                                &lt;property name=&quot;label&quot;&gt;&amp;amp;Paste&lt;/property&gt;
++                                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;name&quot;&gt;m_buttonPaste&lt;/property&gt;
++                                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;size&quot;&gt;-1,-1&lt;/property&gt;
++                                                &lt;property name=&quot;style&quot;&gt;wxBU_EXACTFIT&lt;/property&gt;
++                                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                                                &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonPaste&lt;/event&gt;
++                                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                            &lt;/object&gt;
++                                        &lt;/object&gt;
++                                        &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
++                                            &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
++                                            &lt;property name=&quot;flag&quot;&gt;wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND&lt;/property&gt;
++                                            &lt;property name=&quot;proportion&quot;&gt;0&lt;/property&gt;
++                                            &lt;object class=&quot;wxButton&quot; expanded=&quot;1&quot;&gt;
++                                                &lt;property name=&quot;bg&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;default&quot;&gt;0&lt;/property&gt;
++                                                &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
++                                                &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
++                                                &lt;property name=&quot;id&quot;&gt;wxID_BUTTONADDRESSBOOK&lt;/property&gt;
++                                                &lt;property name=&quot;label&quot;&gt; Address &amp;amp;Book...&lt;/property&gt;
++                                                &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;name&quot;&gt;m_buttonAddress&lt;/property&gt;
++                                                &lt;property name=&quot;permission&quot;&gt;protected&lt;/property&gt;
++                                                &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;size&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;style&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;tooltip&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_extra_style&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_name&quot;&gt;&lt;/property&gt;
++                                                &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
++                                                &lt;event name=&quot;OnButtonClick&quot;&gt;OnButtonAddressBook&lt;/event&gt;
++                                                &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeaveWindow&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnLeftUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMiddleUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMotion&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMouseEvents&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnMouseWheel&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnPaint&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightDClick&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightDown&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnRightUp&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
++                                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
++                                            &lt;/object&gt;
++                                        &lt;/object&gt;
+                                     &lt;/object&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -53,6 +53,17 @@ public:
+         for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
+             delete ppmutexOpenSSL[i];
+         OPENSSL_free(ppmutexOpenSSL);
++
++        // Close sockets
++        foreach(CNode* pnode, vNodes)
++            closesocket(pnode-&gt;hSocket);
++        if (closesocket(hListenSocket) == SOCKET_ERROR)
++            printf(&quot;closesocket(hListenSocket) failed with error %d\n&quot;, WSAGetLastError());
++
++#ifdef __WXMSW__
++        // Shutdown Windows Sockets
++        WSACleanup();
++#endif
+     }
+ }
+ instance_of_cinit;</code></pre></details>
+<nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8acda00/">← UIThreadCall, ThreadSafeMessageBox</a><a rel="next" href="../../commits/b4e235f/">ui tweaks, multiple xpm icon sizes →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

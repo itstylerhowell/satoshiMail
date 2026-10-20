@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bitcoin generation broken in 0.3.8? (64-bit) – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 9 August 2010: I found that SSE2 only added a slight 2% speedup, which didn&#x27;t seem worth the incompatibility. I was trying to take the…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p170-bitcoin-generation-broken-in-0-3-8-64-bit/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="bitcoin generation broken in 0.3.8? (64-bit) – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 9 August 2010: I found that SSE2 only added a slight 2% speedup, which didn&#x27;t seem worth the incompatibility. I was trying to take the…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p170-bitcoin-generation-broken-in-0-3-8-64-bit/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="bitcoin generation broken in 0.3.8? (64-bit) – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 9 August 2010: I found that SSE2 only added a slight 2% speedup, which didn&#x27;t seem worth the incompatibility. I was trying to take the…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "bitcoin generation broken in 0.3.8?  (64-bit)", "url": "https://satoshimail.pages.dev/conversations/p170-bitcoin-generation-broken-in-0-3-8-64-bit/", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T03:06:59Z", "text": "I was starting to wonder when my systems seemed to quit generating coins if there was something going on. They went from about 1 block / day to none in a week. ArtForz in irc suggested I run a test isolated net with two nodes only connected to each other with empty wallet dir. I took a couple of quad core systems and set them up. they have produced no blocks in about 90 minutes now while hashing at a combined rate of over 8000 khash/sec. Is this evidence of a problem yet or is it more bad luck? The systems are Linux 64 bit one Intel quad q6600 and one AMD quad phenom II 940.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "FreeMoney"}, "datePublished": "2010-08-08T03:09:03Z", "text": "The difficulty went up again just after 3.8 was out. I have not gotten any with 4000khash in about 15 days, so 90 minutes of 8000k doesn't mean much. I'm sure we'd know if 3.8 wasn't generating any blocks."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T03:13:09Z", "text": "This is on an isolated test net with just two machines, connections = 1, difficulty = 1"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T03:14:54Z", "text": "maybe only a problem with 64 bit linux or something"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T03:24:29Z", "text": "I haven't had any problems with 0.3.8 release, generated some coin on windows and Linux clients (32/64)bit just fine this week."}, {"@type": "Comment", "author": {"@type": "Person", "name": "FreeMoney"}, "datePublished": "2010-08-08T03:38:21Z", "text": "Oh, that is odd then, that would be like not finding one in over 500 hours, possible I guess, but getting out there"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T03:41:26Z", "text": "I guess I want to know how long I need to run 8000 khash/s at difficulty 1.0 to have any reasonable evidence of a problem. ArtForz said it should tell me in an hour or so."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ArtForz"}, "datePublished": "2010-08-08T03:43:05Z", "text": "At ~ 8Mhash/s combined not generating a block at 1.0 diff in over 1h is pretty unlikely. As in, under 0.1% probability unlikely (50% is ~6 min, 1% ~42 min) <edit> Forgot to mention, he's running a custom compile of stock 0.3.8 sources."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T03:58:09Z", "text": "I am wondering if its something odd in the way I have my systems set up or Huh just various plain ubuntu installs so far as I know."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-08T05:05:04Z", "text": "I'm having a similar problem with my own compile of the SVN trunk. I just reverted to the stock builds to test and see what happens. I should try setting up my own network of two nodes with my builds."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T07:18:55Z", "text": "Ok chatting with lachesis in irc he tried this and I get the same result: We added some prints in main.cpp at the SHA calls like so : loop { SHA256Transform(&tmp.hash1, (char*)&tmp.block + 64, &midstate); printf(\"mid hash =\"); for (int i = 0; i < 8; i++) printf(\" %08x\", ((unsigned *)&tmp.hash1)[i]); printf(\"\"); SHA256Transform(&hash, &tmp.hash1, pSHA256InitState); printf(\"full hash =\"); for (int i = 0; i < 8; i++) printf(\" %08x\", ((unsigned *)&hash)[i]); printf(\"\"); if (((unsigned…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T07:20:20Z", "text": "There is one behavior that I've noticed. Block sync stalling. When the client (be it Windows or Linux) has been running for a few days, *sometimes* they get stuck in block limbo. What happens is your client keeps trying to solve the current block and loses track of the entire block system. So as time goes by, other blocks are solved and your PC is still stuck on the same block. The problem is, if you stop and restart the client, it just picks up where it left off on the same stuck block. The…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T10:32:32Z", "text": "This seems to be a different problem. The blocks do not seem to be \"stuck\" on my systems. The getinfo shows them up to date It seems the sha256 code is not getting built right for linux 64. Not sure if/how it could work on some and not on others."}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-08T11:56:54Z", "text": "Did you compile it yourself? There's a define in makefile.unix. Something like -DCRYPTOPP_DISABLE_SSE2. Remove that. Else the SHA256_Transform will return the initstate. I had the same problem when switchting to 0.3.6."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-08T13:13:30Z", "text": "That seems to be the root of the problem. I think even the bundled binary for Linux 64 in 0.3.8 was compiled wrong then."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-08T15:47:15Z", "text": "That appears to fix it for me too. EDIT: I've uploaded corrected Linux builds to http://www.alloscomp.com/bitcoin/binaries/release-r123-2010-08-08/. Enjoy!"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T17:46:55Z", "text": "I just tested it out, I get the same results. Repeating values with stock, more random values with the flag modification. Probably needs to be fixed for the next release, though I'm not sure how mine are generating anything then?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "nimnul"}, "datePublished": "2010-08-08T17:50:10Z", "text": "@lachesis: 404 not found @knightmb: What about a fixed CentOS build?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T17:56:09Z", "text": "Should be simple enough for CentOS, I was going to test it out first to see if those suffered the same issue, thought it seems like all the builds would suffer this issue if the compile flag is what makes the difference."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T18:06:20Z", "text": "I'm starting to wonder if the two are connected now since the hashing seems to get stuck, maybe that's why it gets stuck on a block."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T18:27:50Z", "text": "After testing the 32bit and 64bit builds, the problem I can confirm what was already posted here, it just affects the 64bit builds. When I go back and trace what's being produced, it's the 64bit Linux machines (the 64bit windows machines don't appear to have this problem) that aren't producing any coin since the latest releases. All of the 32bit builds (stock or custom) appear to be just fine."}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-08T18:32:27Z", "text": "This works for the 64bit builds, strange that it has no affect on the 32bit builds? Should it be disabled for 32bit builds as well?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "tcatm"}, "datePublished": "2010-08-08T18:49:15Z", "text": "I don't really know what it changes. I wonder why the define was made in the first place. The code should be able to determine whether it's running on a SSE2 CPU or not. I discovered it while comparing my 4xSSE2 hash function to the original one in 0.3.6 so it really means, that no 64bit build since 0.3.6 was able to generate any coins. Maybe satoshi can tell us why he put the define in the makefile."}, {"@type": "Comment", "author": {"@type": "Person", "name": "ArtForz"}, "datePublished": "2010-08-09T00:31:45Z", "text": "Just had a \"fun\" gdb session with the official 0.3.8 linux 64 bit binary on debian sid. Same bug, output state on return from SHA256Transform always == initial state. So... did someone really generate a block running the official 0.3.8 64 bit linux binary (the one in bin/64)? Oh, and from a quick glance at the svn changelog, that bug probably has been there since r118 = 0.3.6. Oh, and who THE FUCK thought stripping the official binary was a good idea? I just wasted half an hour hunting down…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-09T01:16:31Z", "text": "Not on 64bit linux, just 32bit and 64bit everything else in between (Linux/Windows) I didn't notice until I checked the generation dates against the release dates of the software. If you don't strip the debug symbols the binary is 8 times it's normal size."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-09T02:05:51Z", "text": "Nice work mate! Time to PM Satoshi. Sent you ฿5.01 for your troubles."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lfm"}, "datePublished": "2010-08-09T10:04:43Z", "text": "The 32 bit Linux build seems ok for those who don't care to try to build it themselves. It's only a few percent slower than the 64 when built right. I guess that flag was put in for old 32 bit machines that might not have sse2. Unfortunatly there is no such thing as a 64 bit x86_64 without sse2 so the conditional compilation produced an empty body which did exactly nothing."}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-08-09T15:45:39Z", "text": "Yet another argument for cmake or similar."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-08-09T18:50:41Z", "text": "I found that SSE2 only added a slight 2% speedup, which didn't seem worth the incompatibility. I was trying to take the safer option. It doesn't look to me like Crypto++ could be deciding whether to use SSE2 at runtime. There's one place where it detects SSE2 for deciding some block count parameter, but the SSE2 stuff is all #ifdef at compile time and I can't see how that would switch at runtime. Maybe I'm not looking in the right place. Should we enable SSE2 in all the makefiles? It seems…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "knightmb"}, "datePublished": "2010-08-09T19:02:12Z", "text": "I do the see point because a non-SSE2 machine, the client would crash? Depends on which is easier really. If you enable something that is going to break compatibility, the only people who will feel the pain are the non-technical users of the client. From their perspective, it just doesn't work for some reason. I think some builds notes would be better, example (If compiling on a 64bit system, be sure to do this part). Have one branch of source that cross-compiles across multiple operating…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "dkaparis"}, "datePublished": "2010-08-09T19:31:37Z", "text": "It's a fact <http://bitbucket.org/dkaparis/bitcoin-cmake/wiki/Home>. I intend to eventually sort out all building hassles and have a reliable build procedure across all win/unix 32/64-bit platform combinations. On that note, I'm currently tackling x64 build for windows and notice that for 64-bit MSVC, the X86_SHA256_HashBlocks function is deferred to an external definition that is not present in the project. In the original CryptoPP library it seems to be in a separate asm module. I wonder how…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "bitcoin generation broken in 0.3.8? (64-bit)", "item": "https://satoshimail.pages.dev/conversations/p170-bitcoin-generation-broken-in-0-3-8-64-bit/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p170">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">bitcoin generation broken in 0.3.8? (64-bit)</span></div></nav>
+<main class="in">
+<h1>bitcoin generation broken in 0.3.8?  (64-bit)</h1>
+<p class="lead">BitcoinTalk forum · 32 messages · from 8 August 2010 · with ArtForz, FreeMoney, Satoshi Nakamoto, dkaparis, knightmb, lachesis…</p>
+<p class="actions"><a class="btn" href="../../#t-p170">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/170/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T03:06:59Z">8 August 2010, 03:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8191#msg8191" rel="nofollow noopener">original</a></span></header>
+<div class="t">I was starting to wonder when my systems seemed to quit generating coins if there was something going on. They went from about 1 block / day to none in a week.
+
+ArtForz in irc suggested I run a test isolated net with two nodes only connected to each other with empty wallet dir. I took a couple of quad core systems and set them up. they have produced no blocks in about 90 minutes now while hashing at a combined rate of over 8000 khash/sec. Is this evidence of a problem yet or is it more bad luck?
+
+The systems are Linux 64 bit one Intel quad q6600 and one AMD quad phenom II 940.</div></article><article class="msg" id="m1">
+<header><b>FreeMoney</b><span class="muted"> · <time datetime="2010-08-08T03:09:03Z">8 August 2010, 03:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8193#msg8193" rel="nofollow noopener">original</a></span></header>
+<div class="t">The difficulty went up again just after 3.8 was out. I have not gotten any with 4000khash in about 15 days, so 90 minutes of 8000k doesn&#x27;t mean much. I&#x27;m sure we&#x27;d know if 3.8 wasn&#x27;t generating any blocks.</div></article><article class="msg" id="m2">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T03:13:09Z">8 August 2010, 03:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8194#msg8194" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: FreeMoney on August 08, 2010, 03:09:03 AM</div><div class="t">The difficulty went up again just after 3.8 was out. I have not gotten any with 4000khash in about 15 days, so 90 minutes of 8000k doesn&#x27;t mean much. I&#x27;m sure we&#x27;d know if 3.8 wasn&#x27;t generating any blocks.</div></blockquote><div class="t">This is on an isolated test net with just two machines, connections = 1, difficulty = 1</div></article><article class="msg" id="m3">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T03:14:54Z">8 August 2010, 03:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8196#msg8196" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: FreeMoney on August 08, 2010, 03:09:03 AM</div><div class="t">The difficulty went up again just after 3.8 was out. I have not gotten any with 4000khash in about 15 days, so 90 minutes of 8000k doesn&#x27;t mean much. I&#x27;m sure we&#x27;d know if 3.8 wasn&#x27;t generating any blocks.</div></blockquote><div class="t">maybe only a problem with 64 bit linux or something</div></article><article class="msg" id="m4">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T03:24:29Z">8 August 2010, 03:24 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8198#msg8198" rel="nofollow noopener">original</a></span></header>
+<div class="t">I haven&#x27;t had any problems with 0.3.8 release, generated some coin on windows and Linux clients (32/64)bit just fine this week.</div></article><article class="msg" id="m5">
+<header><b>FreeMoney</b><span class="muted"> · <time datetime="2010-08-08T03:38:21Z">8 August 2010, 03:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8199#msg8199" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 08, 2010, 03:13:09 AM</div><div class="t">&gt; Quote from: FreeMoney on August 08, 2010, 03:09:03 AM
+&gt; The difficulty went up again just after 3.8 was out. I have not gotten any with 4000khash in about 15 days, so 90 minutes of 8000k doesn&#x27;t mean much. I&#x27;m sure we&#x27;d know if 3.8 wasn&#x27;t generating any blocks.
+
+This is on an isolated test net with just two machines, connections = 1, difficulty = 1</div></blockquote><div class="t">Oh, that is odd then, that would be like not finding one in over 500 hours, possible I guess, but getting out there</div></article><article class="msg" id="m6">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T03:41:26Z">8 August 2010, 03:41 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8200#msg8200" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 08, 2010, 03:24:29 AM</div><div class="t">I haven&#x27;t had any problems with 0.3.8 release, generated some coin on windows and Linux clients (32/64)bit just fine this week.</div></blockquote><div class="t">I guess I want to know how long I need to run 8000 khash/s at difficulty 1.0 to have any reasonable evidence of a problem. ArtForz said it should tell me in an hour or so.</div></article><article class="msg" id="m7">
+<header><b>ArtForz</b><span class="muted"> · <time datetime="2010-08-08T03:43:05Z">8 August 2010, 03:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8201#msg8201" rel="nofollow noopener">original</a></span></header>
+<div class="t">At ~ 8Mhash/s combined not generating a block at 1.0 diff in over 1h is pretty unlikely.
+As in, under 0.1% probability unlikely (50% is ~6 min, 1% ~42 min)
+&lt;edit&gt;
+Forgot to mention, he&#x27;s running a custom compile of stock 0.3.8 sources.</div></article><article class="msg" id="m8">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T03:58:09Z">8 August 2010, 03:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8205#msg8205" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: knightmb on August 08, 2010, 03:24:29 AM</div><div class="t">I haven&#x27;t had any problems with 0.3.8 release, generated some coin on windows and Linux clients (32/64)bit just fine this week.</div></blockquote><div class="t">I am wondering if its something odd in the way I have my systems set up or Huh just various plain ubuntu installs so far as I know.</div></article><article class="msg" id="m9">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-08T05:05:04Z">8 August 2010, 05:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8209#msg8209" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m having a similar problem with my own compile of the SVN trunk. I just reverted to the stock builds to test and see what happens. I should try setting up my own network of two nodes with my builds.</div></article><article class="msg" id="m10">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T07:18:55Z">8 August 2010, 07:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8218#msg8218" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok chatting with lachesis in irc he tried this and I get the same result: We added some prints in main.cpp at the SHA calls like so :</div><pre><code>        loop
+        {
+            SHA256Transform(&amp;tmp.hash1, (char*)&amp;tmp.block + 64, &amp;midstate);
+            printf(&quot;mid hash =&quot;);
+            for (int i = 0; i &lt; 8; i++)
+              printf(&quot; %08x&quot;, ((unsigned *)&amp;tmp.hash1)[i]);
+            printf(&quot;&quot;);
+            SHA256Transform(&amp;hash, &amp;tmp.hash1, pSHA256InitState);
+            printf(&quot;full hash =&quot;);
+            for (int i = 0; i &lt; 8; i++)
+              printf(&quot; %08x&quot;, ((unsigned *)&amp;hash)[i]);
+            printf(&quot;&quot;);
+
+            if (((unsigned short*)&amp;hash)[14] == 0)</code></pre><div class="t">and then in the log we get:
+
+mid hash =
+ 6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19
+full hash =
+ 6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19
+mid hash =
+ 6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19
+full hash =
+ 6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19
+
+repeating! The hash call isn&#x27;t doing anything!
+(he maybe got a different repeating value, I don&#x27;t know)</div></article><article class="msg" id="m11">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T07:20:20Z">8 August 2010, 07:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8219#msg8219" rel="nofollow noopener">original</a></span></header>
+<div class="t">There is one behavior that I&#x27;ve noticed.
+
+Block sync stalling.
+
+When the client (be it Windows or Linux) has been running for a few days, *sometimes* they get stuck in block limbo. What happens is your client keeps trying to solve the current block and loses track of the entire block system. So as time goes by, other blocks are solved and your PC is still stuck on the same block. The problem is, if you stop and restart the client, it just picks up where it left off on the same stuck block. The only way I&#x27;ve seen to fix this is to delete the block chain so that the client will re-download it.
+
+I&#x27;ve had to clear out a few block chains for a few servers because of this, I&#x27;ll notice they are stuck on block 70,000 for example, while the rest of the network is working on block 70,839 for example.
+
+That might explain why you go weeks without winning a block with a 24/7 PC going.
+
+The server farm I had running before were spitting out blocks all day, but now that I&#x27;m just down to a few dozen servers and the difficulty is way up, I barely see about 3 or 4 blocks a day spread across all of them. But I know the 0.3.8 version is working like it should, except for the occasional block freeze.</div></article><article class="msg" id="m12">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T10:32:32Z">8 August 2010, 10:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8226#msg8226" rel="nofollow noopener">original</a></span></header>
+<div class="t">This seems to be a different problem. The blocks do not seem to be &quot;stuck&quot; on my systems. The getinfo shows them up to date
+
+It seems the sha256 code is not getting built right for linux 64. Not sure if/how it could work on some and not on others.</div><blockquote><div class=qh>Quote from: knightmb on August 08, 2010, 07:20:20 AM</div><div class="t">There is one behavior that I&#x27;ve noticed.
+
+Block sync stalling.
+
+When the client (be it Windows or Linux) has been running for a few days, *sometimes* they get stuck in block limbo. What happens is your client keeps trying to solve the current block and loses track of the entire block system. So as time goes by, other blocks are solved and your PC is still stuck on the same block.
+
+...</div></blockquote></article><article class="msg" id="m13">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-08T11:56:54Z">8 August 2010, 11:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8230#msg8230" rel="nofollow noopener">original</a></span></header>
+<div class="t">Did you compile it yourself? There&#x27;s a define in makefile.unix. Something like -DCRYPTOPP_DISABLE_SSE2. Remove that. Else the SHA256_Transform will return the initstate. I had the same problem when switchting to 0.3.6.</div></article><article class="msg" id="m14">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-08T13:13:30Z">8 August 2010, 13:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8233#msg8233" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 08, 2010, 11:56:54 AM</div><div class="t">Did you compile it yourself? There&#x27;s a define in makefile.unix. Something like -DCRYPTOPP_DISABLE_SSE2. Remove that. Else the SHA256_Transform will return the initstate. I had the same problem when switchting to 0.3.6.</div></blockquote><div class="t">That seems to be the root of the problem. I think even the bundled binary for Linux 64 in 0.3.8 was compiled wrong then.</div></article><article class="msg" id="m15">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-08T15:47:15Z">8 August 2010, 15:47 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8239#msg8239" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 08, 2010, 01:13:30 PM</div><div class="t">That seems to be the root of the problem. I think even the bundled binary for Linux 64 in 0.3.8 was compiled wrong then.</div></blockquote><div class="t">That appears to fix it for me too.
+
+EDIT:
+I&#x27;ve uploaded corrected Linux builds to <a href="http://www.alloscomp.com/bitcoin/binaries/release-r123-2010-08-08/." rel="nofollow noopener">http://www.alloscomp.com/bitcoin/binaries/release-r123-2010-08-08/.</a> Enjoy!</div></article><article class="msg" id="m16">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T17:46:55Z">8 August 2010, 17:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8244#msg8244" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 08, 2010, 01:13:30 PM</div><div class="t">&gt; Quote from: tcatm on August 08, 2010, 11:56:54 AM
+&gt; Did you compile it yourself? There&#x27;s a define in makefile.unix. Something like -DCRYPTOPP_DISABLE_SSE2. Remove that. Else the SHA256_Transform will return the initstate. I had the same problem when switchting to 0.3.6.
+
+That seems to be the root of the problem. I think even the bundled binary for Linux 64 in 0.3.8 was compiled wrong then.</div></blockquote><div class="t">I just tested it out, I get the same results. Repeating values with stock, more random values with the flag modification. Probably needs to be fixed for the next release, though I&#x27;m not sure how mine are generating anything then?</div></article><article class="msg" id="m17">
+<header><b>nimnul</b><span class="muted"> · <time datetime="2010-08-08T17:50:10Z">8 August 2010, 17:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8245#msg8245" rel="nofollow noopener">original</a></span></header>
+<div class="t">@lachesis: 404 not found
+
+@knightmb: What about a fixed CentOS build?</div></article><article class="msg" id="m18">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T17:56:09Z">8 August 2010, 17:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8246#msg8246" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: nimnul on August 08, 2010, 05:50:10 PM</div><div class="t">@lachesis: 404 not found
+
+@knightmb: What about a fixed CentOS build?</div></blockquote><div class="t">Should be simple enough for CentOS, I was going to test it out first to see if those suffered the same issue, thought it seems like all the builds would suffer this issue if the compile flag is what makes the difference.</div></article><article class="msg" id="m19">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T18:06:20Z">8 August 2010, 18:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8248#msg8248" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 08, 2010, 10:32:32 AM</div><div class="t">This seems to be a different problem. The blocks do not seem to be &quot;stuck&quot; on my systems. The getinfo shows them up to date
+
+It seems the sha256 code is not getting built right for linux 64. Not sure if/how it could work on some and not on others.
+
+&gt; Quote from: knightmb on August 08, 2010, 07:20:20 AM
+&gt; There is one behavior that I&#x27;ve noticed.
+&gt;
+&gt; Block sync stalling.
+&gt;
+&gt; When the client (be it Windows or Linux) has been running for a few days, *sometimes* they get stuck in block limbo. What happens is your client keeps trying to solve the current block and loses track of the entire block system. So as time goes by, other blocks are solved and your PC is still stuck on the same block.
+&gt;
+&gt; ...</div></blockquote><div class="t">I&#x27;m starting to wonder if the two are connected now since the hashing seems to get stuck, maybe that&#x27;s why it gets stuck on a block.</div></article><article class="msg" id="m20">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T18:27:50Z">8 August 2010, 18:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8255#msg8255" rel="nofollow noopener">original</a></span></header>
+<div class="t">After testing the 32bit and 64bit builds, the problem I can confirm what was already posted here, it just affects the 64bit builds. When I go back and trace what&#x27;s being produced, it&#x27;s the 64bit Linux machines (the 64bit windows machines don&#x27;t appear to have this problem) that aren&#x27;t producing any coin since the latest releases. All of the 32bit builds (stock or custom) appear to be just fine.</div></article><article class="msg" id="m21">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-08T18:32:27Z">8 August 2010, 18:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8257#msg8257" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: tcatm on August 08, 2010, 11:56:54 AM</div><div class="t">Did you compile it yourself? There&#x27;s a define in makefile.unix. Something like -DCRYPTOPP_DISABLE_SSE2. Remove that. Else the SHA256_Transform will return the initstate. I had the same problem when switchting to 0.3.6.</div></blockquote><div class="t">This works for the 64bit builds, strange that it has no affect on the 32bit builds? Should it be disabled for 32bit builds as well?</div></article><article class="msg" id="m22">
+<header><b>tcatm</b><span class="muted"> · <time datetime="2010-08-08T18:49:15Z">8 August 2010, 18:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8261#msg8261" rel="nofollow noopener">original</a></span></header>
+<div class="t">I don&#x27;t really know what it changes. I wonder why the define was made in the first place. The code should be able to determine whether it&#x27;s running on a SSE2 CPU or not. I discovered it while comparing my 4xSSE2 hash function to the original one in 0.3.6 so it really means, that no 64bit build since 0.3.6 was able to generate any coins. Maybe satoshi can tell us why he put the define in the makefile. </div></article><article class="msg" id="m23">
+<header><b>ArtForz</b><span class="muted"> · <time datetime="2010-08-09T00:31:45Z">9 August 2010, 00:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8306#msg8306" rel="nofollow noopener">original</a></span></header>
+<div class="t">Just had a &quot;fun&quot; gdb session with the official 0.3.8 linux 64 bit binary on debian sid.
+Same bug, output state on return from SHA256Transform always == initial state.
+So... did someone really generate a block running the official 0.3.8 64 bit linux binary (the one in bin/64)?
+Oh, and from a quick glance at the svn changelog, that bug probably has been there since r118 = 0.3.6.
+Oh, and who THE FUCK thought stripping the official binary was a good idea? I just wasted half an hour hunting down SHA256Transform in a disassembler.</div></article><article class="msg" id="m24">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-09T01:16:31Z">9 August 2010, 01:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8309#msg8309" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: ArtForz on August 09, 2010, 12:31:45 AM</div><div class="t">Just had a &quot;fun&quot; gdb session with the official 0.3.8 linux 64 bit binary on debian sid.
+Same bug, output state on return from SHA256Transform always == initial state.
+So... did someone really generate a block running the official 0.3.8 64 bit linux binary (the one in bin/64)?
+Oh, and from a quick glance at the svn changelog, that bug probably has been there since r118 = 0.3.6.
+Oh, and who THE FUCK thought stripping the official binary was a good idea? I just wasted half an hour hunting down SHA256Transform in a disassembler.</div></blockquote><div class="t">Not on 64bit linux, just 32bit and 64bit everything else in between (Linux/Windows)
+
+I didn&#x27;t notice until I checked the generation dates against the release dates of the software.
+
+If you don&#x27;t strip the debug symbols the binary is 8 times it&#x27;s normal size.</div></article><article class="msg" id="m25">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-09T02:05:51Z">9 August 2010, 02:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8313#msg8313" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: ArtForz on August 09, 2010, 12:31:45 AM</div><div class="t">Just had a &quot;fun&quot; gdb session with the official 0.3.8 linux 64 bit binary on debian sid.
+Same bug, output state on return from SHA256Transform always == initial state.
+So... did someone really generate a block running the official 0.3.8 64 bit linux binary (the one in bin/64)?
+Oh, and from a quick glance at the svn changelog, that bug probably has been there since r118 = 0.3.6.
+Oh, and who THE FUCK thought stripping the official binary was a good idea? I just wasted half an hour hunting down SHA256Transform in a disassembler.</div></blockquote><div class="t">Nice work mate! Time to PM Satoshi.
+
+Sent you ฿5.01 for your troubles.</div></article><article class="msg" id="m26">
+<header><b>lfm</b><span class="muted"> · <time datetime="2010-08-09T10:04:43Z">9 August 2010, 10:04 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8342#msg8342" rel="nofollow noopener">original</a></span></header>
+<div class="t">The 32 bit Linux build seems ok for those who don&#x27;t care to try to build it themselves. It&#x27;s only a few percent slower than the 64 when built right.
+
+I guess that flag was put in for old 32 bit machines that might not have sse2. Unfortunatly there is no such thing as a 64 bit x86_64 without sse2 so the conditional compilation produced an empty body which did exactly nothing.</div></article><article class="msg" id="m27">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-09T15:45:39Z">9 August 2010, 15:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8369#msg8369" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lfm on August 09, 2010, 10:04:43 AM</div><div class="t">I guess that flag was put in for old 32 bit machines that might not have sse2. Unfortunatly there is no such thing as a 64 bit x86_64 without sse2 so the conditional compilation produced an empty body which did exactly nothing.</div></blockquote><div class="t">Yet another argument for cmake or similar.</div></article><article class="msg sat" id="m28">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-09T18:50:41Z">9 August 2010, 18:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8388#msg8388" rel="nofollow noopener">original</a></span></header>
+<div class="t">I found that SSE2 only added a slight 2% speedup, which didn&#x27;t seem worth the incompatibility.  I was trying to take the safer option.
+
+It doesn&#x27;t look to me like Crypto++ could be deciding whether to use SSE2 at runtime.  There&#x27;s one place where it detects SSE2 for deciding some block count parameter, but the SSE2 stuff is all #ifdef at compile time and I can&#x27;t see how that would switch at runtime.  Maybe I&#x27;m not looking in the right place.
+
+Should we enable SSE2 in all the makefiles?  It seems like we must in case someone compiles with 64-bit.
+
+I will recompile the 64-bit part of the Linux 0.3.8 release.</div></article><article class="msg" id="m29">
+<header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-09T19:02:12Z">9 August 2010, 19:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8389#msg8389" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on August 09, 2010, 06:50:41 PM</div><div class="t">I found that SSE2 only added a slight speedup, about 2%, which didn&#x27;t seem worth the incompatibility. </div></blockquote><div class="t">I do the see point because a non-SSE2 machine, the client would crash?</div><blockquote><div class=qh>Quote</div><div class="t">It doesn&#x27;t look to me like Crypto++ could be deciding whether to use SSE2 at runtime.  There&#x27;s one place where it detects SSE2 for deciding some block count parameter, but the SSE2 stuff is all #ifdef at compile time and I can&#x27;t see how that would switch at runtime.  Maybe I&#x27;m not looking in the right place.
+
+Should we enable SSE2 in all the makefiles?  It seems like we must in case someone compiles with 64-bit.
+
+I will recompile the 64-bit part of the Linux 0.3.8 release.</div></blockquote><div class="t">Depends on which is easier really. If you enable something that is going to break compatibility, the only people who will feel the pain are the non-technical users of the client. From their perspective, it just doesn&#x27;t work for some reason.
+
+I think some builds notes would be better, example (If compiling on a 64bit system, be sure to do this part).
+
+Have one branch of source that cross-compiles across multiple operating systems is always tricky business.  Grin</div></article><article class="msg" id="m30">
+<header><b>dkaparis</b><span class="muted"> · <time datetime="2010-08-09T19:31:37Z">9 August 2010, 19:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8396#msg8396" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: lachesis on August 09, 2010, 03:45:39 PM</div><div class="t">Yet another argument for cmake or similar.</div></blockquote><div class="t">It&#x27;s a fact &lt;<a href="http://bitbucket.org/dkaparis/bitcoin-cmake/wiki/Home" rel="nofollow noopener">http://bitbucket.org/dkaparis/bitcoin-cmake/wiki/Home</a>&gt;.
+
+I intend to eventually sort out all building hassles and have a reliable build procedure across all win/unix 32/64-bit platform combinations.
+
+On that note, I&#x27;m currently tackling x64 build for windows and notice that for 64-bit MSVC, the X86_SHA256_HashBlocks function is deferred to an external definition that is not present in the project. In the original CryptoPP library it seems to be in a separate asm module. I wonder how are people building x64 on windows, are they setting defines to use the C-source sha version?</div></article><article class="msg sat" id="m31">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-09T20:34:06Z">9 August 2010, 20:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=753.msg8417#msg8417" rel="nofollow noopener">original</a></span></header>
+<div class="t">I uploaded 0.3.8.1 for Linux with re-built 64-bit.  I ran a difficulty 1 test with it and it has generated blocks.
+
+<a href="http://bitcointalk.org/index.php?topic=765.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=765.0</a>
+
+Download:
+<a href="http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.8/bitcoin-0.3.8.1-linux.tar.gz/download" rel="nofollow noopener">http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.3.8/bitcoin-0.3.8.1-linux.tar.gz/download</a></div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p169-escrow/">← Escrow</a><a rel="next" href="../../conversations/p171-what-could-be-the-transition-plan-to-y2038-compliant-bitcoin/">What could be the transition plan to Y2038 compliant Bitcoin? (it already is) →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

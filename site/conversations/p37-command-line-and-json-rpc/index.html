@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Command Line and JSON-RPC – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 23 February 2010: Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC. On Linux it needs…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p37-command-line-and-json-rpc/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Command Line and JSON-RPC – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 23 February 2010: Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC. On Linux it needs…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p37-command-line-and-json-rpc/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Command Line and JSON-RPC – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 23 February 2010: Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC. On Linux it needs…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Command Line and JSON-RPC", "url": "https://satoshimail.pages.dev/conversations/p37-command-line-and-json-rpc/", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-23T22:15:41Z", "text": "Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC. On Linux it needs libgtk2.0-0 installed, but does not need a GUI running. Hopefully gtk can be installed without having a windowing system installed. The command to start as a daemon is: bitcoin -daemon [switches...] Or, to run the UI normally and also be able to control it from command line or JSON-RPC, use the \"-server\" switch. bitcoin -server [switches...] With either switch, it runs an HTTP JSON-RPC server that accepts local socket connections on 127.0.0.1:8332. The port is bound to loopback and can only be accessed from the local machine, but from any account, not just the user it's running under. To control it from the command line, the interface is a command name without any switches, followed by parameters if any. bitcoin <command> [params...] For example: bitcoin getinfo bitcoin getdifficulty bitcoin setgenerate true bitcoin stop It's a simple JSON-RPC client and prints the JSON result. Look at rpc.cpp for the list of commands. Web apps or anything automated will normally use JSON-RPC directly, not command line. There are JSON-RPC libraries for all the major languages. In script languages like PHP and Python the syntax is as natural as calling a local function.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-02-24T02:29:17Z", "text": "Oh thank you! You have no idea how badly I needed something like this. I will have a payment library built in no time. Cheesy"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-24T03:07:37Z", "text": "Will this requirement be removed sometime? I'd rather not have to deal with GTK."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-02-24T03:18:54Z", "text": "Gtk is required by the GUI, so it must be linked if you want to use the same binary. Making a separate binary is another option, dunno how much code tweaking and ifdeffing that would take."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-02-24T05:00:45Z", "text": "* madhatter2 pulls out razor sharp hex editor"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-24T06:17:23Z", "text": "How much \"dealing with\" does GTK actually require? Is it just a matter of \"sudo apt-get install libgtk2.0-0\" and having some extra libraries sitting around? GTK doesn't have to do anything, just be there for bitcoin to link to when it loads up, have the gtk-init-check call fail because no GUI present, then it's done. It saves us butchering everything with ifdefs and a separate compile and binary to use wxBase just to try to avoid linking GTK."}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-02-24T06:38:37Z", "text": "*NIX peoples are \"purists\" of sorts. They don't like to pollute their OS installs with libraries that shouldn't be necessary. A million ifdefs are not the answer either. Hmm.. more thought to this may be required."}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-24T06:51:40Z", "text": "I'm using Linux From Scratch, so installing a dependency-ridden package like GTK would be a bit of a pain. Why should I add a dozen additional packages and hundreds of megabytes to my system when BitCoin doesn't even use them?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-02-24T07:56:18Z", "text": "Why would you install them? Because you currently have to. I know the feeling. I run minimalist FreeBSD servers and to clutter them with X libraries is a pain. However, installing them onto a X workstation is totally fine -- you usually have all of the correct dependancies already. Tongue"}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-02-24T18:17:35Z", "text": "This is strange... When I start Bitcoin as a daemon on my 64 bit Linux server, it eats up all the 250MB of remaining RAM, 700MB of swap and eventually crashes. On my 32 bit Ubuntu desktop, it works fine and stays at 15MB of memory usage. The server is running a 64 bit build of Bitcoin. Maybe there's something wrong with the build or something."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-24T22:08:55Z", "text": "When and how fast did memory usage increase? Right away, slowly over a long time, or starting at some later event? I have -daemon running on ubuntu 9.10 64-bit and memory usage is steady. It has to be something about the difference on the server besides 64-bit. Maybe some malfunction from the lack of GUI. A memory leak debug tool could give a clue."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-02-25T16:32:17Z", "text": "It started increasing right away. I'll see if valgrind can help me."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-25T22:54:17Z", "text": "OK, I made a build target bitcoind that only links wxBase and does not link GTK. Version 0.2.7 on SVN. I split out the init and shutdown stuff from ui.cpp into init.cpp, so now ui.cpp is pure UI. ui.h provides inline stubs if wxUSE_GUI=0. We only have four functions that interface from the node to the UI. In the bitcoind build, we don't link ui.o or uibase.o. Sure feels like it could be something in wxWidgets retrying endlessly because some UI thing failed or something wasn't inited correctly.…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-26T09:18:32Z", "text": "I'm getting errors when trying to compile with just wxBase. g++ -c -O0 -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -D__WXGTK__ -DNOPCH -I\"/opt/tdep/include\" -I\"/usr/include\" -DwxUSE_GUI=0 -o obj/nogui/util.o util.cpp In file included from util.cpp:5: headers.h:22:24: error: wx/clipbrd.h: No such file or directory In file included from headers.h:100, from util.cpp:5: db.h: In member function 'bool CDB::Exists(const K&)': db.h:140: error: 'class Db' has no member named 'exists' make: ***…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-26T16:29:21Z", "text": "wx/clipbrd.h isn't used, move it inside the #if wxUSE_GUI. Updated headers.h on SVN. Sorry, I linked to wxbase but I had full wxWidgets on my computer. The db.h:140 class Db no member named \"exisits\" is stranger. pdb->get, pdb->put, pdb->del compiled before that. Do you have version 4.7.25 of Berkeley DB? Db::exists() http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/CXX/frame_main.html…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-26T16:58:54Z", "text": "I'm using Berkeley DB 4.5.20."}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-26T19:37:50Z", "text": "Using DB-4.7.25 fixed that problem. I'm now getting this error, though: g++ -O0 -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -D__WXGTK__ -DNOPCH -I\"/usr/include\" -I\"/opt/tdep/include\" -o bitcoind -L\"/usr/lib\" -L\"/usr/local/lib\" -L\"/opt/tdep/lib\" obj/nogui/util.o obj/nogui/script.o obj/nogui/db.o obj/nogui/net.o obj/nogui/irc.o obj/nogui/main.o obj/nogui/rpc.o obj/nogui/init.o obj/sha.o -l wx_baseu-2.9 -Wl,-Bstatic -l boost_system -l boost_filesystem -l db_cxx -Wl,-Bdynamic -l crypto -l…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-02-26T23:48:44Z", "text": "Are you using wxWidgets 2.9.0? I don't recommend using anything other than 2.9.0. It looks like they've got a reference in the wx headers (arrstr.h) to something outside of wxBase. Removing -D__WXDEBUG__ from bitcoin's makefile would probably solve it. If that doesn't work and you just want to get it working, you could edit wxWidgets include/wx/arrstr.h, line 167 and comment out the wxASSERT_MSG."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cdecker"}, "datePublished": "2010-02-27T03:21:23Z", "text": "The headless mode is incredibly usefull. Finally I can start generating on my servers in the night Cheesy"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-02-27T07:18:31Z", "text": "Cool; it works! Grin Thanks for your help! I am using 2.9.0. (No memory issues for me.)"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-03-02T15:46:42Z", "text": "That wchar thing was what I was stuck on for the OSX build. Cheesy Glad to see it is ironed out. I'll keep hacking away now."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-03-05T01:46:25Z", "text": "sirius-m debugged this, it was 64-bit related. The fix is now available on SVN, file util.cpp."}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Command Line and JSON-RPC", "item": "https://satoshimail.pages.dev/conversations/p37-command-line-and-json-rpc/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p37">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Command Line and JSON-RPC</span></div></nav>
+<main class="in">
+<h1>Command Line and JSON-RPC</h1>
+<p class="lead">BitcoinTalk forum · 22 messages · from 23 February 2010 · with Cdecker, Satoshi Nakamoto, The Madhatter, sirius, theymos</p>
+<p class="actions"><a class="btn" href="../../#t-p37">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/37/" rel="noopener">Archive source</a></p>
+<article class="msg sat" id="m0">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-23T22:15:41Z">23 February 2010, 22:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg452#msg452" rel="nofollow noopener">original</a></span></header>
+<div class="t">Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC.
+
+On Linux it needs libgtk2.0-0 installed, but does not need a GUI running.  Hopefully gtk can be installed without having a windowing system installed.
+
+The command to start as a daemon is:
+bitcoin -daemon [switches...]
+
+Or, to run the UI normally and also be able to control it from command line or JSON-RPC, use the &quot;-server&quot; switch.
+bitcoin -server [switches...]
+
+With either switch, it runs an HTTP JSON-RPC server that accepts local socket connections on 127.0.0.1:8332.  The port is bound to loopback and can only be accessed from the local machine, but from any account, not just the user it&#x27;s running under.
+
+To control it from the command line, the interface is a command name without any switches, followed by parameters if any.
+bitcoin &lt;command&gt; [params...]
+
+For example:
+bitcoin getinfo
+bitcoin getdifficulty
+bitcoin setgenerate true
+bitcoin stop
+
+It&#x27;s a simple JSON-RPC client and prints the JSON result.  Look at rpc.cpp for the list of commands.
+
+Web apps or anything automated will normally use JSON-RPC directly, not command line.  There are JSON-RPC libraries for all the major languages.  In script languages like PHP and Python the syntax is as natural as calling a local function.</div></article><article class="msg" id="m1">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-02-24T02:29:17Z">24 February 2010, 02:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg459#msg459" rel="nofollow noopener">original</a></span></header>
+<div class="t">Oh thank you!
+
+You have no idea how badly I needed something like this.
+
+I will have a payment library built in no time. Cheesy</div></article><article class="msg" id="m2">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-24T03:07:37Z">24 February 2010, 03:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg467#msg467" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: satoshi on February 23, 2010, 10:15:41 PM</div><div class="t">On Linux it needs libgtk2.0-0 installed</div></blockquote><div class="t">Will this requirement be removed sometime? I&#x27;d rather not have to deal with GTK.</div></article><article class="msg" id="m3">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-02-24T03:18:54Z">24 February 2010, 03:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg468#msg468" rel="nofollow noopener">original</a></span></header>
+<div class="t">Gtk is required by the GUI, so it must be linked if you want to use the same binary. Making a separate binary is another option, dunno how much code tweaking and ifdeffing that would take.</div></article><article class="msg" id="m4">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-02-24T05:00:45Z">24 February 2010, 05:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg478#msg478" rel="nofollow noopener">original</a></span></header>
+<div class="t">* madhatter2 pulls out razor sharp hex editor</div></article><article class="msg sat" id="m5">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T06:17:23Z">24 February 2010, 06:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg482#msg482" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: theymos on February 24, 2010, 03:07:37 AM</div><div class="t">&gt; Quote from: satoshi on February 23, 2010, 10:15:41 PM
+&gt; On Linux it needs libgtk2.0-0 installed
+Will this requirement be removed sometime? I&#x27;d rather not have to deal with GTK.</div></blockquote><div class="t">How much &quot;dealing with&quot; does GTK actually require?  Is it just a matter of &quot;sudo apt-get install libgtk2.0-0&quot; and having some extra libraries sitting around?  GTK doesn&#x27;t have to do anything, just be there for bitcoin to link to when it loads up, have the gtk-init-check call fail because no GUI present, then it&#x27;s done. 
+
+It saves us butchering everything with ifdefs and a separate compile and binary to use wxBase just to try to avoid linking GTK.</div></article><article class="msg" id="m6">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-02-24T06:38:37Z">24 February 2010, 06:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg483#msg483" rel="nofollow noopener">original</a></span></header>
+<div class="t">*NIX peoples are &quot;purists&quot; of sorts. They don&#x27;t like to pollute their OS installs with libraries that shouldn&#x27;t be necessary.
+
+A million ifdefs are not the answer either. Hmm.. more thought to this may be required.</div><blockquote><div class=qh>Quote from: satoshi on February 24, 2010, 06:17:23 AM</div><div class="t">&gt; Quote from: theymos on February 24, 2010, 03:07:37 AM
+&gt; &gt; Quote from: satoshi on February 23, 2010, 10:15:41 PM
+&gt; &gt; On Linux it needs libgtk2.0-0 installed
+&gt; Will this requirement be removed sometime? I&#x27;d rather not have to deal with GTK.
+How much &quot;dealing with&quot; does GTK actually require?  Is it just a matter of &quot;sudo apt-get install libgtk2.0-0&quot; and having some extra libraries sitting around?  GTK doesn&#x27;t have to do anything, just be there for bitcoin to link to when it loads up, have the gtk-init-check call fail because no GUI present, then it&#x27;s done. 
+
+It saves us butchering everything with ifdefs and a separate compile and binary to use wxBase just to try to avoid linking GTK.</div></blockquote></article><article class="msg" id="m7">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-24T06:51:40Z">24 February 2010, 06:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg488#msg488" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m using Linux From Scratch, so installing a dependency-ridden package like GTK would be a bit of a pain. Why should I add a dozen additional packages and hundreds of megabytes to my system when BitCoin doesn&#x27;t even use them?</div></article><article class="msg" id="m8">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-02-24T07:56:18Z">24 February 2010, 07:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg493#msg493" rel="nofollow noopener">original</a></span></header>
+<div class="t">Why would you install them? Because you currently have to. I know the feeling. I run minimalist FreeBSD servers and to clutter them with X libraries is a pain.
+
+However, installing them onto a X workstation is totally fine -- you usually have all of the correct dependancies already. Tongue</div></article><article class="msg" id="m9">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-02-24T18:17:35Z">24 February 2010, 18:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg502#msg502" rel="nofollow noopener">original</a></span></header>
+<div class="t">This is strange... When I start Bitcoin as a daemon on my 64 bit Linux server, it eats up all the 250MB of remaining RAM, 700MB of swap and eventually crashes. On my 32 bit Ubuntu desktop, it works fine and stays at 15MB of memory usage. The server is running a 64 bit build of Bitcoin. Maybe there&#x27;s something wrong with the build or something.</div></article><article class="msg sat" id="m10">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T22:08:55Z">24 February 2010, 22:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg509#msg509" rel="nofollow noopener">original</a></span></header>
+<div class="t">When and how fast did memory usage increase?  Right away, slowly over a long time, or starting at some later event?
+
+I have -daemon running on ubuntu 9.10 64-bit and memory usage is steady.
+
+It has to be something about the difference on the server besides 64-bit.  Maybe some malfunction from the lack of GUI.  A memory leak debug tool could give a clue. </div></article><article class="msg" id="m11">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-02-25T16:32:17Z">25 February 2010, 16:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg538#msg538" rel="nofollow noopener">original</a></span></header>
+<div class="t">It started increasing right away. I&#x27;ll see if valgrind can help me.</div></article><article class="msg sat" id="m12">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-25T22:54:17Z">25 February 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg539#msg539" rel="nofollow noopener">original</a></span></header>
+<div class="t">OK, I made a build target bitcoind that only links wxBase and does not link GTK.  Version 0.2.7 on SVN.
+
+I split out the init and shutdown stuff from ui.cpp into init.cpp, so now ui.cpp is pure UI.  ui.h provides inline stubs if wxUSE_GUI=0.  We only have four functions that interface from the node to the UI.  In the bitcoind build, we don&#x27;t link ui.o or uibase.o.</div><blockquote><div class=qh>Quote from: sirius-m on February 25, 2010, 04:32:17 PM</div><div class="t">It started increasing right away. I&#x27;ll see if valgrind can help me.</div></blockquote><div class="t">Sure feels like it could be something in wxWidgets retrying endlessly because some UI thing failed or something wasn&#x27;t inited correctly.  Our hack to ignore the initialize failure and run anyway means we&#x27;re in uncharted territory.  We&#x27;re relying on the fact that we hardly use wx in this mode.  We do still use a few things like wxGetTranslation and wxMutex.
+
+Another way to debug would be to run in gdb, wait until everything is quiet and all threads should be idle, and break it and see which thread is busily doing something and what it&#x27;s doing.
+
+I suspect bitcoind will probably work fine, but I hope you can still debug the problem.</div></article><article class="msg" id="m13">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-26T09:18:32Z">26 February 2010, 09:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg553#msg553" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m getting errors when trying to compile with just wxBase.</div><pre><code>g++ -c -O0 -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -D__WXGTK__ -DNOPCH -I&quot;/opt/tdep/include&quot; -I&quot;/usr/include&quot; -DwxUSE_GUI=0 -o obj/nogui/util.o util.cpp
+In file included from util.cpp:5:
+headers.h:22:24: error: wx/clipbrd.h: No such file or directory
+In file included from headers.h:100,
+                 from util.cpp:5:
+db.h: In member function &#x27;bool CDB::Exists(const K&amp;)&#x27;:
+db.h:140: error: &#x27;class Db&#x27; has no member named &#x27;exists&#x27;
+make: *** [obj/nogui/util.o] Error 1</code></pre><div class="t">Clipbrd.h isn&#x27;t installed with wxBase. Moving wxWidgets-2.9.0/include/wx/clipbrd.h to my include directory just eliminates those two &quot;no such file&quot; lines.</div></article><article class="msg sat" id="m14">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T16:29:21Z">26 February 2010, 16:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg555#msg555" rel="nofollow noopener">original</a></span></header>
+<div class="t">wx/clipbrd.h isn&#x27;t used, move it inside the #if wxUSE_GUI.
+
+Updated headers.h on SVN.
+
+Sorry, I linked to wxbase but I had full wxWidgets on my computer.
+
+The db.h:140 class Db no member named &quot;exisits&quot; is stranger.  pdb-&gt;get, pdb-&gt;put, pdb-&gt;del compiled before that.  Do you have version 4.7.25 of Berkeley DB?
+
+Db::exists()
+<a href="http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/CXX/frame_main.html" rel="nofollow noopener">http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/CXX/frame_main.html</a>
+<a href="http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/CXX/dbexists.html" rel="nofollow noopener">http://www.oracle.com/technology/documentation/berkeley-db/db/api_reference/CXX/dbexists.html</a>
+
+I suppose they might have added exists recently, using get before that.</div></article><article class="msg" id="m15">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-26T16:58:54Z">26 February 2010, 16:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg557#msg557" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;m using Berkeley DB 4.5.20.</div></article><article class="msg" id="m16">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-26T19:37:50Z">26 February 2010, 19:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg558#msg558" rel="nofollow noopener">original</a></span></header>
+<div class="t">Using DB-4.7.25 fixed that problem.
+
+I&#x27;m now getting this error, though:</div><pre><code>g++ -O0 -Wno-invalid-offsetof -Wformat -g -D__WXDEBUG__ -D__WXGTK__ -DNOPCH -I&quot;/usr/include&quot; -I&quot;/opt/tdep/include&quot; -o bitcoind -L&quot;/usr/lib&quot; -L&quot;/usr/local/lib&quot; -L&quot;/opt/tdep/lib&quot; obj/nogui/util.o obj/nogui/script.o obj/nogui/db.o obj/nogui/net.o obj/nogui/irc.o obj/nogui/main.o obj/nogui/rpc.o obj/nogui/init.o obj/sha.o -l wx_baseu-2.9 -Wl,-Bstatic -l boost_system -l boost_filesystem -l db_cxx -Wl,-Bdynamic -l crypto -l gthread-2.0
+obj/nogui/init.o: In function `wxArrayString::Item(unsigned int) const&#x27;:
+init.cpp:(.text._ZNK13wxArrayString4ItemEj[wxArrayString::Item(unsigned int) const]+0x7): undefined reference to `wxTheAssertHandler&#x27;
+init.cpp:(.text._ZNK13wxArrayString4ItemEj[wxArrayString::Item(unsigned int) const]+0x42): undefined reference to `wxOnAssert(char const*, int, char const*, char const*, wchar_t const*)&#x27;
+collect2: ld returned 1 exit status
+make: *** [bitcoind] Error 1</code></pre></article><article class="msg sat" id="m17">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T23:48:44Z">26 February 2010, 23:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg562#msg562" rel="nofollow noopener">original</a></span></header>
+<div class="t">Are you using wxWidgets 2.9.0?  I don&#x27;t recommend using anything other than 2.9.0.
+
+It looks like they&#x27;ve got a reference in the wx headers (arrstr.h) to something outside of wxBase.
+
+Removing -D__WXDEBUG__ from bitcoin&#x27;s makefile would probably solve it.
+
+If that doesn&#x27;t work and you just want to get it working, you could edit wxWidgets include/wx/arrstr.h, line 167 and comment out the wxASSERT_MSG.</div></article><article class="msg" id="m18">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-02-27T03:21:23Z">27 February 2010, 03:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg564#msg564" rel="nofollow noopener">original</a></span></header>
+<div class="t">The headless mode is incredibly usefull. Finally I can start generating on my servers in the night Cheesy</div></article><article class="msg" id="m19">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-02-27T07:18:31Z">27 February 2010, 07:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg568#msg568" rel="nofollow noopener">original</a></span></header>
+<div class="t">Cool; it works! Grin Thanks for your help!
+
+I am using 2.9.0.
+
+(No memory issues for me.)</div></article><article class="msg" id="m20">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-03-02T15:46:42Z">2 March 2010, 15:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg603#msg603" rel="nofollow noopener">original</a></span></header>
+<div class="t">That wchar thing was what I was stuck on for the OSX build. Cheesy
+
+Glad to see it is ironed out. I&#x27;ll keep hacking away now.</div></article><article class="msg sat" id="m21">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-03-05T01:46:25Z">5 March 2010, 01:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg633#msg633" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: sirius-m on February 24, 2010, 06:17:35 PM</div><div class="t">This is strange... When I start Bitcoin as a daemon on my 64 bit Linux server, it eats up all the 250MB of remaining RAM, 700MB of swap and eventually crashes. On my 32 bit Ubuntu desktop, it works fine and stays at 15MB of memory usage. The server is running a 64 bit build of Bitcoin. Maybe there&#x27;s something wrong with the build or something.</div></blockquote><div class="t">sirius-m debugged this, it was 64-bit related. 
+
+The fix is now available on SVN, file util.cpp.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p36-bitcoin-address-collisions/">← Bitcoin Address Collisions</a><a rel="next" href="../../conversations/p38-new-icon-logo/">New icon/logo →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

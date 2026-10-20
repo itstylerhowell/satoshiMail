@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Issues building bitcoin on Windows 7 – Satoshi Nakamoto</title>
+<meta name="description" content="Satoshi Nakamoto, 19 September 2010: The lines it&#x27;s tripping on: ERROR extern map&lt;string, string&gt; mapAddressBook; ERROR extern CCriticalSection…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p219-issues-building-bitcoin-on-windows-7/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Issues building bitcoin on Windows 7 – Satoshi Nakamoto">
+<meta property="og:description" content="Satoshi Nakamoto, 19 September 2010: The lines it&#x27;s tripping on: ERROR extern map&lt;string, string&gt; mapAddressBook; ERROR extern CCriticalSection…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p219-issues-building-bitcoin-on-windows-7/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="Issues building bitcoin on Windows 7 – Satoshi Nakamoto">
+<meta name="twitter:description" content="Satoshi Nakamoto, 19 September 2010: The lines it&#x27;s tripping on: ERROR extern map&lt;string, string&gt; mapAddressBook; ERROR extern CCriticalSection…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "Issues building bitcoin on Windows 7", "url": "https://satoshimail.pages.dev/conversations/p219-issues-building-bitcoin-on-windows-7/", "author": {"@type": "Person", "name": "LobsterMan"}, "datePublished": "2010-09-14T12:14:25Z", "text": "I've been playing around with visual studio (2010) trying to build bitcoin from the source that is included in the win32 zip archive. I created a new makefile project and imported the makefile, acquired the boost, wxwidgets, and the openssl sources, and a few other files which were reported missing when I would try to build. I got as far as the build log reporting that it needed iostream.h, so I went and found a copy of that from libstdc++. Now, after trying to build with iostream.h located in my includes directory, I am getting loads of errors that look like this: 1>------ Build started: Project: bitcoin_test, Configuration: Debug Win32 ------ 1>Build started 9/14/2010 08:07:14. 1>InitializeBuildStatus: 1> Touching \"Debug\\bitcoin_test.unsuccessfulbuild\". 1>ClCompile: 1> util.cpp 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(15): error C2143: syntax error : missing ';' before '<' 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(15): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(16): error C2146: syntax error : missing ';' before identifier 'cs_mapAddressBook' 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(16): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(16): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(17): error C2143: syntax error : missing ';' before '<' 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(17): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(23): error C2146: syntax error : missing ';' before identifier 'dbenv' 1>c:\\users\\[myusername]\\desktop\\bitcoin-0.3.12\\src\\db.h(23): error C4430: missing type specifier - int assumed.…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Gespenster"}, "datePublished": "2010-09-14T18:58:07Z", "text": "You should build using the nmake command from the visual studio command prompt as described in the information distributed with the source."}, {"@type": "Comment", "author": {"@type": "Person", "name": "nelisky"}, "datePublished": "2010-09-14T19:28:48Z", "text": "There's a makefile.mingw, and although I haven't tried yet, I'll probably take a stab at windows building for my cuda miner. Can I not use this?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "LobsterMan"}, "datePublished": "2010-09-17T02:48:24Z", "text": "Ok...so trying to build from the commandline with nmake is still giving me the same problems: c:\\Users\\[myusername]\\Desktop\\bitcoin-0.3.12\\src>nmake /f makefile.vc Microsoft (R) Program Maintenance Utility Version 10.00.30319.01 Copyright (C) Microsoft Corporation. All rights reserved. cl /c /nologo /MDd /EHsc /GR /Zm300 /Zi /D__WXDEBUG__ /DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH /I\"/boost\" /I\"/db/build_windows\" /I\"/openssl/include\" /I\"/wxwidgets/lib/vc_lib/mswud\" /I\"/wxwidgets/include\" /DGUI…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-09-19T18:46:46Z", "text": "The lines it's tripping on: ERROR extern map<string, string> mapAddressBook; ERROR extern CCriticalSection cs_mapAddressBook; ERROR extern vector<unsigned char> vchDefaultKey; OK extern bool fClient; OK extern int nBestHeight; OK extern unsigned int nWalletDBUpdated; ERROR extern DbEnv dbenv; So it's acting like nothing is defined, not even map and vector. Yet, db.h is included by headers.h (and only there, nowhere else) which includes vector, map, util.h and everything before db.h. Is VC…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "Issues building bitcoin on Windows 7", "item": "https://satoshimail.pages.dev/conversations/p219-issues-building-bitcoin-on-windows-7/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p219">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">Issues building bitcoin on Windows 7</span></div></nav>
+<main class="in">
+<h1>Issues building bitcoin on Windows 7</h1>
+<p class="lead">BitcoinTalk forum · 5 messages · from 14 September 2010 · with Gespenster, LobsterMan, Satoshi Nakamoto, nelisky</p>
+<p class="actions"><a class="btn" href="../../#t-p219">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/219/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>LobsterMan</b><span class="muted"> · <time datetime="2010-09-14T12:14:25Z">14 September 2010, 12:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg12743#msg12743" rel="nofollow noopener">original</a></span></header>
+<div class="t">I&#x27;ve been playing around with visual studio (2010) trying to build bitcoin from the source that is included in the win32 zip archive. I created a new makefile project and imported the makefile, acquired the boost, wxwidgets, and the openssl sources, and a few other files which were reported missing when I would try to build. I got as far as the build log reporting that it needed iostream.h, so I went and found a copy of that from libstdc++. Now, after trying to build with iostream.h located in my includes directory, I am getting loads of errors that look like this:</div><pre><code>1&gt;------ Build started: Project: bitcoin_test, Configuration: Debug Win32 ------
+1&gt;Build started 9/14/2010 08:07:14.
+1&gt;InitializeBuildStatus:
+1&gt;  Touching &quot;Debug\bitcoin_test.unsuccessfulbuild&quot;.
+1&gt;ClCompile:
+1&gt;  util.cpp
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(15): error C2143: syntax error : missing &#x27;;&#x27; before &#x27;&lt;&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(15): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16): error C2146: syntax error : missing &#x27;;&#x27; before identifier &#x27;cs_mapAddressBook&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(17): error C2143: syntax error : missing &#x27;;&#x27; before &#x27;&lt;&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(17): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(23): error C2146: syntax error : missing &#x27;;&#x27; before identifier &#x27;dbenv&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(34): error C2143: syntax error : missing &#x27;;&#x27; before &#x27;*&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(34): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(34): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(35): error C2146: syntax error : missing &#x27;;&#x27; before identifier &#x27;strFile&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(35): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(35): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(36): error C2143: syntax error : missing &#x27;;&#x27; before &#x27;&lt;&#x27;
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(36): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1&gt;c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(36): error C2238: unexpected token(s) preceding &#x27;;&#x27;</code></pre><div class="t">This has happened with 2 different versions of iostream.h (tried changing &lt;iostream.h&gt; to &lt;iostream&gt; in db.h also), and if I remove iostream.h from my includes directory it simply reports that file is missing and doesn&#x27;t give hundreds of lines of errors like the above. I haven&#x27;t modified any files at all, I am just trying to get the project to build in a windows environment right now...
+
+I am sort of stuck here and haven&#x27;t been able to figure out what the problem is. Admittedly I don&#x27;t entirely know what I&#x27;m doing (I don&#x27;t have a whole lot of experience with C++ in windows), but I was wondering if anyone has any ideas what my problem might be.</div></article><article class="msg" id="m1">
+<header><b>Gespenster</b><span class="muted"> · <time datetime="2010-09-14T18:58:07Z">14 September 2010, 18:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg12786#msg12786" rel="nofollow noopener">original</a></span></header>
+<div class="t">You should build using the nmake command from the visual studio command prompt as described in the information distributed with the source.</div></article><article class="msg" id="m2">
+<header><b>nelisky</b><span class="muted"> · <time datetime="2010-09-14T19:28:48Z">14 September 2010, 19:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg12791#msg12791" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: Gespenster on September 14, 2010, 06:58:07 PM</div><div class="t">You should build using the nmake command from the visual studio command prompt as described in the information distributed with the source.</div></blockquote><div class="t">There&#x27;s a makefile.mingw, and although I haven&#x27;t tried yet, I&#x27;ll probably take a stab at windows building for my cuda miner. Can I not use this?</div></article><article class="msg" id="m3">
+<header><b>LobsterMan</b><span class="muted"> · <time datetime="2010-09-17T02:48:24Z">17 September 2010, 02:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg13037#msg13037" rel="nofollow noopener">original</a></span></header>
+<div class="t">Ok...so trying to build from the commandline with nmake is still giving me the same problems:</div><pre><code>c:\Users\[myusername]\Desktop\bitcoin-0.3.12\src&gt;nmake /f makefile.vc
+
+Microsoft (R) Program Maintenance Utility Version 10.00.30319.01
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+        cl /c /nologo /MDd /EHsc /GR /Zm300 /Zi /D__WXDEBUG__ /DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH /I&quot;/boost&quot;  /I&quot;/db/build_windows&quot;
+ /I&quot;/openssl/include&quot;  /I&quot;/wxwidgets/lib/vc_lib/mswud&quot;  /I&quot;/wxwidgets/include&quot; /DGUI /Foobj\util.obj util.cpp
+util.cpp
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(15) : error C2143: syntax error : missing &#x27;;&#x27; before &#x27;&lt;&#x27;
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(15) : error C4430: missing type specifier - int assumed. Note: C++ does not support defau
+lt-int
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16) : error C2146: syntax error : missing &#x27;;&#x27; before identifier &#x27;cs_mapAddressBook&#x27;
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16) : error C4430: missing type specifier - int assumed. Note: C++ does not support defau
+lt-int
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(16) : error C4430: missing type specifier - int assumed. Note: C++ does not support defau
+lt-int
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(17) : error C2143: syntax error : missing &#x27;;&#x27; before &#x27;&lt;&#x27;
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(17) : error C4430: missing type specifier - int assumed. Note: C++ does not support defau
+lt-int
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(23) : error C2146: syntax error : missing &#x27;;&#x27; before identifier &#x27;dbenv&#x27;
+c:\users\[myusername]\desktop\bitcoin-0.3.12\src\db.h(23) : error C4430: missing type specifier - int assumed. Note: C++ does not support defau
+lt-int</code></pre><div class="t">Any additional advice would be appreciated...  Undecided
+
+I think that the C4430 error can be ignored by adding a #pragma warning(disable:4430) to headers.h, but the other ones appear to be more serious
+
+It looks like the C2143 is sometimes caused by problems with #includes, but since I am just using the files that were distributed with the source...I would assume all are functional? Maybe it is something about using vs2010 that is causing the problems?</div></article><article class="msg sat" id="m4">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-19T18:46:46Z">19 September 2010, 18:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg13206#msg13206" rel="nofollow noopener">original</a></span></header>
+<div class="t">The lines it&#x27;s tripping on:</div><pre><code>ERROR extern map&lt;string, string&gt; mapAddressBook;
+ERROR extern CCriticalSection cs_mapAddressBook;
+ERROR extern vector&lt;unsigned char&gt; vchDefaultKey;
+OK extern bool fClient;
+OK extern int nBestHeight;
+
+OK extern unsigned int nWalletDBUpdated;
+ERROR extern DbEnv dbenv;</code></pre><div class="t">So it&#x27;s acting like nothing is defined, not even map and vector.
+
+Yet, db.h is included by headers.h (and only there, nowhere else) which includes vector, map, util.h and everything before db.h.
+
+Is VC trying to use precompiled headers and screwing it up?  Could there be some leftover precompiled header files in your directory from previously failed attempts that it&#x27;s finding and using?
+
+There&#x27;s an installer package now that makes it really easy to install MinGW.  Don&#x27;t use the latest version 4.5.0, use a few versions back like 4.4.1 (1.908.0) or 1.812.0.  A setup program completely installs everything, it&#x27;s not hard like it used to be.  I think the only thing I had to do was rename make*.exe something to make.exe.
+<a href="http://tdm-gcc.tdragon.net/" rel="nofollow noopener">http://tdm-gcc.tdragon.net/</a>
+
+Off topic, but: It would be nice if someone would hack on getting tcatm&#x27;s 4-way 128-bit SSE2 code working on Windows.  There&#x27;s something with MinGW&#x27;s optimisation, I&#x27;m not sure but maybe a problem with 16-byte alignment on the stack, that makes it segfault.  With some fiddling, I was able to get his code to work in a test program, but not in Bitcoin itself for some reason.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p218-message-encryption-as-a-built-in-feature/">← Message Encryption as a built-in feature?</a><a rel="next" href="../../conversations/p220-the-case-for-removing-ip-transactions/">The case for removing IP transactions →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

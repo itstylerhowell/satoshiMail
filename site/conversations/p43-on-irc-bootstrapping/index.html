@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>On IRC bootstrapping – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 16 March 2010: Thanks soultcer for talking with the Freenode staffer. Good to know it&#x27;s OK at the current size, and now they know who…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p43-on-irc-bootstrapping/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="On IRC bootstrapping – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 16 March 2010: Thanks soultcer for talking with the Freenode staffer. Good to know it&#x27;s OK at the current size, and now they know who…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p43-on-irc-bootstrapping/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="On IRC bootstrapping – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 16 March 2010: Thanks soultcer for talking with the Freenode staffer. Good to know it&#x27;s OK at the current size, and now they know who…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "On IRC bootstrapping", "url": "https://satoshimail.pages.dev/conversations/p43-on-irc-bootstrapping/", "author": {"@type": "Person", "name": "soultcer"}, "datePublished": "2010-03-15T19:58:52Z", "text": "A week or so ago I met a very nice Freenoder staffer in the #bitcoin and #bitcoin-dev channels. He told me that the #bitcoin channel turned up on Freenode's radar as it looks like a Botnet Command and Control channel, but after I explained to him how Bitcoin works and why they need IRC, he said that the channel at it's current size is not a problem. However, this got me thinking and later this week I also discussed the topic on IRC, and I came to the conclusion, that IRC is the wrong method for bootstrapping, especially in it's current form. At the moment, each client will connect to IRC and stay connected. Using /who and join messages, the client will connect to the found IPs on port 8333 as a bootstrapping method. However, the clients internally also talk to each other and broadcast new nodes via the Bitcoin protocol. Still, they are always online in IRC. This has various disadvantages: • IRC connectivity is necessary for bootstrapping (firewalls often block it and Freenode blocks TOR) • There is a single point of failure (Freenode) • We are leeching Freenode's services instead of using our own infrastructure. Many servers actually disallow bot connections in their MOTDs. • Minor point: The additional protocol inside Bitcoin brings extra complexity There is already a list of permanently-on Bitcoin IPs around in this forum, which is a nice idea, but not very scalable, thus I propose the following solution: Gnutella and MUTE face very similar bootstrapping problems. To solve them, they rely on a list of \"Gnutella Webcaches\". Those webcaches are run by volunteers on simple PHP servers and a master list of them is distributed with each Gnutella/MUTE release. When a client wants to join the network, it asks one or two of the Webcaches via HTTP for a list of other nodes and also gets added to that list (which is usually a list of the last X clients seen). Every few hours (or days) a running client reconnects to the webcache to tell it, that it is still alive and does…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-03-16T01:28:12Z", "text": "To eliminate segmentation, every peer should have a list of every other peer. Tor also has this requirement, so we should copy them: have several trusted directory servers periodically create a signed list of all peers and publish it via HTTP. All BitCoin clients have the option to act as a directory mirror, which will be indicated in the dirServers' list. Generators need to ask to be added to the list (which could also include info like the maximum number of connections that peer will…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-03-16T01:57:24Z", "text": "I vote for the I2P method, myself. It works great."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-03-16T19:48:47Z", "text": "Thanks soultcer for talking with the Freenode staffer. Good to know it's OK at the current size, and now they know who we are. They're supportive of projects like TOR so I hope they would probably be friendly to us. We don't want to overstay our welcome. If we get too big, then by the same token, we're big enough that we don't need IRC anymore and we'll get off. We only needed IRC because nobody had a static IP. In the early days there were some steady supporters, but they all had…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Xunie"}, "datePublished": "2010-04-08T19:57:33Z", "text": "We all talk about bootstrapping systems, how ever, my idea might be a bit better. A user starts bitcoin on a host for the first time, and it will initially download a list of nodes that it will connect to. (until, of course, we have a lot of static nodes we can hard code into bitcoin...) Then, the client tries to connects to those IPs on that list it downloaded, or when it already has a list downloaded from the last time it started bitcoin, connect to those. When we're connected, the client…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "D҉ataWraith"}, "datePublished": "2010-04-30T14:51:14Z", "text": "Hi all. This may be a stupid idea, and if it's not stupid, may not be viable for the next few years, but I thought I'd toss it out there anywhere: What about Multicasting? IPv6 is supposed to have better multicasting support than IPv4, and if I did not misunderstand the Bitcoin protocol, most messages need to be broadcasted to the entire network. Theoretically a node could send such messages to a global multicast address, and everyone will receive it in a bandwith-efficient way. That would…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Xunie"}, "datePublished": "2010-05-03T20:36:34Z", "text": "I don't know that much about IPv6, but it sounds good, if it's possible. How ever, keep in mind that as of now, 9/10th of the world still uses IPv4! So it is a great idea, and developer(s) (how much does bitcoin have anyways?) should implement it in bitcoin (in my humbly opinion). How ever, making it default to use IPv6 isn't a good idea. It's totally viable when everyone will be using IPv6, it's just everyone still uses IPv4! (And I see now that in my previous post I basically explained what…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "theymos"}, "datePublished": "2010-05-03T22:22:23Z", "text": "TCP doesn't work with multicasting. And I doubt it will ever be easy for a home user to join a multicast group."}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-05-04T03:19:03Z", "text": "If you guys are interested in ipv6, there are a lot of transition mechanisms available. Windows comes with teredo which is kind of complicated for what it does.. I like 6to4, basically every ipv4 node has an ipv6 prefix which is 2002:<ipv4 addr> /48. It is very easy to set up 6to4 on a linux box. Here is my setup as an example: echo 0 > /proc/sys/net/ipv6/conf/all/autoconf echo 0 > /proc/sys/net/ipv6/conf/all/accept_ra echo 0 > /proc/sys/net/ipv6/conf/all/accept_redirects echo 0 >…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-03T21:56:11Z", "text": "I throughly agree with this. In the long run, IRC should be completely phased out and replaced with something like Gnutella's host caches or Tor's dictionary servers (as others have suggested). At the very least, Bitcoin should disconnected from IRC as soon as it has a list of peers to connect to. It should also cache that list so it wouldn't need to reconnect upon the next startup. Just my 0.02฿."}, {"@type": "Comment", "author": {"@type": "Person", "name": "Cdecker"}, "datePublished": "2010-06-08T12:11:05Z", "text": "Anyone into a set of multi entity owned DNS servers that cooperate for a Fast Flux [1] network to ensure bootstrap availability? [1] http://en.wikipedia.org/wiki/Fast_flux"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-08T12:39:02Z", "text": "What's wrong with IRC? It's just another method that's used to exchange the peer list. You can just prevent it from connecting and use -addnode=1.2.3.4 to connect to a known node for bootstrapping if you want.. If nodes disconnect from IRC after they get their list then it makes it less useful for bootstrapping since it will be empty except for the node that's trying to bootstrap at the time. IRC has been around forever and it's well documented (and easy to understand for newcomers) - why…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-06-08T13:57:09Z", "text": "I like the idea of distributed host caches like Gnutella uses. At the moment, for the majority of people, IRC is a single point of failure. Let's assume that for some reason our Freenode channel was gone. Maybe Freenode got fed up and shut us down. Maybe MenInBlack saw our system, laughed maniacally, and then pressured Freenode to shut us down. When you start your client, it will do nothing. You could drop to a command line and type \"-addnode\" (or is it -peer? whatever) to connect to a known…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-14T18:13:21Z", "text": "Bitcoin has its own distributed address directory using the \"addr\" message. It's about time we coded in a list of the current long running static nodes to seed from. I can add code so new nodes do not preferentially stay connected to the seed nodes, just connect and get the list, so it won't be a burden on them. What do you think, should I go ahead with adding the seeds? It'll still try IRC first. The IRC has the advantage that it lists nodes that are currently online, since they have to stay…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "laszlo"}, "datePublished": "2010-06-14T18:30:58Z", "text": "I run an IRC server you can use, it's fairly stable but it's not on redundant connections or anything. It is only two servers right now but we don't mess with it or anything, it just runs. My box is a dedicated irc server: 2:28PM up 838 days, 20:54, 1 user, load averages: 0.06, 0.08, 0.08 You can use irc.lfnet.org to connect. I hang out on #linuxos if anyone wants to drop in."}, {"@type": "Comment", "author": {"@type": "Person", "name": "blanu"}, "datePublished": "2010-06-18T05:12:48Z", "text": "This is a common problem in P2P, known as Original Introduction, although bootstrapping is also a good word for it. The problem with bootstrapping is that you can't decentralize it. Whether it's IRC or HTTP or DNS, the client needs to be hardcoded with an address or list of addresses which is sufficiently fresh that at least one of the listed addresses is still active. After the first node is reached, you are no longer in Original Introduction mode and can use the full range of techniques for…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "D҉ataWraith"}, "datePublished": "2010-06-18T14:08:23Z", "text": "I think the way eMule handles bootstrapping for its KAD-network is pretty close to optimal: The list of known peers is stored in a file (nodes.dat), and every client maintains a list of known nodes in that file (sorted by longest uptime, I think -- that's an intrinsic property of Kademlia, but still a good idea). The released client should be accompanied by such a file that contains the addresses of a few reliable peers on static IP addresses, from which a new client can then get more…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-18T17:28:18Z", "text": "The SVN version now uses IRC first and if that fails it falls back to a hardcoded list of seed nodes. There are enough seed nodes now that many of them should still be up by the time of the next release. It only briefly connects to a seed node to get the address list and then disconnects, so your connections drop back to zero for while. At that point, be patient. It's only slow to get connected the first time. This means TOR users won't need to -addnode anymore, it'll get connected…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-06-25T22:40:47Z", "text": "This seems like a good idea. What does everyone think, should we make the switch for 0.3?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Vasiliev"}, "datePublished": "2010-06-25T23:50:15Z", "text": "You may want to leave Freenode in as a fallback server -- if his server doesn't work, use Freenode's."}, {"@type": "Comment", "author": {"@type": "Person", "name": "sirius"}, "datePublished": "2010-07-07T01:05:47Z", "text": "Maybe we should have an option dialog that allows you to choose the IRC server and channel you connect to?"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-07T01:31:07Z", "text": "Everybody needs to connect to the same IRC server and channel so they can find each other. It might not be good if we suddenly rushed freenode with a ton of users all at once. The fallback is our own seed system. irc.lfnet.org is pretty old and has impressive uptime. I think it's going to be fine. We could take IRC out at some point if we want, but I'd rather ease into it and just test our own seed system as a backup for now, and I really like the complementary redundant attributes of the two…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "On IRC bootstrapping", "item": "https://satoshimail.pages.dev/conversations/p43-on-irc-bootstrapping/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p43">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">On IRC bootstrapping</span></div></nav>
+<main class="in">
+<h1>On IRC bootstrapping</h1>
+<p class="lead">BitcoinTalk forum · 22 messages · from 15 March 2010 · with Cdecker, D҉ataWraith, Satoshi Nakamoto, The Madhatter, Vasiliev, Xunie…</p>
+<p class="actions"><a class="btn" href="../../#t-p43">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/43/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>soultcer</b><span class="muted"> · <time datetime="2010-03-15T19:58:52Z">15 March 2010, 19:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg721#msg721" rel="nofollow noopener">original</a></span></header>
+<div class="t">A week or so ago I met a very nice Freenoder staffer in the #bitcoin and #bitcoin-dev channels. He told me that the #bitcoin channel turned up on Freenode&#x27;s radar as it looks like a Botnet Command and Control channel, but after I explained to him how Bitcoin works and why they need IRC, he said that the channel at it&#x27;s current size is not a problem.
+
+However, this got me thinking and later this week I also discussed the topic on IRC, and I came to the conclusion, that IRC is the wrong method for bootstrapping, especially in it&#x27;s current form. At the moment, each client will connect to IRC and stay connected. Using /who and join messages, the client will connect to the found IPs on port 8333 as a bootstrapping method. However, the clients internally also talk to each other and broadcast new nodes via the Bitcoin protocol. Still, they are always online in IRC. This has various disadvantages:
+
+• IRC connectivity is necessary for bootstrapping (firewalls often block it and Freenode blocks TOR)
+
+• There is a single point of failure (Freenode)
+
+• We are leeching Freenode&#x27;s services instead of using our own infrastructure. Many servers actually disallow bot connections in their MOTDs.
+
+• Minor point: The additional protocol inside Bitcoin brings extra complexity
+
+There is already a list of permanently-on Bitcoin IPs around in this forum, which is a nice idea, but not very scalable, thus I propose the following solution: Gnutella and MUTE face very similar bootstrapping problems. To solve them, they rely on a list of &quot;Gnutella Webcaches&quot;. Those webcaches are run by volunteers on simple PHP servers and a master list of them is distributed with each Gnutella/MUTE release. When a client wants to join the network, it asks one or two of the Webcaches via HTTP for a list of other nodes and also gets added to that list (which is usually a list of the last X clients seen). Every few hours (or days) a running client reconnects to the webcache to tell it, that it is still alive and does not have to be deleted from the list. I suggest, that the same thing is implemented for Bitcoin. Volunteers could run those webcaches on cheap PHP webspace and tell their URL to Satoshi or Sirius, who in turn could add the list to each release. This would allow users running behind a restrictive firewall or TOR to use Bitcoin without manually finding other nodes, and it is a much more scalable approach. (As a bonus we could remove those HTTP calls to whatismyip.com or similar sites).
+
+Of course, there might be a better idea for bootstrapping Bitcoin and I would love to hear it. Or maybe suggestions for the Webcache idea. Please post them here!
+
+Cheers,
+soultcer</div></article><article class="msg" id="m1">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-03-16T01:28:12Z">16 March 2010, 01:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg724#msg724" rel="nofollow noopener">original</a></span></header>
+<div class="t">To eliminate segmentation, every peer should have a list of every other peer. Tor also has this requirement, so we should copy them: have several trusted directory servers periodically create a signed list of all peers and publish it via HTTP. All BitCoin clients have the option to act as a directory mirror, which will be indicated in the dirServers&#x27; list. Generators need to ask to be added to the list (which could also include info like the maximum number of connections that peer will accept), but people just wishing to make transactions can just get the list from a dirMirror and connect to a few random peers.
+
+If this is too centralized, we can do what I2P did and allow anyone to become a directory server. You need to be able to detect when a dirServer goes rogue in this case, though.</div></article><article class="msg" id="m2">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-03-16T01:57:24Z">16 March 2010, 01:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg725#msg725" rel="nofollow noopener">original</a></span></header>
+<div class="t">I vote for the I2P method, myself. It works great.</div></article><article class="msg sat" id="m3">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-03-16T19:48:47Z">16 March 2010, 19:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg729#msg729" rel="nofollow noopener">original</a></span></header>
+<div class="t">Thanks soultcer for talking with the Freenode staffer.  Good to know it&#x27;s OK at the current size, and now they know who we are.  They&#x27;re supportive of projects like TOR so I hope they would probably be friendly to us.  We don&#x27;t want to overstay our welcome.  If we get too big, then by the same token, we&#x27;re big enough that we don&#x27;t need IRC anymore and we&#x27;ll get off.
+
+We only needed IRC because nobody had a static IP.  In the early days there were some steady supporters, but they all had pool-allocated IPs that change every few days.  IRC was only intended as a temporary solution.  Bitcoin&#x27;s built-in addr system is the main solution.
+
+Bitcoin can get the list of IPs from any bitcoin node.  In that sense, every node serves as a directory server.
+
+When there are enough static IP nodes to have a good chance that at least one will still be running by the time the current version goes out of use, we can preprogram a seed list.
+
+How do you think we should compile the seed list?  Would it be OK to create it from the currently connected IPs that have been static for a while?
+
+BTW, if we want to supplement by deploying separate directory server software, may I suggest IRC?  IRC is a good directory server (I&#x27;ve heard it has other uses too), and there are mature IRC server implementations available that anyone can run. Smiley  Bitcoin&#x27;s IRC client implementation is already thoroughly tested.</div></article><article class="msg" id="m4">
+<header><b>Xunie</b><span class="muted"> · <time datetime="2010-04-08T19:57:33Z">8 April 2010, 19:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg876#msg876" rel="nofollow noopener">original</a></span></header>
+<div class="t">We all talk about bootstrapping systems, how ever, my idea might be a bit better.
+
+A user starts bitcoin on a host for the first time, and it will initially download a list of nodes that it will connect to.
+(until, of course, we have a lot of static nodes we can hard code into bitcoin...)
+Then, the client tries to connects to those IPs on that list it downloaded, or when it already has a list downloaded from the last time it started bitcoin, connect to those.
+When we&#x27;re connected, the client asks every node for a list of nodes they know and updates its node list.
+Once a complete list is obtained, it is saved on the hard drive and a copy is kept in memory. (This is because we want to have a list of nodes without actually connect to that indexing server.)
+And finally, the node is completely connected to the network.
+When a new node connects (when it receives a &quot;new node packet&quot;), the list is both updated in memory and saved to the hard drive again.
+To make updating the list with new nodes so bandwidth friendly as possible, I suggest that every node &quot;echoes&quot; the IP of a new node connecting to the network to all the nodes it knows...
+
+Pros:
+* Has bootstrapping in mind.
+* Is distributed for clients that have a node list
+
+Cons:
+* Every new client needs to connect to a server to get a new node list until we&#x27;re done with bootstrapping.
+
+This, in my eyes, seems like the best solution to our bootstrapping problem...
+PS: If we implement this, we might just wanna check if the &quot;new node packet&quot; we received contains bogus IPs, or IPs that resolve to .gov domains! Tongue</div></article><article class="msg" id="m5">
+<header><b>D҉ataWraith</b><span class="muted"> · <time datetime="2010-04-30T14:51:14Z">30 April 2010, 14:51 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1036#msg1036" rel="nofollow noopener">original</a></span></header>
+<div class="t">Hi all.
+
+This may be a stupid idea, and if it&#x27;s not stupid, may not be viable for the next few years, but I thought I&#x27;d toss it out there anywhere:
+
+What about Multicasting?
+
+IPv6 is supposed to have better multicasting support than IPv4, and if I did not misunderstand the Bitcoin protocol, most messages need to be broadcasted to the entire network. Theoretically a node could send such messages to a global multicast address, and everyone will receive it in a bandwith-efficient way.
+
+That would make bootstrapping in the traditional sense obsolete, since the client would just have to subscribe to the multicast channel. The remaining &quot;Give me block xyz&quot; requests could be handled by optionally including a field in messages to the multicast channel that basically says &quot;My address is 2001:db8::42, and I&#x27;m willing to answer direct queries for specific blocks&quot;. After listening to the channel for a while, such a packet should come around, because, at the very least, new blocks will be announced there every so often.</div></article><article class="msg" id="m6">
+<header><b>Xunie</b><span class="muted"> · <time datetime="2010-05-03T20:36:34Z">3 May 2010, 20:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1058#msg1058" rel="nofollow noopener">original</a></span></header>
+<div class="t">I don&#x27;t know that much about IPv6, but it sounds good, if it&#x27;s possible.
+How ever, keep in mind that as of now, 9/10th of the world still uses IPv4!
+So it is a great idea, and developer(s) (how much does bitcoin have anyways?) should implement it in bitcoin (in my humbly opinion).
+How ever, making it default to use IPv6 isn&#x27;t a good idea.
+
+It&#x27;s totally viable when everyone will be using IPv6, it&#x27;s just everyone still uses IPv4!
+
+(And I see now that in my previous post I basically explained what other people adviced... Oops!)</div></article><article class="msg" id="m7">
+<header><b>theymos</b><span class="muted"> · <time datetime="2010-05-03T22:22:23Z">3 May 2010, 22:22 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1059#msg1059" rel="nofollow noopener">original</a></span></header>
+<div class="t">TCP doesn&#x27;t work with multicasting. And I doubt it will ever be easy for a home user to join a multicast group.</div></article><article class="msg" id="m8">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-05-04T03:19:03Z">4 May 2010, 03:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1062#msg1062" rel="nofollow noopener">original</a></span></header>
+<div class="t">If you guys are interested in ipv6, there are a lot of transition mechanisms available.  Windows comes with teredo which is kind of complicated for what it does.. I like 6to4, basically every ipv4 node has an ipv6 prefix which is 2002:&lt;ipv4 addr&gt; /48.  It is very easy to set up 6to4 on a linux box.  Here is my setup as an example:</div><pre><code>echo 0 &gt; /proc/sys/net/ipv6/conf/all/autoconf
+echo 0 &gt; /proc/sys/net/ipv6/conf/all/accept_ra
+echo 0 &gt; /proc/sys/net/ipv6/conf/all/accept_redirects
+echo 0 &gt; /proc/sys/net/ipv6/conf/all/router_solicitations
+echo 1 &gt; /proc/sys/net/ipv6/conf/all/forwarding
+ip tunnel add 6to4tunnel mode sit ttl 200 remote any local 76.122.46.187
+ip link set dev 6to4tunnel up
+# listen for 6to4 traffic to me
+ip -6 addr add 2002:4c7a:2ebb::1/16 dev 6to4tunnel
+# route to non 6to4 ipv6 hosts
+ip -6 route add 2000::/3 via ::192.88.99.1 dev 6to4tunnel metric 1
+# add address to lan0
+ip addr add 2002:4c7a:2ebb:0001::1/64 dev lan0
+# add address to lan1
+ip addr add 2002:4c7a:2ebb:0002::1/64 dev lan1
+echo &quot;Starting radvd...&quot;
+/opt/radvd/sbin/radvd</code></pre><div class="t">That is literally all it takes.  This is for my linux box which is acting as a router.  You just convert your ipv4 address to hex.  For instance mine, 76.122.46.187 == 4c 7a 2e bb
+
+The v4 address 192.88.99.1 is an anycast address.. There are routers that pick up the 6to4 traffic and bridge it over into the native v6 land.  Because of how routing works you will just get to the closest (network wise) bridge router when you transmit to v6 addresses.
+
+Setting up radvd allows the client machines on your lans (I have lan0 and lan1) to receive an automatic ipv6 address.  With this set up you can hit ipv6.google.com and see the letters bouncing to know it works.
+
+If you&#x27;re planning to try this, google up some info on 6to4 first so you understand how it works.  Also be aware that your machines which are NAT&#x27;d with ipv4 are globally accessible with this set up and are not filtered unless you set that up separately (windows firewall, ip6tables, etc)</div></article><article class="msg" id="m9">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-03T21:56:11Z">3 June 2010, 21:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1336#msg1336" rel="nofollow noopener">original</a></span></header>
+<div class="t">I throughly agree with this. In the long run, IRC should be completely phased out and replaced with something like Gnutella&#x27;s host caches or Tor&#x27;s dictionary servers (as others have suggested).
+
+At the very least, Bitcoin should disconnected from IRC as soon as it has a list of peers to connect to. It should also cache that list so it wouldn&#x27;t need to reconnect upon the next startup.
+
+Just my 0.02฿.</div></article><article class="msg" id="m10">
+<header><b>Cdecker</b><span class="muted"> · <time datetime="2010-06-08T12:11:05Z">8 June 2010, 12:11 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1407#msg1407" rel="nofollow noopener">original</a></span></header>
+<div class="t">Anyone into a set of multi entity owned DNS servers that cooperate for a Fast Flux [1] network to ensure bootstrap availability?
+
+[1] <a href="http://en.wikipedia.org/wiki/Fast_flux" rel="nofollow noopener">http://en.wikipedia.org/wiki/Fast_flux</a></div></article><article class="msg" id="m11">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-08T12:39:02Z">8 June 2010, 12:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1408#msg1408" rel="nofollow noopener">original</a></span></header>
+<div class="t">What&#x27;s wrong with IRC?  It&#x27;s just another method that&#x27;s used to exchange the peer list.  You can just prevent it from connecting and use -addnode=1.2.3.4 to connect to a known node for bootstrapping if you want..
+
+If nodes disconnect from IRC after they get their list then it makes it less useful for bootstrapping since it will be empty except for the node that&#x27;s trying to bootstrap at the time.
+
+IRC has been around forever and it&#x27;s well documented (and easy to understand for newcomers) - why create something more complicated?</div></article><article class="msg" id="m12">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-06-08T13:57:09Z">8 June 2010, 13:57 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1409#msg1409" rel="nofollow noopener">original</a></span></header>
+<div class="t">I like the idea of distributed host caches like Gnutella uses. At the moment, for the majority of people, IRC is a single point of failure. Let&#x27;s assume that for some reason our Freenode channel was gone. Maybe Freenode got fed up and shut us down. Maybe MenInBlack saw our system, laughed maniacally, and then pressured Freenode to shut us down.
+
+When you start your client, it will do nothing. You could drop to a command line and type &quot;-addnode&quot; (or is it -peer? whatever) to connect to a known node, but at that point you&#x27;d somehow need to know a node. It probably wouldn&#x27;t be that hard for one of us, but what about a new user? We could keep a list of peers on the website for them to use, but at that point, they&#x27;ve gone from &quot;just double click the shiny gold coin and get trading&quot; to &quot;check our website for updated peer lists, open command prompt, navigated to the bitcoin directory, and type the proper peer.....&quot; And if MIB were after us, the website would probably be long since gone.
+
+Of course, we could implement addpeer in a more user-friendly manner. Perhaps a popup that says &quot;I can&#x27;t connect to the network. Enter a peer: &quot; with instructions on some ways to find one, but at that point we&#x27;re creating a social solution to a technical problem.
+
+Also, if we get bigger we will need to move away from IRC anyway (as implied by the OP&#x27;s conversation with a Freenode staffer). And what about Tor users? Why should people who want to use Tor to be anonymous have to manually add a peer?
+
+Finally, anyone on Freenode can easily get a list of all running Bitcoin clients, when they came online, when they went offline, etc. That goes against the project&#x27;s stated goal of anonymity. Of course, with a host cache system, anybody who connected to that cache could be logged by the server operator, but no one operator would have a full picture of the network.
+
+I think the IRC solution is a wonderful beginning, and I applaud how stable it has proven to be. It was a great decision to get the network up easily and concentrate on the more interesting and important considerations in the program. I just think that Bitcoin will outgrow it someday, if it hasn&#x27;t already.</div></article><article class="msg sat" id="m13">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-14T18:13:21Z">14 June 2010, 18:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1579#msg1579" rel="nofollow noopener">original</a></span></header>
+<div class="t">Bitcoin has its own distributed address directory using the &quot;addr&quot; message.  It&#x27;s about time we coded in a list of the current long running static nodes to seed from.  I can add code so new nodes do not preferentially stay connected to the seed nodes, just connect and get the list, so it won&#x27;t be a burden on them.
+
+What do you think, should I go ahead with adding the seeds?
+
+It&#x27;ll still try IRC first.  The IRC has the advantage that it lists nodes that are currently online, since they have to stay connected to stay on the list, but the disadvantage that it&#x27;s a single point of failure.  The &quot;addr&quot; system has no single point of failure, but can only tell you what nodes have recently been seen, so it takes a little longer to get connected since some of the nodes you try have gone offline.  The combination of the two gets us the best of both worlds and more total robustness.
+
+Is there anyone who wants to volunteer to run an IRC server in case freenode gets tired of us?</div></article><article class="msg" id="m14">
+<header><b>laszlo</b><span class="muted"> · <time datetime="2010-06-14T18:30:58Z">14 June 2010, 18:30 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1580#msg1580" rel="nofollow noopener">original</a></span></header>
+<div class="t">I run an IRC server you can use, it&#x27;s fairly stable but it&#x27;s not on redundant connections or anything.  It is only two servers right now but we don&#x27;t mess with it or anything, it just runs.
+
+My box is a dedicated irc server:
+ 2:28PM  up 838 days, 20:54, 1 user, load averages: 0.06, 0.08, 0.08
+
+You can use irc.lfnet.org to connect.
+
+I hang out on #linuxos if anyone wants to drop in.</div></article><article class="msg" id="m15">
+<header><b>blanu</b><span class="muted"> · <time datetime="2010-06-18T05:12:48Z">18 June 2010, 05:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1614#msg1614" rel="nofollow noopener">original</a></span></header>
+<div class="t">This is a common problem in P2P, known as Original Introduction, although bootstrapping is also a good word for it. The problem with bootstrapping is that you can&#x27;t decentralize it. Whether it&#x27;s IRC or HTTP or DNS, the client needs to be hardcoded with an address or list of addresses which is sufficiently fresh that at least one of the listed addresses is still active. After the first node is reached, you are no longer in Original Introduction mode and can use the full range of techniques for decentralization, such as gossip. Unless, of course, you get disconnected from the network and all of your known peers go away, in which case you&#x27;re back to bootstrapping.
+
+There are two properties that are at odds when you chose a bootstrapping method: robustness (scalability/reliability) and freshness. Robustness is increased at the expense of freshness by caching on multiple servers, as is usually done with HTTP peer lists. Freshness is maximized (at least up to the TCP timeout) at the expense of robustness by having everyone connected, as with IRC. Of course, the key is finding the right mix of robustness and freshness because you need both for the bootstrap to be successful.
+
+Here are some of my current favorite methods for bootstrapping:
+
+Append list of fresh peers to executable or installer dynamically on download. People usually get the application from its official website, so the website is already a point of failure for new users. You&#x27;re already hardcoding an address in the application, the address that the application will use to bootstrap. So instead just add fresh peers at the moment of download. You need some fancy code in the executable to read the list off the end, but I&#x27;ve implemented this in an NSIS installer and it&#x27;s not that hard. Most software developers are upset by the idea of this method.
+
+Connect via XMPP to Google App Engine application. This gives the freshness of IRC, but with more robust scaling. App Engine is mostly for writing web apps, but it provides email and XMPP handling as well. It would be simple to write one application that could handle peer lists via either XMPP or HTTP with the same handler code. I&#x27;m currently using this in an application and it works well and is very reliable. I only wish there was a second App Engine to use as a fallback because it does have occasional downtime.
+
+An alternative to requiring all nodes to include the complexity of a protocol like IRC or XMPP is to have a few special sentinel nodes which sit on the network and collect addresses of connected nodes via the usual decentralized methods available to an active node. These sentinel nodes periodically upload fresh addresses, say via HTTP POST to a number of websites. A new node can then download a fresh address list from any of the websites which is currently functioning and reachable. If you have 5 sentinels each uploading every 5 minutes (staggered), then you&#x27;ll have updates roughly once a minute. This is on par with IRC in terms of freshness and is robust as you care to make it by varying the number of HTTP mirrors and the number of sentinels.</div></article><article class="msg" id="m16">
+<header><b>D҉ataWraith</b><span class="muted"> · <time datetime="2010-06-18T14:08:23Z">18 June 2010, 14:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1616#msg1616" rel="nofollow noopener">original</a></span></header>
+<div class="t">I think the way eMule handles bootstrapping for its KAD-network is pretty close to optimal:
+
+The list of known peers is stored in a file (nodes.dat), and every client maintains a list of known nodes in that file (sorted by longest uptime, I think -- that&#x27;s an intrinsic property of Kademlia, but still a good idea). The released client should be accompanied by such a file that contains the addresses of a few reliable peers on static IP addresses, from which a new client can then get more addresses to connect to (and hence store in its own file).
+
+If the &quot;seed list&quot; gets out of date, or the server is shut down or something, you can just ask *anyone* in the network to publish his nodes-file (on rapidshare, say), and voila, you&#x27;ve got a fresh list of IPs you can connect to.</div></article><article class="msg sat" id="m17">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-18T17:28:18Z">18 June 2010, 17:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1619#msg1619" rel="nofollow noopener">original</a></span></header>
+<div class="t">The SVN version now uses IRC first and if that fails it falls back to a hardcoded list of seed nodes.  There are enough seed nodes now that many of them should still be up by the time of the next release.  It only briefly connects to a seed node to get the address list and then disconnects, so your connections drop back to zero for while.  At that point, be patient.  It&#x27;s only slow to get connected the first time.
+
+This means TOR users won&#x27;t need to -addnode anymore, it&#x27;ll get connected automatically.  </div></article><article class="msg sat" id="m18">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-06-25T22:40:47Z">25 June 2010, 22:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1781#msg1781" rel="nofollow noopener">original</a></span></header>
+<blockquote><div class=qh>Quote from: laszlo on June 14, 2010, 06:30:58 PM</div><div class="t">I run an IRC server you can use, it&#x27;s fairly stable but it&#x27;s not on redundant connections or anything.  It is only two servers right now but we don&#x27;t mess with it or anything, it just runs.
+
+My box is a dedicated irc server:
+ 2:28PM  up 838 days, 20:54, 1 user, load averages: 0.06, 0.08, 0.08
+
+You can use irc.lfnet.org to connect.</div></blockquote><div class="t">This seems like a good idea.
+
+What does everyone think, should we make the switch for 0.3?</div></article><article class="msg" id="m19">
+<header><b>Vasiliev</b><span class="muted"> · <time datetime="2010-06-25T23:50:15Z">25 June 2010, 23:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg1785#msg1785" rel="nofollow noopener">original</a></span></header>
+<div class="t">You may want to leave Freenode in as a fallback server -- if his server doesn&#x27;t work, use Freenode&#x27;s.</div></article><article class="msg" id="m20">
+<header><b>sirius</b><span class="muted"> · <time datetime="2010-07-07T01:05:47Z">7 July 2010, 01:05 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg2009#msg2009" rel="nofollow noopener">original</a></span></header>
+<div class="t">Maybe we should have an option dialog that allows you to choose the IRC server and channel you connect to?</div></article><article class="msg sat" id="m21">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-07T01:31:07Z">7 July 2010, 01:31 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=84.msg2010#msg2010" rel="nofollow noopener">original</a></span></header>
+<div class="t">Everybody needs to connect to the same IRC server and channel so they can find each other.</div><blockquote><div class=qh>Quote from: Vasiliev on June 25, 2010, 11:50:15 PM</div><div class="t">You may want to leave Freenode in as a fallback server -- if his server doesn&#x27;t work, use Freenode&#x27;s.</div></blockquote><div class="t">It might not be good if we suddenly rushed freenode with a ton of users all at once.
+
+The fallback is our own seed system.
+
+irc.lfnet.org is pretty old and has impressive uptime.  I think it&#x27;s going to be fine.
+
+We could take IRC out at some point if we want, but I&#x27;d rather ease into it and just test our own seed system as a backup for now, and I really like the complementary redundant attributes of the two different systems.</div></article>
+<aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li><li><a href="../../satoshipedia/martti-malmi/">Martti Malmi</a> <span class="muted">Finnish developer who joined Satoshi in 2009 and built the website and forum.</span></li></ul></aside>
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p42-idea-for-file-hosting-and-proxy-services/">← Idea for file hosting and proxy services</a><a rel="next" href="../../conversations/p44-exchange-methods/">Exchange Methods →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

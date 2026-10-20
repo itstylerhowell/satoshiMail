@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JSON-RPC Multiple Invocations – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 24 July 2010: Obviously it&#x27;s a bug that it repeats the header. I was trying to follow the 1.0 spec…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p126-json-rpc-multiple-invocations/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="JSON-RPC Multiple Invocations – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 24 July 2010: Obviously it&#x27;s a bug that it repeats the header. I was trying to follow the 1.0 spec…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p126-json-rpc-multiple-invocations/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="JSON-RPC Multiple Invocations – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 24 July 2010: Obviously it&#x27;s a bug that it repeats the header. I was trying to follow the 1.0 spec…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "JSON-RPC Multiple Invocations", "url": "https://satoshimail.pages.dev/conversations/p126-json-rpc-multiple-invocations/", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-22T02:09:49Z", "text": "I noticed from a hint that Satoshi dropped in the JSON-RPC password thread about so-called \"Multiple Invocation\" support in Bitcoin's JSON-RPC. As I run a site that polls bitcoind for payments to a large number of addresses twice a minute, I was intrigued. First of all, this isn't JSON-RPC 2.0's \"Batch\" support, where requests are submitted in an array and responses are received the same way: request = [ {\"jsonrpc\": \"2.0\", \"method\": \"sum\", \"params\": [1,2,4], \"id\": \"1\"}, {\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42,23], \"id\": \"2\"}, {\"jsonrpc\": \"2.0\", \"method\": \"get_data\", \"id\": \"9\"} ] response = [ {\"jsonrpc\": \"2.0\", \"result\": 7, \"id\": \"1\"}, {\"jsonrpc\": \"2.0\", \"result\": 19, \"id\": \"2\"}, {\"jsonrpc\": \"2.0\", \"result\": [\"hello\", 5], \"id\": \"9\"} ] Instead, it's something different, and I can't figure out how to parse the responses in Python. Here's a screen capture of a telnet session to the Bitcoin RPC server: $ telnet localhost 8332 Trying 127.0.0.1... Connected to localhost. Escape character is '^]'. POST / HTTP/1.1 Content-Type: text/plain Content-Length: 97 {\"params\":[],\"id\":1,\"method\":\"getconnectioncount\"} {\"params\":[],\"id\":2,\"method\":\"getdifficulty\"} HTTP/1.1 200 OK Connection: close Content-Length: 33 Content-Type: application/json Date: Sat, 08 Jul 2006 12:04:08 GMT Server: json-rpc/1.0 {\"result\":8,\"error\":null,\"id\":1} HTTP/1.1 200 OK Connection: close Content-Length: 49 Content-Type: application/json Date: Sat, 08 Jul 2006 12:04:08 GMT Server: json-rpc/1.0 {\"result\":181.5432893640505,\"error\":null,\"id\":2} Connection closed by foreign host. As you can see, the server replies with two complete HTTP 200 responses instead of (as I would have expected) one response with the two lines concatenated as I did in the request. I can't figure out how to parse that with anything at all semi-automated in Python. urllib2 and httplib both return after the first response and drop the second one on the floor. Has anyone encountered this problem before? Does anyone know of…", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "lachesis"}, "datePublished": "2010-07-22T03:18:36Z", "text": "Alright, I know it hasn't been more than an hour since I last posted about this, but I decided to solve this problem myself. If there's a better solution out there, I'd be glad to hear it, but here's my version 0.1 attempt to make this work: http://www.alloscomp.com/bitcoin/btcjsonrpc.pys Let me know if you like it, hate it, or see any obvious flaws with it. There's some getting started docs in the source, but here's the code of the test suite: from btcjsonrpc import Service s = Service()…"}, {"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-24T00:59:08Z", "text": "Obviously it's a bug that it repeats the header. I was trying to follow the 1.0 spec: http://json-rpc.org/wiki/specification It called for multiple invocation. I think they mean it's like this, but I'm not sure: Post: {\"method\": \"postMessage\", \"params\": [\"Hello all!\"], \"id\": 99} {\"method\": \"postMessage\", \"params\": [\"I have a question:\"], \"id\": 101} Reply: {\"result\": 1, \"error\": null, \"id\": 99} {\"result\": 1, \"error\": null, \"id\": 101} I can't remember where I think I saw that it's supposed to…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "JSON-RPC Multiple Invocations", "item": "https://satoshimail.pages.dev/conversations/p126-json-rpc-multiple-invocations/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p126">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">JSON-RPC Multiple Invocations</span></div></nav>
+<main class="in">
+<h1>JSON-RPC Multiple Invocations</h1>
+<p class="lead">BitcoinTalk forum · 3 messages · from 22 July 2010 · with Satoshi Nakamoto, lachesis</p>
+<p class="actions"><a class="btn" href="../../#t-p126">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/126/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-22T02:09:49Z">22 July 2010, 02:09 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=528.msg4923#msg4923" rel="nofollow noopener">original</a></span></header>
+<div class="t">I noticed from a hint that Satoshi dropped in the JSON-RPC password thread about so-called &quot;Multiple Invocation&quot; support in Bitcoin&#x27;s JSON-RPC.
+
+As I run a site that polls bitcoind for payments to a large number of addresses twice a minute, I was intrigued. First of all, this isn&#x27;t JSON-RPC 2.0&#x27;s &quot;Batch&quot; support, where requests are submitted in an array and responses are received the same way:</div><pre><code>request = [
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;sum&quot;, &quot;params&quot;: [1,2,4], &quot;id&quot;: &quot;1&quot;},
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;subtract&quot;, &quot;params&quot;: [42,23], &quot;id&quot;: &quot;2&quot;},
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;get_data&quot;, &quot;id&quot;: &quot;9&quot;}
+    ]
+response = [
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: 7, &quot;id&quot;: &quot;1&quot;},
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: 19, &quot;id&quot;: &quot;2&quot;},
+        {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [&quot;hello&quot;, 5], &quot;id&quot;: &quot;9&quot;}
+    ]</code></pre><div class="t">Instead, it&#x27;s something different, and I can&#x27;t figure out how to parse the responses in Python. Here&#x27;s a screen capture of a telnet session to the Bitcoin RPC server:</div><pre><code>$ telnet localhost 8332
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is &#x27;^]&#x27;.
+POST / HTTP/1.1
+Content-Type: text/plain
+Content-Length: 97
+
+{&quot;params&quot;:[],&quot;id&quot;:1,&quot;method&quot;:&quot;getconnectioncount&quot;}
+{&quot;params&quot;:[],&quot;id&quot;:2,&quot;method&quot;:&quot;getdifficulty&quot;}
+HTTP/1.1 200 OK
+Connection: close
+Content-Length: 33
+Content-Type: application/json
+Date: Sat, 08 Jul 2006 12:04:08 GMT
+Server: json-rpc/1.0
+
+{&quot;result&quot;:8,&quot;error&quot;:null,&quot;id&quot;:1}
+HTTP/1.1 200 OK
+Connection: close
+Content-Length: 49
+Content-Type: application/json
+Date: Sat, 08 Jul 2006 12:04:08 GMT
+Server: json-rpc/1.0
+
+{&quot;result&quot;:181.5432893640505,&quot;error&quot;:null,&quot;id&quot;:2}
+Connection closed by foreign host.</code></pre><div class="t">As you can see, the server replies with two complete HTTP 200 responses instead of (as I would have expected) one response with the two lines concatenated as I did in the request.
+
+I can&#x27;t figure out how to parse that with anything at all semi-automated in Python. urllib2 and httplib both return after the first response and drop the second one on the floor.
+
+Has anyone encountered this problem before? Does anyone know of a Python library that can handle this strange multi-request behaviour?</div></article><article class="msg" id="m1">
+<header><b>lachesis</b><span class="muted"> · <time datetime="2010-07-22T03:18:36Z">22 July 2010, 03:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=528.msg4940#msg4940" rel="nofollow noopener">original</a></span></header>
+<div class="t">Alright, I know it hasn&#x27;t been more than an hour since I last posted about this, but I decided to solve this problem myself.
+
+If there&#x27;s a better solution out there, I&#x27;d be glad to hear it, but here&#x27;s my version 0.1 attempt to make this work:
+<a href="http://www.alloscomp.com/bitcoin/btcjsonrpc.pys" rel="nofollow noopener">http://www.alloscomp.com/bitcoin/btcjsonrpc.pys</a>
+
+Let me know if you like it, hate it, or see any obvious flaws with it. There&#x27;s some getting started docs in the source, but here&#x27;s the code of the test suite:</div><pre><code>    from btcjsonrpc import Service
+    s = Service()
+    print &#x27;preparing getbalance; id:&#x27;,s.getbalance() # Each call returns its ID so you can find it later in the results
+    print &#x27;preparing getdifficulty; id:&#x27;,s.getdifficulty()
+    print &#x27;preparing listreceivedbyaddress; id:&#x27;,s.listreceivedbyaddress(10000) # Call with a parameter
+    print &#x27;preparing getbalance; id:&#x27;,s.getbalance(id=&#x27;getbalance 2&#x27;) # You can also specify your own ID
+    print &#x27;executing callresults:&#x27;
+    results = s() # Get the results by calling the Service object
+    for id,value in results.iteritems():
+        print id,value
+    # If you&#x27;d prefer to work directly with the JSON responses instead of a dict of IDs, then access the list Service.responses.
+    print &#x27;json responses&#x27;
+    print s.responses</code></pre><div class="t">And here&#x27;s the output, including the docstr:</div><pre><code>$ ./btcjsonrpc.py
+ Socket-based, Bitcoin-compatible JSON-RPC v1.0 client.
+ By: Eric Swanson (http://www.alloscomp.com/bitcoin)
+ Version 0.1, July 21, 2010
+Don&#x27;t use this for one-off request-&gt;response pairs. Use something like the reference python-jsonrpc library, or urllib2 + json. This client is hackish, but it works for me (and has sped up my JSON-RPC accesses tremendously).
+
+For details of WHY exactly I felt the need to redo python-jsonrpc using a raw socket, check out the follow forum post: http://bitcointalk.org/index.php?topic=528.0
+
+Usage is fairly straightforward, and a code sample can be found below the library code (in the if __name__==&#x27;__main__&#x27; clause).
+
+preparing getbalance; id: jss-1
+preparing getdifficulty; id: jss-2
+preparing listreceivedbyaddress; id: jss-3
+preparing getbalance; id: getbalance 2
+
+executing call
+
+results:
+jss-2 181.543289364
+jss-3 []
+getbalance 2 2345.94
+jss-1 2345.94
+
+json responses
+[{u&#x27;id&#x27;: u&#x27;jss-2&#x27;, u&#x27;result&#x27;: 181.54328936405051, u&#x27;error&#x27;: None}, {u&#x27;id&#x27;: u&#x27;jss-3&#x27;, u&#x27;result&#x27;: [], u&#x27;error&#x27;: None}, {u&#x27;id&#x27;: u&#x27;getbalance 2&#x27;, u&#x27;result&#x27;: 2345.9400000000001, u&#x27;error&#x27;: None}, {u&#x27;id&#x27;: u&#x27;jss-1&#x27;, u&#x27;result&#x27;: 2345.9400000000001, u&#x27;error&#x27;: None}]</code></pre></article><article class="msg sat" id="m2">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-24T00:59:08Z">24 July 2010, 00:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=528.msg5416#msg5416" rel="nofollow noopener">original</a></span></header>
+<div class="t">Obviously it&#x27;s a bug that it repeats the header.
+
+I was trying to follow the 1.0 spec: <a href="http://json-rpc.org/wiki/specification" rel="nofollow noopener">http://json-rpc.org/wiki/specification</a>   It called for multiple invocation.
+
+I think they mean it&#x27;s like this, but I&#x27;m not sure:
+
+Post:
+{&quot;method&quot;: &quot;postMessage&quot;, &quot;params&quot;: [&quot;Hello all!&quot;], &quot;id&quot;: 99}
+{&quot;method&quot;: &quot;postMessage&quot;, &quot;params&quot;: [&quot;I have a question:&quot;], &quot;id&quot;: 101}
+
+Reply:
+{&quot;result&quot;: 1, &quot;error&quot;: null, &quot;id&quot;: 99}
+{&quot;result&quot;: 1, &quot;error&quot;: null, &quot;id&quot;: 101}
+
+I can&#x27;t remember where I think I saw that it&#x27;s supposed to send back HTTP status 500 for an error reply.  If it contains multiple responses and one is an error, I wonder if that makes the status 500 for the whole thing, I guess so.  Maybe it should always return 200.  I think someone sounded like the 500 might be causing a problem.
+
+This probably gets fixed after 0.3.3.  Until then, just use single invocation.  I wonder if any JSON-RPC package even supports multiple invocation, probably not.
+
+It would be nice if we could pin down better how multiple-invocation is supposed to work, if at all, before trying to fix it, and whether returning HTTP status 500 for error response is right.</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p125-bitcoin-x64-for-windows/">← Bitcoin x64 for Windows</a><a rel="next" href="../../conversations/p127-scalability-and-transaction-rate/">Scalability and transaction rate →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

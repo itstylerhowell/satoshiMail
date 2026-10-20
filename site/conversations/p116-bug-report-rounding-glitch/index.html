@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BUG Report: Rounding glitch – Satoshi Nakamoto, BitcoinTalk</title>
+<meta name="description" content="Satoshi Nakamoto, 17 July 2010: It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result. The only place where…">
+<link rel="canonical" href="https://satoshimail.pages.dev/conversations/p116-bug-report-rounding-glitch/">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="BUG Report: Rounding glitch – Satoshi Nakamoto, BitcoinTalk">
+<meta property="og:description" content="Satoshi Nakamoto, 17 July 2010: It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result. The only place where…">
+<meta property="og:url" content="https://satoshimail.pages.dev/conversations/p116-bug-report-rounding-glitch/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@TylerHowell88">
+<meta name="twitter:title" content="BUG Report: Rounding glitch – Satoshi Nakamoto, BitcoinTalk">
+<meta name="twitter:description" content="Satoshi Nakamoto, 17 July 2010: It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result. The only place where…">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "DiscussionForumPosting", "headline": "BUG Report: Rounding glitch", "url": "https://satoshimail.pages.dev/conversations/p116-bug-report-rounding-glitch/", "author": {"@type": "Person", "name": "The Madhatter"}, "datePublished": "2010-07-17T14:10:03Z", "text": "Check this out... I just installed 0.3.1 on two different machines and moved one bitpenny (0.01): -= Before the transfer =- [bitcoind@box1 ~]$ ~/bin/bitcoind getinfo { \"balance\" : 1.150000000000, \"blocks\" : 68717, \"connections\" : 6, \"proxy\" : \"\", \"generate\" : false, \"genproclimit\" : -1, \"difficulty\" : 181.5432893640505 } [bitcoind@box2 ~]$ ~/bin/bitcoind getinfo { \"balance\" : 0.000000000000, \"blocks\" : 68717, \"connections\" : 22, \"proxy\" : \"\", \"generate\" : false, \"genproclimit\" : -1, \"difficulty\" : 181.5432893640505 } -= AFTER the transfer =- [bitcoind@box1 ~]$ ~/bin/bitcoind getinfo { \"balance\" : 1.139999999999, \"blocks\" : 68717, \"connections\" : 10, \"proxy\" : \"\", \"generate\" : false, \"genproclimit\" : -1, \"difficulty\" : 181.5432893640505 } [bitcoind@box2 ~]$ ~/bin/bitcoind getinfo { \"balance\" : 0.010000000000, \"blocks\" : 68717, \"connections\" : 20, \"proxy\" : \"\", \"generate\" : false, \"genproclimit\" : -1, \"difficulty\" : 181.5432893640505 } I personally think it is a display problem, but I can't be sure.. strange, no? Both machines are running FreeBSD 7.2/amd64.", "isPartOf": {"@type": "WebSite", "name": "Satoshi Mail", "url": "https://satoshimail.pages.dev/"}, "comment": [{"@type": "Comment", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "datePublished": "2010-07-17T16:06:12Z", "text": "It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result. The only place where it uses floating point to represent money is returning a value in JSON-RPC. 1.139999999999 is longer than bitcoin can internally represent. internally, it could only be: 1.13999999 or 1.14000000 1.139999999999 is much much closer to 1.14000000 than 1.13999999, so it must be 1.14000000. The code is this: (double)GetBalance() / (double)COIN. (I can't think of an easy way to fix…"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Conversations", "item": "https://satoshimail.pages.dev/conversations/"}, {"@type": "ListItem", "position": 3, "name": "BitcoinTalk forum", "item": "https://satoshimail.pages.dev/conversations/bitcointalk/"}, {"@type": "ListItem", "position": 4, "name": "BUG Report: Rounding glitch", "item": "https://satoshimail.pages.dev/conversations/p116-bug-report-rounding-glitch/"}]}</script>
+</head>
+<body>
+<header class="sh"><div class="in">
+  <a class="brand" href="../../"><img src="../../favicon.svg" width="30" height="30" alt=""><span><b>Satoshi</b> Mail</span><span class="beta">Beta</span></a>
+  <nav aria-label="Sections"><a href="../../satoshipedia/">Satoshipedia</a><a href="../../conversations/">Conversations</a><a href="../../commits/">Commits</a><a href="../../#map">Satoshi Map</a></nav>
+  <a class="open" href="../../#t-p116">Open in Satoshi Mail</a>
+</div></header>
+<nav class="crumbs" aria-label="Breadcrumb"><div class="in"><a href="../../">Satoshi Mail</a> <span aria-hidden="true">›</span> <a href="../../conversations/">Conversations</a> <span aria-hidden="true">›</span> <a href="../../conversations/bitcointalk/">BitcoinTalk forum</a> <span aria-hidden="true">›</span> <span aria-current="page">BUG Report: Rounding glitch</span></div></nav>
+<main class="in">
+<h1>BUG Report: Rounding glitch</h1>
+<p class="lead">BitcoinTalk forum · 2 messages · from 17 July 2010 · with Satoshi Nakamoto, The Madhatter</p>
+<p class="actions"><a class="btn" href="../../#t-p116">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/116/" rel="noopener">Archive source</a></p>
+<article class="msg" id="m0">
+<header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-07-17T14:10:03Z">17 July 2010, 14:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=432.msg3748#msg3748" rel="nofollow noopener">original</a></span></header>
+<div class="t">Check this out...
+
+I just installed 0.3.1 on two different machines and moved one bitpenny (0.01):
+
+-= Before the transfer =-
+
+[bitcoind@box1 ~]$ ~/bin/bitcoind getinfo
+{
+    &quot;balance&quot; : 1.150000000000,
+    &quot;blocks&quot; : 68717,
+    &quot;connections&quot; : 6,
+    &quot;proxy&quot; : &quot;&quot;,
+    &quot;generate&quot; : false,
+    &quot;genproclimit&quot; : -1,
+    &quot;difficulty&quot; : 181.5432893640505
+}
+
+[bitcoind@box2 ~]$ ~/bin/bitcoind getinfo
+{
+    &quot;balance&quot; : 0.000000000000,
+    &quot;blocks&quot; : 68717,
+    &quot;connections&quot; : 22,
+    &quot;proxy&quot; : &quot;&quot;,
+    &quot;generate&quot; : false,
+    &quot;genproclimit&quot; : -1,
+    &quot;difficulty&quot; : 181.5432893640505
+}
+
+-= AFTER the transfer =-
+
+[bitcoind@box1 ~]$ ~/bin/bitcoind getinfo
+{
+    &quot;balance&quot; : 1.139999999999,
+    &quot;blocks&quot; : 68717,
+    &quot;connections&quot; : 10,
+    &quot;proxy&quot; : &quot;&quot;,
+    &quot;generate&quot; : false,
+    &quot;genproclimit&quot; : -1,
+    &quot;difficulty&quot; : 181.5432893640505
+}
+
+[bitcoind@box2 ~]$ ~/bin/bitcoind getinfo
+{
+    &quot;balance&quot; : 0.010000000000,
+    &quot;blocks&quot; : 68717,
+    &quot;connections&quot; : 20,
+    &quot;proxy&quot; : &quot;&quot;,
+    &quot;generate&quot; : false,
+    &quot;genproclimit&quot; : -1,
+    &quot;difficulty&quot; : 181.5432893640505
+}
+
+I personally think it is a display problem, but I can&#x27;t be sure.. strange, no?
+
+Both machines are running FreeBSD 7.2/amd64.</div></article><article class="msg sat" id="m1">
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-17T16:06:12Z">17 July 2010, 16:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=432.msg3769#msg3769" rel="nofollow noopener">original</a></span></header>
+<div class="t">It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result.  The only place where it uses floating point to represent money is returning a value in JSON-RPC.
+
+1.139999999999 is longer than bitcoin can internally represent.
+
+internally, it could only be:
+1.13999999 or
+1.14000000
+
+1.139999999999 is much much closer to 1.14000000 than 1.13999999, so it must be 1.14000000.
+
+The code is this:
+(double)GetBalance() / (double)COIN.
+
+(I can&#x27;t think of an easy way to fix it at the moment)</div></article>
+
+<nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p115-nenolod-the-guy-that-wants-to-prove-bitcoin-doesn-t-work/">← Nenolod, the guy that wants to prove Bitcoin doesn&#x27;t work.</a><a rel="next" href="../../conversations/p117-privacy-versus-safety-handling-change/">Privacy versus Safety: handling change →</a></nav>
+</main>
+<footer class="sf"><div class="in">
+  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="../../about/">About</a></p>
+</div></footer>
+</body>
+</html>

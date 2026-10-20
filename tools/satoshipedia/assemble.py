@@ -1,0 +1,130 @@
+"""Build Satoshi Mail + Satoshipedia from the v6 template.
+
+usage: python3 -I assemble.py SCRATCH
+writes SCRATCH/out/mail_template.html (keeps /*__DATA__*/) and SCRATCH/out/satoshi-mail.html
+"""
+import json, sys, pathlib
+
+root = pathlib.Path(sys.argv[1])
+tools, wk, out = root / "tools", root / "wiki", root / "out"
+out.mkdir(exist_ok=True)
+src = (wk / "template_v6.html").read_text()
+
+# 1. strip the publish skeleton
+src = src[src.index("<title>"):]
+tail = src.rindex("</body></html>")
+src = src[:tail].rstrip() + "\n"
+
+
+def patch(s, old, new, count=1):
+    n = s.count(old)
+    if n != count:
+        raise SystemExit(f"patch anchor found {n}x (want {count}): {old[:90]!r}")
+    return s.replace(old, new)
+
+
+# 2. serif face for the encyclopedia
+roboto = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap">'
+src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">')
+
+# 3. css before the first </style> after the main stylesheet
+i = src.index("</style>", src.index("--bg: #f6f8fc"))
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + src[i:]
+
+# 4. markup, 5. article data
+wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+src = patch(src, '<div id="layer"></div>', '<div id="layer"></div>\n' + (tools / "wiki.html").read_text() + (tools / "map.html").read_text())
+src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="data" type="application/json">')
+
+# 6. encyclopedia script before boot, 7. boot through the combined router
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
+
+# inbox banner
+src = patch(src, 'is under <a href="#inbox-private">Private</a>.` : ""}</span></p>',
+            'is under <a href="#inbox-private">Private</a>.` : ""} Who\'s who and what happened is in <a href="#wiki">Satoshipedia</a>, in the dock below.</span></p>')
+# apps grid tile
+src = patch(src, 'popover(el, `<div class="apps">', 'popover(el, `<div class="apps"><a href="#wiki">${ic("menu_book")}Satoshipedia</a>')
+# keyboard: hand keys to the encyclopedia while it is open, and add g w
+kd = '  if ((e.metaKey || e.ctrlKey) && (e.key || "").toLowerCase() === "k") { e.preventDefault(); $("#q").focus(); $("#q").select(); return; }'
+src = patch(src, kd, '  if (document.body.classList.contains("in-map")) { mapKey(e); return; }\n  if (document.body.classList.contains("in-wiki")) { wikiKey(e); return; }\n' + kd)
+src = patch(src, 'const dest = { i: "#inbox",', 'const dest = { w: "#wiki", i: "#inbox",')
+
+# conversation header: Satoshipedia chips under the title
+src = patch(src, '<div id="msgs"></div>', '${wikiChipsFor(t)}<div id="msgs"></div>')
+
+# beta labelling: pill beside the logo, loading screen, About page
+src = patch(src, '<span><b>Satoshi</b> Mail</span>\n    </a>', '<span><b>Satoshi</b> Mail</span>\n    </a>\n    <button class="beta-pill" type="button" data-act="beta" title="Satoshi Mail is in beta and still in development">Beta</button>')
+src = patch(src, '  <div class="bar"></div>\n</div>', '  <div class="bar"></div>\n  <div class="ld-beta"><span class="beta-pill static">Beta</span>In development</div>\n</div>')
+src = patch(src, '<h2>About Satoshi Mail</h2>', '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>\n    <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button></p>')
+
+# credit: founder line at the foot of the rail and on the About page
+MADE_BY = 'Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a>'
+src = patch(src, '<span class="t">Browse all people →</span></a></li></ul>`;', '<span class="t">Browse all people →</span></a></li></ul><p class="made-by">' + MADE_BY + '</p>`;')
+src = patch(src, '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>', '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>\n    <p class="lead made-by-lead">' + MADE_BY + ' (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>')
+
+# compose is just for fun: no emails or drafts are ever created
+src = patch(src, 'function openCompose(draft) {\n', 'function openCompose(draft) {\n  return composeJoke(draft);   // read-only archive: show a joke instead of a compose window\n')
+src = patch(src, '  "open-draft"(el) { const d = ST.drafts.find(x => x.id === el.dataset.id); if (d) openCompose(d); },', '  "open-draft"() { composeJoke(); },')
+src = patch(src, '    item("#drafts", "draft", "Drafts", ST.drafts.length || "", r.view === "drafts", ST.drafts.length ? " unread" : ""),\n', '')
+src = patch(src, 'a: "#all", d: "#drafts" }[k];', 'a: "#all" }[k];')
+src = patch(src, '<td><kbd>c</kbd></td><td>Compose</td>', '<td><kbd>c</kbd></td><td>Compose (try it)</td>')
+src = patch(src, '<kbd>a</kbd> <kbd>d</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Drafts</td>', '<kbd>a</kbd> <kbd>w</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Satoshipedia</td>')
+src = patch(src, 'Stars, read state, archive, trash, drafts and settings are stored only in this browser. Nothing is sent anywhere.', 'Stars, read state, archive, trash and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved.')
+
+# no trash: remove every delete button, the Trash folder and the # shortcut; restore anything trashed before
+src = patch(src, '  for (const k of ["star", "read", "arch", "trash"]) s[k] = s[k] && typeof s[k] === "object" ? s[k] : {};\n',
+            '  for (const k of ["star", "read", "arch", "trash"]) s[k] = s[k] && typeof s[k] === "object" ? s[k] : {};\n  s.trash = {};   // Trash was removed: nothing stays hidden in it\n')
+src = patch(src, '    item("#trash", "delete", "Trash", "", r.folder === "trash"),\n', '')
+src = patch(src, 'b("archive", "archive", "Archive") + b("trash", "delete", "Delete")) +', 'b("archive", "archive", "Archive")) +')
+src = patch(src, '      <button class="ib sm" data-act="trash" data-id="${t.id}" title="Delete" aria-label="Delete">${ic("delete")}</button>\n', '')
+src = patch(src, ': b("archive", "archive", "Archive")) + b("trash", "delete", "Delete")}', ': b("archive", "archive", "Archive"))}')
+src = patch(src, '    case "#": if (curId && !isCommitId(curId)) { H(); bulk([curId], id => { ST.trash[id] = 1; }, "{n} moved to Trash."); } break;\n', '')
+src = patch(src, '<tr><td><kbd>e</kbd> <kbd>#</kbd></td><td>Archive / delete</td></tr>', '<tr><td><kbd>e</kbd></td><td>Archive</td></tr>')
+src = patch(src, '<kbd>in:commits</kbd> <kbd>in:trash</kbd> <kbd>is:starred</kbd>', '<kbd>in:commits</kbd> <kbd>is:starred</kbd>')
+src = patch(src, 'h.match(/^(starred|all|trash)(?:-p(\\d+))?$/)', 'h.match(/^(starred|all)(?:-p(\\d+))?$/)')
+src = patch(src, 'Stars, read state, archive, trash and settings are stored only in this browser.', 'Stars, read state, archive and settings are stored only in this browser.')
+src = patch(src, 'Reset stars, read state and trash</button>', 'Reset stars and read state</button>')
+
+# Blocktrainer's archive: cross-checked source, mentioned on the About page
+src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer\'s Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Conversations it includes link to it, and where it gives a different date that is noted.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
+src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer. An independent reader, not affiliated with any email provider.')
+
+# ── SEO / performance pass ──
+import re as _re
+DESC = "Every email, forum post and commit by Satoshi Nakamoto in a Gmail-style archive, with Satoshipedia and a map of his connections and timeline, 2008–2011."
+META = f"""<meta name="description" content="{DESC}">
+<meta name="theme-color" content="#f7931a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Satoshi Mail">
+<meta property="og:title" content="Satoshi Mail: Satoshi Nakamoto's emails, posts and commits">
+<meta property="og:description" content="{DESC}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Satoshi Mail: Satoshi Nakamoto's emails, posts and commits">
+<meta name="twitter:description" content="{DESC}">
+<meta name="twitter:creator" content="@TylerHowell88">"""
+src = patch(src, '<meta name="claude:viewport-fit-sides" content="cover">', '<meta name="claude:viewport-fit-sides" content="cover">\n' + META)
+# fonts no longer block the first paint (the icon font keeps display=block, so icons never flash as words)
+def _nonblocking(m):
+    href = m.group(1)
+    return f'<link rel="preload" as="style" href="{href}" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link rel="stylesheet" href="{href}"></noscript>'
+src, nfonts = _re.subn(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', _nonblocking, src)
+assert nfonts == 3, nfonts
+# icons: the glyph name moves to data-i and is drawn by CSS, so it isn't page text
+src = patch(src, 'const ic = (n, cls = "") => `<span class="ms ${cls}" aria-hidden="true">${n}</span>`;', 'const ic = (n, cls = "") => `<span class="ms ${cls}" aria-hidden="true" data-i="${n}"></span>`;')
+def _icon(m):
+    attrs, name = m.group(1) or "", m.group(2)
+    if "aria-hidden" not in attrs: attrs += ' aria-hidden="true"'
+    return f'<span class="ms"{attrs} data-i="{name}"></span>'
+src, nicons = _re.subn(r'<span class="ms"((?: [a-z-]+="[^"]*")*)>([a-z0-9_]+)</span>', _icon, src)
+assert nicons >= 15, nicons
+src = patch(src, '<span class="ms fill" style="color:${L.color}" aria-hidden="true">${L.priv ? "lock" : "label"}</span>', '<span class="ms fill" style="color:${L.color}" aria-hidden="true" data-i="${L.priv ? "lock" : "label"}"></span>')
+# a page heading for list views (conversations, Satoshipedia and Satoshi Map have their own h1)
+src = patch(src, '<div class="app" id="app">', '<div class="app" id="app">\n  <h1 class="sr-only" id="apph1">Satoshi Mail</h1>')
+
+(out / "mail_template.html").write_text(src)
+data = json.load(open(wk / "data.json"))
+djson = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+assert src.count("/*__DATA__*/") == 1
+(out / "satoshi-mail.html").write_text(src.replace("/*__DATA__*/", djson))
+print("ok", len(src), "template bytes;", (out / "satoshi-mail.html").stat().st_size, "page bytes")
