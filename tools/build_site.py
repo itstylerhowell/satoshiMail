@@ -322,9 +322,6 @@ class Site:
             note = f'<p class="note">{esc(m["w"])}</p>' if m.get("w") else ""
             to = f' <span class="muted">to {esc(m["to"])}</span>' if m.get("to") else ""
             src = f' · <a href="{esc(m["u"])}" rel="nofollow noopener">original</a>' if m.get("u") else ""
-            sn = self.satoshin.get(msg_key(m))
-            if sn:
-                src += f' · <a href="{esc(self.satoshin_site + sn)}" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a>'
             msgs.append(f"""<article class="msg{' sat' if m.get('s') else ''}" id="m{i}">
 <header><b>{esc(who)}</b>{to}<span class="muted"> · <time datetime="{iso(m['d'])}">{esc(date)}</time>{src}</span></header>
 {note}{self.render_body(m)}</article>""")
@@ -568,7 +565,7 @@ class Site:
 <li><a href="../satoshipedia/">Satoshipedia</a>: {len(self.W['articles'])} articles on the people and events, linked to the messages they draw on.</li>
 <li><a href="../#map">Satoshi Map</a>: everyone he corresponded with, and his timeline from 2008 to 2011.</li></ul>
 <h2>Sources</h2>
-<p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive; messages that are on satoshin.name link to their page there. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
+<p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive: every message in either is also here. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
         self.write("about/", self.page("about/", "About Satoshi Mail – Satoshi Nakamoto's emails, posts and commits",
                    clip(TAGLINE), body, [("About", "about/")], [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Satoshi Mail", "url": self.base + "about/"}],
                    app_href="#about", og_type="website"), priority=0.5)

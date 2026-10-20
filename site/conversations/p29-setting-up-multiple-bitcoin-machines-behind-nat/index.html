@@ -46,7 +46,7 @@ Or is there an other way one should go?
 
 Greetings,
 foobar</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-16T01:34:56Z">16 February 2010, 01:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg360#msg360" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-setting-up-multiple-bitcoin-machines-behind-nat" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-16T01:34:56Z">16 February 2010, 01:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg360#msg360" rel="nofollow noopener">original</a></span></header>
 <div class="t">Right now there isn&#x27;t a port number setting to do that.  It&#x27;s a feature yet to be implemented.  You can only set up your NAT to port-forward to one of the computers.  (I said something earlier about NAT port translation, but that wouldn&#x27;t work, other nodes wouldn&#x27;t know to connect to that port)
 
 If you want, as a small optimization, you could run the rest of your computers as:
@@ -59,7 +59,7 @@ bitcoin -connect=&lt;IP1&gt; -connect=&lt;IP2&gt;</div></article><article class=
 <header><b>Xunie</b><span class="muted"> · <time datetime="2010-04-08T20:06:37Z">8 April 2010, 20:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg877#msg877" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: satoshi on February 16, 2010, 01:34:56 AM</div><div class="t">Right now there isn&#x27;t a port number setting to do that.  It&#x27;s a feature yet to be implemented.</div></blockquote><div class="t">So, if I somehow I forwarded port router:8333 to bitcoinhost1:8333 and router:8334 to bitcoinhost2:8333, we get undefined behavior?
 Because that seems like trivial to me, to keep track of port numbers in any p2p app.</div></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-05-16T23:56:03Z">16 May 2010, 23:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg1135#msg1135" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-setting-up-multiple-bitcoin-machines-behind-nat-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-05-16T23:56:03Z">16 May 2010, 23:56 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=54.msg1135#msg1135" rel="nofollow noopener">original</a></span></header>
 <div class="t">At the moment, it always assumes the incoming port is 8333, so it would tell other bitcoin nodes to connect to router:8333 even if you&#x27;re redirecting from another port number.
 
 I&#x27;m not in a big hurry to fix this because I can&#x27;t think of any benefit to having more than one incoming connection port.  If you&#x27;re providing one incoming port, then you&#x27;ve done your bit to help the network.  Having two incoming ports to the same person doesn&#x27;t help redundancy.

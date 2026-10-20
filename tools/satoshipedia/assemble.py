@@ -29,7 +29,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -37,7 +37,7 @@ src = patch(src, '<div id="layer"></div>', '<div id="layer"></div>\n' + (tools /
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -87,20 +87,23 @@ src = patch(src, 'Stars, read state, archive, trash and settings are stored only
 src = patch(src, 'Reset stars, read state and trash</button>', 'Reset stars and read state</button>')
 
 # Blocktrainer's archive: cross-checked source, mentioned on the About page
-src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer\'s Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Conversations it includes link to it, and where it gives a different date that is noted.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
+src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer\'s Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
 src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.')
 
 # satoshin.name ("Satoshi Nakamoto Archive"): which message is which page there, a details row per message, About text
 xref = json.load(open(tools / "satoshin_xref.json"))
 xjson = json.dumps({"site": xref["site"], "checked": xref["checked"], "msgs": xref["msgs"]}, separators=(",", ":"))
 src = patch(src, '<script id="data" type="application/json">', f'<script id="satoshin-data" type="application/json">{xjson}</script>\n<script id="data" type="application/json">')
-src = patch(src, '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n',
-            '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n      ${(sn => sn ? `<dt>also on:</dt><dd><a href="${esc(sn)}" target="_blank" rel="noopener">${esc(sn.replace(/^https:\\/\\//, ""))}</a></dd>` : "")(SATOSHIN.url(t, i))}\n')
-src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi\'s BitcoinTalk posts and mailing-list emails): every one is here too, and each of those messages links to its page there under its details.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
+src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi\'s BitcoinTalk posts and mailing-list emails): every one is here too. All sources are listed under Settings → Archive → <a href="#sources">Sources</a>.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
 
 # AI Overview card above search results (tools/ask.js)
 src = patch(src, '    head = `<div class="chips">${chip("from:me"', '    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me"')
 src = patch(src, '${empty}</div>`;\n  markCursor();\n}', '${empty}</div>`;\n  markCursor();\n  if (model.kind === "search") askMount(r.search);\n}')
+
+# Sources page: Settings → Archive → Sources (#sources)
+src = patch(src, '<h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a>', '<h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a>')
+src = patch(src, '  if (h === "about") return { view: "about" };', '  if (h === "about") return { view: "about" };\n  if (h === "sources") return { view: "sources" };')
+src = patch(src, 'about: renderAbout }[ROUTE.view]', 'about: renderAbout, sources: renderSources }[ROUTE.view]')
 
 # ── SEO / performance pass ──
 import re as _re

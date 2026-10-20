@@ -1067,3 +1067,17 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 @media (prefers-reduced-motion: reduce) { .ask-dots { animation: none; } }
 @media (max-width: 600px) { .ask { margin: 8px 8px 6px; padding: 12px; } }
 
+/* ── Sources page (Settings → Archive → Sources) ── */
+.src-page h3 { font: 500 16px var(--ui-head); margin: 28px 0 10px; }
+.src-list { display: grid; gap: 12px; max-width: 860px; }
+.src { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
+.src h4 { margin: 0 0 4px; font: 500 15px var(--ui-head); }
+.src h4 .muted, .src-page .muted { color: var(--ink-3); font-weight: 400; }
+.src p { margin: 6px 0; line-height: 1.55; color: var(--ink-2); max-width: 76ch; }
+.src ul { margin: 4px 0 0; padding-left: 20px; color: var(--ink-2); line-height: 1.55; }
+.src-t { border-collapse: collapse; margin-top: 8px; font-size: 13px; width: 100%; max-width: 560px; }
+.src-t th, .src-t td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); }
+.src-t th { font-weight: 500; color: var(--ink-3); }
+.src-t .num { text-align: right; font-variant-numeric: tabular-nums; }
+.src-page .lead .ms { font-size: 18px; vertical-align: -4px; }
+

@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 12 messages · from 8 February 2010 · with BlueSky, NewLibertyStandard, Satoshi Nakamoto, SmokeTooMuch, giik, riX…</p>
 <p class="actions"><a class="btn" href="../../#t-p26">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/26/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T01:27:02Z">8 February 2010, 01:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg279#msg279" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/bitcoin-client-and-website-translation" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T01:27:02Z">8 February 2010, 01:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg279#msg279" rel="nofollow noopener">original</a></span></header>
 <div class="t">Thank you for the offer to help translate.  That is probably the best way you could help.
 
 I will need to prepare the code for translation first.  wxWidgets has locale support, and most strings are in generated code that is already wrapped, so it shouldn&#x27;t be too hard.  We also must finish upgrading to wxWidgets-2.9.0 to get UTF-8 support.  I&#x27;ve done test builds with 2.9.0 and there is one bug left to fix.
@@ -49,7 +49,7 @@ sirius-m</div></article><article class="msg" id="m1">
 <div class="t">I am running Windows 32 (But have AMD64 dual core machine), but could, if required have a version of Linux using virtualisation(I must install this).
 
 The most simple way at present is to have different language binaries(e.g. bitcoin_en.exe, bitcoin_zh.exe etc.). Please post when you want this translated, this would mean there could be a dual language release for the next version (Why not a tri-language release, you do speak Japanese no?).</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T16:10:37Z">8 February 2010, 16:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg283#msg283" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/bitcoin-client-and-website-translation-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-08T16:10:37Z">8 February 2010, 16:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg283#msg283" rel="nofollow noopener">original</a></span></header>
 <div class="t">It&#x27;s much easier to have a single binary and multiple .mo files.  It&#x27;s too much maintenance work to have lots of build variations.  Once the software support is implemented, anyone could contribute translations.
 
 wxWidgets uses the gettext standard.  You use the gettext tools or something like poedit to create a .po file by scanning the sourcefiles for strings and editing the translations into the .po file, then compile it into a .mo file.  The program loads the .mo file at runtime and reskins all the strings.  Additional languages can be added to an existing program by adding .mo files without recompiling the program.
@@ -75,7 +75,7 @@ Do you want it as plain-text or a .html or .php file ?</div></blockquote><div cl
 <div class="t">It looks like the Bitcoin Wikipedia article &lt;<a href="http://en.wikipedia.org/wiki/Bitcoin" rel="nofollow noopener">http://en.wikipedia.org/wiki/Bitcoin</a>&gt; is only available in English. How about some of you either translate or write a new article in your language.</div></article><article class="msg" id="m10">
 <header><b>giik</b><span class="muted"> · <time datetime="2010-02-16T10:23:05Z">16 February 2010, 10:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg374#msg374" rel="nofollow noopener">original</a></span></header>
 <div class="t">My Dutch translation is almost finished. I will send it to sirius-m this week.</div></article><article class="msg sat" id="m11">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-17T19:19:43Z">17 February 2010, 19:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg389#msg389" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-bitcoin-client-and-website-translation" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-17T19:19:43Z">17 February 2010, 19:19 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=47.msg389#msg389" rel="nofollow noopener">original</a></span></header>
 <div class="t">I updated the SVN with changes to support translation.  Translatable strings are all enclosed in _(&quot;&quot;), and we&#x27;re using UTF-8 on all platforms.
 
 When the program runs, it looks in the directory of the EXE for the file: locale\&lt;langcode&gt;\LC_MESSAGES\bitcoin.mo

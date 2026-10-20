@@ -23,10 +23,11 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
   keyed by a stable message ID (`bitcointalk:<msg number>`, otherwise the source URL without its scheme), so it
   survives a rebuilt archive. Made by `../satoshin_xref.py`; `render_page.py` and `build_site.py` warn if a key stops
   matching. Checked 20 October 2026: all 567 of its entries are in Satoshi Mail.
-  It is embedded in the template as `<script id="satoshin-data">`; `wiki.js` uses it for the "Also in" chip and
-  each message's "also on" detail, and `build_site.py` for the links on static conversation pages.
+  It is embedded in the template as `<script id="satoshin-data">`; the Sources page uses it for its counts.
 * `ask.js`, `ask.css`: the AI Overview card above search results. In the claude.ai artifact it asks the viewer's
   Claude (the `sample` capability) to answer the search from the archive and Satoshipedia only, citing the messages
   and articles it used, with two read-only tools (search the archive, read an article). It asks nothing until the
   viewer clicks once. Where AI isn't available (the static site, or a viewer who declines) it shows the matching
   Satoshipedia summary instead.
+* `sources.js`, `sources.css`: the Sources page (`#sources`, from Settings → Archive), listing every source and
+  cross-check with live counts. Conversations no longer carry per-source chips; they keep their Satoshipedia chips.

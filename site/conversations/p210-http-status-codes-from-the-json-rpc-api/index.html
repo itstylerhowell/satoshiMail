@@ -52,7 +52,7 @@ BEFORE, send {&quot;id&quot;:&quot;123&quot;, &quot;method&quot;: &quot;nosuchme
 <div class="t">Speak now about this change or forever hold your peace...  Satoshi will be including this functionality in the next version of Bitcoin (0.3.12).
 
 If you use the JSON-RPC api, you should check your error-condition-handling code; again, the changes are that the error member will be an Object (with &#x27;code&#x27; and &#x27;message&#x27; fields) instead of a String, and the HTTP status code may be 404 instead of 500 for method-not-found.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-06T21:21:21Z">6 September 2010, 21:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=969.msg12130#msg12130" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-http-status-codes-from-the-json-rpc-api" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-06T21:21:21Z">6 September 2010, 21:21 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=969.msg12130#msg12130" rel="nofollow noopener">original</a></span></header>
 <div class="t">This is in SVN rev 147.
 
 This is more standard, and although json-rpc 1.0 didn&#x27;t specify the format of error objects, it did specify that they would be objects not strings or other values, so we needed to change this to be correct.  The code/message members have become standard in later json-rpc specs.

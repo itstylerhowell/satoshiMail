@@ -645,18 +645,8 @@ const SATOSHIN = (() => {
     count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.url(t, i)) n++; return n; },
   };
 })();
-function sourceChipsFor(t) {
-  if (!t || !t.m) return "";
-  const chips = [];
-  if (BLOCKTRAINER.covers(t)) chips.push(`<a href="${BLOCKTRAINER.url}" target="_blank" rel="noopener" title="Blocktrainer's Satoshi Nakamoto archive, with German translations">${ic("open_in_new")}Blocktrainer archive${BLOCKTRAINER.partial(t) ? " (Satoshi's emails)" : ""}</a>`);
-  const sn = SATOSHIN.first(t), n = SATOSHIN.count(t);
-  if (sn) chips.push(`<a href="${esc(sn)}" target="_blank" rel="noopener" title="${n === 1 ? "Satoshi's message here has its own page" : `Satoshi's ${n} messages here each have a page`} on satoshin.name, the Satoshi Nakamoto Archive. This opens the first; each message's details link to its own.">${ic("open_in_new")}satoshin.name${n > 1 ? ` (${n} messages)` : ""}</a>`);
-  if (!chips.length) return "";
-  const note = BLOCKTRAINER.covers(t) && BLOCKTRAINER.dateNote[t.s + "|" + t.t];
-  return `<div class="conv-wiki conv-src">Also in:${chips.join("")}${note ? `<span class="src-note">${ic("event")}${esc(note)}</span>` : ""}</div>`;
-}
 function wikiChipsFor(t) {
-  return wikiChipsOnly(t) + sourceChipsFor(t);
+  return wikiChipsOnly(t);   // sources are listed once, on the Sources page (Settings → Archive)
 }
 function wikiChipsOnly(t) {
   const slugs = new Set();

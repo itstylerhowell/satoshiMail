@@ -55,7 +55,7 @@ index c5a0127..c92592a 100644
  static const int64 COIN = 100000000;</code></pre><div class="t">URL: <a href="http://yyz.us/bitcoin/patch.bitcoin-block-sz-limit" rel="nofollow noopener">http://yyz.us/bitcoin/patch.bitcoin-block-sz-limit</a></div></article><article class="msg" id="m1">
 <header><b>theymos</b><span class="muted"> · <time datetime="2010-10-03T20:28:39Z">3 October 2010, 20:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15126#msg15126" rel="nofollow noopener">original</a></span></header>
 <div class="t">Applying this patch will make you incompatible with other Bitcoin clients.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T21:07:28Z">3 October 2010, 21:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15139#msg15139" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-patch-increase-block-size-limit" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T21:07:28Z">3 October 2010, 21:07 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15139#msg15139" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: theymos on October 03, 2010, 08:28:39 PM</div><div class="t">Applying this patch will make you incompatible with other Bitcoin clients.</div></blockquote><div class="t">+1 theymos.  Don&#x27;t use this patch, it&#x27;ll make you incompatible with the network, to your own detriment.
 
 We can phase in a change later if we get closer to needing it.</div></article><article class="msg" id="m3">
@@ -80,7 +80,7 @@ Satoshi just said it can be changed, so technically the network is capable.</div
 <blockquote><div class=qh>Quote from: martin on October 04, 2010, 11:50:35 AM</div><div class="t">No, it&#x27;s incompatible if just a few people change their behaviour. To roll out a change to the network you need to get most of the clients understanding both the old and the new protocol, and then when you have a majority you turn on the new protocol.</div></blockquote><div class="t">You just described a whole-network upgrade.  I&#x27;d call that an incompatible change Smiley
 
 The effort to raise the transaction rate limit is the same as the effort to change the fundamental nature of bitcoins:  convince the vast majority to upgrade.</div></article><article class="msg sat" id="m8">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-04T19:48:40Z">4 October 2010, 19:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15366#msg15366" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-patch-increase-block-size-limit-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-04T19:48:40Z">4 October 2010, 19:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1347.msg15366#msg15366" rel="nofollow noopener">original</a></span></header>
 <div class="t">It can be phased in, like:
 
 if (blocknumber &gt; 115000)

@@ -71,7 +71,7 @@ I have only just started using bitcoin, so i find it strange that it&#x27;s thro
 Thoughts anyone? Huh</div></article><article class="msg" id="m1">
 <header><b>Gavin Andresen</b><span class="muted"> · <time datetime="2010-07-28T13:40:57Z">28 July 2010, 13:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=601.msg6190#msg6190" rel="nofollow noopener">original</a></span></header>
 <div class="t">Does it work if you specify the full path?  e.g. -datadir=/home/psyvenrix/datadir2  ?</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-28T20:58:26Z">28 July 2010, 20:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=601.msg6268#msg6268" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-having-problems-specifing-datadir" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-28T20:58:26Z">28 July 2010, 20:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=601.msg6268#msg6268" rel="nofollow noopener">original</a></span></header>
 <div class="t">It was able to reproduce this.  The database doesn&#x27;t like the relative path.
 
 &quot;bitcoind -datadir=./subdir getinfo&quot; works against a running daemon, but trying to start the daemon as &quot;bitcoind -datadir=./subdir&quot; gets that exception.
@@ -89,7 +89,7 @@ It looks like you were the first one to ever use -datadir with a relative path.<
 I guess we should resolve the full path before passing it to the database.
 
 It looks like you were the first one to ever use -datadir with a relative path.</div></blockquote><div class="t">I&#x27;ve tried to do it before too, but I never considered it a large enough bug to report. It would be nice to see a fix, though.</div></article><article class="msg sat" id="m5">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:43:29Z">12 August 2010, 21:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=601.msg8924#msg8924" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-having-problems-specifing-datadir-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:43:29Z">12 August 2010, 21:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=601.msg8924#msg8924" rel="nofollow noopener">original</a></span></header>
 <div class="t">Fixed in SVN rev 130.</div></article>
 <aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/gavin-andresen/">Gavin Andresen</a> <span class="muted">Developer Satoshi handed the project and the alert key to.</span></li></ul></aside>
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p139-running-on-a-port-other-than-8333/">← Running on a port other than 8333</a><a rel="next" href="../../conversations/p141-build-error-svn-r115-on-my-mac-workaround/">Build error SVN r115 on my Mac: workaround →</a></nav>

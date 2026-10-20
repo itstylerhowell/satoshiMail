@@ -17,7 +17,7 @@ function updateTitle() {
     else if (r.search != null) name = `Search: ${r.search}`;
     else if (r.label) name = (LISTS[r.label] && LISTS[r.label].name) || r.label;
     else if (r.topic) name = CAT_NAME[r.topic] || r.topic;
-    else name = { sent: "Sent", commits: "Commits", people: "People", activity: "Daily Activity", about: "About", drafts: "Drafts" }[r.view]
+    else name = { sent: "Sent", commits: "Commits", people: "People", activity: "Daily Activity", about: "About", sources: "Sources", drafts: "Drafts" }[r.view]
       || { starred: "Starred", all: "All Mail" }[r.folder]
       || (r.tab === "forums" ? "Inbox: Forums" : r.tab === "private" ? "Inbox: Private email" : "Inbox");
     t = `${name} – Satoshi Mail`;

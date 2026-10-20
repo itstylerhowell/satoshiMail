@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 29 messages · from 1 October 2010 · with FreeMoney, LZ, Satoshi Nakamoto, ShadowOfHarbringer, lfm, mizerydearia…</p>
 <p class="actions"><a class="btn" href="../../#t-p230">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/230/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-01T00:34:35Z">1 October 2010, 00:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg14788#msg14788" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/version-0313-please-upgrade" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-01T00:34:35Z">1 October 2010, 00:34 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg14788#msg14788" rel="nofollow noopener">original</a></span></header>
 <div class="t">Version 0.3.13 is now available.  You should upgrade to prevent potential problems with 0/unconfirmed transactions.  Note: 0.3.13 prevents problems if you haven&#x27;t already spent a 0/unconfirmed transaction, but if that already happened, you need 0.3.13.2.
 
 Changes:
@@ -97,7 +97,7 @@ It has nothing to do with confirmations.</div></article><article class="msg" id=
 <div class="t">I suggest a manpage should be included in the tarball.</div></article><article class="msg" id="m9">
 <header><b>nanotube</b><span class="muted"> · <time datetime="2010-10-03T05:59:06Z">3 October 2010, 05:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15072#msg15072" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: theymos on October 02, 2010, 10:43:29 PM</div><div class="t">Dwdollar lost some BTC with Bitcoin Market because someone either maliciously or accidentally sent him &quot;unconfirmable&quot; transactions, and he hadn&#x27;t upgraded. Maybe now would be a good time to test the alert feature.</div></blockquote><div class="t">I can agree with that. otherwise the 0/unconf txns can propagate through the network and mess up a lot of people&#x27;s wallets.</div></article><article class="msg sat" id="m10">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T18:17:06Z">3 October 2010, 18:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15102#msg15102" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T18:17:06Z">3 October 2010, 18:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15102#msg15102" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: ShadowOfHarbringer on October 02, 2010, 01:00:07 PM</div><div class="t">That&#x27;s nice, however the automatic 4way detection is not working on my Gentoo AMD 64 version client.
 
 I still have to add the &quot;-4way&quot; switch.</div></blockquote><div class="t">Forgot to say, I suspected the detect might not work on 64-bit AMD.  I found it hard to believe but AMD reports a different model number in 64-bit mode.
@@ -105,7 +105,7 @@ I still have to add the &quot;-4way&quot; switch.</div></blockquote><div class="
 Could you grep CPUID your debug.log and tell me what it says?  (and anyone else with 64-bit AMD)  And what AMD chip do you have?
 
 Do all AMDs that support 64-bit have the better SSE2 hardware also?</div></article><article class="msg sat" id="m11">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T19:39:06Z">3 October 2010, 19:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15110#msg15110" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T19:39:06Z">3 October 2010, 19:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15110#msg15110" rel="nofollow noopener">original</a></span></header>
 <div class="t">Could a few people please run this special build?  It&#x27;ll amnesty the dust spam transactions, which will clear up the 0/unconfirmed problem for now.  We really just need one block letting them through to clear up the previous transactions.  Post if you generate a block with this.
 
 These are binaries only.  The linux version is 64-bit only.
@@ -118,11 +118,11 @@ SHA1 9fc44ea5f2109618073e2cfd887e2cc266eb31a9 bitcoin-0.3.13.1-specialbuild-linu
 The linux 64-bit version includes a change to the cpuid 4-way 128-bit SSE2 autodetect for AMD in 64-bit mode, if you&#x27;d like to test that and see if that&#x27;s better.</div></article><article class="msg" id="m12">
 <header><b>tcatm</b><span class="muted"> · <time datetime="2010-10-03T19:45:45Z">3 October 2010, 19:45 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15111#msg15111" rel="nofollow noopener">original</a></span></header>
 <div class="t">Can you include the source? Or better the diff for those transactions? I could run it on my 983 Mhash/s box.</div></article><article class="msg sat" id="m13">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T19:49:32Z">3 October 2010, 19:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15112#msg15112" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T19:49:32Z">3 October 2010, 19:49 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15112#msg15112" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: tcatm on October 03, 2010, 07:45:45 PM</div><div class="t">983 Mhash/s box.</div></blockquote><div class="t">Seriously?  What hardware is that?</div></article><article class="msg" id="m14">
 <header><b>tcatm</b><span class="muted"> · <time datetime="2010-10-03T19:50:15Z">3 October 2010, 19:50 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15113#msg15113" rel="nofollow noopener">original</a></span></header>
 <div class="t">Three GPUs (ATI HD 5870).</div></article><article class="msg sat" id="m15">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T20:02:24Z">3 October 2010, 20:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15116#msg15116" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T20:02:24Z">3 October 2010, 20:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15116#msg15116" rel="nofollow noopener">original</a></span></header>
 <pre><code>diff -u old\main.cpp new\main.cpp
 --- old\main.cpp Sun Oct 03 20:57:20 2010
 +++ new\main.cpp Sun Oct 03 20:57:54 2010
@@ -170,7 +170,7 @@ diff -u old\serialize.h new\serialize.h
 <div class="t">ArtForz is already running with no fees, and he has 20-30% of the network&#x27;s CPU power. The person who originally sent the broken transactions deleted his wallet, though, and the network has forgotten these historical transactions, so any transactions based on this won&#x27;t confirm.</div></article><article class="msg" id="m17">
 <header><b>tcatm</b><span class="muted"> · <time datetime="2010-10-03T20:10:47Z">3 October 2010, 20:10 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15119#msg15119" rel="nofollow noopener">original</a></span></header>
 <div class="t">It&#x27;s running. Should find a block within 3 hours.</div></article><article class="msg sat" id="m18">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T20:54:07Z">3 October 2010, 20:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15136#msg15136" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T20:54:07Z">3 October 2010, 20:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15136#msg15136" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: theymos on October 03, 2010, 08:09:51 PM</div><div class="t">ArtForz is already running with no fees, and he has 20-30% of the network&#x27;s CPU power. The person who originally sent the broken transactions deleted his wallet, though, and the network has forgotten these historical transactions, so any transactions based on this won&#x27;t confirm.</div></blockquote><div class="t">Transactions aren&#x27;t accepted or displayed as 0/unconfirmed until your node has a path of transactions back to the block chain.
 
 Any transactions in your wallet also have bundled with them all unrecorded transactions required to reach the block chain.  If you have a transaction that is displayed as 0/unconfirmed, then you have all the previous unrecorded transactions it depends on and you will also rebroadcast those transactions when you rebroadcast yours.
@@ -223,7 +223,7 @@ cache_alignment : 64
 address sizes   : 48 bits physical, 48 bits virtual
 power management: ts ttp tm stc 100mhzsteps hwpstate</code></pre><div class="t">EDIT:
 Also, i have just found out how to do the cpuid thingy:</div><pre><code>CPUID 444d4163 family 16, model 2, stepping 3, fUseSSE2=0</code></pre></article><article class="msg sat" id="m22">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T21:43:20Z">3 October 2010, 21:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15147#msg15147" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade-5" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T21:43:20Z">3 October 2010, 21:43 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15147#msg15147" rel="nofollow noopener">original</a></span></header>
 <div class="t">ShadowOfHarbringer, is yours faster with -4way?
 
 If it is, then I&#x27;m thinking that any AMD that supports 64-bit has 128-bit SSE2.
@@ -268,7 +268,7 @@ CPUID 444d4163 family 15, model 44, stepping 2, fUseSSE2=0</div></article><artic
 I notice that these options are not showing up in --help output... Shouldn&#x27;t --help have a comprehensive listing of these options in it? (Especially given that there&#x27;s no manpage or other help docs distributed in the official-release tarball?)
 
 Just an idle question, whose result I hope makes its way into the next release. Smiley</div></blockquote><div class="t">The command line switches are listed in &quot;bitcoind -?&quot; instead of &quot;bitcoind help&quot;. You are still right tho, those options are missing from &quot;-?&quot; too.</div></article><article class="msg sat" id="m28">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T23:46:19Z">3 October 2010, 23:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15167#msg15167" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-version-0313-please-upgrade-6" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-03T23:46:19Z">3 October 2010, 23:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1327.msg15167#msg15167" rel="nofollow noopener">original</a></span></header>
 <div class="t">Make sure you keep your node online so it&#x27;ll keep rebroadcasting transaction b412a0.  It haven&#x27;t seen it rebroadcast since 29/09/2010 16:41.</div></article>
 
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p229-0-3-13-rc1-for-windows-please-test/">← 0.3.13 RC1 for Windows, please test</a><a rel="next" href="../../conversations/p231-how-to-overthrow-the-gpu-oligarchs/">How to overthrow the GPU Oligarchs →</a></nav>

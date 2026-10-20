@@ -81,7 +81,7 @@ Try renicing bitcoin and see if it helps.   Find the pid in top or ps and then
 &gt; windows 7 home 64
 I don&#x27;t think their is any renicing under Windows.</div></blockquote><div class="t"> Wink
 C:\Windows\System32\cmd.exe /c start &quot;BitCoin&quot; /LOW /MIN &quot;C:\Program Files\Bitcoin\bitcoin.exe&quot;</div></article><article class="msg sat" id="m9">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-14T16:29:39Z">14 July 2010, 16:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=327.msg2871#msg2871" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-resource-hog" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-14T16:29:39Z">14 July 2010, 16:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=327.msg2871#msg2871" rel="nofollow noopener">original</a></span></header>
 <div class="t">In Windows, you select the process in the task manager, right click, Set Priority.  Set it to BelowNormal or Low.  That shouldn&#x27;t make a difference though.
 
 If you turn off Generate Coins, does the CPU usage go flat?  That would confirm that all the CPU time it&#x27;s taking is generate, which is idle priority already.
@@ -96,7 +96,7 @@ It could be it&#x27;s slow just because you have too many things running at once
 have tried manually setting priority to below normal, and it plays nice!! but stays at 100%
 also, when i turn off generate coins, cpu usage drops to zero!
 turning generate on sends cpu back up to 100%</div></article><article class="msg sat" id="m11">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-15T14:59:00Z">15 July 2010, 14:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=327.msg3162#msg3162" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-resource-hog-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-15T14:59:00Z">15 July 2010, 14:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=327.msg3162#msg3162" rel="nofollow noopener">original</a></span></header>
 <div class="t">Then all the CPU time is the generate thread, which definitely runs at the lowest possible priority, idle priority.  It&#x27;s normal that your CPU meter is 100%.  Since it&#x27;s idle priority, it won&#x27;t actually slow anything else down, even though the CPU meter is 100%.</div></article>
 <aside class="related"><h2>In Satoshipedia</h2><ul><li><a href="../../satoshipedia/laszlo-hanyecz/">Laszlo Hanyecz</a> <span class="muted">Programmer who made the first known commercial bitcoin transaction.</span></li></ul></aside>
 <nav class="prevnext" aria-label="More conversations"><a rel="prev" href="../../conversations/p97-updated-linux-x64-bins-for-those-having-libcrypto-and-glibcx/">← UPDATED - Linux x64 bins for those having libcrypto and GLIBCXX_3.4.11 troubles</a><a rel="next" href="../../conversations/p99-wiki-registration-email/">wiki registration email? →</a></nav>

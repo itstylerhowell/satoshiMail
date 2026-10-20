@@ -67,7 +67,7 @@ This thread below is the closest match.  I can say the crash started the moment
 <a href="http://bitcointalk.org/index.php?topic=991.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=991.0</a>
 
 FYI - I was not overclocking or otherwise buggering about with anything in ways I&#x27;m not meant to.  Which the above thread OP claims to have done.  Also My Wallet.dat looks fine, none of the AppRoaming files have been modified since I rebooted after installing the 23 updates all in one go.</div></article><article class="msg sat" id="m2">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-23T18:52:02Z">23 October 2010, 18:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18246#msg18246" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-win7-64bit-since-last-patch-tues-now-crashes" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-23T18:52:02Z">23 October 2010, 18:52 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18246#msg18246" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: Odin on October 22, 2010, 09:24:38 PM</div><div class="t">  Fault Module Name:   mingwm10.dll</div></blockquote><div class="t">This is the important clue.  I believe it&#x27;s saying it crashed in that.  Maybe there are other versions of it to try.  mingwm10.dll is just a simple placeholder thing that satisfies some callback requirement for multithreaded apps.
 
 Is anyone else running OK on Windows 64-bit?</div></article><article class="msg" id="m3">
@@ -79,7 +79,7 @@ Is anyone else running OK on Windows 64-bit?</div></article><article class="msg"
 <div class="t">Ok good to know others are able to run it ok.
 
 Unfortunately bitcoin is not a critical application for me and need to spend my time on other things.  If however there is a debugging build of the application which can provide line numbers for the crashed code (0xc0000005 - ACCESS VIOLATION) then I&#x27;d be happy to run it to identify the line causing the problem.</div></article><article class="msg sat" id="m6">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-25T17:27:47Z">25 October 2010, 17:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18511#msg18511" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-win7-64bit-since-last-patch-tues-now-crashes-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-10-25T17:27:47Z">25 October 2010, 17:27 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1540.msg18511#msg18511" rel="nofollow noopener">original</a></span></header>
 <div class="t">The only thing I can think of is to see if there are other versions of mingwm10.dll you can get.  mingwm10.dll is a tiny little DLL that came with the MinGW compiler that you need when you build for multi-thread.  I don&#x27;t know exactly what it does, but it probably just says something like &quot;yes Windows, see I&#x27;m in a DLL like you insisted.&quot;
 
 The end of your debug.log file might show the last thing it was doing before it crashed.</div></article>

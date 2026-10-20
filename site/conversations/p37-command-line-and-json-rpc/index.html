@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 22 messages · from 23 February 2010 · with Cdecker, Satoshi Nakamoto, The Madhatter, sirius, theymos</p>
 <p class="actions"><a class="btn" href="../../#t-p37">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/37/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-23T22:15:41Z">23 February 2010, 22:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg452#msg452" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/command-line-and-json-rpc" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-23T22:15:41Z">23 February 2010, 22:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg452#msg452" rel="nofollow noopener">original</a></span></header>
 <div class="t">Version 0.2.6 on SVN can now run as a daemon and be controlled by command line or JSON-RPC.
 
 On Linux it needs libgtk2.0-0 installed, but does not need a GUI running.  Hopefully gtk can be installed without having a windowing system installed.
@@ -73,7 +73,7 @@ I will have a payment library built in no time. Cheesy</div></article><article c
 <div class="t">Gtk is required by the GUI, so it must be linked if you want to use the same binary. Making a separate binary is another option, dunno how much code tweaking and ifdeffing that would take.</div></article><article class="msg" id="m4">
 <header><b>The Madhatter</b><span class="muted"> · <time datetime="2010-02-24T05:00:45Z">24 February 2010, 05:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg478#msg478" rel="nofollow noopener">original</a></span></header>
 <div class="t">* madhatter2 pulls out razor sharp hex editor</div></article><article class="msg sat" id="m5">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T06:17:23Z">24 February 2010, 06:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg482#msg482" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T06:17:23Z">24 February 2010, 06:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg482#msg482" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: theymos on February 24, 2010, 03:07:37 AM</div><div class="t">&gt; Quote from: satoshi on February 23, 2010, 10:15:41 PM
 &gt; On Linux it needs libgtk2.0-0 installed
 Will this requirement be removed sometime? I&#x27;d rather not have to deal with GTK.</div></blockquote><div class="t">How much &quot;dealing with&quot; does GTK actually require?  Is it just a matter of &quot;sudo apt-get install libgtk2.0-0&quot; and having some extra libraries sitting around?  GTK doesn&#x27;t have to do anything, just be there for bitcoin to link to when it loads up, have the gtk-init-check call fail because no GUI present, then it&#x27;s done. 
@@ -97,7 +97,7 @@ It saves us butchering everything with ifdefs and a separate compile and binary 
 However, installing them onto a X workstation is totally fine -- you usually have all of the correct dependancies already. Tongue</div></article><article class="msg" id="m9">
 <header><b>sirius</b><span class="muted"> · <time datetime="2010-02-24T18:17:35Z">24 February 2010, 18:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg502#msg502" rel="nofollow noopener">original</a></span></header>
 <div class="t">This is strange... When I start Bitcoin as a daemon on my 64 bit Linux server, it eats up all the 250MB of remaining RAM, 700MB of swap and eventually crashes. On my 32 bit Ubuntu desktop, it works fine and stays at 15MB of memory usage. The server is running a 64 bit build of Bitcoin. Maybe there&#x27;s something wrong with the build or something.</div></article><article class="msg sat" id="m10">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T22:08:55Z">24 February 2010, 22:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg509#msg509" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-24T22:08:55Z">24 February 2010, 22:08 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg509#msg509" rel="nofollow noopener">original</a></span></header>
 <div class="t">When and how fast did memory usage increase?  Right away, slowly over a long time, or starting at some later event?
 
 I have -daemon running on ubuntu 9.10 64-bit and memory usage is steady.
@@ -105,7 +105,7 @@ I have -daemon running on ubuntu 9.10 64-bit and memory usage is steady.
 It has to be something about the difference on the server besides 64-bit.  Maybe some malfunction from the lack of GUI.  A memory leak debug tool could give a clue. </div></article><article class="msg" id="m11">
 <header><b>sirius</b><span class="muted"> · <time datetime="2010-02-25T16:32:17Z">25 February 2010, 16:32 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg538#msg538" rel="nofollow noopener">original</a></span></header>
 <div class="t">It started increasing right away. I&#x27;ll see if valgrind can help me.</div></article><article class="msg sat" id="m12">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-25T22:54:17Z">25 February 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg539#msg539" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-25T22:54:17Z">25 February 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg539#msg539" rel="nofollow noopener">original</a></span></header>
 <div class="t">OK, I made a build target bitcoind that only links wxBase and does not link GTK.  Version 0.2.7 on SVN.
 
 I split out the init and shutdown stuff from ui.cpp into init.cpp, so now ui.cpp is pure UI.  ui.h provides inline stubs if wxUSE_GUI=0.  We only have four functions that interface from the node to the UI.  In the bitcoind build, we don&#x27;t link ui.o or uibase.o.</div><blockquote><div class=qh>Quote from: sirius-m on February 25, 2010, 04:32:17 PM</div><div class="t">It started increasing right away. I&#x27;ll see if valgrind can help me.</div></blockquote><div class="t">Sure feels like it could be something in wxWidgets retrying endlessly because some UI thing failed or something wasn&#x27;t inited correctly.  Our hack to ignore the initialize failure and run anyway means we&#x27;re in uncharted territory.  We&#x27;re relying on the fact that we hardly use wx in this mode.  We do still use a few things like wxGetTranslation and wxMutex.
@@ -122,7 +122,7 @@ In file included from headers.h:100,
 db.h: In member function &#x27;bool CDB::Exists(const K&amp;)&#x27;:
 db.h:140: error: &#x27;class Db&#x27; has no member named &#x27;exists&#x27;
 make: *** [obj/nogui/util.o] Error 1</code></pre><div class="t">Clipbrd.h isn&#x27;t installed with wxBase. Moving wxWidgets-2.9.0/include/wx/clipbrd.h to my include directory just eliminates those two &quot;no such file&quot; lines.</div></article><article class="msg sat" id="m14">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T16:29:21Z">26 February 2010, 16:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg555#msg555" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T16:29:21Z">26 February 2010, 16:29 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg555#msg555" rel="nofollow noopener">original</a></span></header>
 <div class="t">wx/clipbrd.h isn&#x27;t used, move it inside the #if wxUSE_GUI.
 
 Updated headers.h on SVN.
@@ -147,7 +147,7 @@ init.cpp:(.text._ZNK13wxArrayString4ItemEj[wxArrayString::Item(unsigned int) con
 init.cpp:(.text._ZNK13wxArrayString4ItemEj[wxArrayString::Item(unsigned int) const]+0x42): undefined reference to `wxOnAssert(char const*, int, char const*, char const*, wchar_t const*)&#x27;
 collect2: ld returned 1 exit status
 make: *** [bitcoind] Error 1</code></pre></article><article class="msg sat" id="m17">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T23:48:44Z">26 February 2010, 23:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg562#msg562" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc-5" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-02-26T23:48:44Z">26 February 2010, 23:48 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg562#msg562" rel="nofollow noopener">original</a></span></header>
 <div class="t">Are you using wxWidgets 2.9.0?  I don&#x27;t recommend using anything other than 2.9.0.
 
 It looks like they&#x27;ve got a reference in the wx headers (arrstr.h) to something outside of wxBase.
@@ -167,7 +167,7 @@ I am using 2.9.0.
 <div class="t">That wchar thing was what I was stuck on for the OSX build. Cheesy
 
 Glad to see it is ironed out. I&#x27;ll keep hacking away now.</div></article><article class="msg sat" id="m21">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-03-05T01:46:25Z">5 March 2010, 01:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg633#msg633" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-command-line-and-json-rpc-6" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-03-05T01:46:25Z">5 March 2010, 01:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=63.msg633#msg633" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: sirius-m on February 24, 2010, 06:17:35 PM</div><div class="t">This is strange... When I start Bitcoin as a daemon on my 64 bit Linux server, it eats up all the 250MB of remaining RAM, 700MB of swap and eventually crashes. On my 32 bit Ubuntu desktop, it works fine and stays at 15MB of memory usage. The server is running a 64 bit build of Bitcoin. Maybe there&#x27;s something wrong with the build or something.</div></blockquote><div class="t">sirius-m debugged this, it was 64-bit related. 
 
 The fix is now available on SVN, file util.cpp.</div></article>

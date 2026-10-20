@@ -92,7 +92,7 @@ I just installed 0.3.1 on two different machines and moved one bitpenny (0.01):
 I personally think it is a display problem, but I can&#x27;t be sure.. strange, no?
 
 Both machines are running FreeBSD 7.2/amd64.</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-17T16:06:12Z">17 July 2010, 16:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=432.msg3769#msg3769" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-bug-report-rounding-glitch" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-17T16:06:12Z">17 July 2010, 16:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=432.msg3769#msg3769" rel="nofollow noopener">original</a></span></header>
 <div class="t">It must be a rounding error when getinfo converts to floating point to return the JSON-RPC result.  The only place where it uses floating point to represent money is returning a value in JSON-RPC.
 
 1.139999999999 is longer than bitcoin can internally represent.

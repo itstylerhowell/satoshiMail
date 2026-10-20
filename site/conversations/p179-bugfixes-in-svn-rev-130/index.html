@@ -36,7 +36,7 @@
 <p class="lead">BitcoinTalk forum · 4 messages · from 12 August 2010 · with Satoshi Nakamoto, aceat64, jgarzik</p>
 <p class="actions"><a class="btn" href="../../#t-p179">Read in Satoshi Mail</a> <a class="btn ghost" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/179/" rel="noopener">Archive source</a></p>
 <article class="msg sat" id="m0">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:20:31Z">12 August 2010, 21:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8920#msg8920" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/bugfixes-in-svn-rev-130" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:20:31Z">12 August 2010, 21:20 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8920#msg8920" rel="nofollow noopener">original</a></span></header>
 <div class="t">Misc bugfixes in rev 130:
 
 fix -datadir with relative path
@@ -60,7 +60,7 @@ So, -paytxfee sets nTransactionFee.
 Can someone explain how nTransactionFee causes a client to behave?
 
 And more specifically, what happens when node A sets 1000.0 and all other nodes use 0.01?</div></blockquote><div class="t">From what I understand a node will not include transactions in it&#x27;s blocks unless the transaction includes a fee that meets the node&#x27;s requirements. So in the case of a node setting the fee to 1,000 it would likely never include any transactions in blocks it generates, which means it will miss out on any transaction fees other nodes would have gotten. There really isn&#x27;t a reason to set a nodes requirements higher then the rest of the network since you are basically just pricing yourself out of the market.</div></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T03:15:23Z">13 August 2010, 03:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8960#msg8960" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-bugfixes-in-svn-rev-130" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-13T03:15:23Z">13 August 2010, 03:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=795.msg8960#msg8960" rel="nofollow noopener">original</a></span></header>
 <div class="t">No, that&#x27;s not what it is.
 
 -paytxfee allows you to include a transaction fee with your transactions.  If transaction confirmations become slow, you can get priority by using &quot;-paytxfee=0.01&quot;.  Any transactions you send would cost an extra 0.01.  There&#x27;s no reason to use more than 0.01.

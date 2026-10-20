@@ -289,6 +289,7 @@ function parseHash() {
   if (h === "people") return { view: "people" };
   if (h === "activity") return { view: "activity" };
   if (h === "about") return { view: "about" };
+  if (h === "sources") return { view: "sources" };
   return { view: "list", folder: "inbox", tab: "primary", page: 1 };
 }
 function go(hash) { if (location.hash === hash) render(); else location.hash = hash; }
@@ -648,7 +649,6 @@ function renderMsg(t, i, open, terms) {
       ${m.sm ? `<dt>topics:</dt><dd>${esc(m.sm)}</dd>` : ""}
       ${m.su ? `<dt>${t.k === "x" ? "in archive:" : "on SNI:"}</dt><dd><a href="${esc(m.su)}" target="_blank" rel="noopener">${esc(m.su.replace(/^https:\/\//, ""))}</a></dd>` : ""}
       ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\/\//, ""))}</a></dd>` : ""}
-      ${(sn => sn ? `<dt>also on:</dt><dd><a href="${esc(sn)}" target="_blank" rel="noopener">${esc(sn.replace(/^https:\/\//, ""))}</a></dd>` : "")(SATOSHIN.url(t, i))}
     </dl></div>
     <div class="mbw"><div class="mb"></div></div>`;
   const body = el.querySelector(".mb");
@@ -752,8 +752,8 @@ function renderAbout() {
     <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
     <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi. Conversations where someone else had the last word start out unread.</p>
-    <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Conversations it includes link to it, and where it gives a different date that is noted.</p>
-    <p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi's BitcoinTalk posts and mailing-list emails): every one is here too, and each of those messages links to its page there under its details.</p>
+    <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>
+    <p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi's BitcoinTalk posts and mailing-list emails): every one is here too. All sources are listed under Settings → Archive → <a href="#sources">Sources</a>.</p>
     <p class="lead">One 2014 P2P Foundation post carries the Institute's note about its uncertain authenticity and is shown with that note. Times are in UTC.</p>
     <p class="lead">Stars, read state, archive and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
   </div></div>`;
@@ -904,7 +904,7 @@ function render(fromHash) {
     if (isCommitId(ROUTE.id)) renderCommit(); else renderThread();
   } else {
     HIT = null;
-    ({ sent: renderSent, commits: renderCommitList, drafts: renderDrafts, people: renderPeople, activity: renderActivity, about: renderAbout }[ROUTE.view] || renderList)();
+    ({ sent: renderSent, commits: renderCommitList, drafts: renderDrafts, people: renderPeople, activity: renderActivity, about: renderAbout, sources: renderSources }[ROUTE.view] || renderList)();
   }
   if (keepTop != null) { const s2 = $("#scroller"); if (s2) s2.scrollTop = keepTop; }
   const sc2 = $("#main .scroll"), card = $("#main");
@@ -1000,7 +1000,7 @@ const ACTIONS = {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
     popover(el, `<h4>Density</h4>${r("density", "default", "Default")}${r("density", "comfortable", "Comfortable")}${r("density", "compact", "Compact")}
       <h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
-      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);
+      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
   resetstate() { const before = JSON.stringify(ST); ST.star = {}; ST.read = {}; ST.arch = {}; ST.trash = {}; save(); closeLayer(); render(); snack("Mailbox reset.", () => { Object.assign(ST, JSON.parse(before)); save(); }); },
@@ -1857,18 +1857,8 @@ const SATOSHIN = (() => {
     count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.url(t, i)) n++; return n; },
   };
 })();
-function sourceChipsFor(t) {
-  if (!t || !t.m) return "";
-  const chips = [];
-  if (BLOCKTRAINER.covers(t)) chips.push(`<a href="${BLOCKTRAINER.url}" target="_blank" rel="noopener" title="Blocktrainer's Satoshi Nakamoto archive, with German translations">${ic("open_in_new")}Blocktrainer archive${BLOCKTRAINER.partial(t) ? " (Satoshi's emails)" : ""}</a>`);
-  const sn = SATOSHIN.first(t), n = SATOSHIN.count(t);
-  if (sn) chips.push(`<a href="${esc(sn)}" target="_blank" rel="noopener" title="${n === 1 ? "Satoshi's message here has its own page" : `Satoshi's ${n} messages here each have a page`} on satoshin.name, the Satoshi Nakamoto Archive. This opens the first; each message's details link to its own.">${ic("open_in_new")}satoshin.name${n > 1 ? ` (${n} messages)` : ""}</a>`);
-  if (!chips.length) return "";
-  const note = BLOCKTRAINER.covers(t) && BLOCKTRAINER.dateNote[t.s + "|" + t.t];
-  return `<div class="conv-wiki conv-src">Also in:${chips.join("")}${note ? `<span class="src-note">${ic("event")}${esc(note)}</span>` : ""}</div>`;
-}
 function wikiChipsFor(t) {
-  return wikiChipsOnly(t) + sourceChipsFor(t);
+  return wikiChipsOnly(t);   // sources are listed once, on the Sources page (Settings → Archive)
 }
 function wikiChipsOnly(t) {
   const slugs = new Set();
@@ -2459,7 +2449,7 @@ function updateTitle() {
     else if (r.search != null) name = `Search: ${r.search}`;
     else if (r.label) name = (LISTS[r.label] && LISTS[r.label].name) || r.label;
     else if (r.topic) name = CAT_NAME[r.topic] || r.topic;
-    else name = { sent: "Sent", commits: "Commits", people: "People", activity: "Daily Activity", about: "About", drafts: "Drafts" }[r.view]
+    else name = { sent: "Sent", commits: "Commits", people: "People", activity: "Daily Activity", about: "About", sources: "Sources", drafts: "Drafts" }[r.view]
       || { starred: "Starred", all: "All Mail" }[r.folder]
       || (r.tab === "forums" ? "Inbox: Forums" : r.tab === "private" ? "Inbox: Private email" : "Inbox");
     t = `${name} – Satoshi Mail`;
@@ -2676,6 +2666,56 @@ ACTIONS["ask-off"] = () => {
   ASK_AUTO = false; try { localStorage.removeItem(ASK_KEY); } catch (e) {}
   askSet({ foot: "AI overviews are off. The next search will offer one again." });
 };
+/* ═════════════ Sources page (#sources, from Settings → Archive) ═════════════
+   One place listing where everything comes from, instead of source chips on each conversation.
+   Counts are computed from the archive, so they always match what Satoshi Mail shows. */
+function renderSources() {
+  CURRENT_LIST = [];
+  const sat = t => t.m.filter(m => m.s).length;
+  const group = pred => { const ts = THREADS.filter(pred); return { t: ts.length, m: ts.reduce((n, t) => n + t.m.length, 0), s: ts.reduce((n, t) => n + sat(t), 0) }; };
+  const lists = [...new Set(THREADS.filter(t => t.k !== "x").map(t => t.s))].map(s => ({ s, name: LISTS[s] ? LISTS[s].long : s, ...group(t => t.s === s) }));
+  const priv = group(t => t.k === "x");
+  let snLinked = 0;
+  THREADS.forEach(t => t.m.forEach((m, i) => { if (SATOSHIN.url(t, i)) snLinked++; }));
+  const ext = (href, label) => `<a href="${href}" target="_blank" rel="noopener">${label}</a>`;
+  const conv = (s, title) => { const t = THREADS.find(x => x.s === s && x.t === title); return t ? `<a href="#t-${t.id}">${esc(title)}</a>` : esc(title); };
+  const notes = Object.entries(BLOCKTRAINER.dateNote).map(([k, v]) => { const [s, title] = k.split("|"); return `<li>${conv(s, title)}: ${esc(v)}</li>`; }).join("");
+  const n = fmtNum;
+  $("#main").innerHTML = `<div class="scroll"><div class="page src-page"><h2>Sources</h2>
+    <p class="lead">Everything in Satoshi Mail comes from the sources below. Each message also links to its own original from its details (the ${ic("arrow_drop_down")} beside the recipient).</p>
+
+    <h3>Messages and code</h3>
+    <div class="src-list">
+      <section class="src"><h4>${ext("https://satoshi.nakamotoinstitute.org/", "Satoshi Nakamoto Institute")}</h4>
+        <p>Satoshi's mailing-list emails and forum posts, with the other people's messages around them, and The Quotable Satoshi, which supplies the Topics.</p>
+        <table class="src-t"><thead><tr><th>Source</th><th class="num">Conversations</th><th class="num">Messages</th><th class="num">By Satoshi</th></tr></thead><tbody>
+        ${lists.map(l => `<tr><td><a href="#label-${l.s}">${esc(l.name)}</a></td><td class="num">${n(l.t)}</td><td class="num">${n(l.m)}</td><td class="num">${n(l.s)}</td></tr>`).join("")}
+        </tbody></table></section>
+      <section class="src"><h4>${ext("https://github.com/lugaxker/nakamoto-archive", "nakamoto-archive")} <span class="muted">on GitHub</span></h4>
+        <p>Satoshi's private emails, with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others: ${n(priv.t)} conversations, ${n(priv.m)} emails, ${n(priv.s)} by Satoshi. Shown under <a href="#inbox-private">Inbox → Private</a>.</p></section>
+      <section class="src"><h4>${ext("https://github.com/bitcoin/bitcoin", "Bitcoin Core")} <span class="muted">on GitHub</span></h4>
+        <p>Satoshi's ${n(COMMITS.length)} commits to Bitcoin's source code, each with its diff. Shown under <a href="#commits">Commits</a>.</p></section>
+      <section class="src"><h4>${ext("https://bitcoin.org/bitcoin.pdf", "bitcoin.org")}</h4>
+        <p>The Bitcoin white paper, attached to the message that announced it.</p></section>
+    </div>
+
+    <h3>Cross-checked against</h3>
+    <div class="src-list">
+      <section class="src"><h4>${ext(BLOCKTRAINER.url, "Blocktrainer's Satoshi Nakamoto archive")}</h4>
+        <p>4,236 entries with German translations, checked on 20 October 2026. Every one of its entries is also here. It has no emails with Adam Back, and only Satoshi's side of his exchanges with Mike Hearn and Dustin Trammell.</p>
+        ${notes ? `<p>Where it gives a different date:</p><ul>${notes}</ul>` : ""}</section>
+      <section class="src"><h4>${ext(SATOSHIN.home, "Satoshi Nakamoto Archive (satoshin.name)")}</h4>
+        <p>567 of Satoshi's BitcoinTalk posts and mailing-list emails, each on its own page, checked on 20 October 2026. Every one is also here (${n(snLinked)} messages match). Satoshi Mail also has six of his BitcoinTalk posts that it lacks, and his private emails, P2P Foundation and p2p-research posts. Read more in <a href="#wiki-satoshin-archive">Satoshipedia</a>.</p></section>
+    </div>
+
+    <h3>Satoshipedia</h3>
+    <div class="src-list">
+      <section class="src"><h4><a href="#wiki">Satoshipedia</a></h4>
+        <p>Its ${n(WA.length)} articles cite the sources above and ${ext("https://en.wikipedia.org/wiki/Satoshi_Nakamoto", "Wikipedia")} (CC BY-SA 4.0); each article lists its references. The AI Overview on search answers only from this archive and Satoshipedia.</p></section>
+    </div>
+    <p class="lead muted">See also <a href="#about">About this archive</a>.</p>
+  </div></div>`;
+}
 
 /* ═════════════ boot ═════════════ */
 routeAll(true);

@@ -42,7 +42,7 @@
 (Not trying to nag or anything).
 
 On a side node: I have noticed that the network is about 3x larger than normal now. I see more nodes! Smiley</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-14T20:17:20Z">14 January 2010, 20:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg97#msg97" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-64bit-support" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-14T20:17:20Z">14 January 2010, 20:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg97#msg97" rel="nofollow noopener">original</a></span></header>
 <div class="t">I haven&#x27;t tried compiling 64-bit yet. 64-bit wouldn&#x27;t make it any faster, since it uses 64-bit numbers in only a few places and SHA-256 is a 32-bit algorithm, but it may be convenient for those running a 64-bit OS. If I get a chance I&#x27;ll try -m64 and see what the problem is.
 
 You can run the 32-bit version on 64-bit Linux by installing ia32-libs.  (sudo apt-get install ia32-libs)  If we made a Debian package, it could automatically pull that in as a dependency.</div></article><article class="msg" id="m2">
@@ -56,7 +56,7 @@ Thanks and keep up the good work. I can&#x27;t wait to see how many exchangers a
 Keep up the great work! Smiley</div></article><article class="msg" id="m3">
 <header><b>Sabunir</b><span class="muted"> · <time datetime="2010-01-25T05:13:23Z">25 January 2010, 05:13 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg127#msg127" rel="nofollow noopener">original</a></span></header>
 <div class="t">I second the request for 64-bit support, even if it wouldn&#x27;t make the app run faster. I&#x27;m no expert, but I can&#x27;t see any harm in it. On the other hand, it&#x27;s a good way to embrace the future.</div></article><article class="msg sat" id="m4">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-29T00:42:49Z">29 January 2010, 00:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg174#msg174" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-64bit-support-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-01-29T00:42:49Z">29 January 2010, 00:42 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=18.msg174#msg174" rel="nofollow noopener">original</a></span></header>
 <div class="t">I committed a fix for 64-bit compile and some fixes to support wxWidgets 2.9.0.
 
 There was one compile error in serialize.h with min(sizeof()) that I fixed for 64-bit.  The rest of the 64-bit compile errors I was getting were in wxWidgets 2.8.9, so I started working on supporting wxWidgets 2.9.0.

@@ -95,7 +95,7 @@ lt-int</code></pre><div class="t">Any additional advice would be appreciated... 
 I think that the C4430 error can be ignored by adding a #pragma warning(disable:4430) to headers.h, but the other ones appear to be more serious
 
 It looks like the C2143 is sometimes caused by problems with #includes, but since I am just using the files that were distributed with the source...I would assume all are functional? Maybe it is something about using vs2010 that is causing the problems?</div></article><article class="msg sat" id="m4">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-19T18:46:46Z">19 September 2010, 18:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg13206#msg13206" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-issues-building-bitcoin-on-windows-7" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-09-19T18:46:46Z">19 September 2010, 18:46 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=1034.msg13206#msg13206" rel="nofollow noopener">original</a></span></header>
 <div class="t">The lines it&#x27;s tripping on:</div><pre><code>ERROR extern map&lt;string, string&gt; mapAddressBook;
 ERROR extern CCriticalSection cs_mapAddressBook;
 ERROR extern vector&lt;unsigned char&gt; vchDefaultKey;

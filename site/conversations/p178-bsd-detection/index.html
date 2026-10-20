@@ -59,7 +59,7 @@ And then checks for BSD should be
 This is the recommended way of detecting BSD in the FreeBSD Porter&#x27;s Handbook &lt;<a href="http://www.freebsd.org/doc/en/books/porters-handbook/porting-versions.html" rel="nofollow noopener">http://www.freebsd.org/doc/en/books/porters-handbook/porting-versions.html</a>&gt;.
 
 This change is already done in my CMake tree.</div></article><article class="msg sat" id="m1">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T00:02:06Z">12 August 2010, 00:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=790.msg8814#msg8814" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-bsd-detection" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T00:02:06Z">12 August 2010, 00:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=790.msg8814#msg8814" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: dkaparis on August 11, 2010, 11:00:16 PM</div><div class="t">There is this piece of code in headers.h:
 
 #ifdef __WXMAC_OSX__
@@ -77,7 +77,7 @@ This change is already done in my CMake tree.</div></article><article class="msg
 &gt; #endif
 Will that definitely cause BSD to be defined on Mac?</div></blockquote><div class="t">Don&#x27;t know if Mac OS X is technically a BSD and I don&#x27;t have access to a Mac, maybe someone else may test it.
 If there are other Mac (and not BSD) specialties, then we&#x27;d need to check both for __WXMAC_OSX__ and BSD or detect these in some other way altogether.</div></article><article class="msg sat" id="m3">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:14:20Z">12 August 2010, 21:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=790.msg8919#msg8919" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-bsd-detection-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-12T21:14:20Z">12 August 2010, 21:14 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=790.msg8919#msg8919" rel="nofollow noopener">original</a></span></header>
 <div class="t">This is in SVN rev 130.  Check that it compiles right.</div><pre><code>#if (defined(__unix__) || defined(unix)) &amp;&amp; !defined(USG)
 #include &lt;sys/param.h&gt;  // to get BSD define
 #endif

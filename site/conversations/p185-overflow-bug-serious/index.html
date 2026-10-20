@@ -86,7 +86,7 @@ The recommendation &lt;<a href="http://bitcointalk.org/index.php?topic=823.msg95
 EDIT:  I was unable to patch directly using this, perhaps CRLF problems.
 
 I applied your changes manually, and uploaded the result here: <a href="http://yyz.us/bitcoin/patch.bitcoin-gavin-overflow-quick-fix" rel="nofollow noopener">http://yyz.us/bitcoin/patch.bitcoin-gavin-overflow-quick-fix</a></div></article><article class="msg sat" id="m5">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T20:59:09Z">15 August 2010, 20:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9530#msg9530" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T20:59:09Z">15 August 2010, 20:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9530#msg9530" rel="nofollow noopener">original</a></span></header>
 <div class="t">Here&#x27;s the preliminary change.  Look right?  I have more changes to make, this isn&#x27;t all of it.  Will SVN shortly.</div><pre><code>    bool CheckTransaction() const
     {
         // Basic checks that don&#x27;t depend on any context
@@ -120,7 +120,7 @@ I applied your changes manually, and uploaded the result here: <a href="http://y
 
         return true;
     }</code></pre><div class="t">Don&#x27;t sticky the topic, nobody looks up there.  There&#x27;ll be enough posts to bump.</div></article><article class="msg sat" id="m6">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:06:45Z">15 August 2010, 21:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9531#msg9531" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-2" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:06:45Z">15 August 2010, 21:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9531#msg9531" rel="nofollow noopener">original</a></span></header>
 <div class="t">It would help if people stop generating.  We will probably need to re-do a branch around the current one, and the less you generate the faster that will be.
 
 A first patch will be in SVN rev 132.  It&#x27;s not uploaded yet.  I&#x27;m pushing some other misc changes out of the way first, then I&#x27;ll upload the patch for this.</div></article><article class="msg" id="m7">
@@ -136,7 +136,7 @@ It&#x27;s painful to have to re-download all or most of the chain to fix this...
 
 Can you easily hardcode a check for the bad block&#x27;s hash at startup and orphan it and subsequent blocks if they&#x27;re on the best-block chain?
 It&#x27;s painful to have to re-download all or most of the chain to fix this...</div></blockquote><div class="t">Or just a quick re-verification of all blocks. After all, it is 5x faster &lt;<a href="http://bitcointalk.org/index.php?topic=550.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=550.0</a>&gt; than it used t be. Wink</div></article><article class="msg sat" id="m10">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:23:55Z">15 August 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9539#msg9539" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-3" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:23:55Z">15 August 2010, 21:23 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9539#msg9539" rel="nofollow noopener">original</a></span></header>
 <div class="t">Once you have an update, you could download knightmb&#x27;s block chain.  You&#x27;ll want one that&#x27;s old enough that it ends before block 74000 so the most recent security lockin will check it.  Can someone find the link for that?  </div></article><article class="msg" id="m11">
 <header><b>theymos</b><span class="muted"> · <time datetime="2010-08-15T21:26:09Z">15 August 2010, 21:26 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9540#msg9540" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: satoshi on August 15, 2010, 09:23:55 PM</div><div class="t">Once you have an update, you could download knightmb&#x27;s block chain.  You&#x27;ll want one that&#x27;s old enough that it ends before block 74000 so the most recent security lockin will check it.  Can someone find the link for that? </div></blockquote><div class="t"><a href="http://knightmb.dyndns.org/files/bitcoin/blocks/" rel="nofollow noopener">http://knightmb.dyndns.org/files/bitcoin/blocks/</a></div></article><article class="msg" id="m12">
@@ -152,7 +152,7 @@ How about explaining to us stupid newbies what we would do with the blockchain o
 <blockquote><div class=qh>Quote from: kencausey on August 15, 2010, 09:36:30 PM</div><div class="t">How about explaining to us stupid newbies what we would do with the blockchain once we download it?</div></blockquote><div class="t">It means replacing files in the bitcoin data directory.  It is not recommended, unless you know what you&#x27;re doing.
 
 Easiest and safest way is to backup wallet.dat then redownload everything.</div></article><article class="msg sat" id="m15">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:40:19Z">15 August 2010, 21:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9548#msg9548" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-4" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T21:40:19Z">15 August 2010, 21:40 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9548#msg9548" rel="nofollow noopener">original</a></span></header>
 <div class="t">Patch is uploaded to SVN rev 132!
 
 For now, recommended steps:
@@ -209,7 +209,7 @@ Satoshi said it needs to be before 74,000</div></blockquote><div class="t">So lo
 and if &quot;..Only the blocks including and after the invalid block are invalid. All previous blocks are valid..&quot;, it doesn&#x27;t need to be before 74000.
 
 just wanted to save knightmb some time, but yours is bigger than mine anyway.  Grin</div></article><article class="msg sat" id="m30">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T22:58:08Z">15 August 2010, 22:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9573#msg9573" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-5" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T22:58:08Z">15 August 2010, 22:58 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9573#msg9573" rel="nofollow noopener">original</a></span></header>
 <div class="t">Don&#x27;t update the block chain download.  When you take someone&#x27;s block chain download, you don&#x27;t want it right up to the end.  A somewhat old one is better so it can download and verify the most recent blocks.
 
 tcatm&#x27;s 4-way SSE2 SHA-256 is in the file sha256.cpp and already uploaded a few revs ago.
@@ -260,7 +260,7 @@ Can you dump block data from a windows machine onto a Linux/Mac machine?
 Edit: Updated the SVN version number as per satoshi&#x27;s comment a moment ago.
 
 Ah, never mind. Since the SVN version was just updated and the Windows builds were just released, I&#x27;ll wait. Embarrassed</div></article><article class="msg sat" id="m33">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:17:24Z">15 August 2010, 23:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9576#msg9576" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-6" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:17:24Z">15 August 2010, 23:17 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9576#msg9576" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: knightmb on August 15, 2010, 10:59:04 PM</div><div class="t">[edit] Just saw your post, I&#x27;ll build one to less than 74,000 then, should at least save you technical people a few minutes of downloading the new chain.  Wink</div></blockquote><div class="t">Just leave the old one alone!  Older is better.  What block number is it?  Anywhere from 60000-74000 is good.  The one that you&#x27;ve had available for a while has been vetted and is the best choice.</div></article><article class="msg" id="m34">
 <header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-15T23:18:34Z">15 August 2010, 23:18 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9577#msg9577" rel="nofollow noopener">original</a></span></header>
 <div class="t">I just used your old file knightmb and on a rather old system it didn&#x27;t take me very long to catch up, so I&#x27;m inclined to say &quot;don&#x27;t bother&quot;.</div></article><article class="msg" id="m35">
@@ -272,7 +272,7 @@ There must be a label on the client that show a warning message if needed Smiley
 Now everyone have always to check the website, and I think that this is bad.</div></article><article class="msg" id="m37">
 <header><b>knightmb</b><span class="muted"> · <time datetime="2010-08-15T23:35:39Z">15 August 2010, 23:35 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9583#msg9583" rel="nofollow noopener">original</a></span></header>
 <div class="t">Cool, works for me!  Grin</div></article><article class="msg sat" id="m38">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:36:10Z">15 August 2010, 23:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9584#msg9584" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-7" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:36:10Z">15 August 2010, 23:36 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9584#msg9584" rel="nofollow noopener">original</a></span></header>
 <div class="t">Starting at 67000 is perfect.  
 
 Yeah, at the moment you&#x27;ll stop at 74638.  It should start slowly creeping up as more nodes upgrade and generate.
@@ -289,7 +289,7 @@ Download links:
 SHA1 16645ec5fcdb35bc54bc7195309a1a81105242bb bitcoin-0.3.10-win32-setup.exe
 SHA1 4f35ad7711a38fe8c880c6c9beab430824c426d3 bitcoin-0.3.10-win32.zip
 SHA1 e3fda1ddb31b0d5c35156cacd80dee6ea6ae6423 bitcoin-0.3.10-linux.tar.gz</div></article><article class="msg sat" id="m39">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:37:07Z">15 August 2010, 23:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9586#msg9586" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-8" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-15T23:37:07Z">15 August 2010, 23:37 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9586#msg9586" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: Joozero on August 15, 2010, 11:32:43 PM</div><div class="t">I think that you should add something about this: <a href="http://bitcointalk.org/index.php?topic=259.0" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=259.0</a>
 There must be a label on the client that show a warning message if needed Smiley
 Now everyone have always to check the website, and I think that this is bad.</div></blockquote><div class="t">Agree, wanted to do that for a long time, haven&#x27;t had time to do it.
@@ -367,7 +367,7 @@ From what I can tell, my (updated) sending client wallet shows the deducted amou
 Will it get reincorporated into the fixed chain, and will the recipient be able to spend it?</div></article><article class="msg" id="m47">
 <header><b>kosovito</b><span class="muted"> · <time datetime="2010-08-16T00:39:17Z">16 August 2010, 00:39 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9615#msg9615" rel="nofollow noopener">original</a></span></header>
 <div class="t">I did all steps, now my client is 0.3.10 and it stopped at block 74638. Is all fine?</div></article><article class="msg sat" id="m48">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:00:45Z">16 August 2010, 01:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9623#msg9623" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-9" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:00:45Z">16 August 2010, 01:00 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9623#msg9623" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: Ground Loop on August 16, 2010, 12:29:55 AM</div><div class="t">Question about fallout:  I had a transaction that I submitted after the bad block, using the bad block chain.
 
 What is the status of that transaction?
@@ -376,7 +376,7 @@ From what I can tell, my (updated) sending client wallet shows the deducted amou
 Will it get reincorporated into the fixed chain, and will the recipient be able to spend it?</div></blockquote><div class="t">Right, it will get reincorporated into the fixed chain.  The transaction won&#x27;t disappear, it&#x27;ll still be visible on both sides, but the confirmation count will jump back to 0 and start counting up again.
 
 It&#x27;s only if you generated a block in the bad chain after block 74638 that the 50 BTC from that will disappear.  Any blocks in the bad chain wouldn&#x27;t have matured yet. </div></article><article class="msg sat" id="m49">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:02:24Z">16 August 2010, 01:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9624#msg9624" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-10" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:02:24Z">16 August 2010, 01:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9624#msg9624" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: kosovito on August 16, 2010, 12:39:17 AM</div><div class="t">I did all steps, now my client is 0.3.10 and it stopped at block 74638. Is all fine?</div></blockquote><div class="t">If you still show 74638 blocks then you aren&#x27;t connected to any 0.3.10 nodes.  
 
 For today, try adding these parameters: 
@@ -391,7 +391,7 @@ See
 2) How will this affect clients that upgrade to 3.8.10 but don&#x27;t remove their block chain files?</div></article><article class="msg" id="m51">
 <header><b>kencausey</b><span class="muted"> · <time datetime="2010-08-16T01:06:13Z">16 August 2010, 01:06 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9627#msg9627" rel="nofollow noopener">original</a></span></header>
 <div class="t">I added the addnode options and info about the &#x27;stuck at 74638 blocks&#x27; issue at <a href="http://bitcointalk.org/index.php?topic=823.msg9595#msg9595" rel="nofollow noopener">http://bitcointalk.org/index.php?topic=823.msg9595#msg9595</a></div></article><article class="msg sat" id="m52">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:12:05Z">16 August 2010, 01:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9628#msg9628" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-11" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T01:12:05Z">16 August 2010, 01:12 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9628#msg9628" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: trebronics on August 16, 2010, 01:02:35 AM</div><div class="t">Most people running clients are not reading this message thread.  So...  Silly questions:
 
 1) How will this continue to affect version 3.8.1 (pre-catastrophe) clients with bad block chain?
@@ -399,7 +399,7 @@ See
 2) If you didn&#x27;t remove your blk*.dat files, you&#x27;re not helping to contribute to that 50%, and you&#x27;ll still show bad transactions until the good chain overtakes the bad chain.</div></article><article class="msg" id="m53">
 <header><b>Ground Loop</b><span class="muted"> · <time datetime="2010-08-16T02:02:07Z">16 August 2010, 02:02 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9632#msg9632" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: NewLibertyStandard on August 16, 2010, 12:20:59 AM</div><div class="t">Ya know, in a way, this actually temporarily decreases the difficulty to generate blocks until everyone upgrades. Yeah, it&#x27;ll be slower, but that just gives each client more time to try to generate the difficult hash.</div></blockquote><div class="t">Of course, this happened right after the difficulty kicked up to 511.7, so all these new &quot;good&quot; blocks will have to contend with that.  And a good chunk of the network grind power is off on the wrong chain, so new blocks may take a lot longer than 10min to find.  At what point will the balancing figure this out and possibly kick the difficulty back down again?</div></article><article class="msg sat" id="m54">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:16:10Z">16 August 2010, 02:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9642#msg9642" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-12" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:16:10Z">16 August 2010, 02:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9642#msg9642" rel="nofollow noopener">original</a></span></header>
 <div class="t">The bad chain is also slowed down as more nodes upgrade.
 
 We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were uploaded about 2 and 3 hours ago.  Of the nodes I&#x27;m connected to, more than half are already 0.3.10.  I would say we probably already have more power than the bad chain.</div></article><article class="msg" id="m55">
@@ -408,7 +408,7 @@ We&#x27;ve already generated 14 blocks since 74638.  The builds of 0.3.10 were 
 My wife&#x27;s PC already generated 2 of the new blocks (LOL), luck is on her side I guess.</div></article><article class="msg" id="m56">
 <header><b>lachesis</b><span class="muted"> · <time datetime="2010-08-16T02:28:57Z">16 August 2010, 02:28 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9646#msg9646" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: satoshi on August 16, 2010, 02:16:10 AM</div><div class="t">... Of the nodes I&#x27;m connected to, more than half are already 0.3.10. ...</div></blockquote><div class="t">That&#x27;s great news! How did you figure that out, though? I was considering writing a client specially tailored to put itself out there and try to get as many people to connect as possible, then survey their versions and write out a log (in addition to all the normal bitcoin stuff).</div></article><article class="msg sat" id="m57">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:38:21Z">16 August 2010, 02:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9648#msg9648" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-13" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T02:38:21Z">16 August 2010, 02:38 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9648#msg9648" rel="nofollow noopener">original</a></span></header>
 <div class="t">On Windows, findstr /c:&quot;version message&quot; debug.log
 
 It looks like the bad chain was on block 74678 recently.  Can&#x27;t wait to overtake it.
@@ -452,7 +452,7 @@ It was block 73746 that I generated.
 And I sent 49.00 of it to 19Nzg21hQQDAY5GTdTTuUVPA4MaE7AusXz (using the broken chain)
 
 Now I&#x27;m waiting for that node to figure out it was received, and it&#x27;s using the new chain.</div></article><article class="msg sat" id="m63">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T12:59:38Z">16 August 2010, 12:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9734#msg9734" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-14" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T12:59:38Z">16 August 2010, 12:59 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9734#msg9734" rel="nofollow noopener">original</a></span></header>
 <div class="t">It looks like we overtook the bad chain somewhere around 74689.  0.3.9 and lower nodes have been responding with the current block number for some hours now.
 
 That means it&#x27;s no longer necessary to delete blk*.dat before upgrading.  You can just upgrade and it&#x27;ll reorg away the bad block chain.
@@ -465,7 +465,7 @@ instead of removind and redownloading the whole chain?</div></article><article c
 <div class="t">So at this point, would a client that has not upgraded also have the correct chain?</div></article><article class="msg" id="m66">
 <header><b>NewLibertyStandard</b><span class="muted"> · <time datetime="2010-08-16T22:15:32Z">16 August 2010, 22:15 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9834#msg9834" rel="nofollow noopener">original</a></span></header>
 <blockquote><div class=qh>Quote from: laszlo on August 16, 2010, 10:13:00 PM</div><div class="t">So at this point, would a client that has not upgraded also have the correct chain?</div></blockquote><div class="t">Yes. The only exception would be if an unpatched client made another fake transaction and managed to verify it. They would be able to spread that fake block to a few other nodes that haven&#x27;t upgraded, but the upgraded clients seem to have more power than the unpatched clients, so the bad link would not last long and would not be spread by upgraded clients.</div></article><article class="msg sat" id="m67">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T22:54:55Z">16 August 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9841#msg9841" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-overflow-bug-serious-15" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-08-16T22:54:55Z">16 August 2010, 22:54 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=823.msg9841#msg9841" rel="nofollow noopener">original</a></span></header>
 <div class="t">Un-upgraded nodes have the correct chain most of the time, but they are still trying to include the overflow transaction in every block, so they&#x27;re continually trying to fork and generate invalid blocks.  If an old version node is restarted, its transaction pool is emptied, so it may generate valid blocks for a while until the transaction gets broadcast again.  0.3.9 and lower nodes still must upgrade.
 
 The SVN now has the code we needed to automatically reorg the block chain without having to delete the blk*.dat files manually.  I knew I couldn&#x27;t write that code fast and carefully enough yesterday, so I went with the quick manual option.</div></article>

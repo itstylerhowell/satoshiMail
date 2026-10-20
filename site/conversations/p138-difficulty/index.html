@@ -114,7 +114,7 @@ Just imagine how hard it would be to win a block then!!!!!</div></article><artic
 70717 1280276194
 70718 1280284347
 70719 1280277330</code></pre><div class="t">This doesn&#x27;t seem to have any effect on things so much other than providing a kind of inaccurate depiction of statistical results every now and then (when a block is claimed to be from the future or the past), however what would happen if either the first or second (whichever one triggers new difficulty being established) of a new set of 2016 blocks is generated  to have a timestamp 2+ weeks in the past or the future?  If in the past, I presume according to the code in main.cpp: GetNextWorkRequired function that the lowest accepted interval is 3.5 days.  And if in the future I presume according to the code the lowest accepted interval is 56 days.</div></article><article class="msg sat" id="m6">
-<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T01:16:23Z">29 July 2010, 01:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6301#msg6301" rel="nofollow noopener">original</a> · <a href="https://satoshin.name/re-difficulty" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a></span></header>
+<header><b>Satoshi Nakamoto</b><span class="muted"> · <time datetime="2010-07-29T01:16:23Z">29 July 2010, 01:16 UTC</time> · <a href="https://bitcointalk.org/index.php?topic=587.msg6301#msg6301" rel="nofollow noopener">original</a></span></header>
 <div class="t">You were looking at the wrong code.  Here&#x27;s the code that applies:</div><pre><code>bool CBlock::CheckBlock() const
 {
 ...
