@@ -20,6 +20,8 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
   `../mail_template.html` by hand (search for the matching block).
 
 * `satoshin_xref.json`: which of Satoshi's messages are on satoshin.name (the Satoshi Nakamoto Archive) and at which page,
-  keyed `"<thread id>/<message index>"`. Checked 20 October 2026: all 567 of its entries are in Satoshi Mail.
+  keyed by a stable message ID (`bitcointalk:<msg number>`, otherwise the source URL without its scheme), so it
+  survives a rebuilt archive. Made by `../satoshin_xref.py`; `render_page.py` and `build_site.py` warn if a key stops
+  matching. Checked 20 October 2026: all 567 of its entries are in Satoshi Mail.
   It is embedded in the template as `<script id="satoshin-data">`; `wiki.js` uses it for the "Also in" chip and
   each message's "also on" detail, and `build_site.py` for the links on static conversation pages.

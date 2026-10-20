@@ -1,0 +1,2894 @@
+{
+"site": "https://satoshin.name/",
+"retrieved": "2026-10-20",
+"note": "Index of satoshin.name taken on 20 October 2026: one row per message page. Forum rows give the BitcoinTalk msg number; list rows the source URL, the time the site shows (UTC, to the minute) and, for the Cryptography list, the opening of the text. Rebuild with tools/satoshin.py for full rows.",
+"entries": [
+{
+"slug": "bitcoin-list-bitcoin-0319-is-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/26744510/",
+"date": "2010-12-13T16:12Z"
+},
+{
+"slug": "added-some-dos-limits-removed-safe-mode-0319",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29479
+},
+{
+"slug": "re-pc-world-article-on-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29280
+},
+{
+"slug": "re-minimalistic-bitcoin-client-on-d-language",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29259
+},
+{
+"slug": "re-bitcoin-and-buffer-overflow-attacks",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29165
+},
+{
+"slug": "re-bitdns-and-generalizing-bitcoin-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29159
+},
+{
+"slug": "re-bitdns-and-generalizing-bitcoin-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28959
+},
+{
+"slug": "accounts-example-code",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28947
+},
+{
+"slug": "re-bitdns-and-generalizing-bitcoin-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28917
+},
+{
+"slug": "re-fees-in-bitdns-confusion",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28729
+},
+{
+"slug": "re-bitdns-and-generalizing-bitcoin-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28715
+},
+{
+"slug": "re-bitdns-and-generalizing-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28696
+},
+{
+"slug": "re-automated-nightly-builds",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28643
+},
+{
+"slug": "re-json-rpc-method-idea-list-transactions-newer-than-a-given-txid-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28640
+},
+{
+"slug": "re-version-0318-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28549
+},
+{
+"slug": "re-version-0318",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28533
+},
+{
+"slug": "re-json-rpc-method-idea-list-transactions-newer-than-a-given-txid-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28313
+},
+{
+"slug": "version-0318",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28302
+},
+{
+"slug": "bitcoin-list-bitcoin-0318-is-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/26722835/",
+"date": "2010-12-08T23:11Z"
+},
+{
+"slug": "re-json-rpc-method-idea-list-transactions-newer-than-a-given-txid-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28292
+},
+{
+"slug": "re-json-rpc-method-idea-list-transactions-newer-than-a-given-txid",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28228
+},
+{
+"slug": "re-wikileaks-contact-info",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 26999
+},
+{
+"slug": "re-rfc-ship-block-chain-1-74000-with-release-tarballs-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 26016
+},
+{
+"slug": "re-incompatible-wallet-format-with-latest-bitcoin-git",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 25799
+},
+{
+"slug": "re-rfc-ship-block-chain-1-74000-with-release-tarballs-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 25449
+},
+{
+"slug": "re-is-safe-running-bitcoins-with-the-same-wallet-on-more-computers-simultaneously",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 25154
+},
+{
+"slug": "re-rfc-ship-block-chain-1-74000-with-release-tarballs-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 25138
+},
+{
+"slug": "re-cooperative-mining",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 25119
+},
+{
+"slug": "re-new-demonstration-cpu-miner-available",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24719
+},
+{
+"slug": "re-new-getwork-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24708
+},
+{
+"slug": "re-version-0317",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24673
+},
+{
+"slug": "re-rfc-ship-block-chain-1-74000-with-release-tarballs-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24662
+},
+{
+"slug": "version-0317",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24460
+},
+{
+"slug": "re-rfc-ship-block-chain-1-74000-with-release-tarballs",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24438
+},
+{
+"slug": "re-opencl-miner-for-the-masses-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24101
+},
+{
+"slug": "re-new-getwork-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 24095
+},
+{
+"slug": "re-new-getwork",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 23891
+},
+{
+"slug": "new-getwork",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 23876
+},
+{
+"slug": "re-opencl-miner-for-the-masses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 23097
+},
+{
+"slug": "re-transaction-spam-flood-attack-currently-under-way",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 22952
+},
+{
+"slug": "re-need-op_blocknumber-to-allow-time-limited-transactions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 22119
+},
+{
+"slug": "re-some-testing-that-i-did-on-the-testnetwork-my-findings-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 21959
+},
+{
+"slug": "re-some-testing-that-i-did-on-the-testnetwork-my-findings",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 21896
+},
+{
+"slug": "re-new-icon-logo-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 21766
+},
+{
+"slug": "version-0315",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 21897
+},
+{
+"slug": "re-0313-rc1-for-windows-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14787
+},
+{
+"slug": "re-win7-64bit-since-last-patch-tues-now-crashes-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18511
+},
+{
+"slug": "re-multiple-wallets-one-computer-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18508
+},
+{
+"slug": "re-multiple-wallets-one-computer",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18349
+},
+{
+"slug": "re-suggestion-allow-short-messages-to-be-sent-together-with-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18250
+},
+{
+"slug": "re-win7-64bit-since-last-patch-tues-now-crashes",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18246
+},
+{
+"slug": "re-error-please-help-me-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18245
+},
+{
+"slug": "re-error-please-help-me",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 18241
+},
+{
+"slug": "re-website-and-software-translations-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 17965
+},
+{
+"slug": "version-0314",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 17924
+},
+{
+"slug": "key-pool-feature-for-safer-wallet-backup",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 16316
+},
+{
+"slug": "re-the-niche-list",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15741
+},
+{
+"slug": "re-tor-connections-not-working-reliably-many-seednodes-offline",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15682
+},
+{
+"slug": "re-website-and-software-translations-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15660
+},
+{
+"slug": "re-i-broke-my-wallet-sends-never-confirm-now-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15672
+},
+{
+"slug": "re-patch-increase-block-size-limit-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15366
+},
+{
+"slug": "re-website-and-software-translations-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15360
+},
+{
+"slug": "re-website-and-software-translations-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15176
+},
+{
+"slug": "re-version-0313-please-upgrade-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15167
+},
+{
+"slug": "re-memory-leak-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15150
+},
+{
+"slug": "re-version-0313-please-upgrade-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15147
+},
+{
+"slug": "re-how-to-overthrow-the-gpu-oligarchs",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15142
+},
+{
+"slug": "re-patch-increase-block-size-limit",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15139
+},
+{
+"slug": "re-version-0313-please-upgrade-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15136
+},
+{
+"slug": "re-version-0313-please-upgrade-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15116
+},
+{
+"slug": "re-version-0313-please-upgrade-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15112
+},
+{
+"slug": "re-version-0313-please-upgrade",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15110
+},
+{
+"slug": "re-version-0313",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 15102
+},
+{
+"slug": "version-0313-please-upgrade",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14788
+},
+{
+"slug": "re-remote-rpc-access",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14736
+},
+{
+"slug": "re-prioritized-transactions-and-tx-fees-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14734
+},
+{
+"slug": "re-prioritized-transactions-and-tx-fees",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14732
+},
+{
+"slug": "re-bitcoin-wikipedia-page-deleted",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14729
+},
+{
+"slug": "0313-rc1-for-windows-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14722
+},
+{
+"slug": "re-i-broke-my-wallet-sends-never-confirm-now-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14720
+},
+{
+"slug": "re-i-broke-my-wallet-sends-never-confirm-now",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14714
+},
+{
+"slug": "re-how-to-make-a-distributed-bitcoin-escrow-service",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 14136
+},
+{
+"slug": "re-porn",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13844
+},
+{
+"slug": "re-how-divisible-are-bitcoins-the-technical-side",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13848
+},
+{
+"slug": "re-warning-check-your-system-help-me-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13833
+},
+{
+"slug": "internal-version-number",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13831
+},
+{
+"slug": "re-always-pay-transaction-fee-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13829
+},
+{
+"slug": "re-message-encryption-as-a-built-in-feature",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13221
+},
+{
+"slug": "re-the-case-for-removing-ip-transactions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13219
+},
+{
+"slug": "re-bug-usr-bin-bitcoind",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13211
+},
+{
+"slug": "re-issues-building-bitcoin-on-windows-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13206
+},
+{
+"slug": "re-memory-leak",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 13201
+},
+{
+"slug": "re-switch-to-gpl",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12494
+},
+{
+"slug": "re-rfc-remove-db_private-flag-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12484
+},
+{
+"slug": "re-running-on-a-port-other-than-8333",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12483
+},
+{
+"slug": "re-auto-detect-for-128-bit-4-way-sse2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12372
+},
+{
+"slug": "re-won-t-let-me-send-coins-because-it-requires-a-transaction-fee-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12368
+},
+{
+"slug": "re-won-t-let-me-send-coins-because-it-requires-a-transaction-fee-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12342
+},
+{
+"slug": "re-won-t-let-me-send-coins-because-it-requires-a-transaction-fee",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12341
+},
+{
+"slug": "auto-detect-for-128-bit-4-way-sse2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12262
+},
+{
+"slug": "re-bitcoin-blogger-is-it-better-to-buy-or-generate-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12248
+},
+{
+"slug": "re-always-pay-transaction-fee-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12237
+},
+{
+"slug": "re-version-0312",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12240
+},
+{
+"slug": "version-0312",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12181
+},
+{
+"slug": "re-always-pay-transaction-fee",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12168
+},
+{
+"slug": "re-bitcoind-as-daemon-in-osx",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12135
+},
+{
+"slug": "re-auto-backing-up-of-walletdat-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12134
+},
+{
+"slug": "re-warning-check-your-system-help-me-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12132
+},
+{
+"slug": "re-http-status-codes-from-the-json-rpc-api",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12130
+},
+{
+"slug": "re-warning-check-your-system-help-me",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12063
+},
+{
+"slug": "re-cryptopp-assertion-error",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 12062
+},
+{
+"slug": "re-big-endian-code-problems",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11610
+},
+{
+"slug": "re-version-0311-with-upgrade-alerts",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11505
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11503
+},
+{
+"slug": "version-0311-with-upgrade-alerts",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11439
+},
+{
+"slug": "re-bitcoin-does-not-violate-mises-regression-theorem",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11405
+},
+{
+"slug": "re-bitcoins-are-most-like-shares-of-common-stock",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11403
+},
+{
+"slug": "re-new-web-service-obtain-dump-of-bitcoin-block-nnnn",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11400
+},
+{
+"slug": "re-auto-backing-up-of-walletdat-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11399
+},
+{
+"slug": "re-auto-backing-up-of-walletdat-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11345
+},
+{
+"slug": "re-auto-backing-up-of-walletdat-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11350
+},
+{
+"slug": "re-gentoo-linux-ebuild",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11342
+},
+{
+"slug": "re-auto-backing-up-of-walletdat",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11228
+},
+{
+"slug": "re-need-a-post-writing-up-some-things-users-should-know-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11227
+},
+{
+"slug": "re-rfc-remove-db_private-flag",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11224
+},
+{
+"slug": "re-development-of-alert-system-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11219
+},
+{
+"slug": "re-development-of-alert-system-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11158
+},
+{
+"slug": "re-development-of-alert-system-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11155
+},
+{
+"slug": "re-development-of-alert-system-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11151
+},
+{
+"slug": "re-development-of-alert-system-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11150
+},
+{
+"slug": "re-development-of-alert-system-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11078
+},
+{
+"slug": "re-development-of-alert-system",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11074
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 11068
+},
+{
+"slug": "re-integrating-digital-payments-into-p2p-protocols",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10723
+},
+{
+"slug": "development-of-alert-system",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10722
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10720
+},
+{
+"slug": "re-28-days-without-generation-i-have-4200khash-s-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10717
+},
+{
+"slug": "re-need-a-post-writing-up-some-things-users-should-know",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10715
+},
+{
+"slug": "re-hypothetical-question-on-lost-coins-transfers",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10300
+},
+{
+"slug": "need-a-post-writing-up-some-things-users-should-know",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10297
+},
+{
+"slug": "re-28-days-without-generation-i-have-4200khash-s",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10290
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10281
+},
+{
+"slug": "re-howto-compiling-bitcoin-on-ubuntu-1004-karmic",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10275
+},
+{
+"slug": "re-convert-bitcoin-to-gtk-yes-no-wx-is-better",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10272
+},
+{
+"slug": "re-checking-the-block-chain-on-load",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10082
+},
+{
+"slug": "re-difficulty-more-nodes-active-or-faster-nodes",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10076
+},
+{
+"slug": "re-new-screenshots-to-the-front-page",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 10067
+},
+{
+"slug": "re-checkpointing-the-block-chain-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9843
+},
+{
+"slug": "re-overflow-bug-serious-15",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9841
+},
+{
+"slug": "re-checkpointing-the-block-chain",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9816
+},
+{
+"slug": "checking-the-block-chain-on-load",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9813
+},
+{
+"slug": "re-patch-automatic-block-validation-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9775
+},
+{
+"slug": "re-blocks-minus-1",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9774
+},
+{
+"slug": "blocks-minus-1",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9757
+},
+{
+"slug": "re-patch-automatic-block-validation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9754
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9736
+},
+{
+"slug": "re-overflow-bug-serious-14",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9734
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9676
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-039-rc2-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9661
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-039-rc2-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9655
+},
+{
+"slug": "re-overflow-bug-serious-13",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9648
+},
+{
+"slug": "re-overflow-bug-serious-12",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9642
+},
+{
+"slug": "re-overflow-bug-serious-11",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9628
+},
+{
+"slug": "re-overflow-bug-serious-10",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9624
+},
+{
+"slug": "re-overflow-bug-serious-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9623
+},
+{
+"slug": "re-03101-question-on-where-block-should-be-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9612
+},
+{
+"slug": "re-03101-question-on-where-block-should-be",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9608
+},
+{
+"slug": "version-0310-block-74638-overflow-patch",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9590
+},
+{
+"slug": "re-overflow-bug-serious-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9586
+},
+{
+"slug": "re-overflow-bug-serious-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9584
+},
+{
+"slug": "re-overflow-bug-serious-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9576
+},
+{
+"slug": "re-overflow-bug-serious-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9573
+},
+{
+"slug": "re-overflow-bug-serious-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9548
+},
+{
+"slug": "re-overflow-bug-serious-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9539
+},
+{
+"slug": "re-overflow-bug-serious-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9531
+},
+{
+"slug": "bitcoin-list-alert-we-are-investigating-a-problem",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/25954806/",
+"date": "2010-08-15T20:38Z"
+},
+{
+"slug": "re-overflow-bug-serious",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9530
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-039-rc2-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9483
+},
+{
+"slug": "re-tcatm-s-4-way-sse2-for-linux-32-64-bit-039-rc2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9478
+},
+{
+"slug": "re-potential-disaster-scenario",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9454
+},
+{
+"slug": "re-version-039-rc1-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9475
+},
+{
+"slug": "tcatm-s-4-way-sse2-for-linux-32-64-bit-is-in-0310",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9452
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9359
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9278
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9228
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9159
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9145
+},
+{
+"slug": "re-proposed-change-to-sendtoaddress-api-call",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9134
+},
+{
+"slug": "re-not-a-suggestion-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9074
+},
+{
+"slug": "version-039-rc1-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9046
+},
+{
+"slug": "re-bitcoin-watchdog-service-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 9041
+},
+{
+"slug": "re-bugfixes-in-svn-rev-130",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8960
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8929
+},
+{
+"slug": "re-having-problems-specifing-datadir-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8924
+},
+{
+"slug": "bugfixes-in-svn-rev-130",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8920
+},
+{
+"slug": "re-bsd-detection-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8919
+},
+{
+"slug": "re-bsd-detection",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8814
+},
+{
+"slug": "re-flood-attack-000000001-bc-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8810
+},
+{
+"slug": "re-where-is-the-separate-discussion-devoted-to-possible-bitcoin-weaknesses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8804
+},
+{
+"slug": "re-lost-large-number-of-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8803
+},
+{
+"slug": "re-bitcoin-watchdog-service",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8922
+},
+{
+"slug": "re-not-a-suggestion-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8798
+},
+{
+"slug": "re-not-a-suggestion-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8836
+},
+{
+"slug": "re-compile-error-in-svn-r127",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8651
+},
+{
+"slug": "re-escrow",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8649
+},
+{
+"slug": "re-not-a-suggestion",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8637
+},
+{
+"slug": "re-version-0381-update-for-linux-64-bit-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8628
+},
+{
+"slug": "re-bitcoin-minting-is-thermodynamically-perverse-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8431
+},
+{
+"slug": "connection-limits",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8424
+},
+{
+"slug": "re-version-0381-update-for-linux-64-bit",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8422
+},
+{
+"slug": "re-bitcoin-generation-broken-in-038-64-bit",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8417
+},
+{
+"slug": "re-what-could-be-the-transition-plan-to-y2038-compliant-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8413
+},
+{
+"slug": "version-0381-update-for-linux-64-bit",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8402
+},
+{
+"slug": "re-bitcoin-generation-broken-in-038",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8388
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8145
+},
+{
+"slug": "escrow",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8140
+},
+{
+"slug": "re-a-proposal-for-a-semi-automated-escrow-mechanism-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8137
+},
+{
+"slug": "re-bitcoin-minting-is-thermodynamically-perverse",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8114
+},
+{
+"slug": "re-latency-and-locality",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 8103
+},
+{
+"slug": "re-a-proposal-for-a-semi-automated-escrow-mechanism",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7712
+},
+{
+"slug": "re-flood-attack-000000001-bc-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7710
+},
+{
+"slug": "re-transaction-overload-solution",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7706
+},
+{
+"slug": "re-bitcoind-transaction-to-ip-address",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7705
+},
+{
+"slug": "re-who-s-the-spanish-jerk-draining-the-faucet",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7703
+},
+{
+"slug": "re-flood-attack-000000001-bc-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7696
+},
+{
+"slug": "re-flood-attack-000000001-bc-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7694
+},
+{
+"slug": "re-flood-attack-000000001-bc-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7687
+},
+{
+"slug": "re-flood-attack-000000001-bc",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7524
+},
+{
+"slug": "re-building-initial-transaction-trust-through-coin-ripping",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7385
+},
+{
+"slug": "re-please-upgrade-to-038",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7381
+},
+{
+"slug": "re-bitcoind-x86-binary-for-centos-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7372
+},
+{
+"slug": "please-upgrade-to-038",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7364
+},
+{
+"slug": "re-what-happens-when-network-is-split-for-prolonged-time-and-reconnected",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7356
+},
+{
+"slug": "re-content-length-header-and-500-was-re-authentication-json-rpc-and-python",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7335
+},
+{
+"slug": "re-bitcoind-x86-binary-for-centos",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7331
+},
+{
+"slug": "re-builds-for-ubuntu",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7328
+},
+{
+"slug": "re-protocol-buffers-for-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7090
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7084
+},
+{
+"slug": "re-mac-client-problems-outlined",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7068
+},
+{
+"slug": "re-linux-version-no-gui-after-upgrade-wtf",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 7057
+},
+{
+"slug": "re-linux-distribution-download-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6822
+},
+{
+"slug": "webpage-idea-next-predicted-difficulty-change",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6760
+},
+{
+"slug": "re-4-hashes-parallel-on-sse2-cpus-for-036",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6751
+},
+{
+"slug": "re-alert-upgrade-to-036-asap-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6728
+},
+{
+"slug": "re-alert-upgrade-to-036-asap-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6711
+},
+{
+"slug": "re-patch-implement-listtransactions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6706
+},
+{
+"slug": "re-bug-immature-coins-lost-in-walletdat-during-transaction",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6701
+},
+{
+"slug": "bitcoin-list-alert-upgrade-to-bitcoin-036",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/25843947/",
+"date": "2010-07-30T06:02Z"
+},
+{
+"slug": "re-alert-upgrade-to-036-asap-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6542
+},
+{
+"slug": "re-linux-distribution-download",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6516
+},
+{
+"slug": "re-transaction-disappeared-in-the-void",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6512
+},
+{
+"slug": "re-implementation-bug-prior-to-036",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6508
+},
+{
+"slug": "re-alert-upgrade-to-036-asap-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6502
+},
+{
+"slug": "re-alert-upgrade-to-036-asap",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6490
+},
+{
+"slug": "re-alert-version-036-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6480
+},
+{
+"slug": "re-alert-version-036",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6469
+},
+{
+"slug": "alert-upgrade-to-036",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6451
+},
+{
+"slug": "re-wiki-registration-email",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6307
+},
+{
+"slug": "re-scalability-and-transaction-rate",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6306
+},
+{
+"slug": "re-difficulty",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6301
+},
+{
+"slug": "re-build-error-svn-r115-on-my-mac-workaround",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6273
+},
+{
+"slug": "re-having-problems-specifing-datadir",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6268
+},
+{
+"slug": "re-bitcoin-x86-for-windows-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6083
+},
+{
+"slug": "re-bitcoin-x86-for-windows-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 6069
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-13",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5990
+},
+{
+"slug": "re-bitcoin-x86-for-windows",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5978
+},
+{
+"slug": "re-bitcoin-x64-for-windows",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5920
+},
+{
+"slug": "re-stealing-coins-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5778
+},
+{
+"slug": "re-md5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5772
+},
+{
+"slug": "re-json-rpc-password-12",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5771
+},
+{
+"slug": "re-json-rpc-password-11",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5769
+},
+{
+"slug": "re-json-rpc-password-10",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5767
+},
+{
+"slug": "re-stealing-coins-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5754
+},
+{
+"slug": "re-stealing-coins-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5740
+},
+{
+"slug": "re-stealing-coins-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5724
+},
+{
+"slug": "re-stealing-coins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5712
+},
+{
+"slug": "bitcoind-without-wxwidgets",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5904
+},
+{
+"slug": "bitcoin-033-released-please-upgrade",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5707
+},
+{
+"slug": "re-a-simple-traffic-load-test-run-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5698
+},
+{
+"slug": "re-a-simple-traffic-load-test-run",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5694
+},
+{
+"slug": "re-reading-writing-blocks-and-flatdata",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5450
+},
+{
+"slug": "version-0325-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5443
+},
+{
+"slug": "re-warning-don-t-use-server-or-bitcoind-on-a-machine-where-you-web-browse",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5432
+},
+{
+"slug": "re-bitcoind-not-responding-to-rpc-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5419
+},
+{
+"slug": "re-json-rpc-multiple-invocations",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5416
+},
+{
+"slug": "re-json-rpc-password-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5383
+},
+{
+"slug": "re-faster-initial-block-download",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5378
+},
+{
+"slug": "faster-initial-block-download-5x-faster",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5349
+},
+{
+"slug": "re-bitcoind-not-responding-to-rpc",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5339
+},
+{
+"slug": "re-json-rpc-password-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 5338
+},
+{
+"slug": "re-json-rpc-password-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4928
+},
+{
+"slug": "re-json-rpc-password-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4775
+},
+{
+"slug": "re-json-rpc-password-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4758
+},
+{
+"slug": "re-json-rpc-password-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4646
+},
+{
+"slug": "re-json-rpc-password-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4577
+},
+{
+"slug": "re-they-want-to-delete-the-wikipedia-article",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4508
+},
+{
+"slug": "re-json-rpc-password-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4268
+},
+{
+"slug": "warning-don-t-use-server-or-bitcoind-where-you-web-browse-v032-and-lower",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4263
+},
+{
+"slug": "re-json-rpc-password",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4169
+},
+{
+"slug": "re-did-block-generation-crawl-to-a-halt",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4095
+},
+{
+"slug": "re-nenolod-the-guy-that-wants-to-prove-bitcoin-doesn-t-work-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4073
+},
+{
+"slug": "re-msvc-build-sha-256",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4068
+},
+{
+"slug": "json-rpc-password",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4059
+},
+{
+"slug": "re-bitcoin-032-released-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4037
+},
+{
+"slug": "re-uri-scheme-for-bitcoin-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 4008
+},
+{
+"slug": "re-source-code-documentation-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3999
+},
+{
+"slug": "re-bitcoin-snack-machine-fast-transaction-problem-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3867
+},
+{
+"slug": "re-network-size",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3830
+},
+{
+"slug": "re-source-code-documentation-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3828
+},
+{
+"slug": "re-bitcoin-032-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3825
+},
+{
+"slug": "re-assertion-failure-ubuntu-lucid-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3823
+},
+{
+"slug": "re-bitcoin-snack-machine-fast-transaction-problem",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3819
+},
+{
+"slug": "bitcoin-032-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3807
+},
+{
+"slug": "re-nenolod-the-guy-that-wants-to-prove-bitcoin-doesn-t-work",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3773
+},
+{
+"slug": "re-privacy-versus-safety-handling-change",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3770
+},
+{
+"slug": "re-bug-report-rounding-glitch",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3769
+},
+{
+"slug": "re-a-new-currency-system-for-the-world",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3605
+},
+{
+"slug": "re-bitcoin-031-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3590
+},
+{
+"slug": "sample-account-system-using-json-rpc-needed",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3579
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-12",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3565
+},
+{
+"slug": "re-website-integration-for-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3559
+},
+{
+"slug": "re-the-dollar-cost-of-bitmining-energy",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3545
+},
+{
+"slug": "re-bitcoin-trademark",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3540
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-11",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3537
+},
+{
+"slug": "re-031-release-candidate-please-test-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3536
+},
+{
+"slug": "re-source-code-documentation-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3534
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-10",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3526
+},
+{
+"slug": "re-request-expected-bitcoins-per-day-display",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3524
+},
+{
+"slug": "re-hash-function-not-secure",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3520
+},
+{
+"slug": "re-source-code-documentation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3510
+},
+{
+"slug": "re-031-release-candidate-please-test-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3505
+},
+{
+"slug": "re-resending-transaction",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3499
+},
+{
+"slug": "re-fedora-13-libcrypto",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3495
+},
+{
+"slug": "re-assertion-failure-ubuntu-lucid",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3492
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3488
+},
+{
+"slug": "re-seticons-icon-bundle-doesn-t-contain-any-suitable-icon-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3362
+},
+{
+"slug": "re-donations-to-freebitcoinsappspotcom-needed",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3350
+},
+{
+"slug": "re-031-release-candidate-please-test-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3339
+},
+{
+"slug": "re-seticons-icon-bundle-doesn-t-contain-any-suitable-icon-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3323
+},
+{
+"slug": "re-031-release-candidate-please-test-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3319
+},
+{
+"slug": "re-runaway-cpu-usage-for-64bit-bitcoin-linux-client-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3309
+},
+{
+"slug": "re-seticons-icon-bundle-doesn-t-contain-any-suitable-icon",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3308
+},
+{
+"slug": "re-031-release-candidate-please-test-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3306
+},
+{
+"slug": "re-031-release-candidate-please-test-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3305
+},
+{
+"slug": "re-031-release-candidate-please-test-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3295
+},
+{
+"slug": "re-website-and-software-translations-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3257
+},
+{
+"slug": "re-website-and-software-translations-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3247
+},
+{
+"slug": "re-website-and-software-translations-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3242
+},
+{
+"slug": "re-website-and-software-translations",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3238
+},
+{
+"slug": "re-031-release-candidate-please-test-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3221
+},
+{
+"slug": "re-031-release-candidate-please-test",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3205
+},
+{
+"slug": "bitcoin-031-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3198
+},
+{
+"slug": "re-resource-hog-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3162
+},
+{
+"slug": "re-static-linux-x86_64-bins-for-those-having-libcrypto-troubles",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3157
+},
+{
+"slug": "re-bitcoin-030-runtime-error",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3150
+},
+{
+"slug": "re-runaway-cpu-usage-for-64bit-bitcoin-linux-client-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 3008
+},
+{
+"slug": "re-scalability",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2947
+},
+{
+"slug": "re-warning-this-block-was-not-received-by-any-other-nodes",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2913
+},
+{
+"slug": "re-runaway-cpu-usage-for-64bit-bitcoin-linux-client",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2908
+},
+{
+"slug": "re-error-on-ubuntu-1004",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2903
+},
+{
+"slug": "re-hash-sec-throttling-for-democracy",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2935
+},
+{
+"slug": "re-stuck-on-513-blocks",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2895
+},
+{
+"slug": "re-bitcoin-auto-renice-ing-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2886
+},
+{
+"slug": "re-building-bitcoin-03",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2885
+},
+{
+"slug": "re-stopped-prodicing-coins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2880
+},
+{
+"slug": "re-resource-hog",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2871
+},
+{
+"slug": "re-no-blocks-downloaded-why",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2867
+},
+{
+"slug": "re-major-meltdown-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2133
+},
+{
+"slug": "re-security",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2132
+},
+{
+"slug": "re-bitcoin-03-win64-broken-access-to-appdata-if-non-latin-characters-in-username-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2092
+},
+{
+"slug": "re-btc-vulnerability-massive-attack-against-btc-system-is-it-really",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2078
+},
+{
+"slug": "re-bitcoin-03-win64-broken-access-to-appdata-if-non-latin-characters-in-username-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2077
+},
+{
+"slug": "re-anonymity",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2071
+},
+{
+"slug": "re-bitcoin-03-win64-broken-access-to-appdata-if-non-latin-characters-in-username",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2068
+},
+{
+"slug": "re-on-irc-bootstrapping-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2010
+},
+{
+"slug": "bitcoin-list-bitcoin-03-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/25686730/",
+"date": "2010-07-06T21:53Z"
+},
+{
+"slug": "re-03-almost-ready-please-test-the-mac-version-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2006
+},
+{
+"slug": "bitcoin-03-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 2004
+},
+{
+"slug": "re-slashdot-submission-for-10",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1976
+},
+{
+"slug": "re-03-almost-ready-please-test-the-mac-version",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1947
+},
+{
+"slug": "re-feature-request-limiting-connections-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1929
+},
+{
+"slug": "re-03-almost-ready-12",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1927
+},
+{
+"slug": "re-13-almost-ready-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1926
+},
+{
+"slug": "re-feature-request-limiting-connections",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1924
+},
+{
+"slug": "re-major-meltdown",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1838
+},
+{
+"slug": "re-13-almost-ready-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1834
+},
+{
+"slug": "re-ipv6-headless-client-and-more",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1828
+},
+{
+"slug": "re-beta",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1827
+},
+{
+"slug": "re-bitcoin-faucet-changes",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1816
+},
+{
+"slug": "re-building-bitcoin-client-completely-headless",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1815
+},
+{
+"slug": "re-bitcoin-mobile",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1814
+},
+{
+"slug": "re-13-almost-ready",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1806
+},
+{
+"slug": "beta",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1803
+},
+{
+"slug": "re-03-almost-ready-11",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1800
+},
+{
+"slug": "re-bitcoin-clients-getting-k-lined-from-the-irc-bootstrapping-channel-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1797
+},
+{
+"slug": "re-03-almost-ready-10",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1787
+},
+{
+"slug": "re-on-irc-bootstrapping-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1781
+},
+{
+"slug": "re-bitcoin-clients-getting-k-lined-from-the-irc-bootstrapping-channel",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1779
+},
+{
+"slug": "re-03-almost-ready-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1769
+},
+{
+"slug": "re-03-almost-ready-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1760
+},
+{
+"slug": "re-03-almost-ready-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1748
+},
+{
+"slug": "re-03-almost-ready-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1686
+},
+{
+"slug": "re-03-almost-ready-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1679
+},
+{
+"slug": "re-03-almost-ready-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1671
+},
+{
+"slug": "re-03-almost-ready-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1677
+},
+{
+"slug": "re-03-almost-ready-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1675
+},
+{
+"slug": "re-03-almost-ready",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1670
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1669
+},
+{
+"slug": "re-bitcoin-in-ubuntu-1004-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1668
+},
+{
+"slug": "re-how-fast-do-the-fastest-computers-generate-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1656
+},
+{
+"slug": "03-almost-ready-please-test-the-mac-version",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1654
+},
+{
+"slug": "re-bitcoin-in-ubuntu-1004-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1653
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1648
+},
+{
+"slug": "re-dying-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1647
+},
+{
+"slug": "re-bitcoin-in-ubuntu-1004",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1646
+},
+{
+"slug": "re-get-5-free-bitcoins-from-freebitcoinsappspotcom",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1620
+},
+{
+"slug": "re-on-irc-bootstrapping-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1619
+},
+{
+"slug": "re-transactions-and-scripts-dup-hash160-equalverify-checksig-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1617
+},
+{
+"slug": "re-transactions-and-scripts-dup-hash160-equalverify-checksig",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1611
+},
+{
+"slug": "re-website-translations-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1600
+},
+{
+"slug": "re-uri-scheme-for-bitcoin-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1596
+},
+{
+"slug": "re-what-is-the-incentive-to-collect-transactions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1595
+},
+{
+"slug": "re-can-t-build-r80-from-svn",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1590
+},
+{
+"slug": "re-technical-clarifications",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1588
+},
+{
+"slug": "re-dealing-with-sha-256-collisions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1585
+},
+{
+"slug": "re-hostnames-instead-of-ip-addresses-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1582
+},
+{
+"slug": "re-on-irc-bootstrapping-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1579
+},
+{
+"slug": "re-website-translations-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1324
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1323
+},
+{
+"slug": "re-hostnames-instead-of-ip-addresses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1322
+},
+{
+"slug": "re-website-translations-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1269
+},
+{
+"slug": "re-odd-amount-of-generated-coins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1260
+},
+{
+"slug": "re-website-translations",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1259
+},
+{
+"slug": "re-share-database-blocks",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1258
+},
+{
+"slug": "re-cli-bitcoin-generation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1256
+},
+{
+"slug": "re-tracing-a-coin-s-lineage",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1254
+},
+{
+"slug": "json-rpc-programming-tips-using-labels",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1252
+},
+{
+"slug": "re-we-accept-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1169
+},
+{
+"slug": "re-ummmm-where-did-my-bitcoins-go",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1149
+},
+{
+"slug": "re-is-there-a-way-to-automate-bitcoin-payments-for-a-website",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1143
+},
+{
+"slug": "re-setting-up-multiple-bitcoin-machines-behind-nat-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1135
+},
+{
+"slug": "re-removing-bitcoin-addresses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1134
+},
+{
+"slug": "re-exception-9key_error-error",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1133
+},
+{
+"slug": "re-uri-scheme-for-bitcoin-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1132
+},
+{
+"slug": "re-for-a-website-taking-payments-with-bitcoins-better-ip-or-bitcoin-addresses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1131
+},
+{
+"slug": "re-could-the-bitcoin-network-be-destroyed-by-someone-generating-endless-bitcoin-add",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1130
+},
+{
+"slug": "re-idea-for-file-hosting-and-proxy-services-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 810
+},
+{
+"slug": "re-idea-for-file-hosting-and-proxy-services",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 809
+},
+{
+"slug": "re-exchange-methods",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 807
+},
+{
+"slug": "re-who-is-bitcoincom",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 806
+},
+{
+"slug": "re-idea-for-file-hosting-service",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 731
+},
+{
+"slug": "re-on-irc-bootstrapping",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 729
+},
+{
+"slug": "idea-for-file-hosting-and-proxy-services",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 719
+},
+{
+"slug": "re-bitcoin-auto-renice-ing",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 717
+},
+{
+"slug": "re-command-line-and-json-rpc-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 633
+},
+{
+"slug": "re-money-transfer-regulations",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 614
+},
+{
+"slug": "re-new-icon-logo-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 588
+},
+{
+"slug": "re-wxwidgets-290",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 571
+},
+{
+"slug": "re-new-icon-logo-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 566
+},
+{
+"slug": "re-command-line-and-json-rpc-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 562
+},
+{
+"slug": "re-new-icon-logo-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 561
+},
+{
+"slug": "re-command-line-and-json-rpc-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 555
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 540
+},
+{
+"slug": "re-command-line-and-json-rpc-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 539
+},
+{
+"slug": "re-new-icon-logo",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 521
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 510
+},
+{
+"slug": "re-command-line-and-json-rpc-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 509
+},
+{
+"slug": "re-make-your-we-accept-bitcoin-logo-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 507
+},
+{
+"slug": "new-icon-logo",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 504
+},
+{
+"slug": "re-command-line-and-json-rpc",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 482
+},
+{
+"slug": "re-uri-scheme-for-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 481
+},
+{
+"slug": "re-bitcoin-address-collisions-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 453
+},
+{
+"slug": "command-line-and-json-rpc",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 452
+},
+{
+"slug": "re-ui-improvements-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 446
+},
+{
+"slug": "re-bitcoin-address-collisions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 443
+},
+{
+"slug": "re-generation-slowed-down-dramatically",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 433
+},
+{
+"slug": "re-ui-improvements",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 434
+},
+{
+"slug": "re-beta-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 1928
+},
+{
+"slug": "ui-improvements",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 426
+},
+{
+"slug": "re-current-bitcoin-economic-model-is-unsustainable",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 415
+},
+{
+"slug": "post-your-static-ip",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 414
+},
+{
+"slug": "re-number-of-connections-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 413
+},
+{
+"slug": "re-bitcoin-client-and-website-translation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 389
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 388
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 376
+},
+{
+"slug": "re-setting-up-multiple-bitcoin-machines-behind-nat",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 360
+},
+{
+"slug": "re-proof-of-work-difficulty-increasing",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 346
+},
+{
+"slug": "re-what-s-with-this-odd-generation-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 329
+},
+{
+"slug": "re-what-s-with-this-odd-generation-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 327
+},
+{
+"slug": "re-deb-package-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 326
+},
+{
+"slug": "re-repost-request-make-this-anonymous-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 324
+},
+{
+"slug": "re-deb-package-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 322
+},
+{
+"slug": "re-what-s-with-this-odd-generation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 316
+},
+{
+"slug": "re-deb-package",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 315
+},
+{
+"slug": "re-simple-to-implement-feature-requests",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 284
+},
+{
+"slug": "bitcoin-client-and-website-translation-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 283
+},
+{
+"slug": "bitcoin-client-and-website-translation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 279
+},
+{
+"slug": "re-make-your-we-accept-bitcoin-logo",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 278
+},
+{
+"slug": "re-how-divisible-are-bitcoins-and-other-market-economic-questions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 267
+},
+{
+"slug": "re-repost-request-make-this-anonymous-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 264
+},
+{
+"slug": "re-questions-about-addresses-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 250
+},
+{
+"slug": "proof-of-work-difficulty-increasing",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 249
+},
+{
+"slug": "re-tor-and-i2p-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 223
+},
+{
+"slug": "re-questions-about-addresses",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 222
+},
+{
+"slug": "re-win32-cpu-cycles-vs-live-protection-engines",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 220
+},
+{
+"slug": "re-64bit-support-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 174
+},
+{
+"slug": "re-a-newb-s-test-anyone-want-to-buy-a-picture-for-1-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 173
+},
+{
+"slug": "re-payment-server",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 172
+},
+{
+"slug": "re-bitcoin-crash-when-sending-coins-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 170
+},
+{
+"slug": "re-blocks-never-stop-generating",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 160
+},
+{
+"slug": "re-a-newb-s-test-anyone-want-to-buy-a-picture-for-1",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 159
+},
+{
+"slug": "re-bitcoin-crash-when-sending-coins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 156
+},
+{
+"slug": "re-tor-and-i2p",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 113
+},
+{
+"slug": "re-number-of-connections",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 112
+},
+{
+"slug": "re-64bit-support",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 97
+},
+{
+"slug": "re-is-my-second-transaction-working-correctly-transfer-question",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 85
+},
+{
+"slug": "re-a-few-suggestions-9",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 79
+},
+{
+"slug": "re-a-few-suggestions-8",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 77
+},
+{
+"slug": "bitcoin-list-bitcoin-02-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/24205662/",
+"date": "2009-12-17T06:52Z"
+},
+{
+"slug": "bitcoin-02-released",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 73
+},
+{
+"slug": "re-a-few-suggestions-7",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 70
+},
+{
+"slug": "re-a-few-suggestions-6",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 67
+},
+{
+"slug": "re-a-few-suggestions-5",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 62
+},
+{
+"slug": "re-a-few-suggestions-4",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 55
+},
+{
+"slug": "re-a-few-suggestions-3",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 54
+},
+{
+"slug": "re-questions-about-bitcoin-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 49
+},
+{
+"slug": "re-questions-about-bitcoin",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 46
+},
+{
+"slug": "re-a-few-suggestions-2",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 45
+},
+{
+"slug": "re-a-few-suggestions",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 41
+},
+{
+"slug": "old-thread-bitcoin-version-02-development-status",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 38
+},
+{
+"slug": "re-repost-linux-unix-compile",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 37
+},
+{
+"slug": "repost-linux-unix-compile",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 36
+},
+{
+"slug": "re-repost-how-anonymous-are-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 34
+},
+{
+"slug": "repost-how-anonymous-are-bitcoins",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 33
+},
+{
+"slug": "re-repost-request-make-this-anonymous",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 32
+},
+{
+"slug": "re-repost-bitcoin-maturation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 31
+},
+{
+"slug": "repost-request-make-this-anonymous",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 30
+},
+{
+"slug": "repost-bitcoin-maturation",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 29
+},
+{
+"slug": "welcome-to-the-new-bitcoin-forum",
+"category": "Bitcoin Forum",
+"bitcointalk_msg": 28
+},
+{
+"slug": "re-bitcoin-list-does-bitcoin-crash-in-windows",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/23824064/",
+"date": "2009-10-23T23:57Z"
+},
+{
+"slug": "re-bitcoin-list-bitcoin-v015-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21646307/",
+"date": "2009-02-22T17:47Z"
+},
+{
+"slug": "bitcoin-list-bitcoin-v015-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21500063/",
+"date": "2009-02-04T19:46Z"
+},
+{
+"slug": "re-bitcoin-v01-released-2",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10189.html",
+"date": "2009-01-25T16:34Z",
+"body_start": "Hal Finney wrote: > > * Spammer botnets "
+},
+{
+"slug": "re-bitcoin-list-problems",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21424626/",
+"date": "2009-01-25T16:45Z"
+},
+{
+"slug": "re-bitcoin-list-bitcoin-v015-released-2",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21740046/",
+"date": "2009-03-04T16:59Z"
+},
+{
+"slug": "re-bitcoin-v01-released",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10162.html",
+"date": "2009-01-17T14:58Z",
+"body_start": "> Dustin D. Trammell wrote: > > Satoshi "
+},
+{
+"slug": "re-bitcoin-list-bitcoin-v01-released",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21356305/",
+"date": "2009-01-16T18:35Z"
+},
+{
+"slug": "bitcoin-list-bitcoin-v013",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21313152/",
+"date": "2009-01-12T22:48Z"
+},
+{
+"slug": "bitcoin-list-bitcoin-v01-alpha-release-notes",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21312004/",
+"date": "2009-01-12T20:20Z"
+},
+{
+"slug": "bitcoin-list-bitcoin-v012-now-available",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21303153/",
+"date": "2009-01-11T22:32Z"
+},
+{
+"slug": "bitcoin-v01-released",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10142.html",
+"date": "2009-01-10T01:05Z",
+"body_start": "Announcing the first release of Bitcoin,"
+},
+{
+"slug": "bitcoin-list-welcome",
+"category": "SourceForge Mailing Lists",
+"source_url": "https://sourceforge.net/p/bitcoin/mailman/message/21033408/",
+"date": "2008-12-10T17:00Z"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-14",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10011.html",
+"date": "2008-11-17T21:33Z",
+"body_start": "James A. Donald wrote: > > Fortunately, "
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-13",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10008.html",
+"date": "2008-11-17T17:06Z",
+"body_start": "Ray Dillinger wrote: > One way to do thi"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-12",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10006.html",
+"date": "2008-11-17T17:04Z",
+"body_start": "I'll try and hurry up and release the so"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-11",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg10001.html",
+"date": "2008-11-14T22:29Z",
+"body_start": "Hal Finney wrote: > I think it is necess"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-10",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09997.html",
+"date": "2008-11-14T03:34Z",
+"body_start": "James A. Donald wrote: > It is not suffi"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-9",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09991.html",
+"date": "2008-11-11T14:30Z",
+"body_start": "James A. Donald wrote: > So what happene"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-8",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09990.html",
+"date": "2008-11-10T19:09Z",
+"body_start": "James A. Donald wrote: > Furthermore, it"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-7",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09985.html",
+"date": "2008-11-09T19:17Z",
+"body_start": "James A. Donald wrote: >OK, suppose one "
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-6",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09986.html",
+"date": "2008-11-09T19:14Z",
+"body_start": "James A. Donald wrote: > The core concep"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-5",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09980.html",
+"date": "2008-11-09T19:13Z",
+"body_start": "Hal Finney wrote: > it is mentioned that"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-4",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09979.html",
+"date": "2008-11-08T21:38Z",
+"body_start": "Ray Dillinger: > the \"currency\" is infla"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-3",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09971.html",
+"date": "2008-11-07T17:30Z",
+"body_start": ">[Lengthy exposition of vulnerability of"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper-2",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09967.html",
+"date": "2008-11-03T19:45Z",
+"body_start": ">> As long as honest nodes control the m"
+},
+{
+"slug": "re-bitcoin-p2p-e-cash-paper",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09964.html",
+"date": "2008-11-03T01:56Z",
+"body_start": ">Satoshi Nakamoto wrote: >> I've been wo"
+},
+{
+"slug": "bitcoin-p2p-e-cash-paper",
+"category": "The Cryptography Mailing List",
+"source_url": "https://www.mail-archive.com/cryptography@metzdowd.com/msg09959.html",
+"date": "2008-11-01T23:16Z",
+"body_start": "I've been working on a new electronic ca"
+}
+]
+}

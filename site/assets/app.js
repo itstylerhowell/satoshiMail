@@ -647,7 +647,7 @@ function renderMsg(t, i, open, terms) {
       ${m.sm ? `<dt>topics:</dt><dd>${esc(m.sm)}</dd>` : ""}
       ${m.su ? `<dt>${t.k === "x" ? "in archive:" : "on SNI:"}</dt><dd><a href="${esc(m.su)}" target="_blank" rel="noopener">${esc(m.su.replace(/^https:\/\//, ""))}</a></dd>` : ""}
       ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\/\//, ""))}</a></dd>` : ""}
-      ${SATOSHIN.url(t, i) ? `<dt>also on:</dt><dd><a href="${esc(SATOSHIN.url(t, i))}" target="_blank" rel="noopener">${esc(SATOSHIN.url(t, i).replace(/^https:\/\//, ""))}</a></dd>` : ""}
+      ${(sn => sn ? `<dt>also on:</dt><dd><a href="${esc(sn)}" target="_blank" rel="noopener">${esc(sn.replace(/^https:\/\//, ""))}</a></dd>` : "")(SATOSHIN.url(t, i))}
     </dl></div>
     <div class="mbw"><div class="mb"></div></div>`;
   const body = el.querySelector(".mb");
@@ -1838,16 +1838,22 @@ const BLOCKTRAINER = {
 };
 /* satoshin.name, the "Satoshi Nakamoto Archive" (checked 20 October 2026): 567 of Satoshi's own
    BitcoinTalk posts and mailing-list emails, each on its own page. Every one is also here; the map
-   below says which message is which page. It has no private emails, P2P Foundation or p2p-research posts. */
+   below says which message is which page. It has no private emails, P2P Foundation or p2p-research posts.
+   Keys are stable message IDs (built by tools/satoshin_xref.py, same rule as key() here):
+   "bitcointalk:<msg number>" for forum posts, otherwise the source URL without scheme or trailing slash. */
 const SATOSHIN = (() => {
   let x = { msgs: {} };
   try { x = JSON.parse(document.getElementById("satoshin-data").textContent); } catch (e) {}
   const base = x.site || "https://satoshin.name/";
   return {
     home: base, msgs: x.msgs || {},
-    url(t, i) { const s = this.msgs[t.id + "/" + i]; return s ? base + s : ""; },
+    key(m) {
+      const u = (m && m.u) || "", f = u.match(/bitcointalk\.org\/.*?msg(\d+)/);
+      return f ? "bitcointalk:" + f[1] : u.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    },
+    url(t, i) { const k = this.key(t.m[i]), s = k && this.msgs[k]; return s ? base + s : ""; },
     first(t) { for (let i = 0; i < (t.m || []).length; i++) { const u = this.url(t, i); if (u) return u; } return ""; },
-    count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.msgs[t.id + "/" + i]) n++; return n; },
+    count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.url(t, i)) n++; return n; },
   };
 })();
 function sourceChipsFor(t) {

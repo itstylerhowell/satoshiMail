@@ -990,7 +990,7 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   --tab-accent: #1a73e8;
   --pill-new: #188038; --pill-new-ink: #ffffff;
   --badge-red: #ff3b30; --badge-red-ink: #ffffff;
-  --chip-muted: #e8eaed; --chip-muted-ink: #5f6368;
+  --outline: #747775;       /* edges of inputs, chips and toggles: 4.5:1 on white */
   --glass: rgba(200, 200, 210, .35);
   --glass-hi: rgba(255, 255, 255, .4);
   --glass-ring: rgba(0, 0, 0, .08);
@@ -1001,14 +1001,14 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   :root:not([data-theme="light"]) {
     --bg: #111111; --ink: #e3e3e3; --line: #34373b; --info: #1f2633;
     --tab-accent: #8ab4f8; --pill-new: #81c995; --pill-new-ink: #0d2818;
-    --badge-red: #ff6961; --badge-red-ink: #2b0000; --chip-muted: #3c4043; --chip-muted-ink: #c4c7c5;
+    --badge-red: #ff6961; --badge-red-ink: #2b0000; --outline: #8e918f;
     --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
   }
 }
 :root[data-theme="dark"] {
   --bg: #111111; --ink: #e3e3e3; --line: #34373b; --info: #1f2633;
   --tab-accent: #8ab4f8; --pill-new: #81c995; --pill-new-ink: #0d2818;
-  --badge-red: #ff6961; --badge-red-ink: #2b0000; --chip-muted: #3c4043; --chip-muted-ink: #c4c7c5;
+  --badge-red: #ff6961; --badge-red-ink: #2b0000; --outline: #8e918f;
   --glass: rgba(60, 62, 70, .5); --glass-hi: rgba(255, 255, 255, .08); --glass-ring: rgba(255, 255, 255, .1); --glass-tile: #2a2b2d;
 }
 :root[data-density="comfortable"] { --row-h: 56px; }
@@ -1032,8 +1032,9 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 .banner { margin: 12px 16px 8px; padding: 14px 16px; border-radius: 12px; background: var(--info); line-height: 1.55; }
 .banner > .ms { color: var(--tab-accent); }
 
-/* small grey source chips */
-.lchip.muted, .lchip.src { background: var(--chip-muted); color: var(--chip-muted-ink); }
+/* controls get a visible edge (3:1 or better); selected chips keep their filled look */
+.wk-search label, .fchip:not(.on), .attach, .wk-letters a, .conv-wiki a, .vz-chip:not([aria-pressed="true"]), .vz-seg { border-color: var(--outline); }
+.wk-search label:focus-within { border-color: var(--accent); }
 
 /* dock: frosted glass */
 .dock { background: var(--glass); border: 0; border-radius: 20px;

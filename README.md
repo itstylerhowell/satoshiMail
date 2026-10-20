@@ -30,6 +30,8 @@ tools/
   build_site.py             satoshi-mail.html → site/
   blocktrainer.py           add Blocktrainer's archive to an sni-data dataset (local use)
   satoshin.py               add satoshin.name (Satoshi Nakamoto Archive) to an sni-data dataset (local use)
+  satoshin_xref.py          match satoshin.name's pages to the archive → satoshipedia/satoshin_xref.json
+  satoshin_index.json       snapshot of satoshin.name's index (20 October 2026), the default input to satoshin_xref.py
   site-assets/              styles, favicon and share image for the static pages
   satoshipedia/             encyclopedia sources (articles.py), its builder, and the
                             Satoshipedia / Satoshi Map / SEO code merged into the template

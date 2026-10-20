@@ -82,6 +82,21 @@ def autolink(text_escaped: str) -> str:
 
 # ───────────────────────────── input ─────────────────────────────
 
+def msg_key(m: dict) -> str | None:
+    """Stable key of a message in the satoshin.name link table (same rule as tools/satoshin_xref.py and wiki.js)."""
+    u = m.get("u") or ""
+    mm = re.search(r"bitcointalk\.org/.*?msg(\d+)", u)
+    if mm:
+        return "bitcointalk:" + mm.group(1)
+    return re.sub(r"^https?://", "", u).rstrip("/") or None
+
+
+def check_satoshin(data: dict, links: dict) -> list[str]:
+    """Keys in the satoshin.name link table that no longer match a message by Satoshi."""
+    sat = {msg_key(m) for t in data["threads"] for m in t["m"] if str(m.get("s")) == "1"}
+    return sorted(k for k in links if k not in sat)
+
+
 def split_page(page: str) -> dict:
     """The single-file app → its parts."""
     if "<title>" not in page:
@@ -122,6 +137,9 @@ class Site:
         self.by_id = {t["id"]: t for t in self.threads}
         self.satoshin = parts["satoshin"].get("msgs", {})
         self.satoshin_site = parts["satoshin"].get("site", "https://satoshin.name/")
+        stale = check_satoshin(self.D, self.satoshin)
+        if stale:
+            print(f"warning: {len(stale)} satoshin.name links match no message by Satoshi (rebuild with tools/satoshin_xref.py): {', '.join(stale[:5])}", file=sys.stderr)
         self.lists = {k: {"name": n, "long": l} for k, n, l in re.findall(r'"([a-z0-9-]+)":\s*\{ name: "([^"]+)",[^}]*long: "([^"]+)"', parts["app_js"])}
         self.arts = {a["slug"]: a for a in self.W["articles"]}
         self.alias = {}
@@ -304,7 +322,7 @@ class Site:
             note = f'<p class="note">{esc(m["w"])}</p>' if m.get("w") else ""
             to = f' <span class="muted">to {esc(m["to"])}</span>' if m.get("to") else ""
             src = f' · <a href="{esc(m["u"])}" rel="nofollow noopener">original</a>' if m.get("u") else ""
-            sn = self.satoshin.get(f'{t["id"]}/{i}')
+            sn = self.satoshin.get(msg_key(m))
             if sn:
                 src += f' · <a href="{esc(self.satoshin_site + sn)}" rel="noopener" title="This message on satoshin.name, the Satoshi Nakamoto Archive">satoshin.name</a>'
             msgs.append(f"""<article class="msg{' sat' if m.get('s') else ''}" id="m{i}">

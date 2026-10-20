@@ -95,7 +95,7 @@ xref = json.load(open(tools / "satoshin_xref.json"))
 xjson = json.dumps({"site": xref["site"], "checked": xref["checked"], "msgs": xref["msgs"]}, separators=(",", ":"))
 src = patch(src, '<script id="data" type="application/json">', f'<script id="satoshin-data" type="application/json">{xjson}</script>\n<script id="data" type="application/json">')
 src = patch(src, '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n',
-            '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n      ${SATOSHIN.url(t, i) ? `<dt>also on:</dt><dd><a href="${esc(SATOSHIN.url(t, i))}" target="_blank" rel="noopener">${esc(SATOSHIN.url(t, i).replace(/^https:\\/\\//, ""))}</a></dd>` : ""}\n')
+            '      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}\n      ${(sn => sn ? `<dt>also on:</dt><dd><a href="${esc(sn)}" target="_blank" rel="noopener">${esc(sn.replace(/^https:\\/\\//, ""))}</a></dd>` : "")(SATOSHIN.url(t, i))}\n')
 src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi\'s BitcoinTalk posts and mailing-list emails): every one is here too, and each of those messages links to its page there under its details.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
 
 # ── SEO / performance pass ──

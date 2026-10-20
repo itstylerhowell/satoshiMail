@@ -33,6 +33,7 @@ from pathlib import Path
 SITE = "https://satoshin.name/"
 TABLE = "satoshin_entries"
 UA = "sni-data (+https://github.com/itstylerhowell/satoshiMail)"
+MAX_PAGES = 200   # safety stop; the site had 23 list pages in October 2026
 SKIP = {"about", "category", "feed", "wp-admin", "wp-content", "wp-json", "pretenders", "tag", "page"}
 
 
@@ -181,12 +182,20 @@ class Fetcher:
 
 
 def crawl(fetch: Fetcher, limit: int | None = None) -> list[dict]:
-    first = fetch.get(SITE, "list-1.html")
-    slugs, n = list_slugs(first), last_page(first)
-    for pg in range(2, n + 1):
-        slugs += [s for s in list_slugs(fetch.get(f"{SITE}?pg={pg}", f"list-{pg}.html")) if s not in slugs]
-        if limit and len(slugs) >= limit:
+    # Walk the list pages until one adds nothing new. The page links on each page are only a hint:
+    # if they show just nearby pages, stopping at the highest one would end the crawl early.
+    page = fetch.get(SITE, "list-1.html")
+    slugs, hint, pg = list_slugs(page), last_page(page), 1
+    while pg < MAX_PAGES and not (limit and len(slugs) >= limit):
+        pg += 1
+        page = fetch.get(f"{SITE}?pg={pg}", f"list-{pg}.html")
+        new = [s for s in list_slugs(page) if s not in slugs]
+        if not new:
             break
+        slugs += new
+        hint = max(hint, last_page(page))
+    if pg < hint and not limit:
+        print(f"note: stopped at list page {pg}, though page links go up to {hint}", file=sys.stderr)
     slugs = slugs[:limit] if limit else slugs
     rows = []
     for i, s in enumerate(slugs, 1):

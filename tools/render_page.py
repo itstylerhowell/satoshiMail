@@ -25,4 +25,18 @@ if wiki.exists():
     assert n == 1, "wiki-data script not found in the template"
 blob = data.read_text(encoding="utf-8").strip().replace("</", "<\\/")
 out.write_text(tpl.replace("/*__DATA__*/", blob), encoding="utf-8")
+
+# the satoshin.name link table is keyed by stable message IDs; warn if any no longer match a message by Satoshi
+m = re.search(r'<script id="satoshin-data" type="application/json">(.*?)</script>', tpl, re.S)
+if m:
+    links = json.loads(m.group(1)).get("msgs", {})
+    archive = json.loads(data.read_text(encoding="utf-8"))
+    def key(msg):
+        u = msg.get("u") or ""
+        f = re.search(r"bitcointalk\.org/.*?msg(\d+)", u)
+        return "bitcointalk:" + f.group(1) if f else re.sub(r"^https?://", "", u).rstrip("/")
+    sat = {key(x) for t in archive["threads"] for x in t["m"] if str(x.get("s")) == "1"}
+    stale = [k for k in links if k not in sat]
+    if stale:
+        print(f"warning: {len(stale)} of {len(links)} satoshin.name links match no message by Satoshi; rerun tools/satoshin_xref.py", file=sys.stderr)
 print(f"{out} ({out.stat().st_size / 1e6:.1f} MB)")

@@ -627,16 +627,22 @@ const BLOCKTRAINER = {
 };
 /* satoshin.name, the "Satoshi Nakamoto Archive" (checked 20 October 2026): 567 of Satoshi's own
    BitcoinTalk posts and mailing-list emails, each on its own page. Every one is also here; the map
-   below says which message is which page. It has no private emails, P2P Foundation or p2p-research posts. */
+   below says which message is which page. It has no private emails, P2P Foundation or p2p-research posts.
+   Keys are stable message IDs (built by tools/satoshin_xref.py, same rule as key() here):
+   "bitcointalk:<msg number>" for forum posts, otherwise the source URL without scheme or trailing slash. */
 const SATOSHIN = (() => {
   let x = { msgs: {} };
   try { x = JSON.parse(document.getElementById("satoshin-data").textContent); } catch (e) {}
   const base = x.site || "https://satoshin.name/";
   return {
     home: base, msgs: x.msgs || {},
-    url(t, i) { const s = this.msgs[t.id + "/" + i]; return s ? base + s : ""; },
+    key(m) {
+      const u = (m && m.u) || "", f = u.match(/bitcointalk\.org\/.*?msg(\d+)/);
+      return f ? "bitcointalk:" + f[1] : u.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    },
+    url(t, i) { const k = this.key(t.m[i]), s = k && this.msgs[k]; return s ? base + s : ""; },
     first(t) { for (let i = 0; i < (t.m || []).length; i++) { const u = this.url(t, i); if (u) return u; } return ""; },
-    count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.msgs[t.id + "/" + i]) n++; return n; },
+    count(t) { let n = 0; for (let i = 0; i < (t.m || []).length; i++) if (this.url(t, i)) n++; return n; },
   };
 })();
 function sourceChipsFor(t) {
