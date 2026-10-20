@@ -1088,6 +1088,26 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 .src-t .num { text-align: right; font-variant-numeric: tabular-nums; }
 .src-page .lead .ms { font-size: 18px; vertical-align: -4px; }
 
+/* ── Send feedback dialog ── */
+.fb-dlg { width: min(520px, calc(100vw - 64px)); }
+.fb-dlg h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; font: 400 22px var(--ui-head); }
+.fb-intro, .fb-note { margin: 0 0 12px; color: var(--ink-2); line-height: 1.5; }
+.fb-note { margin: 12px 0 10px; font-size: 13px; }
+.fb-kinds { border: 0; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.fb-kinds legend { padding: 0; margin-bottom: 6px; font-weight: 500; }
+.fb-kinds label { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; cursor: pointer; }
+.fb-l { display: block; font-weight: 500; margin-bottom: 6px; }
+#fbtext { width: 100%; box-sizing: border-box; min-height: 120px; resize: vertical; padding: 10px 12px; border: 1px solid var(--outline); border-radius: 8px;
+  background: var(--surface); color: var(--ink); font: 14px/1.5 var(--ui); }
+#fbtext:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+.fb-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; }
+.fb-meta label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; min-height: 28px; }
+#fbcount { color: var(--ink-3); }
+.fb-to { display: flex; flex-wrap: wrap; gap: 8px; }
+.fb-to .pillbtn .ms { font-size: 18px; }
+.fb-send[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.fb-cut { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-3); }
+
 </style>
 
 <div id="loading" role="status" aria-label="Loading Satoshi Mail">
@@ -1984,7 +2004,7 @@ function renderAbout() {
   CURRENT_LIST = [];
   $("#main").innerHTML = `<div class="scroll"><div class="page"><h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>
     <p class="lead made-by-lead">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>
-    <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button></p>
+    <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
     <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi. Conversations where someone else had the last word start out unread.</p>
     <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>
@@ -2234,7 +2254,8 @@ const ACTIONS = {
   settings(el) {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
     popover(el, `<h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
-      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);
+      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>
+      <h4>Help</h4><button class="mi" data-act="feedback">${ic("feedback")} Send feedback</button><button class="mi" data-act="help">${ic("keyboard")} Keyboard shortcuts</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
   resetstate() { const before = JSON.stringify(ST); ST.star = {}; ST.read = {}; ST.arch = {}; ST.trash = {}; save(); closeLayer(); render(); snack("Mailbox reset.", () => { Object.assign(ST, JSON.parse(before)); save(); }); },
@@ -2626,7 +2647,7 @@ function wkNav(route) {
 }
 function wkFoot() {
   $("#wkfoot").innerHTML = `<div>
-    <nav><a href="#wiki">Satoshipedia</a><a href="#wiki~about">About</a><a href="#wiki~all">All articles</a><a href="#inbox">Satoshi Mail inbox</a><a href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Wikipedia: Satoshi Nakamoto</a></nav>
+    <nav><a href="#wiki">Satoshipedia</a><a href="#wiki~about">About</a><a href="#wiki~all">All articles</a><a href="#inbox">Satoshi Mail inbox</a><a href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Wikipedia: Satoshi Nakamoto</a><button class="linkbtn" data-act="feedback">Send feedback</button></nav>
     <div class="made-by-foot">${MADE_BY} · <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a> · <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">Open source (MIT) on GitHub</a></div>
     <div><b>Beta:</b> Satoshi Mail and Satoshipedia are still in development. Satoshipedia is the encyclopedia of Satoshi Mail. Its ${WA.length} articles were written with AI assistance using only the Satoshi Nakamoto Institute, GitHub (nakamoto-archive and the Bitcoin Core repository), bitcoin.org, Blocktrainer's archive, satoshin.name and Wikipedia (CC BY-SA 4.0), and link to their sources; check them before relying on a claim. Quotations are from the archive. Updated ${esc(WIKI.updated)}.</div>
   </div>`;
@@ -3940,6 +3961,64 @@ function renderSources() {
     <p class="lead muted">See also <a href="#about">About this archive</a>.</p>
   </div></div>`;
 }
+/* ═════════════ Send feedback (Settings → Help → Send feedback) ═════════════
+   A short form that hands the message to GitHub (a pre-filled new issue on the satoshiMail repository)
+   or X (a post mentioning @TylerHowell88). Nothing is stored or sent by the page itself: the viewer
+   reviews and sends it there, signed in to their own account. Works the same on the static site. */
+const FB_REPO = "https://github.com/itstylerhowell/satoshiMail";
+const FB_X = "TylerHowell88";
+const FB_KINDS = [["bug", "Something's broken"], ["idea", "Idea or request"], ["data", "Wrong or missing message"], ["other", "Other"]];
+function fbPageLabel() {
+  const h = location.hash || "#inbox";
+  const t = (document.title || "").replace(/ – Satoshi Mail$/, "");
+  return t ? `${t} (${h})` : h;
+}
+function fbLinks() {
+  const box = $("#fbdlg");
+  if (!box) return;
+  const kind = (box.querySelector("input[name=fbkind]:checked") || {}).value || "other";
+  const label = (FB_KINDS.find(k => k[0] === kind) || FB_KINDS[3])[1];
+  const text = box.querySelector("#fbtext").value.trim();
+  const withPage = box.querySelector("#fbpage").checked;
+  const page = withPage ? fbPageLabel() : "";
+  const first = text.split("\n")[0].slice(0, 70);
+  const title = `[${label}] ${first || "Feedback"}`;
+  const body = `${text || "(write your feedback here)"}\n\n---\nType: ${label}${page ? `\nPage: ${page}` : ""}\nSent from Satoshi Mail (beta)`;
+  const gh = `${FB_REPO}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  const head = `@${FB_X} Satoshi Mail feedback (${label.toLowerCase()}): `;
+  const room = 280 - head.length;
+  const post = head + (text.length > room ? text.slice(0, room - 1) + "…" : text);
+  const x = `https://x.com/intent/post?text=${encodeURIComponent(post)}`;
+  const ok = text.length > 0;
+  box.querySelectorAll("a.fb-send").forEach(a => {
+    a.href = a.dataset.to === "gh" ? gh : x;
+    a.setAttribute("aria-disabled", String(!ok));
+    a.tabIndex = ok ? 0 : -1;
+  });
+  box.querySelector(".fb-cut").hidden = !(text.length > room);
+  box.querySelector("#fbcount").textContent = text.length ? `${text.length} characters` : "";
+}
+ACTIONS.feedback = () => {
+  dialog(`<div class="fb-dlg" id="fbdlg"><h2><span>Send feedback</span><button class="ib" data-act="closelayer" aria-label="Close">${ic("close")}</button></h2>
+    <p class="fb-intro">Found a bug, a wrong date, or have an idea? Tell Tyler, who makes Satoshi Mail.</p>
+    <fieldset class="fb-kinds"><legend>What's it about?</legend>${FB_KINDS.map(([v, l], i) => `<label><input type="radio" name="fbkind" value="${v}"${i === 0 ? " checked" : ""}> ${l}</label>`).join("")}</fieldset>
+    <label class="fb-l" for="fbtext">Your feedback</label>
+    <textarea id="fbtext" rows="5" maxlength="4000" placeholder="What happened, or what would you like to see?"></textarea>
+    <div class="fb-meta"><label><input type="checkbox" id="fbpage" checked> Include the page I'm on</label><span id="fbcount"></span></div>
+    <p class="fb-note">Choose where to send it. You'll review it there before it's posted, signed in to your own account.</p>
+    <div class="fb-to">
+      <a class="pillbtn primary fb-send" data-to="gh" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">${ic("bug_report")}Open a GitHub issue</a>
+      <a class="pillbtn fb-send" data-to="x" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">${ic("alternate_email")}Post to @${FB_X} on X</a>
+    </div>
+    <p class="fb-cut" hidden>X posts are limited to 280 characters, so a long message is shortened there; GitHub keeps all of it.</p>
+  </div>`);
+  const box = $("#fbdlg");
+  box.addEventListener("input", fbLinks);
+  box.addEventListener("change", fbLinks);
+  box.addEventListener("click", e => { const a = e.target.closest("a.fb-send"); if (a && a.getAttribute("aria-disabled") === "true") { e.preventDefault(); box.querySelector("#fbtext").focus(); } });
+  fbLinks();
+  box.querySelector("#fbtext").focus();
+};
 
 /* ═════════════ boot ═════════════ */
 routeAll(true);

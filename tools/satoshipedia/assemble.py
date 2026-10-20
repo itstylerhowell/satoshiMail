@@ -29,7 +29,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -37,7 +37,7 @@ src = patch(src, '<div id="layer"></div>', '<div id="layer"></div>\n' + (tools /
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -104,6 +104,10 @@ src = patch(src, '${empty}</div>`;\n  markCursor();\n}', '${empty}</div>`;\n  ma
 src = patch(src, '<h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a>', '<h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a>')
 src = patch(src, '  if (h === "about") return { view: "about" };', '  if (h === "about") return { view: "about" };\n  if (h === "sources") return { view: "sources" };')
 src = patch(src, 'about: renderAbout }[ROUTE.view]', 'about: renderAbout, sources: renderSources }[ROUTE.view]')
+
+# Send feedback: Settings → Help, the About page (tools/feedback.js)
+src = patch(src, '<button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>`);', '<button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>\n      <h4>Help</h4><button class="mi" data-act="feedback">${ic("feedback")} Send feedback</button><button class="mi" data-act="help">${ic("keyboard")} Keyboard shortcuts</button>`);')
+src = patch(src, '<p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button></p>', '<p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>')
 
 # no density setting: everyone gets the standard 48px rows (a saved choice from before is ignored)
 src = patch(src, '    popover(el, `<h4>Density</h4>${r("density", "default", "Default")}${r("density", "comfortable", "Comfortable")}${r("density", "compact", "Compact")}\n      <h4>Theme</h4>', '    popover(el, `<h4>Theme</h4>')

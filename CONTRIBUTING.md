@@ -2,6 +2,9 @@
 
 Thanks for helping. Satoshi Mail is in beta, so issues and pull requests are welcome.
 
+Feedback from inside the app (Settings → Help → Send feedback) arrives here as issues, or as posts to
+[@TylerHowell88](https://x.com/TylerHowell88) on X.
+
 ## Ground rules
 
 * **Sources.** Satoshipedia cites only the Satoshi Nakamoto Institute, GitHub
