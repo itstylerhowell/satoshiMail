@@ -675,6 +675,8 @@ window.SM_DIFFS = "%s";
         shutil.copy(assets / "site.css", self.out / "assets" / "site.css")
         for f in ("favicon.svg", "og.png"):
             shutil.copy(assets / f, self.out / f)
+        for f in assets.glob("google*.html"):   # Google Search Console verification files, served as-is
+            shutil.copy(f, self.out / f.name)
         (self.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {self.base}sitemap.xml\n", encoding="utf-8")
         urls = "".join(f"  <url><loc>{esc(self.base + p)}</loc><lastmod>{lm}</lastmod><priority>{pr:.1f}</priority></url>\n" for p, lm, pr in self.urls)
         (self.out / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n', encoding="utf-8")
