@@ -215,6 +215,8 @@ const $ = s => d.querySelector(s);
     check("adam back times", ab.m.map(m => m.d).join() === "1219253439,1219323359,1219341589,1219342637,1231613205" && ab.m.every(m => !m.dp && /AB1/.test(m.od)));
     const wd = D.threads.find(t => t.s === "wei-dai");
     check("wei dai dates", wd.m[0].d === 1219423080 && wd.m[2].d === 1231586220 && wd.m[2].dp === "local");
+    await go("#updates"); check("update log", d.querySelectorAll("#main .upd").length >= 10 && /Update log/.test(d.querySelector("#main").textContent));
+    check("update log in settings", /href="#updates"/.test(html));
     await go("#label-nicholas-bohm"); check("bohm label", d.querySelectorAll("#main .row").length === 16);
     await go("#wiki-nicholas-bohm");
     const fee = [...main.querySelectorAll("a.ml")].find(a => a.dataset.date === "2009-05-24");

@@ -41,6 +41,7 @@ tools/
                             Satoshipedia / Satoshi Map / SEO code merged into the template
     template_v6.html          the base mail app that assemble.py builds on
     assemble.py               base app + every css/js file here → mail_template.html and satoshi-mail.html
+    updates.json              the Update log (#updates, /updates/ and /updates/feed.xml): add an entry with every update
 tests/                      headless tests for satoshi-mail.html (jsdom)
 ```
 

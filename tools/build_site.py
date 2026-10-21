@@ -251,7 +251,7 @@ class Site:
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail (SatoshiMail) is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
   <p>Inspired by <a href="https://x.com/lukeigel" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" rel="noopener">Jmail</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a> · <a href="{up}updates/">Update log</a></p>
 </div></footer>
 </body>
 </html>
@@ -566,6 +566,35 @@ class Site:
                    app_href="#wiki", og_type="website"), priority=0.9)
 
     # ── about, 404, app ──
+    def build_updates(self):
+        """The update log (tools/satoshipedia/updates.json) as a page and an RSS feed."""
+        ups = json.loads((HERE / "satoshipedia" / "updates.json").read_text(encoding="utf-8"))["updates"]
+        repo = "https://github.com/itstylerhowell/satoshiMail/commit/"
+        def day(d): return long_day(int(dt.datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=dt.timezone.utc).timestamp()))
+        items = "".join(f"""<li class="upd"><p class="muted"><time datetime="{esc(u['date'])}">{day(u['date'])}</time></p><h2>{esc(u['title'])}</h2>
+<ul>{"".join(f"<li>{esc(x)}</li>" for x in u["items"])}</ul>{f'<p class="muted">Changes: {", ".join(f"""<a href="{repo}{esc(c)}" rel="noopener">{esc(c)}</a>""" for c in u["commits"])}</p>' if u.get("commits") else ""}</li>""" for u in ups)
+        body = f"""<h1>Update log</h1>
+<p class="lead">Every update to Satoshi Mail, newest first. Follow along with the <a href="feed.xml">RSS feed</a>.</p>
+<p class="actions"><a class="btn" href="../#updates">Open in Satoshi Mail</a></p>
+<ol class="list upd-list">{items}</ol>"""
+        latest = ups[0]["date"] if ups else BUILD_DATE
+        ld = {"@context": "https://schema.org", "@type": "CollectionPage", "name": "Satoshi Mail update log", "url": self.base + "updates/",
+              "dateModified": latest, "isPartOf": {"@type": "WebSite", "name": SITE_NAME, "url": self.base}}
+        page = self.page("updates/", "Update log – Satoshi Mail", clip(f"Every update to Satoshi Mail, newest first. Latest, {day(latest)}: {ups[0]['title']}." if ups else "Every update to Satoshi Mail."),
+                         body, [("Update log", "updates/")], [ld], app_href="#updates", og_type="website")
+        page = page.replace("</head>", f'<link rel="alternate" type="application/rss+xml" title="Satoshi Mail updates" href="{self.base}updates/feed.xml">\n</head>', 1)
+        self.write("updates/", page, priority=0.5, lastmod=latest)
+        def rfc822(d): return dt.datetime.strptime(d, "%Y-%m-%d").replace(hour=12, tzinfo=dt.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+        rss_items = "".join(f"""  <item><title>{esc(u['title'])}</title><link>{self.base}updates/</link><guid isPermaLink="false">satoshimail-update-{esc(u['date'])}-{k}</guid><pubDate>{rfc822(u['date'])}</pubDate><description>{esc("<ul>" + "".join(f"<li>{esc(x)}</li>" for x in u["items"]) + "</ul>")}</description></item>
+""" for k, u in enumerate(reversed(ups)))
+        rss_items = "".join(reversed(rss_items.splitlines(True)))
+        (self.out / "updates" / "feed.xml").write_text(f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+  <title>Satoshi Mail updates</title><link>{self.base}updates/</link><description>Every update to Satoshi Mail, the archive of Satoshi Nakamoto's emails, posts and commits.</description><language>en</language>
+  <atom:link href="{self.base}updates/feed.xml" rel="self" type="application/rss+xml"/>
+{rss_items}</channel></rss>
+""", encoding="utf-8")
+
     def build_about(self):
         body = f"""<h1>About Satoshi Mail</h1>
 <p class="lead">{esc(TAGLINE)}</p>
@@ -642,6 +671,7 @@ class Site:
 <p>The interactive reader needs JavaScript. You can still read everything here:</p>
 <ul><li><a href="conversations/">All {len(self.threads)} conversations</a></li><li><a href="commits/">All {len(self.commits)} commits</a></li><li><a href="satoshipedia/">Satoshipedia, the encyclopedia</a></li><li><a href="about/">About Satoshi Mail</a></li></ul></div></noscript>"""
         loader = """<script>
+window.SM_SITE = true;
 window.SM_DIFFS = "%s";
 (function () {
   var q = new URLSearchParams(location.search).get("q");
@@ -755,6 +785,7 @@ def main(argv=None) -> int:
     s.build_conversations()
     s.build_commits()
     s.build_about()
+    s.build_updates()
     s.build_static_assets()
     if not a.no_analytics:
         add_analytics(out)

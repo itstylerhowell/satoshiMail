@@ -1,0 +1,122 @@
+{
+  "_about": "Satoshi Mail's update log, newest first. Add an entry for every update that goes live. date is the day in US Central time; items are short, plain-language sentences; commits lists the Git commits it covers.",
+  "updates": [
+    {
+      "date": "2026-10-21",
+      "title": "Update log",
+      "items": [
+        "This page: a log of every update to Satoshi Mail, newest first, with an RSS feed to follow along."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Easier to find, easier to read",
+      "items": [
+        "Every page now has its own title and description in search results, and Google can match “SatoshiMail” as one word.",
+        "Clearer contrast for grey text, labels and badges, bigger touch targets for checkboxes, and tidier headings for screen readers.",
+        "The site is registered with Google Search Console and its sitemap submitted."
+      ],
+      "commits": ["c8fff6d", "d82d386", "4ea5e89", "d7de37d"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Faster loading",
+      "items": [
+        "The first visit downloads less than half as much: commit diffs load only when you open a commit or search, and only the icons in use are downloaded.",
+        "Repeat visits load almost instantly, because the app's files are now cached for a year and renamed whenever they change."
+      ],
+      "commits": ["01f42ee"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Satoshi by name",
+      "items": [
+        "The message list says “Satoshi” where it used to say “me”, as in “Satoshi, Hal 3”. Searching from:me still works."
+      ],
+      "commits": ["71867ae"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "New home at satoshimail.vercel.app",
+      "items": [
+        "Satoshi Mail now lives at satoshimail.vercel.app, and everything needed to rebuild it is on GitHub.",
+        "Visits are counted with Vercel Web Analytics, which uses no cookies and doesn't record what you search for.",
+        "The “page not found” page keeps its styling at any address."
+      ],
+      "commits": ["5e2ba6a", "42b9158", "9beadaf", "5649fc9"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Exact dates from the correspondents' own copies",
+      "items": [
+        "Satoshi's five emails with Adam Back now have their exact send times, from Back's copies filed in COPA v Wright.",
+        "Satoshi's second email to Wei Dai is correctly dated 10 January 2009, from Dai's own copies.",
+        "Satoshipedia's Adam Back and Wei Dai articles cite both, including Dai's 2023 answers to COPA's lawyers.",
+        "A credit to Luke Igel and Riley Walz's Jmail, which inspired Satoshi Mail, in the sidebar, About and the beta notice."
+      ],
+      "commits": ["62edda7", "f76e28b", "0d94a6f"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "A 2010–2013 Gmail look",
+      "items": [
+        "Arial, square corners, grey buttons, the red COMPOSE button and yellow highlights, as Gmail looked when Satoshi was writing."
+      ],
+      "commits": ["a878e56"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "New material from public records",
+      "items": [
+        "Satoshi's 2009 emails with Nicholas Bohm: 16 conversations and 64 emails, 25 of them by Satoshi, from Bohm's evidence in COPA v Wright.",
+        "Three test topics from the Bitcoin forum's staff area, written before it opened in November 2009: 30 posts, 20 by Satoshi.",
+        "The exact time of Satoshi's last email to Gavin Andresen, with Gavin's reply.",
+        "New Satoshipedia articles: Nicholas Bohm, COPA v Wright, Kleiman v. Wright and the forum staff board."
+      ],
+      "commits": ["c4d508e"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Send feedback, and a simpler app",
+      "items": [
+        "Send feedback from Settings or Satoshipedia: it drafts a post to @TylerHowell88 on X.",
+        "A Sources page under Settings → Archive lists where everything comes from, instead of source chips on every conversation.",
+        "The density setting, the apps grid and the People and More apps were removed."
+      ],
+      "commits": ["33d9f0c", "cb84e6b", "b4d3af9", "b6a6a41", "069a119", "aa6f327"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "AI Overview in search",
+      "items": [
+        "Searches like “Hal Finney” or “did Satoshi have any photos” get a short AI-written overview, answered only from this archive and Satoshipedia, with links to the sources."
+      ],
+      "commits": ["0c069e0"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "A new look, inspired by Jmail",
+      "items": [
+        "Jmail's colours, rows and app dock, with an overview banner at the top of search results."
+      ],
+      "commits": ["0d506b8", "9f36ea2"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Cross-checked against satoshin.name",
+      "items": [
+        "Every one of satoshin.name's 567 posts and emails was matched to the archive, and Satoshi Mail has six BitcoinTalk posts it lacks."
+      ],
+      "commits": ["57d7744"]
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Open source launch",
+      "items": [
+        "Satoshi Mail, Satoshipedia and Satoshi Map, open source under the MIT license: every email, forum post and commit by Satoshi Nakamoto, 2008–2011."
+      ],
+      "commits": ["ea26fbd"]
+    }
+  ]
+}

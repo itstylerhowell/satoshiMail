@@ -36,15 +36,16 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + (tools / "updates.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 src = patch(src, '<div id="layer"></div>', '<div id="layer"></div>\n' + (tools / "wiki.html").read_text() + (tools / "map.html").read_text())
-src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="data" type="application/json">')
+ujson = json.dumps(json.load(open(tools / "updates.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="updates-data" type="application/json">{ujson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -222,6 +223,13 @@ src = src.replace(".rail h3", ".rail :is(h2, h3)")
 # - label chips: text mixed 25% toward the page's ink colour (darker in light mode, lighter in dark) for 4.5:1
 src = patch(src, '<a class="lchip" href="#label-${slug}" style="color:${L.color};background:color-mix(in srgb, ${L.color} 15%, transparent)">',
             '<a class="lchip" href="#label-${slug}" style="color:color-mix(in srgb, ${L.color} 75%, var(--ink));background:color-mix(in srgb, ${L.color} 15%, transparent)">')
+
+# Update log (#updates): Settings → Archive, the sidebar under the credits, and About
+src = patch(src, '<a class="mi" href="#sources">${ic("source")} Sources</a>', '<a class="mi" href="#sources">${ic("source")} Sources</a><a class="mi" href="#updates">${ic("history")} Update log</a>')
+src = patch(src, '  if (h === "sources") return { view: "sources" };', '  if (h === "sources") return { view: "sources" };\n  if (h === "updates") return { view: "updates" };')
+src = patch(src, 'sources: renderSources }[ROUTE.view]', 'sources: renderSources, updates: renderUpdates }[ROUTE.view]')
+src = patch(src, '<p class="made-by inspired">' + INSPIRED + '.</p>`;', '<p class="made-by inspired">' + INSPIRED + '.</p><p class="made-by upd-link"><a href="#updates">Update log</a> · last updated ${esc(UPDATES.length ? updDate(UPDATES[0].date) : "")}</p>`;')
+src = patch(src, '<p class="lead made-by-lead">' + INSPIRED + '.</p>', '<p class="lead made-by-lead">' + INSPIRED + '.</p>\n    <p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>')
 
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).

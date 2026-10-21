@@ -307,6 +307,7 @@ function parseHash() {
   if (h === "activity") return { view: "activity" };
   if (h === "about") return { view: "about" };
   if (h === "sources") return { view: "sources" };
+  if (h === "updates") return { view: "updates" };
   return { view: "list", folder: "inbox", tab: "primary", page: 1 };
 }
 function go(hash) { if (location.hash === hash) render(); else location.hash = hash; }
@@ -342,7 +343,7 @@ function renderRail() {
     <h2>Topics</h2><ul>${topics}<li><button class="nav" data-act="more-topics">${ic(showAllTopics ? "expand_less" : "expand_more")}<span class="t">${showAllTopics ? "Less" : `More (${CATS.length - 6})`}</span></button></li></ul>
     <h2>Labels</h2><ul>${labels}</ul>
     ${privLabels ? `<h2>Private email</h2><ul>${privLabels}</ul>` : ""}
-    <h2>People</h2><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p><p class="made-by inspired">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>`;
+    <h2>People</h2><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p><p class="made-by inspired">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p><p class="made-by upd-link"><a href="#updates">Update log</a> · last updated ${esc(UPDATES.length ? updDate(UPDATES[0].date) : "")}</p>`;
 }
 
 /* ═════════════ lists ═════════════ */
@@ -772,6 +773,7 @@ function renderAbout() {
   $("#main").innerHTML = `<div class="scroll"><div class="page"><h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>
     <p class="lead made-by-lead">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>
     <p class="lead made-by-lead">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>
+    <p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>
     <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
     <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi. Conversations where someone else had the last word start out unread.</p>
@@ -927,7 +929,7 @@ function render(fromHash) {
     if (isCommitId(ROUTE.id)) renderCommit(); else renderThread();
   } else {
     HIT = null;
-    ({ sent: renderSent, commits: renderCommitList, drafts: renderDrafts, people: renderPeople, activity: renderActivity, about: renderAbout, sources: renderSources }[ROUTE.view] || renderList)();
+    ({ sent: renderSent, commits: renderCommitList, drafts: renderDrafts, people: renderPeople, activity: renderActivity, about: renderAbout, sources: renderSources, updates: renderUpdates }[ROUTE.view] || renderList)();
   }
   if (keepTop != null) { const s2 = $("#scroller"); if (s2) s2.scrollTop = keepTop; }
   const sc2 = $("#main .scroll"), card = $("#main");
@@ -1022,7 +1024,7 @@ const ACTIONS = {
   settings(el) {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
     popover(el, `<h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
-      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>
+      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><a class="mi" href="#updates">${ic("history")} Update log</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>
       <h4>Help</h4><button class="mi" data-act="feedback">${ic("feedback")} Send feedback</button><button class="mi" data-act="help">${ic("keyboard")} Keyboard shortcuts</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
@@ -2793,6 +2795,27 @@ ACTIONS.feedback = () => {
   fbLinks();
   box.querySelector("#fbtext").focus();
 };
+/* ═════════════ Update log (#updates) ═════════════
+   Every update to Satoshi Mail, newest first, from tools/satoshipedia/updates.json. */
+const UPDATES = (() => { try { return JSON.parse($("#updates-data").textContent).updates || []; } catch (e) { return []; } })();
+const UPD_REPO = "https://github.com/itstylerhowell/satoshiMail/commit/";
+function updDate(ymd) {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long", day: "numeric" });
+}
+function renderUpdates() {
+  CURRENT_LIST = [];
+  const feed = window.SM_SITE ? ` · <a href="updates/feed.xml">${ic("rss_feed")} RSS feed</a>` : "";
+  $("#main").innerHTML = `<div class="scroll"><div class="page upd-page"><h2>Update log</h2>
+    <p class="lead">Every update to Satoshi Mail, newest first.${feed} · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
+    <ol class="upd-list">${UPDATES.map(u => `<li class="upd">
+      <div class="upd-h"><time datetime="${esc(u.date)}">${esc(updDate(u.date))}</time><h3>${esc(u.title)}</h3></div>
+      <ul>${u.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      ${u.commits && u.commits.length ? `<p class="upd-c">Changes: ${u.commits.map(c => `<a href="${UPD_REPO}${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join(", ")}</p>` : ""}
+    </li>`).join("")}</ol>
+    <p class="lead muted">See also <a href="#about">About this archive</a> and <a href="#sources">Sources</a>.</p>
+  </div></div>`;
+}
 
 /* ═════════════ boot ═════════════ */
 routeAll(true);
