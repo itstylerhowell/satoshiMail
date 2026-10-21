@@ -1,13 +1,20 @@
 """Build Satoshi Mail + Satoshipedia from the v6 template.
 
-usage: python3 -I assemble.py SCRATCH
-writes SCRATCH/out/mail_template.html (keeps /*__DATA__*/) and SCRATCH/out/satoshi-mail.html
+usage: python3 -I tools/satoshipedia/assemble.py [ROOT]      (ROOT defaults to the repository)
+In the repository: reads tools/satoshipedia/ and site/data/archive.json, and writes
+tools/mail_template.html (keeps /*__DATA__*/) and satoshi-mail.html.
+In a working folder with tools/, wiki/ and out/: writes out/mail_template.html and out/satoshi-mail.html.
 """
 import json, sys, pathlib
 
-root = pathlib.Path(sys.argv[1])
-tools, wk, out = root / "tools", root / "wiki", root / "out"
-out.mkdir(exist_ok=True)
+root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[2]).resolve()
+if (root / "tools" / "satoshipedia" / "assemble.py").exists():  # the repository layout
+    tools = wk = root / "tools" / "satoshipedia"
+    DATA, TEMPLATE_OUT, PAGE_OUT = root / "site" / "data" / "archive.json", root / "tools" / "mail_template.html", root / "satoshi-mail.html"
+else:
+    tools, wk, out = root / "tools", root / "wiki", root / "out"
+    out.mkdir(exist_ok=True)
+    DATA, TEMPLATE_OUT, PAGE_OUT = wk / "data.json", out / "mail_template.html", out / "satoshi-mail.html"
 src = (wk / "template_v6.html").read_text()
 
 # 1. strip the publish skeleton
@@ -158,9 +165,9 @@ src = patch(src, '<span class="ms fill" style="color:${L.color}" aria-hidden="tr
 # a page heading for list views (conversations, Satoshipedia and Satoshi Map have their own h1)
 src = patch(src, '<div class="app" id="app">', '<div class="app" id="app">\n  <h1 class="sr-only" id="apph1">Satoshi Mail</h1>')
 
-(out / "mail_template.html").write_text(src)
-data = json.load(open(wk / "data.json"))
+TEMPLATE_OUT.write_text(src)
+data = json.load(open(DATA))
 djson = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 assert src.count("/*__DATA__*/") == 1
-(out / "satoshi-mail.html").write_text(src.replace("/*__DATA__*/", djson))
-print("ok", len(src), "template bytes;", (out / "satoshi-mail.html").stat().st_size, "page bytes")
+PAGE_OUT.write_text(src.replace("/*__DATA__*/", djson))
+print("ok", len(src), "template bytes;", PAGE_OUT.stat().st_size, "page bytes")

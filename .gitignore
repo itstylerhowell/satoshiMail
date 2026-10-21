@@ -2,6 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 satoshi-mail.html
-data/
+/data/
 node_modules/
 tools/satoshipedia/data.json

@@ -37,6 +37,9 @@ tools/
   site-assets/              styles, favicon and share image for the static pages
   satoshipedia/             encyclopedia sources (articles.py), its builder, and the
                             Satoshipedia / Satoshi Map / SEO code merged into the template
+    template_v6.html          the base mail app that assemble.py builds on
+    assemble.py               base app + every css/js file here → mail_template.html and satoshi-mail.html
+tests/                      headless tests for satoshi-mail.html (jsdom)
 ```
 
 ## Build
@@ -44,8 +47,22 @@ tools/
 Requires Python 3.10+ (no third-party packages for these tools).
 
 ```bash
-python tools/render_page.py                    # site/data/archive.json → satoshi-mail.html
+python tools/satoshipedia/build_wiki.py tools/satoshipedia   # articles.py → wiki.json (checks every link)
+python tools/satoshipedia/assemble.py                         # template_v6.html + css/js + site/data/archive.json
+                                                              #   → tools/mail_template.html and satoshi-mail.html
 python tools/build_site.py satoshi-mail.html site --base-url https://satoshimail.pages.dev/
+```
+
+`satoshi-mail.html` is the whole app in one file. `python tools/render_page.py` rebuilds it from
+`tools/mail_template.html` alone, when only the data has changed.
+
+To add the extra sources (Nicholas Bohm's emails, the forum's staff topics, corrected dates) to a fresh
+archive, see `tools/extra_sources.py`.
+
+### Tests
+
+```bash
+cd tests && npm install && node test.js ../satoshi-mail.html && node ask_test.js ../satoshi-mail.html
 ```
 
 ## Deploy on Cloudflare Pages

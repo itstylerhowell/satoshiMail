@@ -1,0 +1,6 @@
+{
+  "name": "satoshi-mail-tests",
+  "private": true,
+  "description": "Headless tests for satoshi-mail.html (run: node test.js ../satoshi-mail.html)",
+  "dependencies": { "jsdom": "^24.1.0" }
+}

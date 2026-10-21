@@ -10,7 +10,10 @@ HERE = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
 sys.path.insert(0, str(HERE))
 from articles import ARTICLES, COMMON_REFS, DID_YOU_KNOW  # noqa: E402
 
-DATA = json.loads((HERE / "data.json").read_text())
+_data = HERE / "data.json"
+if not _data.exists():  # in the repository the archive is site/data/archive.json
+    _data = HERE.parents[1] / "site" / "data" / "archive.json"
+DATA = json.loads(_data.read_text())
 THREADS = DATA["threads"]
 COMMITS = DATA["commits"]
 SLUGS = {a["slug"]: a for a in ARTICLES}
