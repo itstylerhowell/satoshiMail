@@ -15,13 +15,18 @@ WA.forEach(a => {
 // sender name (lower case) → article slug, for linking people in the archive to their articles
 const ALIAS = new Map();
 WA.forEach(a => { if (a.slug !== "satoshi-nakamoto") a.aliases.forEach(x => ALIAS.set(x.toLowerCase(), a.slug)); });
+// a {{mail:…}} link's conversation; when several share a title, its date= picks the one with that day
+function findLinkedThread(src, title, date) {
+  const ts = THREADS.filter(t => t.s === src && t.t === title);
+  return (date && ts.find(t => t.m.some(m => new Date(m.d * 1000).toISOString().slice(0, 10) === date))) || ts[0];
+}
 // thread → articles that cite it
 const CITED = new Map();
 WA.forEach(a => {
-  const re = /data-src="([^"]*)" data-title="([^"]*)"/g; let m;
+  const re = /data-src="([^"]*)" data-title="([^"]*)"(?: data-from="[^"]*")?(?: data-date="([^"]*)")?/g; let m;
   const all = a.lead + a.sections.map(s => s.html).join("");
   while ((m = re.exec(all))) {
-    const t = THREADS.find(t => t.s === htmlText(m[1]) && t.t === htmlText(m[2]));
+    const t = findLinkedThread(htmlText(m[1]), htmlText(m[2]), m[3]);
     if (t) { if (!CITED.has(t.id)) CITED.set(t.id, new Set()); CITED.get(t.id).add(a.slug); }
   }
 });
@@ -149,7 +154,7 @@ const LIVE = {
 /* ── link resolution inside rendered articles ── */
 function resolveLinks(root) {
   root.querySelectorAll("a.ml[data-src]").forEach(el => {
-    const t = THREADS.find(t => t.s === el.dataset.src && t.t === el.dataset.title);
+    const t = findLinkedThread(el.dataset.src, el.dataset.title, el.dataset.date);
     if (!t) { el.href = "#search-" + encodeURIComponent(el.dataset.title); return; }
     let i = -1;
     if (el.dataset.from || el.dataset.date) {

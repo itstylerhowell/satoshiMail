@@ -8,7 +8,8 @@ Feedback from inside the app (Settings → Help → Send feedback) goes to
 ## Ground rules
 
 * **Sources.** Satoshipedia cites only the Satoshi Nakamoto Institute, GitHub
-  (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive and satoshin.name.
+  (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive, satoshin.name and primary sources (court
+  records, the forum itself, correspondents' own published copies).
   `tools/satoshipedia/build_wiki.py` refuses to build if an article links anywhere else.
   Every claim needs a citation or a link to the message it comes from.
 * **Neutral on identity.** Articles report who has been named as Satoshi, by whom, and

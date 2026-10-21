@@ -161,12 +161,12 @@ dict(
 '''Gavin Andresen''' is a software developer who discovered Bitcoin in 2010, created the Bitcoin Faucet website that gave bitcoin away, and became lead developer after Satoshi left.[^wp-andresen] His first forum posts in this archive date from June 2010 ({{search:from:"gavin andresen"|his messages}}).
 
 == Handover ==
-Satoshi gave Andresen control of the source code repository and the network alert key.[^wp] On 26 April 2011 he sent him the alert key and broadcast code “in case you need it”, with a request: “I wish you wouldn't keep talking about me as a mysterious shadowy figure, the press just turns that into a pirate currency angle.” Andresen published the exchange on his website eleven years later ({{mail:single-emails|Email to Gavin Andresen|the email}}).[^na] It is the latest email from Satoshi in this archive.
+Satoshi gave Andresen control of the source code repository and the network alert key.[^wp] On 26 April 2011 he sent him the alert key and broadcast code “in case you need it”, with a request: “I wish you wouldn't keep talking about me as a mysterious shadowy figure, the press just turns that into a pirate currency angle.” Andresen published the exchange on his website eleven years later ({{mail:single-emails|Email to Gavin Andresen|the email}}).[^na] His reply quotes Satoshi's email as sent at 4:29 AM US Eastern time (08:29 UTC), and answers about the key: “now I’ve gotta figure out a couple of people who I can trust to keep them safe”.[^gavin-blog] It is the latest email from Satoshi in this archive.
 
 == Later ==
 In 2014 Andresen stepped back as lead maintainer. His commit access was later revoked after he stated that [[craig-wright|Craig Wright]] was Satoshi; he later said it had been a mistake to trust Wright.[^wp-andresen]
 """,
- refs={}, see=["departure-of-satoshi-nakamoto", "satoshis-accounts", "bitcoin-core"],
+ refs={"gavin-blog": "[https://riski.wiki/wiki/User:Gavinandresen/Blog/2022-04-26_Eleven_years_ago_today%E2%80%A6 Eleven years ago today…], Gavin Andresen's blog, 26 April 2022.", }, see=["departure-of-satoshi-nakamoto", "satoshis-accounts", "bitcoin-core"],
 ),
 dict(
  slug="adam-back", title="Adam Back", kind="person", img="avatar",
@@ -362,7 +362,7 @@ dict(
 In December 2015 ''Wired'' and ''Gizmodo'' suggested that Wright might be Satoshi.[^wp] On 2 May 2016 a post on his website associated him with Satoshi.[^wp-wright] [[gavin-andresen|Gavin Andresen]] and [[jon-matonis|Jon Matonis]] backed the claim; [[jeff-garzik|Jeff Garzik]] and [[peter-todd|Peter Todd]] disputed it.[^wp] In April 2019 he registered US copyrights in the white paper and the v0.1 code, and he sued people who accused him of lying about inventing Bitcoin.[^wp-wright]
 
 == COPA v Wright ==
-The Crypto Open Patent Alliance (COPA) sued Wright in London's High Court. After a five-week trial, Mr Justice Mellor ruled in March 2024 that Wright is not Satoshi Nakamoto. The written judgment, released on 20 May 2024, found that the documents he relied on were forgeries and that he had “lied to the court extensively and repeatedly”.[^wp-wright] In December 2024 he received a suspended prison sentence for contempt of court, for violating a court order related to his claims.[^wp]
+The Crypto Open Patent Alliance (COPA) sued Wright in London's High Court. After a five-week trial, Mr Justice Mellor ruled in March 2024 that Wright is not Satoshi Nakamoto. The written judgment, released on 20 May 2024, found that the documents he relied on were forgeries and that he had “lied to the court extensively and repeatedly”.[^wp-wright] See [[copa-v-wright|COPA v Wright]] for the case and the judgment, and [[kleiman-v-wright|Kleiman v. Wright]] for the earlier US case. In December 2024 he received a suspended prison sentence for contempt of court, for violating a court order related to his claims.[^wp]
 """,
  refs={}, see=["identity-of-satoshi-nakamoto", "media-investigations"],
 ),
@@ -881,9 +881,94 @@ For the Cryptography Mailing List, the archive's dates are when mail-archive.com
        "sn-about": "[https://satoshin.name/about/ About the Archive], satoshin.name. Retrieved 20 October 2026."},
  see=["satoshi-nakamoto-institute", "blocktrainer-archive", "nakamoto-archive"],
 ),
+dict(
+ slug="nicholas-bohm", title="Nicholas Bohm", kind="person", img="icon:gavel",
+ caption="Early Bitcoin user and correspondent of Satoshi, 2009",
+ cats=["People", "Correspondents"],
+ short="Retired English solicitor who debugged Bitcoin v0.1 with Satoshi by email in 2009.",
+ featured=False, aliases=["Nicholas Bohm", "Bohm"], label="nicholas-bohm",
+ info=[("Profession", "Solicitor (retired 1994)"), ("Emails with Satoshi", "January–July 2009"), ("Evidence", "COPA v Wright, 2023")],
+ body="""
+'''Nicholas Bohm''' is a retired English solicitor who was one of Bitcoin's first users and corresponded with Satoshi Nakamoto in 2009. He qualified in 1968, became a partner at the law firm Norton Rose in 1975 and retired from it in 1994. His interest in cryptography dates from the late 1970s.[^bohm-ws]
+
+== With Satoshi ==
+Bohm read the [[cryptography-mailing-list|Cryptography Mailing List]], where the white paper was announced, and downloaded the paper on 18 January 2009.[^bohm-ws] On 25 January he asked [[bitcoin-list|bitcoin-list]] whether it was the place to report problems ({{mail:bitcoin-list|[bitcoin-list] Problems|his post}}). Satoshi replied the same day, to him and the list, asking him to send his debug log directly rather than to the list ({{mail:bitcoin-list|[bitcoin-list] Problems|the reply|from=Satoshi}}), and they continued in private ({{mail:nicholas-bohm|[bitcoin-list] Problems|the emails}}).
+
+Over the following week they chased crashes in [[bitcoin-v0-1|Bitcoin v0.1]]. When email attachments failed to arrive, Satoshi sent test builds from both his addresses and through a file-hosting site, and on 31 January he wrote: “Good news! I pinpointed the bug. The bug could occur if a DNS lookup failed.” ({{mail:nicholas-bohm|Bugfix|the email}}).
+
+On 1 February Satoshi told him, “I sent a transfer to your Bitcoin address in case you're curious what that looks like” ({{mail:nicholas-bohm|Another crash|the email|from=Satoshi|date=2009-02-01}}); Bohm's witness statement describes it as an unprompted transfer of 100 bitcoins.[^bohm-ws] Two days later Bohm sent bitcoins to an address Satoshi gave him, Satoshi promised to send “+0.01” back as a confirmation, and Bohm wrote that “the bc19.01 came back pretty swiftly!” ({{mail:nicholas-bohm|Bitcoin|the email|date=2009-02-03}}).
+
+Their emails run until July 2009. Satoshi explained what the “blocks” count in the status bar meant ({{mail:nicholas-bohm|Bitcoin UI question|the email|from=Satoshi}}), that an occasional generated block marked “not accepted” was normal ({{mail:nicholas-bohm|Generated (not accepted)|the email|from=Satoshi}}), and, when Bohm found a generated block worth 50.10, that the extra 0.10 was a transaction fee someone had included ({{mail:nicholas-bohm|Bitcoin|the email|date=2009-05-24}}).
+
+== Evidence in COPA v Wright ==
+In July 2023 Bohm made a witness statement for the Crypto Open Patent Alliance in [[copa-v-wright|COPA v Wright]], exhibiting his complete correspondence with Satoshi as exported from his email program.[^bohm-ws] That export was later republished on GitHub, which is the copy in Satoshi Mail; Bohm's postal address, telephone numbers and IP address are left out here.[^nb1]
+""",
+ refs={"bohm-ws": "[https://bitcoindefense.org/assets/documents/Witness-Statement-of-Nicholas-Bohm.pdf Witness statement of Nicholas Bohm], COPA v Wright, claim IL-2021-000019, July 2023.",
+       "nb1": "[https://github.com/NicholasBohm/emails Emails with Satoshi Nakamoto] (exhibit NB1, republished on GitHub). Retrieved 21 October 2026."},
+ see=["copa-v-wright", "bitcoin-v0-1", "hal-finney"],
+),
+dict(
+ slug="copa-v-wright", title="COPA v Wright", kind="topic", img="icon:gavel",
+ caption="High Court of England and Wales, 2024",
+ cats=["Identity", "Events"],
+ short="The 2024 High Court case that declared Craig Wright is not Satoshi Nakamoto.",
+ featured=False, aliases=["COPA v Wright", "Crypto Open Patent Alliance v Wright"], label=None,
+ info=[("Court", "High Court of England and Wales"), ("Judge", "Mr Justice Mellor"), ("Trial", "5 February – 14 March 2024"), ("Judgment", "20 May 2024"), ("Citation", "[2024] EWHC 1198 (Ch)")],
+ body="""
+'''COPA v Wright''' was a case in the High Court of England and Wales in which the Crypto Open Patent Alliance (COPA) asked the court to decide whether [[craig-wright|Craig Wright]] is Satoshi Nakamoto. The judge, Mr Justice Mellor, declared that Wright is not the author of the [[bitcoin-white-paper|Bitcoin white paper]], is not the person who adopted or operated under the pseudonym Satoshi Nakamoto from 2008 to 2011, did not create the Bitcoin system, and is not the author of the initial versions of the Bitcoin software.[^copa]
+
+== The case ==
+COPA's claim (IL-2021-000019) was heard together with a second claim, IL-2022-000069, which the judgment calls the BTC Core Claim, in the Intellectual Property List of the Business and Property Courts. The hearing ran on 22 days between 5 February and 14 March 2024, and the judge announced his four declarations at the close of the closing arguments.[^copa]
+
+The written judgment, [2024] EWHC 1198 (Ch), was handed down on 20 May 2024. In it the judge said he was “entirely satisfied that Dr Wright lied to the Court extensively and repeatedly”, and that on whether Wright was Satoshi “the evidence was overwhelming”.[^copa]
+
+== Satoshi's correspondence as evidence ==
+Witnesses who had corresponded with Satoshi gave evidence. [[nicholas-bohm|Nicholas Bohm]]'s statement exhibited his complete email exchange with Satoshi from 2009, which is now in Satoshi Mail.[^bohm-ws]
+""",
+ refs={"copa": "[https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198 Crypto Open Patent Alliance v Craig Steven Wright [2024] EWHC 1198 (Ch)], judgment of Mellor J, 20 May 2024.",
+       "bohm-ws": "[https://bitcoindefense.org/assets/documents/Witness-Statement-of-Nicholas-Bohm.pdf Witness statement of Nicholas Bohm], COPA v Wright, claim IL-2021-000019, July 2023."},
+ see=["craig-wright", "kleiman-v-wright", "identity-of-satoshi-nakamoto"],
+),
+dict(
+ slug="kleiman-v-wright", title="Kleiman v. Wright", kind="topic", img="icon:gavel",
+ caption="US District Court, Southern District of Florida",
+ cats=["Identity", "Events"],
+ short="US civil case against Craig Wright; a 2021 jury awarded W&K Info Defense Research $100 million.",
+ featured=False, aliases=["Kleiman v Wright", "Kleiman v. Wright"], label=None,
+ info=[("Court", "US District Court, S.D. Florida"), ("Case", "9:18-cv-80176"), ("Verdict", "6 December 2021")],
+ body="""
+'''Kleiman v. Wright''' was a civil case in the United States District Court for the Southern District of Florida, case 9:18-cv-80176, brought against [[craig-wright|Craig Wright]] by Ira Kleiman, as personal representative of the estate of David Kleiman, and by W&K Info Defense Research, LLC.[^govinfo][^ecf915]
+
+On 6 December 2021 the jury awarded W&K $100 million on one count, conversion of intellectual property. It found for Wright on the other claims and rejected all of the estate's claims.[^ecf915]
+
+The case is separate from [[copa-v-wright|COPA v Wright]], the 2024 English case that decided Wright is not Satoshi.
+""",
+ refs={"govinfo": "[https://www.govinfo.gov/app/details/USCOURTS-flsd-9_18-cv-80176 Kleiman v. Wright, 18-80176], US District Court for the Southern District of Florida (GovInfo).",
+       "ecf915": "[https://storage.courtlistener.com/recap/gov.uscourts.flsd.521536/gov.uscourts.flsd.521536.915.0.pdf Dr. Craig Wright's opposition to plaintiffs' motion to compel], ECF No. 915, 20 January 2023 (summarising the verdict)."},
+ see=["craig-wright", "copa-v-wright"],
+),
+dict(
+ slug="forum-staff-board", title="Forum staff board (2009)", kind="topic", img="icon:forum",
+ caption="Test topics from before the forum opened",
+ cats=["Forums and lists"],
+ short="Deleted test topics from the Bitcoin forum's staff area, written before it opened in November 2009.",
+ featured=False, aliases=["Staff board", "SMF Config Notes"], label="forum-staff",
+ info=[("Written", "November 2009 – January 2010"), ("Saved", "July 2012, as PDF files"), ("Topics", "3")],
+ body="""
+The '''forum staff board''' is the name used here for three test topics from the staff area of the Bitcoin forum, written while Satoshi was setting it up in November 2009, before he opened it to the public on 22 November ({{mail:bitcointalk|Welcome to the new Bitcoin forum!|his announcement}}). The topics were later deleted from the forum, and are preserved as PDF files created in July 2012 and published at bitcointalk.org/first_topics.[^ft] Times are as the forum printed them.
+
+In “SMF Config Notes” Satoshi listed his changes to the forum software: a 12×12 coin image in place of SMF's “pip stars”, the registration page's “hide your e-mail address” box ticked by default, and the Announcements board kept to moderators ({{mail:forum-staff|SMF Config Notes|the topic}}). After Martti Malmi (sirius) switched on e-mail confirmation for new accounts in December 2009, Satoshi asked in January 2010 why: he had already customised the registration page so that spambots designed for SMF “won't be able to figure it out”, with a hidden extra parameter in the CAPTCHA address and three CAPTCHA images of which only one shows.
+
+In “Testing the new site platform” he posted a run of replies reading only “blank”, explaining: “I have to get the number of posts up over 20 so the topic will have multiple pages” ({{mail:forum-staff|Testing the new site platform|the topic}}).
+""",
+ refs={"ft": "[https://bitcointalk.org/first_topics/ first_topics], bitcointalk.org: three PDF files dated 12 July 2012. Retrieved 21 October 2026."},
+ see=["bitcointalk", "martti-malmi"],
+),
 ]
 
 DID_YOU_KNOW = [
+ "... that one of Bitcoin v0.1's first crashes, which Satoshi chased by email with [[nicholas-bohm|Nicholas Bohm]], happened when a DNS lookup failed? ({{mail:nicholas-bohm|Bugfix|email}})",
+ "... that Satoshi posted a string of messages reading “blank” to test page breaks on the forum before it opened? ([[forum-staff-board]])",
  "... that Satoshi's first known email, in August 2008, described the white paper under the title ''Electronic Cash Without a Trusted Third Party''? ({{mail:adam-back|Citation of your Hashcash paper|email}})",
  "... that the first public reply to the [[bitcoin-white-paper|white paper]] said it did not seem “to scale to the required size”? ({{mail:cryptography|Bitcoin P2P e-cash paper|thread|from=Donald}})",
  "... that Satoshi told [[martti-malmi|Martti Malmi]] “My writing is not that great, I'm a much better coder”?",

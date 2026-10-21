@@ -43,6 +43,13 @@ src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#
 # inbox banner
 src = patch(src, 'is under <a href="#inbox-private">Private</a>.` : ""}</span></p>',
             'is under <a href="#inbox-private">Private</a>.` : ""} Who\'s who and what happened is in <a href="#wiki">Satoshipedia</a>, in the dock below.</span></p>')
+# sources added from public records (tools/extra_sources.py)
+src = patch(src, '''  "single-emails":   { name: "Other email",     color: "#616161", addr: "",                                   long: "Single emails to Gavin Andresen, Jon Matonis and Laszlo Hanyecz", priv: 1 },
+''', '''  "single-emails":   { name: "Other email",     color: "#616161", addr: "",                                   long: "Single emails to Gavin Andresen, Jon Matonis and Laszlo Hanyecz", priv: 1 },
+  "nicholas-bohm":   { name: "Nicholas Bohm",   color: "#6d4c41", addr: "",                                   long: "Private email with Nicholas Bohm (COPA v Wright exhibit NB1)", priv: 1 },
+  "forum-staff":     { name: "Forum staff board", color: "#b06000", addr: "bitcoin.org/smf staff board",       long: "Deleted staff-board topics, saved by the forum in 2012" },
+''')
+
 # no apps grid (the nine dots by the profile picture): the button, its menu and its styles go
 src = patch(src, '    <button class="ib hide-sm" data-act="apps" aria-label="Satoshi Nakamoto Institute apps" title="SNI apps"><span class="ms">apps</span></button>\n', '')
 src = patch(src, '  apps(el) {\n    const a = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener">${ic(icon)}${label}</a>`;\n    popover(el, `<div class="apps">${a("https://nakamotoinstitute.org/library/", "menu_book", "Library")}${a("https://nakamotoinstitute.org/mempool/", "article", "Mempool")}${a("https://satoshi.nakamotoinstitute.org/quotes/", "format_quote", "Quotes")}${a("https://nakamotoinstitute.org/the-skeptics/", "trending_down", "Skeptics")}${a("https://nakamotoinstitute.org/podcasts/", "podcasts", "Podcasts")}${a("https://satoshi.nakamotoinstitute.org/code/", "code", "Code")}</div>`);\n  },\n', '')
@@ -91,7 +98,7 @@ src = patch(src, 'Reset stars, read state and trash</button>', 'Reset stars and 
 
 # Blocktrainer's archive: cross-checked source, mentioned on the About page
 src = patch(src, '<p class="lead">One 2014 P2P Foundation post carries', '<p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer\'s Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>\n    <p class="lead">One 2014 P2P Foundation post carries')
-src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.')
+src = patch(src, '. An independent reader, not affiliated with any email provider.', '; nakamoto-archive; Nicholas Bohm\'s emails (COPA v Wright exhibit NB1); the forum\'s saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.')
 
 # satoshin.name ("Satoshi Nakamoto Archive"): which message is which page there, a details row per message, About text
 xref = json.load(open(tools / "satoshin_xref.json"))

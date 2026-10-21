@@ -11,6 +11,9 @@ material the archive is made of, which keeps its own terms:
 | Satoshi's commits and their diffs | [bitcoin/bitcoin](https://github.com/bitcoin/bitcoin) | MIT (Bitcoin Core's license). |
 | The white paper | [bitcoin.org](https://bitcoin.org/bitcoin.pdf) | See bitcoin.org. |
 | Satoshipedia article text | Written for this project, summarising and quoting Wikipedia and the sources above | Shared under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), because it draws on Wikipedia. |
+| Nicholas Bohm's emails with Satoshi | Exhibit NB1 to his witness statement in COPA v Wright, [republished on GitHub](https://github.com/NicholasBohm/emails) | Court-disclosed correspondence. Bohm's postal address, telephone numbers, IP address and machine name are removed. |
+| Forum staff-board topics (2009) | [bitcointalk.org/first_topics](https://bitcointalk.org/first_topics/) | Published by the forum as PDF files. |
+| Court records | [COPA v Wright, [2024] EWHC 1198 (Ch)](https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198); Kleiman v. Wright (S.D. Fla., 9:18-cv-80176) | Cited in Satoshipedia; public court records. |
 | satoshin.name cross-check | [Satoshi Nakamoto Archive](https://satoshin.name/) | Only links to its pages (`tools/satoshipedia/satoshin_xref.json`) and comparison figures are included. `tools/satoshin.py` crawls it politely for local use; it publishes no reuse licence. |
 | Blocktrainer cross-check | [Blocktrainer's archive](https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive) | Only links and comparison figures are included. `tools/blocktrainer.py` downloads its data for local use; it publishes no reuse licence, so ask Blocktrainer before republishing its German translations. |
 

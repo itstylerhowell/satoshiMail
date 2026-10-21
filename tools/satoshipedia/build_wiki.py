@@ -17,9 +17,13 @@ SLUGS = {a["slug"]: a for a in ARTICLES}
 ERRORS = []
 
 # Only these sources may be cited or linked: the Satoshi Nakamoto Institute, GitHub
-# (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive and satoshin.name.
+# (nakamoto-archive, bitcoin/bitcoin), bitcoin.org, Wikipedia, Blocktrainer's archive, satoshin.name and primary sources
+# (court records, the forum itself, correspondents' own published copies).
 ALLOWED_HOSTS = {"nakamotoinstitute.org", "satoshi.nakamotoinstitute.org", "github.com", "bitcoin.org", "en.wikipedia.org",
-                 "www.blocktrainer.de", "satoshin.name"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
+                 "www.blocktrainer.de", "satoshin.name",
+                 # primary sources, allowed from 21 October 2026: court records, the forum, correspondents' own copies
+                 "caselaw.nationalarchives.gov.uk", "www.judiciary.uk", "www.govinfo.gov", "storage.courtlistener.com",
+                 "bitcoindefense.org", "bitcointalk.org", "riski.wiki"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
 
 
 def check_hosts(where, text):
@@ -70,7 +74,8 @@ def inline(text, ctx):
             if not ts:
                 ERRORS.append(f"{ctx['article']}: no thread {src!r} / {title!r}")
             else:
-                t = ts[0]
+                # several conversations can share a title; date= picks the one with a message that day
+                t = next((x for x in ts if opts.get("date") and any(day(msg["d"]) == opts["date"] for msg in x["m"])), ts[0])
                 if opts:
                     ok = [i for i, msg in enumerate(t["m"])
                           if (not opts.get("from") or re.search(opts["from"], msg["f"], re.I))

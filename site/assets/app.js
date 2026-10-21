@@ -19,6 +19,8 @@ const LISTS = {
   "adam-back":       { name: "Adam Back",       color: "#795548", addr: "adam@cypherspace.org",               long: "Private email with Adam Back", priv: 1 },
   "wei-dai":         { name: "Wei Dai",         color: "#00838f", addr: "weidai@ibiblio.org",                 long: "Private email with Wei Dai", priv: 1 },
   "single-emails":   { name: "Other email",     color: "#616161", addr: "",                                   long: "Single emails to Gavin Andresen, Jon Matonis and Laszlo Hanyecz", priv: 1 },
+  "nicholas-bohm":   { name: "Nicholas Bohm",   color: "#6d4c41", addr: "",                                   long: "Private email with Nicholas Bohm (COPA v Wright exhibit NB1)", priv: 1 },
+  "forum-staff":     { name: "Forum staff board", color: "#b06000", addr: "bitcoin.org/smf staff board",       long: "Deleted staff-board topics, saved by the forum in 2012" },
 };
 const CATS = RAW.cats;
 const CAT_NAME = Object.fromEntries(CATS.map(c => [c.slug, c.name]));
@@ -755,7 +757,7 @@ function renderAbout() {
     <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>
     <p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi's BitcoinTalk posts and mailing-list emails): every one is here too. All sources are listed under Settings → Archive → <a href="#sources">Sources</a>.</p>
     <p class="lead">One 2014 P2P Foundation post carries the Institute's note about its uncertain authenticity and is shown with that note. Times are in UTC.</p>
-    <p class="lead">Stars, read state, archive and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
+    <p class="lead">Stars, read state, archive and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Nicholas Bohm's emails (COPA v Wright exhibit NB1); the forum's saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
   </div></div>`;
 }
 
@@ -1223,13 +1225,18 @@ WA.forEach(a => {
 // sender name (lower case) → article slug, for linking people in the archive to their articles
 const ALIAS = new Map();
 WA.forEach(a => { if (a.slug !== "satoshi-nakamoto") a.aliases.forEach(x => ALIAS.set(x.toLowerCase(), a.slug)); });
+// a {{mail:…}} link's conversation; when several share a title, its date= picks the one with that day
+function findLinkedThread(src, title, date) {
+  const ts = THREADS.filter(t => t.s === src && t.t === title);
+  return (date && ts.find(t => t.m.some(m => new Date(m.d * 1000).toISOString().slice(0, 10) === date))) || ts[0];
+}
 // thread → articles that cite it
 const CITED = new Map();
 WA.forEach(a => {
-  const re = /data-src="([^"]*)" data-title="([^"]*)"/g; let m;
+  const re = /data-src="([^"]*)" data-title="([^"]*)"(?: data-from="[^"]*")?(?: data-date="([^"]*)")?/g; let m;
   const all = a.lead + a.sections.map(s => s.html).join("");
   while ((m = re.exec(all))) {
-    const t = THREADS.find(t => t.s === htmlText(m[1]) && t.t === htmlText(m[2]));
+    const t = findLinkedThread(htmlText(m[1]), htmlText(m[2]), m[3]);
     if (t) { if (!CITED.has(t.id)) CITED.set(t.id, new Set()); CITED.get(t.id).add(a.slug); }
   }
 });
@@ -1357,7 +1364,7 @@ const LIVE = {
 /* ── link resolution inside rendered articles ── */
 function resolveLinks(root) {
   root.querySelectorAll("a.ml[data-src]").forEach(el => {
-    const t = THREADS.find(t => t.s === el.dataset.src && t.t === el.dataset.title);
+    const t = findLinkedThread(el.dataset.src, el.dataset.title, el.dataset.date);
     if (!t) { el.href = "#search-" + encodeURIComponent(el.dataset.title); return; }
     let i = -1;
     if (el.dataset.from || el.dataset.date) {
@@ -2659,8 +2666,9 @@ function renderSources() {
   CURRENT_LIST = [];
   const sat = t => t.m.filter(m => m.s).length;
   const group = pred => { const ts = THREADS.filter(pred); return { t: ts.length, m: ts.reduce((n, t) => n + t.m.length, 0), s: ts.reduce((n, t) => n + sat(t), 0) }; };
-  const lists = [...new Set(THREADS.filter(t => t.k !== "x").map(t => t.s))].map(s => ({ s, name: LISTS[s] ? LISTS[s].long : s, ...group(t => t.s === s) }));
-  const priv = group(t => t.k === "x");
+  const lists = [...new Set(THREADS.filter(t => t.k !== "x" && t.s !== "forum-staff").map(t => t.s))].map(s => ({ s, name: LISTS[s] ? LISTS[s].long : s, ...group(t => t.s === s) }));
+  const priv = group(t => t.k === "x" && t.s !== "nicholas-bohm");
+  const bohm = group(t => t.s === "nicholas-bohm"), staff = group(t => t.s === "forum-staff");
   let snLinked = 0;
   THREADS.forEach(t => t.m.forEach((m, i) => { if (SATOSHIN.url(t, i)) snLinked++; }));
   const ext = (href, label) => `<a href="${href}" target="_blank" rel="noopener">${label}</a>`;
@@ -2679,6 +2687,12 @@ function renderSources() {
         </tbody></table></section>
       <section class="src"><h4>${ext("https://github.com/lugaxker/nakamoto-archive", "nakamoto-archive")} <span class="muted">on GitHub</span></h4>
         <p>Satoshi's private emails, with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others: ${n(priv.t)} conversations, ${n(priv.m)} emails, ${n(priv.s)} by Satoshi. Shown under <a href="#inbox-private">Inbox → Private</a>.</p></section>
+      <section class="src"><h4>${ext("https://github.com/NicholasBohm/emails", "Nicholas Bohm's emails")} <span class="muted">COPA v Wright, exhibit NB1</span></h4>
+        <p>Satoshi's private emails with Nicholas Bohm, January to July 2009: ${n(bohm.t)} conversations, ${n(bohm.m)} emails, ${n(bohm.s)} by Satoshi. Bohm exported them from his email program as an exhibit to his witness statement in <a href="#wiki-copa-v-wright">COPA v Wright</a>; they were later republished on GitHub. Times are converted from UK time to UTC, and Bohm's address, telephone numbers and IP address are left out. Shown under <a href="#label-nicholas-bohm">Nicholas Bohm</a>.</p></section>
+      <section class="src"><h4>${ext("https://bitcointalk.org/first_topics/", "The forum's saved staff topics")} <span class="muted">bitcointalk.org</span></h4>
+        <p>Three test topics from the forum's staff area, written before it opened in November 2009 and preserved as PDF files in 2012: ${n(staff.m)} posts, ${n(staff.s)} by Satoshi. Shown under <a href="#label-forum-staff">Forum staff board</a>; see <a href="#wiki-forum-staff-board">Satoshipedia</a>.</p></section>
+      <section class="src"><h4>${ext("https://riski.wiki/wiki/User:Gavinandresen/Blog/2022-04-26_Eleven_years_ago_today%E2%80%A6", "Gavin Andresen's blog")}</h4>
+        <p>Andresen's own copy of Satoshi's last email to him (26 April 2011) and his reply, which gives the email's time.</p></section>
       <section class="src"><h4>${ext("https://github.com/bitcoin/bitcoin", "Bitcoin Core")} <span class="muted">on GitHub</span></h4>
         <p>Satoshi's ${n(COMMITS.length)} commits to Bitcoin's source code, each with its diff. Shown under <a href="#commits">Commits</a>.</p></section>
       <section class="src"><h4>${ext("https://bitcoin.org/bitcoin.pdf", "bitcoin.org")}</h4>
@@ -2694,10 +2708,18 @@ function renderSources() {
         <p>567 of Satoshi's BitcoinTalk posts and mailing-list emails, each on its own page, checked on 20 October 2026. Every one is also here (${n(snLinked)} messages match). Satoshi Mail also has six of his BitcoinTalk posts that it lacks, and his private emails, P2P Foundation and p2p-research posts. Read more in <a href="#wiki-satoshin-archive">Satoshipedia</a>.</p></section>
     </div>
 
+    <h3>Court records</h3>
+    <div class="src-list">
+      <section class="src"><h4><a href="#wiki-copa-v-wright">COPA v Wright</a> <span class="muted">High Court of England and Wales</span></h4>
+        <p>The ${ext("https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198", "judgment of 20 May 2024")}, [2024] EWHC 1198 (Ch), and the witness statement of Nicholas Bohm.</p></section>
+      <section class="src"><h4><a href="#wiki-kleiman-v-wright">Kleiman v. Wright</a> <span class="muted">US District Court, Southern District of Florida</span></h4>
+        <p>Case 9:18-cv-80176: the ${ext("https://www.govinfo.gov/app/details/USCOURTS-flsd-9_18-cv-80176", "case record on GovInfo")} and filings on CourtListener.</p></section>
+    </div>
+
     <h3>Satoshipedia</h3>
     <div class="src-list">
       <section class="src"><h4><a href="#wiki">Satoshipedia</a></h4>
-        <p>Its ${n(WA.length)} articles cite the sources above and ${ext("https://en.wikipedia.org/wiki/Satoshi_Nakamoto", "Wikipedia")} (CC BY-SA 4.0); each article lists its references. The AI Overview on search answers only from this archive and Satoshipedia.</p></section>
+        <p>Its ${n(WA.length)} articles cite the sources above, other primary sources such as court records, and ${ext("https://en.wikipedia.org/wiki/Satoshi_Nakamoto", "Wikipedia")} (CC BY-SA 4.0); each article lists its references. The AI Overview on search answers only from this archive and Satoshipedia.</p></section>
     </div>
     <p class="lead muted">See also <a href="#about">About this archive</a>.</p>
   </div></div>`;

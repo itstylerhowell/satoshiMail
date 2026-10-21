@@ -32,6 +32,8 @@ tools/
   satoshin.py               add satoshin.name (Satoshi Nakamoto Archive) to an sni-data dataset (local use)
   satoshin_xref.py          match satoshin.name's pages to the archive → satoshipedia/satoshin_xref.json
   satoshin_index.json       snapshot of satoshin.name's index (20 October 2026), the default input to satoshin_xref.py
+  extra_sources.py          adds Nicholas Bohm's emails, the forum's saved staff topics and Gavin Andresen's reply
+  sources/first_topics.txt  text of bitcointalk.org/first_topics (1.pdf, 2.pdf, 4.pdf), checked against the PDFs
   site-assets/              styles, favicon and share image for the static pages
   satoshipedia/             encyclopedia sources (articles.py), its builder, and the
                             Satoshipedia / Satoshi Map / SEO code merged into the template
@@ -63,8 +65,10 @@ Messages from the [Satoshi Nakamoto Institute](https://satoshi.nakamotoinstitute
 [bitcoin/bitcoin](https://github.com/bitcoin/bitcoin); the white paper from
 [bitcoin.org](https://bitcoin.org/bitcoin.pdf); cross-checked against
 [Blocktrainer's archive](https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive) and
-[satoshin.name](https://satoshin.name/), the Satoshi Nakamoto Archive; messages that are on
-satoshin.name link to their page there.
+[satoshin.name](https://satoshin.name/), the Satoshi Nakamoto Archive. Also from public records:
+Nicholas Bohm's emails with Satoshi (COPA v Wright exhibit NB1, [republished on GitHub](https://github.com/NicholasBohm/emails)),
+the forum's [saved staff topics](https://bitcointalk.org/first_topics/), and Gavin Andresen's own copy of Satoshi's last email.
+The full list is in the app under Settings → Archive → Sources.
 Satoshipedia also cites Wikipedia. See [NOTICE.md](NOTICE.md) for what the MIT license
 covers and the terms of the archived material.
 

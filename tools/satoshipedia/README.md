@@ -2,8 +2,8 @@
 
 The encyclopedia built into Satoshi Mail (`#wiki`).
 
-* `articles.py`: the 48 articles, Did-you-know items and references, in a small wiki markup.
-* Sources are limited to the Satoshi Nakamoto Institute, GitHub, bitcoin.org, Wikipedia, Blocktrainer's archive and satoshin.name; `build_wiki.py` fails if any citation or link points anywhere else.
+* `articles.py`: the 52 articles, Did-you-know items and references, in a small wiki markup.
+* Sources are limited to the Satoshi Nakamoto Institute, GitHub, bitcoin.org, Wikipedia, Blocktrainer's archive, satoshin.name and listed primary sources (court records, the forum, correspondents' own copies); `build_wiki.py` fails if any citation or link points anywhere else.
 * `build_wiki.py DIR`: turns `DIR/articles.py` into `DIR/wiki.json` and checks every
   `{{mail:…}}`, `{{commit:…}}` and `[[article]]` link against `DIR/data.json`
   (the mail app's data blob). It fails if any link does not resolve.

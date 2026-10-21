@@ -1,0 +1,161 @@
+### TOPIC 1
+Bitcoin Forum
+Special => Staff Forum => Topic started by: Simple Machines on November 17, 2009, 06:12:08
+PM
+Title: Welcome to SMF!
+Post by: Simple Machines on November 17, 2009, 06:12:08 PM
+Welcome to Simple Machines Forum!
+We hope you enjoy using your forum. If you have any problems, please feel free to
+Thanks!
+Simple Machines
+Title: Re: Welcome to SMF!
+Post by: admin on November 18, 2009, 06:51:12 PM
+Test message
+Title: Re: Welcome to SMF!
+Post by: satoshi on November 19, 2009, 02:23:06 PM
+Another test message
+
+### TOPIC 2
+Bitcoin Forum
+Special => Staff Forum => Topic started by: admin on November 18, 2009, 08:04:27 PM
+Title: Testing the new site platform
+Post by: admin on November 18, 2009, 08:04:27 PM
+Drupal & Simple Machines Forum
+Title: Re: Testing the new site platform
+Post by: admin on November 18, 2009, 11:51:20 PM
+Another test reply
+Title: Re: Testing the new site platform
+Post by: admin on November 18, 2009, 11:58:48 PM
+now a longer post
+aaaaaaaaaa aaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccc ccccccccccccc ccccccccccc dddddddddddddddddd eeeeeeeeeee
+eeeeeeeeeeeeeeeeeeeeeeeeeeee fffffffffff fffffffff gggggggggggggg hhhhhhhhhhhh
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh iiiiiiiiiiiii jjjjjjjjjjjjjjjjjjj kkkkkkkkkkkkkkkk
+Title: Re: Testing the new site platform
+Post by: admin on November 19, 2009, 12:00:14 AM
+Quote from: admin on November 18, 2009, 11:58:48 PM
+now a longer post
+aaaaaaaaaa aaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbb bbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccc ccccccccccccc ccccccccccc dddddddddddddddddd eeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeeeee
+fffffffffff fffffffff gggggggggggggg hhhhhhhhhhhh hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh iiiiiiiiiiiii jjjjjjjjjjjjjjjjjjj
+kkkkkkkkkkkkkkkk
+So there's what a quote box looks like
+Title: Re: Testing the new site platform
+Post by: admin on November 19, 2009, 12:41:44 AM
+Quote from: admin on November 19, 2009, 12:00:14 AM
+Quote from: admin on November 18, 2009, 11:58:48 PM
+now a longer post
+aaaaaaaaaa aaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbb bbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccc ccccccccccccc ccccccccccc dddddddddddddddddd eeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeeeee
+fffffffffff fffffffff gggggggggggggg hhhhhhhhhhhh hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh iiiiiiiiiiiii jjjjjjjjjjjjjjjjjjj
+kkkkkkkkkkkkkkkk
+So there's what a quote box looks like
+and quoting a quote...
+Title: Re: Testing the new site platform
+Post by: admin on November 19, 2009, 12:47:31 AM
+1: testing what a code block looks like
+2: line 2
+3: indented
+4: indented
+5: aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaaaaaaaa
+aaaaaaaaa
+after teletype block
+before code block
+Code:
+1: testing what a code block looks like
+2: line 2
+3: indented
+4: indented
+5: aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaa
+after code block
+line of text before code block
+Code:
+0: line zero
+1: line 1
+2: and end
+line of text after code block
+Edit: Checking what an edited post looks like
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:40:43 PM
+I have to get the number of posts up over 20 so the topic will have multiple pages,
+so here goes with a bunch of blank posts.
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:43:00 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:43:46 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:44:53 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:45:32 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:46:12 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:46:42 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:47:21 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:49:36 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:49:56 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:51:08 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:52:13 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:54:06 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:57:12 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 21, 2009, 12:58:11 PM
+blank
+Title: Re: Testing the new site platform
+Post by: satoshi on November 25, 2009, 01:23:49 PM
+Test
+
+### TOPIC 4
+Bitcoin Forum
+Special => Staff Forum => Topic started by: satoshi on November 20, 2009, 12:37:24 AM
+Title: SMF Config Notes
+Post by: satoshi on November 20, 2009, 12:37:24 AM
+I left the admin account set to the original SMF theme so if I somehow completely
+wedge the custom theme I can still get in to fix it.
+I've got a neat little 12x12 coin image to replace those pip stars with. Should look
+nice. Also some nice button images to try.
+The registration page has "hide your e-mail address" unchecked by default. I must
+fix that in php before we can open up.
+The Announcements forum is currently moderator access only.
+Title: Re: SMF Config Notes
+Post by: satoshi on November 21, 2009, 01:42:43 AM
+12x12 coin for pip stars done.
+Registration page "hide your e-mail address" checked by default done, haven't tested
+it yet.
+Title: Re: SMF Config Notes
+Post by: sirius on December 23, 2009, 06:27:08 AM
+Changed the registration to require e-mail confirmation. The confirmation mail
+contains the user-given password, this might need fixing.
+Title: Re: SMF Config Notes
+Post by: satoshi on January 14, 2010, 03:36:36 PM
+Is there any reason to have e-mail confirmation?
+If you're doing that out of spam concerns, I've already got that covered. I made
+some customizations to the registration HTML so any spambots designed for SMF
+won't be able to figure it out. The CAPTCHA image URL requires an extra parameter,
+and there are 3 different CAPTCHA images, but only one shows because the others
+have stuff like width=0 height=0.
+Title: Re: SMF Config Notes
+Post by: sirius on January 15, 2010, 12:59:07 AM
+Yes, spam prevention was the purpose, but if there's no spam problem with
+immediate registration, I'll turn the e-mail activation off.
