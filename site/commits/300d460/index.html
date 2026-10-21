@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "got rid of CheckForShutdown, replaced some thread-unsafe wxWidgets calls, Linux fixes, socket send MSG_NOSIGNAL, bind INADDR_ANY, works reliably on Linux now except if wxMessageBox is used in a thread other than the GUI thread", "url": "https://satoshimail.vercel.app/commits/300d460/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-06T05:50:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/300d4608f2504e3e4a02a13b6c6000b52c436975"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "got rid of CheckForShutdown, replaced…", "item": "https://satoshimail.vercel.app/commits/300d460/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -43,7 +45,8 @@
 +                //    DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, wtx.nTime).c_str(),
                  //    wtx.hashBlock.ToString().substr(0,14).c_str(),
                  //    wtx.mapValue[&quot;message&quot;].c_str());
-             }</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -167,9 +167,12 @@ void ThreadIRCSeed(void* parg)
+             }
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -167,9 +167,12 @@ void ThreadIRCSeed(void* parg)
      while (!fShutdown)
      {
          CAddress addrConnect(&quot;216.155.130.130:6667&quot;);
@@ -58,7 +61,8 @@
 +        }
  
          SOCKET hSocket;
-         if (!ConnectSocket(addrConnect, hSocket))</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1361,15 +1361,24 @@ bool ScanMessageStart(Stream&amp; s)
+         if (!ConnectSocket(addrConnect, hSocket))
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1361,15 +1361,24 @@ bool ScanMessageStart(Stream&amp; s)
  
  bool CheckDiskSpace(int64 nAdditionalBytes)
  {
@@ -231,7 +235,8 @@
 -    return true;
  }
  
- </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -68,7 +68,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
+ 
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -68,7 +68,7 @@ bool CommitTransactionSpent(const CWalletTx&amp; wtxNew, const CKey&amp; key);
  bool SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew);
  void GenerateBitcoins(bool fGenerate);
  void ThreadBitcoinMiner(void* parg);
@@ -239,7 +244,8 @@
 +void BitcoinMiner();
  
  
- </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -48,6 +48,10 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+ 
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -48,6 +48,10 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
      SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
      if (hSocket == INVALID_SOCKET)
          return false;
@@ -538,7 +544,8 @@
      }
 +#if defined(__BSD__) || defined(__WXOSX__)
 +    int set = 1;
-+    setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -30,7 +30,6 @@ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
++    setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;set, sizeof(int));
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -30,7 +30,6 @@ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
  bool AnySubscribed(unsigned int nChannel);
  bool StartNode(string&amp; strError=REF(string()));
  bool StopNode();
@@ -553,7 +560,8 @@
 +        memset(&amp;sockaddr, 0, sizeof(sockaddr));
          sockaddr.sin_family = AF_INET;
          sockaddr.sin_addr.s_addr = ip;
-         sockaddr.sin_port = port;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -65,11 +65,13 @@ bool Is24HourTime()
+         sockaddr.sin_port = port;
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -65,11 +65,13 @@ bool Is24HourTime()
  
  string DateStr(int64 nTime)
  {
@@ -733,7 +741,8 @@
 +#endif
  
      //
-     // Parameters</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -32,7 +32,6 @@ extern int fMinimizeOnClose;
+     // Parameters
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -32,7 +32,6 @@ extern int fMinimizeOnClose;
  
  
  extern void HandleCtrlA(wxKeyEvent&amp; event);
@@ -751,7 +760,8 @@
 +    int GetSortIndex(const string&amp; strSort);
      void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
      bool DeleteLine(uint256 hashKey);
-     bool InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -84,7 +84,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+     bool InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -84,7 +84,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	m_staticText32-&gt;Wrap( -1 );
  	bSizer85-&gt;Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
  	
@@ -966,7 +976,8 @@
 -	
  	bSizer80-&gt;Add( m_buttonCancel, 0, wxALL, 5 );
  	
- 	bSizer79-&gt;Add( bSizer80, 0, wxEXPAND, 5 );</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
+ 	bSizer79-&gt;Add( bSizer80, 0, wxEXPAND, 5 );
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
              &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
              &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
              &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
@@ -1265,7 +1276,8 @@
                                  &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
 @@ -12959,7 +12959,7 @@
                                  &lt;property name=&quot;id&quot;&gt;wxID_CANCEL&lt;/property&gt;
-                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -96,12 +96,7 @@ void RandAddSeedPerfmon()
+                                 &lt;property name=&quot;label&quot;&gt;Cancel&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -96,12 +96,7 @@ void RandAddSeedPerfmon()
          hash = 0;
          memset(pdata, 0, nSize);
  
@@ -1297,7 +1309,8 @@
 -
  }
  
- string GetDataDir()</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -84,6 +84,10 @@ inline void SetThreadPriority(int nThread, int nPriority) { setpriority(PRIO_PRO
+ string GetDataDir()
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -84,6 +84,10 @@ inline void SetThreadPriority(int nThread, int nPriority) { setpriority(PRIO_PRO
  #define THREAD_PRIORITY_NORMAL          0
  #define THREAD_PRIORITY_ABOVE_NORMAL    0
  #endif
@@ -1331,7 +1344,8 @@
 +            nLoops = GetRand(20) + 1;                               \
          if (nLoops-- &gt; 1)                                           \
          {                                                           \
-             ThreadFn;                                               \</code></pre></details>
+             ThreadFn;                                               \
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e4c05d3/">← unix build merged in, bitmap resources from xpm instead of…</a><a rel="next" href="../../commits/8acda00/">UIThreadCall, ThreadSafeMessageBox →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "better wallet.dat flush, consolidated QueryPerformanceCounter, PRI64d printf portability", "url": "https://satoshimail.vercel.app/commits/e8474be/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T20:10:46Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e8474beb6f2c5e2654f8ebc671b3dbf5fae78563"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "better wallet.dat flush, consolidated…", "item": "https://satoshimail.vercel.app/commits/e8474be/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,7 +53,8 @@
 +                                or prebuilt: http://wxpack.sourceforge.net
  OpenSSL        \openssl       http://www.openssl.org/source/
  Berkeley DB    \db            http://www.oracle.com/technology/software/products/berkeley-db/index.html
- Boost          \boost         http://www.boost.org/users/download/</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -4,8 +4,11 @@
+ Boost          \boost         http://www.boost.org/users/download/
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -4,8 +4,11 @@
  
  #include &quot;headers.h&quot;
  
@@ -172,7 +175,8 @@
 +            }
 +        }
 +    }
-+}</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -17,7 +17,10 @@ extern map&lt;string, string&gt; mapAddressBook;
++}
+</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -17,7 +17,10 @@ extern map&lt;string, string&gt; mapAddressBook;
  extern bool fClient;
  
  
@@ -248,7 +252,8 @@
 +        nWalletDBUpdated++;
          return Write(make_pair(string(&quot;setting&quot;), strKey), value);
      }
- </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2518,8 +2518,7 @@ bool BitcoinMiner()
+ 
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2518,8 +2518,7 @@ bool BitcoinMiner()
  
  int64 GetBalance()
  {
@@ -267,7 +272,8 @@
 +    ///printf(&quot; GetBalance() time = %15&quot;PRI64d&quot;\n&quot;, PerformanceCounter() - nStart);
      return nTotal;
  }
- </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -344,7 +344,7 @@ public:
+ 
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -344,7 +344,7 @@ public:
      {
          if (scriptPubKey.size() &lt; 6)
              return &quot;CTxOut(error)&quot;;
@@ -275,7 +281,8 @@
 +        return strprintf(&quot;CTxOut(nValue=%&quot;PRI64d&quot;.%08&quot;PRI64d&quot;, scriptPubKey=%s)&quot;, nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,24).c_str());
      }
  
-     void print() const</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -13,8 +13,8 @@ DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
+     void print() const
+</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -13,8 +13,8 @@ DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
  
  
  
@@ -285,7 +292,8 @@
 +LIBPATHS=/LIBPATH:&quot;/db/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/openssl/out&quot; /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
  LIBS= \
      libdb47s$(D).lib \
-     libeay32.lib \</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -589,7 +589,7 @@ public:
+     libeay32.lib \
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -589,7 +589,7 @@ public:
          // We&#x27;re using mapAskFor as a priority queue,
          // the key is the earliest time the request can be sent
          int64&amp; nRequestTime = mapAlreadyAskedFor[inv];
@@ -293,7 +301,8 @@
 +        printf(&quot;askfor %s  %&quot;PRI64d&quot;\n&quot;, inv.ToString().c_str(), nRequestTime);
  
          // Make sure not to reuse time indexes to keep things in the same order
-         int64 nNow = (GetTime() - 1) * 1000000;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3414,28 +3414,25 @@ bool CMyApp::OnInit2()
+         int64 nNow = (GetTime() - 1) * 1000000;
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3414,28 +3414,25 @@ bool CMyApp::OnInit2()
      //
      bool fFirstRun;
      string strErrors;
@@ -372,7 +381,8 @@
 +        return;
      CSendingDialog* pdialog = new CSendingDialog(pframeMain, addr, nValue, wtx);
      if (!pdialog-&gt;Show())
-         wxMessageBox(&quot;ShowModal Failed  &quot;);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,8 +14,7 @@ bool fPrintToConsole = false;
+         wxMessageBox(&quot;ShowModal Failed  &quot;);
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,8 +14,7 @@ bool fPrintToConsole = false;
  
  // Init openssl library multithreading support
  static wxMutex** ppmutexOpenSSL;
@@ -441,7 +451,8 @@
 +            printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);
 +        printf(&quot;|  nTimeOffset = %+&quot;PRI64d&quot;  (%+&quot;PRI64d&quot; minutes)\n&quot;, nTimeOffset, nTimeOffset/60);
      }
- }</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -13,7 +13,6 @@ typedef unsigned long long  uint64;
+ }
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -13,7 +13,6 @@ typedef unsigned long long  uint64;
  #if defined(_MSC_VER) &amp;&amp; _MSC_VER &lt; 1300
  #define for  if (false) ; else for
  #endif
@@ -555,7 +566,8 @@
 +
  template&lt;typename T1&gt;
  inline uint256 Hash(const T1 pbegin, const T1 pend)
- {</code></pre></details>
+ {
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/dc73b32/">← CCriticalSection using wxWidgets instead of Windows OS calls</a><a rel="next" href="../../commits/32d4903/">make CheckDiskSpace portable →</a></nav>
 </main>
 <footer class="sf"><div class="in">

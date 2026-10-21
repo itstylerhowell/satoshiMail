@@ -70,6 +70,8 @@ cd tests && npm install && node test.js ../satoshi-mail.html && node ask_test.js
 * **Git:** import this repository in Vercel (Add New → Project). `vercel.json` sets everything:
   no build step, the output directory is `site`, plus the security and cache headers.
 * **CLI:** `npx vercel deploy --prod` from the repository root.
+* **Analytics:** in the Vercel project, open Analytics and click Enable. Every page already has the
+  plain-HTML Web Analytics script (`build_site.py --no-analytics` leaves it out).
 
 It also runs on Cloudflare Pages (output directory `site`; `site/_headers` carries the headers there).
 

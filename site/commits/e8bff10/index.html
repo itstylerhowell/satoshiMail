@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "minor UI tweaks, removed some outdated txt files, (and json-rpc password -rpcpw= switch, which we're going to revert)", "url": "https://satoshimail.vercel.app/commits/e8bff10/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-18T20:47:29Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e8bff10f07b80d820545661cee9337d8664a64cb"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "minor UI tweaks, removed some outdated…", "item": "https://satoshimail.vercel.app/commits/e8bff10/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -72,7 +74,8 @@
 +    if (mapArgs.count(&quot;-server&quot;) || mapArgs.count(&quot;-rpcpw&quot;) || fDaemon)
          CreateThread(ThreadRPCServer, NULL);
  
-     if (fFirstRun)</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;&amp;Neue Empfangs-Adresse&quot;
+     if (fFirstRun)
+</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -216,7 +216,7 @@ msgstr &quot;&amp;Neue Empfangs-Adresse&quot;
  #: ../../../ui.cpp:1124
  #: ../../../ui.cpp:2352
  msgid &quot;&quot;
@@ -120,7 +123,8 @@
 +&quot;You should use a new address for each payment you receive.\n&quot;
  &quot;\n&quot;
  &quot;Label&quot;
- msgstr &quot;&quot;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,6 +21,8 @@ void ThreadRPCServer2(void* parg);
+ msgstr &quot;&quot;
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,6 +21,8 @@ void ThreadRPCServer2(void* parg);
  typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
  extern map&lt;string, rpcfn_type&gt; mapCallTable;
  
@@ -387,7 +391,8 @@
 +                Value result = (*(*mi).second)(Array(params.begin()+1, params.end()), false);
  
                  // Send reply
-                 string strReply = JSONRPCReply(result, Value::null, id);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+                 string strReply = JSONRPCReply(result, Value::null, id);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 302;
@@ -395,7 +400,8 @@
 +static const char* pszSubVer = &quot;.2&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1132,7 +1132,7 @@ void CMainFrame::OnButtonNew(wxCommandEvent&amp; event)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1132,7 +1132,7 @@ void CMainFrame::OnButtonNew(wxCommandEvent&amp; event)
      // Ask name
      CGetTextFromUserDialog dialog(this,
          _(&quot;New Receiving Address&quot;),
@@ -412,7 +418,8 @@
 +            _(&quot;You should use a new address for each payment you receive.\n\nLabel&quot;),
              &quot;&quot;);
          if (!dialog.ShowModal())
-             return;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -701,12 +701,13 @@ void AddTimeData(unsigned int ip, int64 nTime)
+             return;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -701,12 +701,13 @@ void AddTimeData(unsigned int ip, int64 nTime)
          sort(vTimeOffsets.begin(), vTimeOffsets.end());
          int64 nMedian = vTimeOffsets[vTimeOffsets.size()/2];
          nTimeOffset = nMedian;
@@ -426,7 +433,8 @@
 +            nTimeOffset = 0;
          }
          foreach(int64 n, vTimeOffsets)
-             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);</code></pre></details>
+             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/ae922a3/">← security safeguards, limited addr messages -- version 0.3.2</a><a rel="next" href="../../commits/3b7cd5d/">Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

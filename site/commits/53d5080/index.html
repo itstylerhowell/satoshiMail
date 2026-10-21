@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "update fSpent flag on wallet transactions if they're seen spent in case copy of wallet.dat was used elsewhere or restored from backup, better error dialog box if try to spend already spent coins, got rid of unused notebook with only one tab on main dialog, nicer looking About dialog, resize About dialog better on linux", "url": "https://satoshimail.vercel.app/commits/53d5080/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-03T22:58:40Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/53d508072b02d522371bde148dcc3e925f472be7"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "update fSpent flag on wallet…", "item": "https://satoshimail.vercel.app/commits/53d5080/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -62,7 +64,8 @@
 +                mapKeys[vchPubKey] = wkey.vchPrivKey;
                  mapPubKeys[Hash160(vchPubKey)] = vchPubKey;
              }
-             else if (strType == &quot;defaultkey&quot;)</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+             else if (strType == &quot;defaultkey&quot;)
+</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -72,7 +75,8 @@
  #include &quot;xpm/send16.xpm&quot;
  #include &quot;xpm/send16noshadow.xpm&quot;
  #include &quot;xpm/send20.xpm&quot;
-+#include &quot;xpm/about.xpm&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
++#include &quot;xpm/about.xpm&quot;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -178,7 +182,8 @@
 +            wxMessageBox(&quot;Error: The transaction was rejected.  This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.&quot;, &quot;Sending...&quot;);
              return error(&quot;SendMoney() : Error: Transaction not valid&quot;);
          }
-         wtxNew.RelayWalletTransaction();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+         wtxNew.RelayWalletTransaction();
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -223,7 +228,8 @@
 +};
  
  
- </code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
+ 
+</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -243,7 +249,8 @@
 +    WalletUpdateSpent(txin.prevout);
 +
 +    return true;
- }</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+ }
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -257,7 +264,8 @@
 +static const char* pszSubVer = &quot; test2&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -134,7 +134,6 @@ int GetSelection(wxListCtrl* listCtrl)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -134,7 +134,6 @@ int GetSelection(wxListCtrl* listCtrl)
      return -1;
  }
  
@@ -358,7 +366,8 @@
 +
  void CEditProductDialog::OnButtonSend(wxCommandEvent&amp; event)
  {
-     CProduct product;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -1,4 +1,4 @@
+     CProduct product;
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -372,7 +381,8 @@
 +    void OnListItemActivated(wxListEvent&amp; event);
      void OnListItemActivatedProductsSent(wxListEvent&amp; event);
      void OnListItemActivatedOrdersSent(wxListEvent&amp; event);
-     void OnListItemActivatedOrdersReceived(wxListEvent&amp; event);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,7 +1,6 @@
+     void OnListItemActivatedOrdersReceived(wxListEvent&amp; event);
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,7 +1,6 @@
  // Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -568,7 +578,8 @@
 +	this-&gt;SetSizer( bSizer63 );
  	this-&gt;Layout();
  	
- 	// Connect Events</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,7 +1,6 @@
+ 	// Connect Events
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,7 +1,6 @@
  // Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -638,7 +649,8 @@
 +		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxT(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
  		~CAboutDialogBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
          &lt;property name=&quot;relative_path&quot;&gt;1&lt;/property&gt;
          &lt;property name=&quot;use_enum&quot;&gt;0&lt;/property&gt;
          &lt;property name=&quot;use_microsoft_bom&quot;&gt;0&lt;/property&gt;
@@ -937,7 +949,8 @@
 -                            &lt;property name=&quot;flag&quot;&gt;wxEXPAND | wxALL&lt;/property&gt;
 -                            &lt;property name=&quot;proportion&quot;&gt;1&lt;/property&gt;
 -                            &lt;object class=&quot;wxPanel&quot; expanded=&quot;1&quot;&gt;
-+                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;</code></pre></details><details><summary><code>xpm/about.xpm</code></summary><pre><code>@@ -0,0 +1,665 @@
++                            &lt;property name=&quot;flag&quot;&gt;wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND&lt;/property&gt;
+</code></pre></details><details><summary><code>xpm/about.xpm</code></summary><pre><code>@@ -0,0 +1,665 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.

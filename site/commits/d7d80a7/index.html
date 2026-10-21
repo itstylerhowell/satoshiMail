@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix unsafe string handling in wxGetTranslation", "url": "https://satoshimail.vercel.app/commits/d7d80a7/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-28T15:00:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d7d80a74d58152453cfb0c71a08f6b424d2493c9"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix unsafe string handling in…", "item": "https://satoshimail.vercel.app/commits/d7d80a7/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -85,7 +87,8 @@
 -	-del *.pdb
 +    -del /Q obj\*
 +    -del *.ilk
-+    -del *.pdb</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
++    -del *.pdb
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 207;
@@ -93,7 +96,8 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -445,17 +445,17 @@ const char* wxGetTranslation(const char* pszEnglish)
+ 
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -445,17 +445,17 @@ const char* wxGetTranslation(const char* pszEnglish)
              return (*mi).second;
  
          // wxWidgets translation
@@ -114,7 +118,8 @@
 +        strcpy(pszCached, strTranslated.utf8_str());
          mapCache[pszEnglish] = pszCached;
          return pszCached;
-     }</code></pre></details>
+     }
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6557910/">← wx/utils.h and wx/clipbrd.h not needed on bitcoind wxbase…</a><a rel="next" href="../../commits/2cffa7c/">fixed runaway memory alloc bug on 64-bit in ParseString… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

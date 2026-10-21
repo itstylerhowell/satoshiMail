@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen's JSON-RPC HTTP authentication, faster initial block download -- version 0.3.3", "url": "https://satoshimail.vercel.app/commits/3b7cd5d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-25T16:45:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/3b7cd5d89a226426df9c723d1f9ddfe08b7d1def"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen's JSON-RPC HTTP…", "item": "https://satoshimail.vercel.app/commits/3b7cd5d/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -110,7 +112,8 @@
 +    bnBestChainWork = pindexBest-&gt;bnChainWork;
      printf(&quot;LoadBlockIndex(): hashBestChain=%s  height=%d\n&quot;, hashBestChain.ToString().substr(0,16).c_str(), nBestHeight);
  
-     return true;</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -16,7 +16,7 @@ extern map&lt;string, string&gt; mapAddressBook;
+     return true;
+</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -16,7 +16,7 @@ extern map&lt;string, string&gt; mapAddressBook;
  extern CCriticalSection cs_mapAddressBook;
  extern vector&lt;unsigned char&gt; vchDefaultKey;
  extern bool fClient;
@@ -127,7 +130,8 @@
 +        int ret = dbenv.txn_begin(GetTxn(), &amp;ptxn, DB_TXN_NOSYNC);
          if (!ptxn || ret != 0)
              return false;
-         vTxn.push_back(ptxn);</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -26,6 +26,7 @@
+         vTxn.push_back(ptxn);
+</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -26,6 +26,7 @@
  #include &lt;wx/clipbrd.h&gt;
  #include &lt;wx/taskbar.h&gt;
  #endif
@@ -144,7 +148,8 @@
 +#include &lt;boost/program_options/parsers.hpp&gt;
  
  #ifdef __WXMSW__
- #include &lt;windows.h&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -240,33 +240,34 @@ IMPLEMENT_APP(CMyApp)
+ #include &lt;windows.h&gt;
+</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -240,33 +240,34 @@ IMPLEMENT_APP(CMyApp)
  
  bool CMyApp::Initialize(int&amp; argc, wxChar** argv)
  {
@@ -277,7 +282,8 @@
 +    if (mapArgs.count(&quot;-server&quot;) || fDaemon)
          CreateThread(ThreadRPCServer, NULL);
  
-     if (fFirstRun)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -24,6 +24,7 @@ map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+     if (fFirstRun)
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -24,6 +24,7 @@ map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
  const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;);
  CBlockIndex* pindexGenesisBlock = NULL;
  int nBestHeight = -1;
@@ -369,7 +375,8 @@
 +       {
              if (!pcoin-&gt;IsFinal() || pcoin-&gt;fSpent)
                  continue;
-             int64 n = pcoin-&gt;GetCredit();</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -32,6 +32,7 @@ extern map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
+             int64 n = pcoin-&gt;GetCredit();
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -32,6 +32,7 @@ extern map&lt;uint256, CBlockIndex*&gt; mapBlockIndex;
  extern const uint256 hashGenesisBlock;
  extern CBlockIndex* pindexGenesisBlock;
  extern int nBestHeight;
@@ -437,7 +444,8 @@
 +
      bool IsInMainChain() const
      {
-         return (pnext || this == pindexBest);</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -22,7 +22,7 @@ WXLIBS= \
+         return (pnext || this == pindexBest);
+</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -22,7 +22,7 @@ WXLIBS= \
   -l wxmsw29ud_html -l wxmsw29ud_core -l wxmsw29ud_adv -l wxbase29ud -l wxtiffd -l wxjpegd -l wxpngd -l wxzlibd
  
  LIBS= \
@@ -445,14 +453,16 @@
 + -l libboost_system-mgw34-mt-d -l libboost_filesystem-mgw34-mt-d -l libboost_program_options-mgw34-mt-d \
   -l db_cxx \
   -l eay32 \
-  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -19,6 +19,7 @@ LIBS= -dead_strip \
+  -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
+</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -19,6 +19,7 @@ LIBS= -dead_strip \
   $(DEPSDIR)/lib/libdb_cxx-4.8.a \
   $(DEPSDIR)/lib/libboost_system.a \
   $(DEPSDIR)/lib/libboost_filesystem.a \
 + $(DEPSDIR)/lib/libboost_program_options.a \
   $(DEPSDIR)/lib/libcrypto.a 
  
- WXDEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -DNOPCH -DMSG_NOSIGNAL=0</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
+ WXDEFS=$(shell $(DEPSDIR)/bin/wx-config --cxxflags) -DNOPCH -DMSG_NOSIGNAL=0
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
  
  LIBS= \
   -Wl,-Bstatic \
@@ -460,7 +470,8 @@
 +   -l boost_system -l boost_filesystem -l boost_program_options \
     -l db_cxx \
     -l crypto \
-  -Wl,-Bdynamic \</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -19,7 +19,7 @@ LIBPATHS= \
+  -Wl,-Bdynamic \
+</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -19,7 +19,7 @@ LIBPATHS= \
    /LIBPATH:&quot;/wxwidgets/lib/vc_lib&quot;
  
  LIBS= \
@@ -468,7 +479,8 @@
 +  libboost_system-vc80-mt-gd.lib libboost_filesystem-vc80-mt-gd.lib libboost_program_options-vc80-mt-gd.lib \
    libdb47sd.lib \
    libeay32.lib \
-   wxmsw29ud_html.lib wxmsw29ud_core.lib wxmsw29ud_adv.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib \</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,7 +21,27 @@ void ThreadRPCServer2(void* parg);
+   wxmsw29ud_html.lib wxmsw29ud_core.lib wxmsw29ud_adv.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib \
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -21,7 +21,27 @@ void ThreadRPCServer2(void* parg);
  typedef Value(*rpcfn_type)(const Array&amp; params, bool fHelp);
  extern map&lt;string, rpcfn_type&gt; mapCallTable;
  
@@ -767,7 +779,8 @@
 +            string strHeader = str.substr(0, nColon);
 +            boost::trim(strHeader);
 +            string strValue = str.substr(nColon+1);
-+            boost::trim(strValue);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
++            boost::trim(strValue);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -777,7 +790,8 @@
 +static const char* pszSubVer = &quot;&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -800,14 +814,16 @@
 +VIProductVersion 0.3.3.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1614,6 +1614,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1614,6 +1614,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
  CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
  {
      m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
 +    //m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
  
      // Change (c) into UTF-8 or ANSI copyright symbol
-     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+     wxString str = m_staticTextMain-&gt;GetLabel();
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
  	
  	public:
  		wxStaticText* m_staticTextVersion;
@@ -815,7 +831,8 @@
 +		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,333 ), long style = wxDEFAULT_DIALOG_STYLE );
  		~CAboutDialogBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
              &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
              &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
              &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
@@ -823,7 +840,8 @@
 +            &lt;property name=&quot;size&quot;&gt;532,333&lt;/property&gt;
              &lt;property name=&quot;style&quot;&gt;wxDEFAULT_DIALOG_STYLE&lt;/property&gt;
              &lt;property name=&quot;subclass&quot;&gt;&lt;/property&gt;
-             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -416,7 +416,7 @@ void ParseParameters(int argc, char* argv[])
+             &lt;property name=&quot;title&quot;&gt;About Bitcoin&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -416,7 +416,7 @@ void ParseParameters(int argc, char* argv[])
  {
      mapArgs.clear();
      mapMultiArgs.clear();
@@ -898,7 +916,8 @@
 +        if ((nMedian &gt; 0 ? nMedian : -nMedian) &gt; 70 * 60)
          {
              // Only let other nodes change our clock so far before we
-             // go to the NTP servers</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,8 @@ void ParseParameters(int argc, char* argv[]);
+             // go to the NTP servers
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,8 @@ void ParseParameters(int argc, char* argv[]);
  const char* wxGetTranslation(const char* psz);
  int GetFilesize(FILE* file);
  void GetDataDir(char* pszDirRet);
@@ -922,7 +941,8 @@
 +}
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e8bff10/">← minor UI tweaks, removed some outdated txt files, (and…</a><a rel="next" href="../../commits/7d46f92/">Lachesis: remove newlines every 64 characters in… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

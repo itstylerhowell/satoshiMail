@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed colors on ubuntu lucid, enabled -O2 in makefile.unix, boost removed -mt from their library names in 1.40, updated bitcoin icon, hashmeter, generated and hashmeter log entries -- version 0.2.13", "url": "https://satoshimail.vercel.app/commits/68b973a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-21T01:33:44Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/68b973a913fd1569d3a9a444d4233b15f7866e3e"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed colors on ubuntu lucid, enabled…", "item": "https://satoshimail.vercel.app/commits/68b973a/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -166,7 +168,8 @@
 +
                  tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
              }
-         }</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
+         }
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -21,7 +21,7 @@ WXLIBS= \
  
  LIBS= \
   -Wl,-Bstatic \
@@ -192,7 +195,8 @@
 -	-rm obj/nogui/*
 +	-rm obj/*.o
 +	-rm obj/nogui/*.o
- 	-rm headers.h.gch</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -965,7 +965,7 @@ void ThreadOpenConnections2(void* parg)
+ 	-rm headers.h.gch
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -965,7 +965,7 @@ void ThreadOpenConnections2(void* parg)
                  int64 nSinceLastTry = GetAdjustedTime() - addr.nLastTry;
  
                  // Randomize the order in a deterministic way, putting the standard port first
@@ -200,7 +204,8 @@
 +                int64 nRandomizer = (uint64)(nStart * 4951 + addr.nLastTry * 9567851 + addr.ip * 7789) % (2 * 60 * 60);
                  if (addr.port != DEFAULT_PORT)
                      nRandomizer += 2 * 60 * 60;
- </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -12,7 +12,7 @@ extern int nBestHeight;
+ 
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -12,7 +12,7 @@ extern int nBestHeight;
  
  
  
@@ -208,7 +213,8 @@
 +static const unsigned short DEFAULT_PORT = 0x8d20; // htons(8333)
  static const unsigned int PUBLISH_HOPS = 5;
  enum
- {</code></pre></details><details><summary><code>rc/bitcoin-bc.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/bitcoin.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/favicon.ico</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ {
+</code></pre></details><details><summary><code>rc/bitcoin-bc.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/bitcoin.ico</code></summary><pre><code></code></pre></details><details><summary><code>rc/favicon.ico</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -216,7 +222,8 @@
 +static const int VERSION = 213;
  static const char* pszSubVer = &quot;&quot;;
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -250,7 +250,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -250,7 +250,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
  #ifdef __WXMSW__
      SetIcon(wxICON(bitcoin));
  #else
@@ -243,7 +250,8 @@
 +#endif
      ptaskbaricon-&gt;Show(fMinimizeToTray || fClosedToTray);
  }
- </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -20,8 +20,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -20,8 +20,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	this-&gt;SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
  	
  	m_menubar = new wxMenuBar( 0 );
@@ -307,7 +315,8 @@
 +	bSizer60-&gt;Add( bSizer61, 0, wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 2 );
  	
  	bSizer63-&gt;Add( bSizer60, 1, wxEXPAND|wxLEFT, 5 );
- 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -25,9 +25,9 @@
+ 	
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -25,9 +25,9 @@
  #include &lt;wx/textctrl.h&gt;
  #include &lt;wx/button.h&gt;
  #include &lt;wx/sizer.h&gt;
@@ -334,7 +343,8 @@
 +		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,315 ), long style = wxDEFAULT_DIALOG_STYLE );
  		~CAboutDialogBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -71,7 +71,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -71,7 +71,7 @@
              &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
              &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
              &lt;object class=&quot;wxMenuBar&quot; expanded=&quot;1&quot;&gt;
@@ -633,7 +643,8 @@
                                                  &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;
 @@ -3215,7 +3172,7 @@
                                          &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
-                                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -101,10 +101,8 @@ void RandAddSeedPerfmon()
+                                             &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -101,10 +101,8 @@ void RandAddSeedPerfmon()
          hash = 0;
          memset(pdata, 0, nSize);
  
@@ -644,7 +655,8 @@
 -    printf(&quot;%s RandAddSeed()\n&quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
  #endif
  }
- </code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,203 +1,219 @@
+ 
+</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,203 +1,219 @@
  /* XPM */
  static const char * bitcoin16_xpm[] = {
  /* columns rows colors chars-per-pixel */

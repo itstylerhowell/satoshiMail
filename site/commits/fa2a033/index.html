@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix display of new generated coins, fix assertion in bitcoinminer", "url": "https://satoshimail.vercel.app/commits/fa2a033/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-25T04:35:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/fa2a0338d3f8b1c3a1d75bff39ff42e436cee0dc"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix display of new generated coins…", "item": "https://satoshimail.vercel.app/commits/fa2a033/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -129,7 +131,8 @@
 +                    return true;
                  if (fLimitProcessors &amp;&amp; vnThreadsRunning[3] &gt; nLimitProcessors)
                      return true;
-                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+                 tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -137,7 +140,8 @@
 +static const int VERSION = 105;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -306,6 +306,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -306,6 +306,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
  
      // Init column headers
      int nDateWidth = DateTimeStr(1229413914).size() * 6 + 8;
@@ -262,14 +266,16 @@
 -            _strlwr(pszExePath);
  
              // Set the path to the shortcut target
-             psl-&gt;SetPath(pszExePath);</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -88,6 +88,7 @@ public:
+             psl-&gt;SetPath(pszExePath);
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -88,6 +88,7 @@ public:
  
      void OnCrossThreadCall(wxCommandEvent&amp; event);
      void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
 +    bool DeleteLine(uint256 hashKey);
      void InsertTransaction(const CWalletTx&amp; wtx, bool fNew, int nIndex=-1);
      void RefreshListCtrl();
-     void RefreshStatus();</code></pre></details>
+     void RefreshStatus();
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/99cef99/">← flush wallet.dat, multi-proc, reorg options, revert to…</a><a rel="next" href="../../commits/dd51920/">addr relaying fixes, proxy option and privacy patches… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

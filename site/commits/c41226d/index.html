@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "revert revision 56, going in different direction with boost::asio and JSON-RPC", "url": "https://satoshimail.vercel.app/commits/c41226d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-10T19:33:04Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c41226d847c7d32ade7f02c0d53c85b0800fc71b"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "revert revision 56, going in different…", "item": "https://satoshimail.vercel.app/commits/c41226d/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,7 +53,8 @@
 -#include &quot;ipc.h&quot;
  
  #include &quot;xpm/addressbook16.xpm&quot;
- #include &quot;xpm/addressbook20.xpm&quot;</code></pre></details><details><summary><code>ipc.cpp</code></summary><pre><code>@@ -1,33 +0,0 @@
+ #include &quot;xpm/addressbook20.xpm&quot;
+</code></pre></details><details><summary><code>ipc.cpp</code></summary><pre><code>@@ -1,33 +0,0 @@
 -/*
 - * Inter-process calling functionality
 - */
@@ -126,7 +129,8 @@
 +        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
  
  bitcoin.exe: headers.h.gch $(OBJS)
- 	-kill /f bitcoin.exe</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -75,12 +75,11 @@ obj/sha.o: sha.cpp                  sha.h
+ 	-kill /f bitcoin.exe
+</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -75,12 +75,11 @@ obj/sha.o: sha.cpp                  sha.h
  obj/irc.o: irc.cpp                  $(HEADERS)
  	g++ -c $(CFLAGS) -o $@ $&lt;
  
@@ -140,7 +144,8 @@
 +        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
  
  bitcoin: headers.h.gch $(OBJS)
- 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -31,7 +31,7 @@ LIBS= \
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -31,7 +31,7 @@ LIBS= \
     -l wx_gtk2u$(D)-2.9 \
   -Wl,-Bdynamic \
     -l crypto \
@@ -163,7 +168,8 @@
 +        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
  
  bitcoin: headers.h.gch $(OBJS)
- 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ DEFINE_EVENT_TYPE(wxEVT_REPLY3)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ DEFINE_EVENT_TYPE(wxEVT_REPLY3)
  
  CMainFrame* pframeMain = NULL;
  CMyTaskBarIcon* ptaskbaricon = NULL;
@@ -226,7 +232,8 @@
 -    pserver-&gt;Create(GetDataDir() + &quot;service&quot;);
  
      //
-     // Tests</code></pre></details>
+     // Tests
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/53d5080/">← update fSpent flag on wallet transactions if they&#x27;re seen…</a><a rel="next" href="../../commits/75990a4/">JSON Spirit library from… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

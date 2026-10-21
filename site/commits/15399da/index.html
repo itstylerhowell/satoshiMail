@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "blocks-1, verify block chain on load, so wouldn't have needed to delete blk*.dat, it would have done a reorg automatically", "url": "https://satoshimail.vercel.app/commits/15399da/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-16T17:05:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/15399da9fe29336f119121340146d78973b601a5"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "blocks-1, verify block chain on load…", "item": "https://satoshimail.vercel.app/commits/15399da/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -64,7 +66,8 @@
 +
      return true;
  }
- </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1234,6 +1234,57 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
+ 
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1234,6 +1234,57 @@ bool Reorganize(CTxDB&amp; txdb, CBlockIndex* pindexNew)
  }
  
  
@@ -174,14 +177,16 @@
 +            return false;
  
      txdb.Close();
- </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1065,6 +1065,7 @@ public:
+ 
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1065,6 +1065,7 @@ public:
      bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
      bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
      bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
 +    bool SetBestChain(CTxDB&amp; txdb, CBlockIndex* pindexNew);
      bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos);
      bool CheckBlock() const;
-     bool AcceptBlock();</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -120,7 +120,7 @@ Value getblockcount(const Array&amp; params, bool fHelp)
+     bool AcceptBlock();
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -120,7 +120,7 @@ Value getblockcount(const Array&amp; params, bool fHelp)
              &quot;getblockcount\n&quot;
              &quot;Returns the number of blocks in the longest block chain.&quot;);
  
@@ -198,7 +203,8 @@
 +    obj.push_back(Pair(&quot;blocks&quot;,        (int)nBestHeight));
      obj.push_back(Pair(&quot;connections&quot;,   (int)vNodes.size()));
      obj.push_back(Pair(&quot;proxy&quot;,         (fUseProxy ? addrProxy.ToStringIPPort() : string())));
-     obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     obj.push_back(Pair(&quot;generate&quot;,      (bool)fGenerateBitcoins));
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 310;
@@ -206,7 +212,8 @@
 +static const char* pszSubVer = &quot;.2&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1027,7 +1027,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1027,7 +1027,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
          strGen = _(&quot;(not connected)&quot;);
      m_statusBar-&gt;SetStatusText(strGen, 1);
  
@@ -214,7 +221,8 @@
 +    string strStatus = strprintf(_(&quot;     %d connections     %d blocks     %d transactions&quot;), vNodes.size(), nBestHeight, nTransactionCount);
      m_statusBar-&gt;SetStatusText(strStatus, 2);
  
-     if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)</code></pre></details>
+     if (fDebug &amp;&amp; GetTime() - nThreadSocketHandlerHeartbeat &gt; 60)
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6da916d/">← wrap sha256.cpp in FOURWAYSSE2 #ifdef</a><a rel="next" href="../../commits/a01d587/">erase the bad chain after disconnecting it →</a></nav>
 </main>
 <footer class="sf"><div class="in">

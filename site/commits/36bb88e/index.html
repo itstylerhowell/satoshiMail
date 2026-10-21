@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix system tray icon on windows", "url": "https://satoshimail.vercel.app/commits/36bb88e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-21T18:41:34Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/36bb88e1b9825f84c49c04643461dce823f70455"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix system tray icon on windows", "item": "https://satoshimail.vercel.app/commits/36bb88e/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -45,11 +47,13 @@
 +            SetIcon(wxICON(favicon), strTooltip);
  #else
              SetIcon(bitcoin80_xpm, strTooltip);
- #endif</code></pre></details><details><summary><code>ui.rc</code></summary><pre><code>@@ -12,3 +12,4 @@ addressbook16         BITMAP  &quot;rc/addressbook16.bmp&quot;
+ #endif
+</code></pre></details><details><summary><code>ui.rc</code></summary><pre><code>@@ -12,3 +12,4 @@ addressbook16         BITMAP  &quot;rc/addressbook16.bmp&quot;
  addressbook16mask     BITMAP  &quot;rc/addressbook16mask.bmp&quot;
  addressbook20         BITMAP  &quot;rc/addressbook20.bmp&quot;
  addressbook20mask     BITMAP  &quot;rc/addressbook20mask.bmp&quot;
-+favicon               ICON    &quot;rc/favicon.ico&quot;</code></pre></details>
++favicon               ICON    &quot;rc/favicon.ico&quot;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/161c38b/">← 80x80 xpm icon for ubuntu, alignment tweaked to scale…</a><a rel="next" href="../../commits/8efd8f7/">re-enable hiding taskbar button on minimize on linux… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

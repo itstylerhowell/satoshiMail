@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Fredrik Roubert: simplified makefile.unix with wx-config, misc", "url": "https://satoshimail.vercel.app/commits/17b2740/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-29T15:34:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/17b2740289268c037c5adb5956989f134982bf80"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Fredrik Roubert: simplified…", "item": "https://satoshimail.vercel.app/commits/17b2740/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -67,7 +69,8 @@
 +    printf(&quot;nTargetTimespan = %&quot;PRI64d&quot;    nActualTimespan = %&quot;PRI64d&quot;\n&quot;, nTargetTimespan, nActualTimespan);
      printf(&quot;Before: %08x  %s\n&quot;, pindexLast-&gt;nBits, CBigNum().SetCompact(pindexLast-&gt;nBits).getuint256().ToString().c_str());
      printf(&quot;After:  %08x  %s\n&quot;, bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
- </code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -54,7 +54,7 @@ obj/%.o: %.cpp $(HEADERS)
+ 
+</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -54,7 +54,7 @@ obj/%.o: %.cpp $(HEADERS)
  	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
  
  cryptopp/obj/%.o: cryptopp/%.cpp
@@ -75,7 +78,8 @@
 +	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_X86_ASM_AVAILABLE -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
  
  obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
- 	windres $(DEFS) $(INCLUDEPATHS) -o $@ -i $&lt;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,21 +3,12 @@
+ 	windres $(DEFS) $(INCLUDEPATHS) -o $@ -i $&lt;
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,21 +3,12 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -124,7 +128,8 @@
 +	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
  
  bitcoin: $(OBJS) obj/ui.o obj/uibase.o
- 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1763,8 +1763,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1763,8 +1763,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
  
  CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
  {
@@ -133,7 +138,8 @@
 +    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d%s beta&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer));
  
      // Change (c) into UTF-8 or ANSI copyright symbol
-     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details>
+     wxString str = m_staticTextMain-&gt;GetLabel();
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/f6f8237/">← fixed makefile.osx</a><a rel="next" href="../../commits/757f076/">reverted makefile.unix wx-config -- version 0.3.6 →</a></nav>
 </main>
 <footer class="sf"><div class="in">

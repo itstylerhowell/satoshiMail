@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "enable SSE2 in all builds to fix crypto++ SHA-256 on 64-bit", "url": "https://satoshimail.vercel.app/commits/e6b7ab5/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-09T19:54:40Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e6b7ab57496c9267c5d0bbad2be8e942a01731dc"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "enable SSE2 in all builds to fix…", "item": "https://satoshimail.vercel.app/commits/e6b7ab5/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -55,7 +57,8 @@
 +If you need to build Boost yourself:
 +sudo su
  ./bootstrap.sh
- ./bjam install</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -54,7 +54,7 @@ obj/%.o: %.cpp $(HEADERS)
+ ./bjam install
+</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -54,7 +54,7 @@ obj/%.o: %.cpp $(HEADERS)
  	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
  
  cryptopp/obj/%.o: cryptopp/%.cpp
@@ -63,11 +66,13 @@
 +	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_X86_ASM_AVAILABLE -o $@ $&lt;
  
  obj/ui_res.o: ui.rc  rc/bitcoin.ico rc/check.ico rc/send16.bmp rc/send16mask.bmp rc/send16masknoshadow.bmp rc/send20.bmp rc/send20mask.bmp rc/addressbook16.bmp rc/addressbook16mask.bmp rc/addressbook20.bmp rc/addressbook20mask.bmp
- 	windres $(DEFS) $(INCLUDEPATHS) -o $@ -i $&lt;</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -69,3 +69,4 @@ clean:
+ 	windres $(DEFS) $(INCLUDEPATHS) -o $@ -i $&lt;
+</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -69,3 +69,4 @@ clean:
  	-rm -f bitcoin bitcoind
  	-rm -f obj/*.o
  	-rm -f obj/nogui/*.o
-+	-rm -f cryptopp/obj/*.o</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -51,7 +51,7 @@ obj/%.o: %.cpp $(HEADERS)
++	-rm -f cryptopp/obj/*.o
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -51,7 +51,7 @@ obj/%.o: %.cpp $(HEADERS)
  	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
  
  cryptopp/obj/%.o: cryptopp/%.cpp
@@ -75,7 +80,8 @@
 +	g++ -c $(CFLAGS) -O3 -o $@ $&lt;
  
  bitcoin: $(OBJS) obj/ui.o obj/uibase.o
- 	g++ $(CFLAGS) -o $@ $^ $(WXLIBS) $(LIBS)</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ 	g++ $(CFLAGS) -o $@ $^ $(WXLIBS) $(LIBS)
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 308;
@@ -83,7 +89,8 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b34e8c3/">← new safety feature displays a warning message and locks…</a><a rel="next" href="../../commits/94cfec0/">always make 8 outbound connections even if have inbound… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

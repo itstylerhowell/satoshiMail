@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "gethashespersec and added version and hashespersec to getinfo", "url": "https://satoshimail.vercel.app/commits/fb83d28/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-10T22:55:23Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/fb83d28768e62eb46f83d15afaf67bdfb4675d9d"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "gethashespersec and added version and…", "item": "https://satoshimail.vercel.app/commits/fb83d28/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -93,7 +95,8 @@
 +                            nCycleCounter = 0;
                              string strStatus = strprintf(&quot;    %.0f khash/s&quot;, dHashesPerSec/1000.0);
                              UIThreadCall(bind(CalledSetStatusBar, strStatus, 0));
-                             static int64 nLogTime;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -42,6 +42,8 @@ extern CCriticalSection cs_mapRequestCount;
+                             static int64 nLogTime;
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -42,6 +42,8 @@ extern CCriticalSection cs_mapRequestCount;
  extern map&lt;string, string&gt; mapAddressBook;
  extern CCriticalSection cs_mapAddressBook;
  extern vector&lt;unsigned char&gt; vchDefaultKey;
@@ -101,7 +104,8 @@
 +extern int64 nHPSTimerStart;
  
  // Settings
- extern int fGenerateBitcoins;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -217,13 +217,28 @@ Value setgenerate(const Array&amp; params, bool fHelp)
+ extern int fGenerateBitcoins;
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -217,13 +217,28 @@ Value setgenerate(const Array&amp; params, bool fHelp)
  }
  
  
@@ -154,7 +158,8 @@
 +    make_pair(&quot;gethashespersec&quot;,       &amp;gethashespersec),
      make_pair(&quot;getinfo&quot;,               &amp;getinfo),
      make_pair(&quot;getnewaddress&quot;,         &amp;getnewaddress),
-     make_pair(&quot;setlabel&quot;,              &amp;setlabel),</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     make_pair(&quot;setlabel&quot;,              &amp;setlabel),
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 308;
@@ -162,7 +167,8 @@
 +static const char* pszSubVer = &quot;.3&quot;;
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/342e1b7/">← json-spirit print reals with 8 decimal places, bitcoind…</a><a rel="next" href="../../commits/0cff7a8/">disable SSE2 on 32-bit →</a></nav>
 </main>
 <footer class="sf"><div class="in">

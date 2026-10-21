@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "json-spirit print reals with 8 decimal places, bitcoind help <command> instead of bitcoind <command> -?", "url": "https://satoshimail.vercel.app/commits/342e1b7/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-10T19:21:17Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/342e1b73385cac5a5b2fc7316d82a2b55b3a85d4"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "json-spirit print reals with 8 decimal…", "item": "https://satoshimail.vercel.app/commits/342e1b7/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -45,7 +47,8 @@
 +            &quot;  bitcoin [options] help &lt;command&gt;    \t\t  &quot; + _(&quot;Get help for a command\n&quot;) +
            _(&quot;Options:\n&quot;) +
              &quot;  -conf=&lt;file&gt;    \t  &quot; + _(&quot;Specify configuration file (default: bitcoin.conf)\n&quot;) +
-             &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -342,7 +342,7 @@ namespace json_spirit
+             &quot;  -gen            \t  &quot; + _(&quot;Generate coins\n&quot;) +
+</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -342,7 +342,7 @@ namespace json_spirit
          {
              std::ostringstream os;
  
@@ -53,7 +56,8 @@
 +            ///// Bitcoin: Tell the types by name instead of by number
              os &lt;&lt; &quot;value is type &quot; &lt;&lt; Value_type_name[type()] &lt;&lt; &quot;, expected &quot; &lt;&lt; Value_type_name[vtype];
  
-             throw std::runtime_error( os.str() );</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -124,8 +124,11 @@ namespace json_spirit
+             throw std::runtime_error( os.str() );
+</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -124,8 +124,11 @@ namespace json_spirit
                  case str_type:   output( value.get_str() );   break;
                  case bool_type:  output( value.get_bool() );  break;
                  case int_type:   output_int( value );         break;
@@ -65,7 +69,8 @@
 +
                  case null_type:  os_ &lt;&lt; &quot;null&quot;;               break;
                  default: assert( false );
-             }</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -56,10 +56,14 @@ void PrintConsole(const char* format, ...)
+             }
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -56,10 +56,14 @@ void PrintConsole(const char* format, ...)
  
  Value help(const Array&amp; params, bool fHelp)
  {
@@ -193,7 +198,8 @@
 +        Value result = CallRPC(strMethod, params);
  
          // Print result
-         string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));</code></pre></details>
+         string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c2fa70d/">← always make 8 outbound connections even if have inbound…</a><a rel="next" href="../../commits/fb83d28/">gethashespersec and added version and hashespersec to… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

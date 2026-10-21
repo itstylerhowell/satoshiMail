@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "warning message if clock is too far off", "url": "https://satoshimail.vercel.app/commits/2201a08/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-20T16:55:14Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2201a0808ea240617a66823f98dda3433d2546b0"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "warning message if clock is too far off", "item": "https://satoshimail.vercel.app/commits/2201a08/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +        ThreadSafeMessageBox(strMessage, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
          CreateThread(Shutdown, NULL);
          return false;
-     }</code></pre></details><details><summary><code>noui.h</code></summary><pre><code>@@ -3,7 +3,35 @@
+     }
+</code></pre></details><details><summary><code>noui.h</code></summary><pre><code>@@ -3,7 +3,35 @@
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -100,14 +103,16 @@
 +inline bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* parent)
  {
      return true;
- }</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -247,6 +247,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+ }
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -247,6 +247,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
      obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
      obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
      obj.push_back(Pair(&quot;hashespersec&quot;,  gethashespersec(params, false)));
 +    obj.push_back(Pair(&quot;status&quot;,        strWarning));
      return obj;
  }
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 310;
@@ -115,7 +120,8 @@
 +static const char* pszSubVer = &quot;.5&quot;;
  
  
- </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,6 +14,7 @@ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
+ 
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,6 +14,7 @@ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
  bool fShutdown = false;
  bool fDaemon = false;
  bool fCommandLine = false;
@@ -157,7 +163,8 @@
 +            }
          }
          foreach(int64 n, vTimeOffsets)
-             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -143,6 +143,7 @@ extern char pszSetDataDir[MAX_PATH];
+             printf(&quot;%+&quot;PRI64d&quot;  &quot;, n);
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -143,6 +143,7 @@ extern char pszSetDataDir[MAX_PATH];
  extern bool fShutdown;
  extern bool fDaemon;
  extern bool fCommandLine;
@@ -176,7 +183,8 @@
 +
  template&lt;typename T&gt;
  string HexStr(const T itbegin, const T itend, bool fSpaces=true)
- {</code></pre></details>
+ {
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0545481/">← block index checking on load, extra redundant checks, misc…</a><a rel="next" href="../../commits/4019262/">alert system -- version 0.3.11 →</a></nav>
 </main>
 <footer class="sf"><div class="in">

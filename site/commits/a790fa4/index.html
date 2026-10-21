@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "don't count or spend payments until they have 1 confirmation, misc cleanup, changed internal version number from 312 to 31300 -- version 0.3.13", "url": "https://satoshimail.vercel.app/commits/a790fa4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-30T16:23:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a790fa46f40d751307f86c37a709eb119768ce5b"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "don't count or spend payments until…", "item": "https://satoshimail.vercel.app/commits/a790fa4/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -111,7 +113,8 @@
 +msgstr &quot;versão %s%s beta&quot;
  
  #: ../../../ui.cpp:1681
- msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -487,18 +487,56 @@ void CWalletTx::AddSupportingTransactions(CTxDB&amp; txdb)
+ msgid &quot;Will appear as \&quot;From: Unknown\&quot;&quot;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -487,18 +487,56 @@ void CWalletTx::AddSupportingTransactions(CTxDB&amp; txdb)
  
  
  
@@ -553,7 +556,8 @@
 +VIProductVersion 0.3.13.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -103,6 +103,16 @@ int InsertLine(wxListCtrl* listCtrl, void* pdata, const wxString&amp; str0, const wx
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -103,6 +103,16 @@ int InsertLine(wxListCtrl* listCtrl, void* pdata, const wxString&amp; str0, const wx
      return nIndex;
  }
  

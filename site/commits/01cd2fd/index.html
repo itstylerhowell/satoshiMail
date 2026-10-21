@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix -datadir=./subdir relative path, autostart off by default except on windows, fix occasional \"vector iterator not dereferencable\" assertion with msvc, fix readlink compile warning on linux build, use sys/param.h and BSD define instead of __BSD__, -paytxfee switch", "url": "https://satoshimail.vercel.app/commits/01cd2fd/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-12T21:13:43Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/01cd2fdaf3ac6071304ceb80fb7436ac02b1059e"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix -datadir=./subdir relative path…", "item": "https://satoshimail.vercel.app/commits/01cd2fd/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -71,7 +73,8 @@
 +#ifdef BSD
  #include &lt;netinet/in.h&gt;
  #endif
- </code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -137,7 +137,10 @@ bool AppInit2(int argc, char* argv[])
+ 
+</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -137,7 +137,10 @@ bool AppInit2(int argc, char* argv[])
      ParseParameters(argc, argv);
  
      if (mapArgs.count(&quot;-datadir&quot;))
@@ -107,7 +110,8 @@
 +#if defined(__WXMSW__) &amp;&amp; defined(GUI)
      if (fFirstRun)
          SetStartOnSystemStartup(true);
- #endif</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
+ #endif
+</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -184,8 +184,8 @@ msgid &quot;From: &quot;
  msgstr &quot;Von: &quot;
  
  #: ../../../ui.cpp:634
@@ -257,7 +261,8 @@
 +
  #: ../../../ui.cpp:1682
  msgid &quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;
- msgstr &quot;Não é possível incluir uma mensagem ao enviar para um endereço Bitcoin&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2224,7 +2224,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ msgstr &quot;Não é possível incluir uma mensagem ao enviar para um endereço Bitcoin&quot;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2224,7 +2224,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
          // This includes all nodes that are currently online,
          // since they rebroadcast an addr every 24 hours
          pfrom-&gt;vAddrToSend.clear();
@@ -265,7 +270,8 @@
 +        int64 nSince = GetAdjustedTime() - 12 * 60 * 60; // in the last 12 hours
          CRITICAL_BLOCK(cs_mapAddresses)
          {
-             unsigned int nSize = mapAddresses.size();</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -66,7 +66,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
+             unsigned int nSize = mapAddresses.size();
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -66,7 +66,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
      SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
      if (hSocket == INVALID_SOCKET)
          return false;
@@ -322,7 +328,8 @@
 +#ifdef BSD
      // Different way of disabling SIGPIPE on BSD
      setsockopt(hListenSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;nOne, sizeof(int));
- #endif</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -974,8 +974,8 @@ void ThreadRPCServer2(void* parg)
+ #endif
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -974,8 +974,8 @@ void ThreadRPCServer2(void* parg)
                  printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
  
                  // Observe lockdown
@@ -332,7 +339,8 @@
 +                    throw runtime_error(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.&quot;);
  
                  // Execute
-                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 308;
@@ -340,7 +348,8 @@
 +static const char* pszSubVer = &quot;.4&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -515,7 +515,7 @@ string SingleLine(const string&amp; strIn)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -515,7 +515,7 @@ string SingleLine(const string&amp; strIn)
  {
      string strOut;
      bool fOneSpace = false;
@@ -388,7 +397,8 @@
 +        m_textCtrlFrom-&gt;SetValue(_(&quot;n/a&quot;));
          m_textCtrlMessage-&gt;SetValue(_(&quot;Can&#x27;t include a message when sending to a Bitcoin address&quot;));
      }
-     else if (fEnable &amp;&amp; !fEnabledPrev)</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -430,8 +430,9 @@ inline void heapchk()
+     else if (fEnable &amp;&amp; !fEnabledPrev)
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -430,8 +430,9 @@ inline void heapchk()
  template&lt;typename T1&gt;
  inline uint256 Hash(const T1 pbegin, const T1 pend)
  {
@@ -430,7 +440,8 @@
 +    SHA256_Update(&amp;ctx, (p3begin == p3end ? pblank : (unsigned char*)&amp;p3begin[0]), (p3end - p3begin) * sizeof(p3begin[0]));
      SHA256_Final((unsigned char*)&amp;hash1, &amp;ctx);
      uint256 hash2;
-     SHA256((unsigned char*)&amp;hash1, sizeof(hash1), (unsigned char*)&amp;hash2);</code></pre></details>
+     SHA256((unsigned char*)&amp;hash1, sizeof(hash1), (unsigned char*)&amp;hash2);
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/819adff/">← fix build, thanks jgarzik</a><a rel="next" href="../../commits/7f71fd1/">fix -datadir=./subdir relative path, autostart off by… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "makefile.unix to build with option to enable tcatm's 4-way SSE2 SHA-256 with -4way switch on Linux -- version 0.3.10 release", "url": "https://satoshimail.vercel.app/commits/08fee75/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T22:46:58Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/08fee75201e82f2e34fcc1549ee8edd152f5d040"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "makefile.unix to build with option to…", "item": "https://satoshimail.vercel.app/commits/08fee75/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -63,7 +65,8 @@
 +bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha256.o
  	g++ $(CFLAGS) -o $@ $^ $(LIBS)
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -86,7 +89,8 @@
 +VIProductVersion 0.3.10.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/85de7d7/">← scanback check to prevent adding to the 74638 overflow chain</a><a rel="next" href="../../commits/6ac7f9f/">misc changes →</a></nav>
 </main>
 <footer class="sf"><div class="in">

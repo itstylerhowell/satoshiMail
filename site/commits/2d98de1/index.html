@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Mac OS build fixes by laszlo -- version 0.2.8", "url": "https://satoshimail.vercel.app/commits/2d98de1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-05-19T00:26:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2d98de1b3ae2ade8b1e5493bc63c0c1d776deeb1"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Mac OS build fixes by laszlo --…", "item": "https://satoshimail.vercel.app/commits/2d98de1/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -59,7 +61,8 @@
 +#ifndef __WXMSW__
      umask(077);
  #endif
- #ifdef __WXMSW__</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1338,7 +1338,7 @@ bool CBlock::AcceptBlock()
+ #ifdef __WXMSW__
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1338,7 +1338,7 @@ bool CBlock::AcceptBlock()
  
      // Don&#x27;t relay old inventory during initial block download.
      // Please keep this number updated to a few thousand below current block count.
@@ -79,7 +82,8 @@
 +            pto-&gt;nNextSendTxInv = GetTimeMillis() + 3000 + GetRand(2000);
              fSendTxInv = true;
          }
- </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -927,9 +927,7 @@ void ThreadOpenConnections2(void* parg)
+ 
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -927,9 +927,7 @@ void ThreadOpenConnections2(void* parg)
                      continue;
  
                  // Only try the old stuff if we don&#x27;t have enough connections
@@ -89,7 +93,8 @@
 +                if (vNodes.size() &gt;= 8 &amp;&amp; nSinceLastSeen &gt; 24 * 60 * 60)
                      continue;
  
-                 // If multiple addresses are ready, prioritize by time since</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -45,6 +45,7 @@ bool StopNode();
+                 // If multiple addresses are ready, prioritize by time since
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -45,6 +45,7 @@ bool StopNode();
  //  (4) message start
  //  (12) command
  //  (4) size
@@ -232,7 +237,8 @@
 +        return &amp;vSend[nHeaderStart] + offsetof(CMessageHeader, pchCommand);
      }
  
- </code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -77,24 +77,28 @@ Value getconnectioncount(const Array&amp; params)
+ 
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -77,24 +77,28 @@ Value getconnectioncount(const Array&amp; params)
  }
  
  
@@ -277,7 +283,8 @@
 +    obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
      return obj;
  }
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -287,7 +294,8 @@
 +static const char* pszSubVer = &quot;.0&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -256,11 +256,20 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -256,11 +256,20 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
      m_staticTextBalance-&gt;SetLabel(FormatMoney(GetBalance()) + &quot;  &quot;);
      m_listCtrl-&gt;SetFocus();
      ptaskbaricon = new CMyTaskBarIcon();
@@ -334,7 +342,8 @@
 +    wxCommandEvent event2(wxEVT_COMMAND_MENU_SELECTED, wxID_PREFERENCES);
      pframeMain-&gt;GetEventHandler()-&gt;AddPendingEvent(event2);
  }
- </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -24,7 +24,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ 
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -24,7 +24,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	
  	m_menuFile = new wxMenu();
  	wxMenuItem* m_menuFileExit;
@@ -395,7 +404,8 @@
 +	m_listCtrlReceived = new wxListCtrl( m_panel93, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SORT_DESCENDING );
  	bSizer113-&gt;Add( m_listCtrlReceived, 1, wxEXPAND, 5 );
  	
- 	m_panel93-&gt;SetSizer( bSizer113 );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -42,29 +42,28 @@
+ 	m_panel93-&gt;SetSizer( bSizer113 );
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -42,29 +42,28 @@
  
  #define wxID_MAINFRAME 1000
  #define wxID_OPTIONSGENERATEBITCOINS 1001
@@ -446,7 +456,8 @@
 +#define wxID_TEXTCTRL 1023
  
  ///////////////////////////////////////////////////////////////////////////////
- /// Class CMainFrameBase</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -123,7 +123,7 @@
+ /// Class CMainFrameBase
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -123,7 +123,7 @@
                          &lt;property name=&quot;checked&quot;&gt;0&lt;/property&gt;
                          &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
                          &lt;property name=&quot;help&quot;&gt;&lt;/property&gt;
@@ -508,7 +519,8 @@
 +                                            &lt;property name=&quot;window_style&quot;&gt;&lt;/property&gt;
                                              &lt;event name=&quot;OnChar&quot;&gt;&lt;/event&gt;
                                              &lt;event name=&quot;OnEnterWindow&quot;&gt;&lt;/event&gt;
-                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -314,6 +314,12 @@ string FormatMoney(int64 n, bool fPlus)
+                                             &lt;event name=&quot;OnEraseBackground&quot;&gt;&lt;/event&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -314,6 +314,12 @@ string FormatMoney(int64 n, bool fPlus)
      return str;
  }
  
@@ -520,14 +532,16 @@
 +
  bool ParseMoney(const char* pszIn, int64&amp; nRet)
  {
-     string strWhole;</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -133,6 +133,7 @@ void PrintException(std::exception* pex, const char* pszThread);
+     string strWhole;
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -133,6 +133,7 @@ void PrintException(std::exception* pex, const char* pszThread);
  void LogException(std::exception* pex, const char* pszThread);
  void ParseString(const string&amp; str, char c, vector&lt;string&gt;&amp; v);
  string FormatMoney(int64 n, bool fPlus=false);
 +bool ParseMoney(const string&amp; str, int64&amp; nRet);
  bool ParseMoney(const char* pszIn, int64&amp; nRet);
  vector&lt;unsigned char&gt; ParseHex(const char* psz);
- vector&lt;unsigned char&gt; ParseHex(const std::string&amp; str);</code></pre></details>
+ vector&lt;unsigned char&gt; ParseHex(const std::string&amp; str);
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/966cca4/">← misc</a><a rel="next" href="../../commits/124baa4/">build-osx.txt build instructions and makefile.osx from… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc", "url": "https://satoshimail.vercel.app/commits/b075bbf/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-06T00:38:11Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/b075bbf9862df41cdf5265026ba787b7d0fecb07"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc", "item": "https://satoshimail.vercel.app/commits/b075bbf/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -62,7 +64,8 @@
 +        printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,16).c_str());
  
          CInv inv(MSG_BLOCK, pblock-&gt;GetHash());
-         pfrom-&gt;AddInventoryKnown(inv);</code></pre></details>
+         pfrom-&gt;AddInventoryKnown(inv);
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/107d9e2/">← fix transaction fee bug in CreateTransaction, higher size…</a><a rel="next" href="../../commits/4ea3f3d/">retry IRC if name in use, resize to fit ubuntu&#x27;s giant… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

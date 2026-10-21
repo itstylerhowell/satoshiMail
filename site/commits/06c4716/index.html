@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "version 0.3 rc2", "url": "https://satoshimail.vercel.app/commits/06c4716/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-26T15:47:45Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/06c47163962ce418569d9386770001c7a79c026e"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "version 0.3 rc2", "item": "https://satoshimail.vercel.app/commits/06c4716/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +            struct hostent* phostent = gethostbyname(&quot;irc.lfnet.org&quot;);
              if (phostent &amp;&amp; phostent-&gt;h_addr_list &amp;&amp; phostent-&gt;h_addr_list[0])
                  addrConnect = CAddress(*(u_long*)phostent-&gt;h_addr_list[0], htons(6667));
-         }</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2707,7 +2707,7 @@ void BitcoinMiner()
+         }
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2707,7 +2707,7 @@ void BitcoinMiner()
              }
  
              // Update nTime every few seconds
@@ -57,7 +60,8 @@
 +            const unsigned int nMask = 0xffff;
              if ((++tmp.block.nNonce &amp; nMask) == 0)
              {
-                 // Meter hashes/sec</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+                 // Meter hashes/sec
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 300;
@@ -65,7 +69,8 @@
 +static const char* pszSubVer = &quot; rc2&quot;;
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8700fae/">← build-unix.txt: updated a few version numbers</a><a rel="next" href="../../commits/f077bc0/">reduced max outbound connections from 15 to 8 --version… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

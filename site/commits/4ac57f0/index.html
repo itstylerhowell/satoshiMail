@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "move debug.log and db.log to data dir, portable GetDataDir, optimize GetBalance, fix repaint bogdown, -addnode and -? switches", "url": "https://satoshimail.vercel.app/commits/4ac57f0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-01T01:16:51Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4ac57f013e20da2d0f87fff69625cbd4419089f3"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "move debug.log and db.log to data dir…", "item": "https://satoshimail.vercel.app/commits/4ac57f0/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -43,7 +45,8 @@
 +MinGW GCC (v3.4.5)
  Microsoft Visual C++ 6.0 SP6
  
- </code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -61,18 +61,19 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+ 
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -61,18 +61,19 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
          {
              if (fShutdown)
                  return;
@@ -98,7 +101,8 @@
 +                        printf(&quot;Flushed wallet.dat %&quot;PRI64d&quot;ms\n&quot;, GetTimeMillis() - nStart);
                          mapFileUseCount.erase(mi++);
                      }
-                 }</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -40,7 +40,7 @@ bool DecodeAddress(string str, CAddress&amp; addr)
+                 }
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -40,7 +40,7 @@ bool DecodeAddress(string str, CAddress&amp; addr)
          return false;
      memcpy(&amp;tmp, &amp;vch[0], sizeof(tmp));
  
@@ -131,7 +135,8 @@
 +                strlcpy(pszName, vWords[0].c_str() + 1, sizeof(pszName));
                  if (strchr(pszName, &#x27;!&#x27;))
                      *strchr(pszName, &#x27;!&#x27;) = &#x27;\0&#x27;;
-                 printf(&quot;IRC got join\n&quot;);</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -1,11 +1,6 @@
+                 printf(&quot;IRC got join\n&quot;);
+</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -1,11 +1,6 @@
  // Copyright (c) 2009 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -142,7 +147,8 @@
 -#endif
  
  extern bool RecvLine(SOCKET hSocket, string&amp; strLine);
- extern void ThreadIRCSeed(void* parg);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,7 +42,6 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
+ extern void ThreadIRCSeed(void* parg);
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,7 +42,6 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
  CCriticalSection cs_mapKeys;
  CKey keyUser;
  
@@ -245,7 +251,8 @@
 +    //printf(&quot;GetBalance() %&quot;PRI64d&quot;ms\n&quot;, GetTimeMillis() - nStart);
      return nTotal;
  }
- </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,7 +34,6 @@ extern int nBestHeight;
+ 
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,7 +34,6 @@ extern int nBestHeight;
  extern uint256 hashBestChain;
  extern CBlockIndex* pindexBest;
  extern unsigned int nTransactionsUpdated;
@@ -307,7 +314,8 @@
 +        return nGetCreditCached;
      }
  
-     IMPLEMENT_SERIALIZE</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -21,8 +21,7 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect);
+     IMPLEMENT_SERIALIZE
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -21,8 +21,7 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect);
  bool fClient = false;
  uint64 nLocalServices = (fClient ? 0 : NODE_NETWORK);
  CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
@@ -376,7 +384,8 @@
 +    printf(&quot;bound to addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
  
      // Listen for incoming connections
-     if (listen(hListenSocket, SOMAXCONN) == SOCKET_ERROR)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -1,12 +1,6 @@
+     if (listen(hListenSocket, SOMAXCONN) == SOCKET_ERROR)
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -1,12 +1,6 @@
  // Copyright (c) 2009 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -505,7 +514,8 @@
 +        return (ip != 0 &amp;&amp; ip != INADDR_NONE &amp;&amp; port != htons(USHRT_MAX));
      }
  
-     unsigned char GetByte(int n) const</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -25,7 +25,6 @@ DEFINE_EVENT_TYPE(wxEVT_TABLEDELETED)
+     unsigned char GetByte(int n) const
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -25,7 +25,6 @@ DEFINE_EVENT_TYPE(wxEVT_TABLEDELETED)
  CMainFrame* pframeMain = NULL;
  CMyTaskBarIcon* ptaskbaricon = NULL;
  map&lt;string, string&gt; mapAddressBook;
@@ -821,7 +831,8 @@
 +    void RefreshStatusColumn();
  };
  
- </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -5,9 +5,13 @@
+ 
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -5,9 +5,13 @@
  #include &quot;headers.h&quot;
  
  
@@ -947,7 +958,8 @@
 +
  
  
- </code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -54,16 +54,23 @@ inline T&amp; REF(const T&amp; val)
+ 
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -54,16 +54,23 @@ inline T&amp; REF(const T&amp; val)
      return (T&amp;)val;
  }
  
@@ -1043,7 +1055,8 @@
 +#endif
  }
  
- // Randomize the stack to help protect against buffer overrun exploits</code></pre></details>
+ // Randomize the stack to help protect against buffer overrun exploits
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/32d4903/">← make CheckDiskSpace portable</a><a rel="next" href="../../commits/b7362c0/">renamed build.txt to build-msw.txt →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "JSON Spirit library from http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx, MIT license", "url": "https://satoshimail.vercel.app/commits/75990a4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-10T19:41:22Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/75990a46a7e4999729ff67c4268c2241c98e486f"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "JSON Spirit library from…", "item": "https://satoshimail.vercel.app/commits/75990a4/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -59,7 +61,8 @@
 +HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 +WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 +FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+OTHER DEALINGS IN THE SOFTWARE.</code></pre></details><details><summary><code>json/json_spirit.h</code></summary><pre><code>@@ -0,0 +1,18 @@
++OTHER DEALINGS IN THE SOFTWARE.
+</code></pre></details><details><summary><code>json/json_spirit.h</code></summary><pre><code>@@ -0,0 +1,18 @@
 +#ifndef JSON_SPIRIT
 +#define JSON_SPIRIT
 +
@@ -77,7 +80,8 @@
 +#include &quot;json_spirit_writer.h&quot;
 +#include &quot;json_spirit_utils.h&quot;
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_error_position.h</code></summary><pre><code>@@ -0,0 +1,54 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_error_position.h</code></summary><pre><code>@@ -0,0 +1,54 @@
 +#ifndef JSON_SPIRIT_ERROR_POSITION
 +#define JSON_SPIRIT_ERROR_POSITION
 +
@@ -131,7 +135,8 @@
 +}
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_reader.cpp</code></summary><pre><code>@@ -0,0 +1,137 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_reader.cpp</code></summary><pre><code>@@ -0,0 +1,137 @@
 +//          Copyright John W. Wilkinson 2007 - 2009.
 +// Distributed under the MIT License, see accompanying file LICENSE.txt
 +
@@ -268,7 +273,8 @@
 +    begin = read_range_or_throw( begin, end, value );
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_reader.h</code></summary><pre><code>@@ -0,0 +1,62 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_reader.h</code></summary><pre><code>@@ -0,0 +1,62 @@
 +#ifndef JSON_SPIRIT_READER
 +#define JSON_SPIRIT_READER
 +
@@ -330,7 +336,8 @@
 +#endif
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_reader_template.h</code></summary><pre><code>@@ -0,0 +1,612 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_reader_template.h</code></summary><pre><code>@@ -0,0 +1,612 @@
 +#ifndef JSON_SPIRIT_READER_TEMPLATE
 +#define JSON_SPIRIT_READER_TEMPLATE
 +
@@ -629,7 +636,8 @@
 +
 +            value_ = value;
 +            current_p_ = &amp;value_;
-+            return current_p_;</code></pre></details><details><summary><code>json/json_spirit_stream_reader.h</code></summary><pre><code>@@ -0,0 +1,70 @@
++            return current_p_;
+</code></pre></details><details><summary><code>json/json_spirit_stream_reader.h</code></summary><pre><code>@@ -0,0 +1,70 @@
 +#ifndef JSON_SPIRIT_READ_STREAM
 +#define JSON_SPIRIT_READ_STREAM
 +
@@ -699,7 +707,8 @@
 +    };
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_utils.h</code></summary><pre><code>@@ -0,0 +1,61 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_utils.h</code></summary><pre><code>@@ -0,0 +1,61 @@
 +#ifndef JSON_SPIRIT_UTILS
 +#define JSON_SPIRIT_UTILS
 +
@@ -760,7 +769,8 @@
 +    }
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_value.cpp</code></summary><pre><code>@@ -0,0 +1,8 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_value.cpp</code></summary><pre><code>@@ -0,0 +1,8 @@
 +/* Copyright (c) 2007 John W Wilkinson
 +
 +   This source code can be used for any purpose as long as
@@ -768,7 +778,8 @@
 +
 +// json spirit version 2.00
 +
-+#include &quot;json_spirit_value.h&quot;</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -0,0 +1,532 @@
++#include &quot;json_spirit_value.h&quot;
+</code></pre></details><details><summary><code>json/json_spirit_value.h</code></summary><pre><code>@@ -0,0 +1,532 @@
 +#ifndef JSON_SPIRIT_VALUE
 +#define JSON_SPIRIT_VALUE
 +
@@ -1067,7 +1078,8 @@
 +
 +    template&lt; class Config &gt;
 +    Value_impl&lt; Config &gt;&amp; Value_impl&lt; Config &gt;::operator=( const Value_impl&amp; lhs )
-+    {</code></pre></details><details><summary><code>json/json_spirit_writer.cpp</code></summary><pre><code>@@ -0,0 +1,95 @@
++    {
+</code></pre></details><details><summary><code>json/json_spirit_writer.cpp</code></summary><pre><code>@@ -0,0 +1,95 @@
 +//          Copyright John W. Wilkinson 2007 - 2009.
 +// Distributed under the MIT License, see accompanying file LICENSE.txt
 +
@@ -1162,7 +1174,8 @@
 +    return write_string( value, true );
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_writer.h</code></summary><pre><code>@@ -0,0 +1,50 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_writer.h</code></summary><pre><code>@@ -0,0 +1,50 @@
 +#ifndef JSON_SPIRIT_WRITER
 +#define JSON_SPIRIT_WRITER
 +
@@ -1212,7 +1225,8 @@
 +#endif
 +}
 +
-+#endif</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -0,0 +1,245 @@
++#endif
+</code></pre></details><details><summary><code>json/json_spirit_writer_template.h</code></summary><pre><code>@@ -0,0 +1,245 @@
 +#ifndef JSON_SPIRIT_WRITER_TEMPLATE
 +#define JSON_SPIRIT_WRITER_TEMPLATE
 +
@@ -1457,7 +1471,8 @@
 +    }
 +}
 +
-+#endif</code></pre></details>
++#endif
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c41226d/">← revert revision 56, going in different direction with…</a><a rel="next" href="../../commits/fa9dbd6/">better error message in check_type(), tell the types by… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

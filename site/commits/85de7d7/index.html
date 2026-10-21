@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "scanback check to prevent adding to the 74638 overflow chain", "url": "https://satoshimail.vercel.app/commits/85de7d7/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T22:21:03Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/85de7d7c0cbb1e9aa311606644b697674c84f6f9"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "scanback check to prevent adding to…", "item": "https://satoshimail.vercel.app/commits/85de7d7/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -52,7 +54,8 @@
 +    }
  
      // Write block to history file
-     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     if (!CheckDiskSpace(::GetSerializeSize(*this, SER_DISK)))
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 310;
@@ -60,7 +63,8 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/d4c6b90/">← fix for block 74638 overflow output transaction</a><a rel="next" href="../../commits/08fee75/">makefile.unix to build with option to enable tcatm&#x27;s 4-way… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

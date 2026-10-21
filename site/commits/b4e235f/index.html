@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "ui tweaks, multiple xpm icon sizes", "url": "https://satoshimail.vercel.app/commits/b4e235f/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-07T18:51:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/b4e235f9f23b492539eeeddbbd1e7a7ef1b6793e"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "ui tweaks, multiple xpm icon sizes", "item": "https://satoshimail.vercel.app/commits/b4e235f/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -46,7 +48,8 @@
 +#include &quot;xpm/bitcoin48.xpm&quot;
  #include &quot;xpm/check.xpm&quot;
  #include &quot;xpm/send16.xpm&quot;
- #include &quot;xpm/send16noshadow.xpm&quot;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -1044,13 +1044,13 @@ bool BindListenPort(string&amp; strError)
+ #include &quot;xpm/send16noshadow.xpm&quot;
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -1044,13 +1044,13 @@ bool BindListenPort(string&amp; strError)
      {
          int nErr = WSAGetLastError();
          if (nErr == WSAEADDRINUSE)
@@ -61,7 +64,8 @@
 +    printf(&quot;Bound to port %d\n&quot;, ntohs(sockaddr.sin_port));
  
      // Listen for incoming connections
-     if (listen(hListenSocket, SOMAXCONN) == SOCKET_ERROR)</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -316,13 +316,15 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+     if (listen(hListenSocket, SOMAXCONN) == SOCKET_ERROR)
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -316,13 +316,15 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
      fOnSetFocusAddress = false;
      fRefresh = false;
      m_choiceFilter-&gt;SetSelection(0);
@@ -110,7 +114,8 @@
 +#endif
          }
      }
-     else</code></pre></details><details><summary><code>xpm/bitcoin.xpm</code></summary><pre><code>@@ -1,304 +0,0 @@
+     else
+</code></pre></details><details><summary><code>xpm/bitcoin.xpm</code></summary><pre><code>@@ -1,304 +0,0 @@
 -/* XPM */
 -static char * bitcoin_xpm[] = {
 -/* columns rows colors chars-per-pixel */
@@ -409,7 +414,8 @@
 -&quot;HXHXHXHXHXHXHX~ j -.0XrXzXxXzXzXzXzXwX3XXXXXOX1X2X5XpXmXAXFXGXGXGXFXFXSXL.r %     O HXHXHXHXHXHX&quot;,
 -&quot;HXHXHXHXHXHXHXHX! j / gXSXSXZXxXzXzXkXxXzXBXBXBXZXCXAXAXAXAXSXSXSXSXNX| 3 &amp;     O HXHXHXHXHXHXHX&quot;,
 -&quot;HXHXHXHXHXHXHXHXHX} n V U.DXSXBXzXkXkXkXxXxXxXBXxXBXBXCXZXZXZXAXAXU.M &lt; .     @ HXHXHXHXHXHXHXHX&quot;,
--&quot;HXHXHXHXHXHXHXHXHXHXHXV d G Z.pXzXkXzXjXkXkXxXzXxXxXxXBXBXZXNXT.G 3 * .     9 HXHXHXHXHXHXHXHXHX&quot;,</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -0,0 +1,203 @@
+-&quot;HXHXHXHXHXHXHXHXHXHXHXV d G Z.pXzXkXzXjXkXkXxXzXxXxXxXBXBXZXNXT.G 3 * .     9 HXHXHXHXHXHXHXHXHX&quot;,
+</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -0,0 +1,203 @@
 +/* XPM */
 +static char * bitcoin16_xpm[] = {
 +/* columns rows colors chars-per-pixel */
@@ -1339,7 +1345,8 @@
 +&quot;sXsXsXsXsXsXsXsXsXsXsXsXsXsXy w w a z V ( -.:.:.1.@.V l p 9 * #     # sXsXsXsXsXsXsXsXsXsXsXsXsX&quot;,
 +&quot;sXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXq : &lt; 1 9 8 8 8 3 = * @ X X X 6 sXsXsXsXsXsXsXsXsXsXsXsXsXsXsX&quot;,
 +&quot;sXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsX5 5 6 : O O @ : 6 5 sXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsXsX&quot;
-+};</code></pre></details>
++};
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8b4cefd/">← UI tweaks, use BindListenPort to detect instance already…</a><a rel="next" href="../../commits/956468c/">Get local host IP on Linux, Shutdown() a little cleaner --… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

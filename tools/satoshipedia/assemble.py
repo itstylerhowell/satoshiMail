@@ -88,7 +88,7 @@ src = patch(src, '    item("#drafts", "draft", "Drafts", ST.drafts.length || "",
 src = patch(src, 'a: "#all", d: "#drafts" }[k];', 'a: "#all" }[k];')
 src = patch(src, '<td><kbd>c</kbd></td><td>Compose</td>', '<td><kbd>c</kbd></td><td>Compose (try it)</td>')
 src = patch(src, '<kbd>a</kbd> <kbd>d</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Drafts</td>', '<kbd>a</kbd> <kbd>w</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Satoshipedia</td>')
-src = patch(src, 'Stars, read state, archive, trash, drafts and settings are stored only in this browser. Nothing is sent anywhere.', 'Stars, read state, archive, trash and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved.')
+src = patch(src, 'Stars, read state, archive, trash, drafts and settings are stored only in this browser. Nothing is sent anywhere.', 'Stars, read state, archive, trash and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On satoshimail.vercel.app, visits are counted with Vercel Web Analytics, which uses no cookies and doesn\'t record what you search for.')
 
 # no trash: remove every delete button, the Trash folder and the # shortcut; restore anything trashed before
 src = patch(src, '  for (const k of ["star", "read", "arch", "trash"]) s[k] = s[k] && typeof s[k] === "object" ? s[k] : {};\n',

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "unix build merged in, bitmap resources from xpm instead of rc, better addr relay, better selection of addrs by time last seen for faster connect", "url": "https://satoshimail.vercel.app/commits/e4c05d3/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-05T04:41:36Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e4c05d31778a85014b2a52e2f20753b38dfbf950"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "unix build merged in, bitmap resources…", "item": "https://satoshimail.vercel.app/commits/e4c05d3/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -108,7 +110,8 @@
 +cd /usr/local/boost_1_40_0
 +su
 +./bootstrap.sh
-+./bjam install</code></pre></details><details><summary><code>build.txt</code></summary><pre><code>@@ -1,88 +0,0 @@
++./bjam install
+</code></pre></details><details><summary><code>build.txt</code></summary><pre><code>@@ -1,88 +0,0 @@
 -BitCoin v0.1.6 BETA
 -
 -Copyright (c) 2009 Satoshi Nakamoto
@@ -196,7 +199,8 @@
 ------
 -If you have trouble compiling Boost with Microsoft Visual C++ 6.0, try going
 -back to Boost version 1.35.  It looks like they may be starting to reduce
--support for MSVC 6.0.</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -62,9 +62,9 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
+-support for MSVC 6.0.
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -62,9 +62,9 @@ CDB::CDB(const char* pszFile, const char* pszMode, bool fTxn) : pdb(NULL)
              if (fShutdown)
                  return;
              string strDataDir = GetDataDir();
@@ -235,7 +239,8 @@
 +                        nLastFlushed = nWalletDBUpdated;
                          int64 nStart = GetTimeMillis();
                          dbenv.txn_checkpoint(0, 0, 0);
-                         dbenv.lsn_reset(strFile.c_str(), 0);</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -17,16 +17,18 @@
+                         dbenv.lsn_reset(strFile.c_str(), 0);
+</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -17,16 +17,18 @@
  #endif
  #define _WIN32_IE 0x0400
  #define WIN32_LEAN_AND_MEAN 1
@@ -305,7 +310,8 @@
 +#include &quot;xpm/check.xpm&quot;
 +#include &quot;xpm/send16.xpm&quot;
 +#include &quot;xpm/send16noshadow.xpm&quot;
-+#include &quot;xpm/send20.xpm&quot;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -4,10 +4,7 @@
++#include &quot;xpm/send20.xpm&quot;
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -4,10 +4,7 @@
  
  #include &quot;headers.h&quot;
  
@@ -334,7 +340,8 @@
 +                    nGotIRCAddresses++;
                  }
                  else
-                 {</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -4,7 +4,5 @@
+                 {
+</code></pre></details><details><summary><code>irc.h</code></summary><pre><code>@@ -4,7 +4,5 @@
  
  extern bool RecvLine(SOCKET hSocket, string&amp; strLine);
  extern void ThreadIRCSeed(void* parg);
@@ -342,7 +349,8 @@
  
 -extern map&lt;vector&lt;unsigned char&gt;, CAddress&gt; mapIRCAddresses;
 -extern CCriticalSection cs_mapIRCAddresses;
-+extern int nGotIRCAddresses;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -100,13 +100,10 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
++extern int nGotIRCAddresses;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -100,13 +100,10 @@ bool AddToWallet(const CWalletTx&amp; wtxIn)
          if (fInsertedNew)
              wtx.nTimeReceived = GetAdjustedTime();
  
@@ -497,7 +505,8 @@
 +        int nProcessors = wxThread::GetCPUCount();
          printf(&quot;%d processors\n&quot;, nProcessors);
          if (nProcessors &lt; 1)
-             nProcessors = 1;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -968,6 +968,14 @@ public:
+             nProcessors = 1;
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -968,6 +968,14 @@ public:
              return error(&quot;CBlock::WriteToDisk() : ftell failed&quot;);
          fileout &lt;&lt; *this;
  
@@ -511,7 +520,8 @@
 +
          return true;
      }
- </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -0,0 +1,86 @@
+ 
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -0,0 +1,86 @@
 +# Copyright (c) 2009 Satoshi Nakamoto
 +# Distributed under the MIT/X11 software license, see the accompanying
 +# file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -597,7 +607,8 @@
 +
 +clean:
 +	-rm obj/*
-+	-rm headers.h.gch</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -3,7 +3,6 @@
++	-rm headers.h.gch
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -3,7 +3,6 @@
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  #include &quot;headers.h&quot;
@@ -896,7 +907,8 @@
      // Set to nonblocking, incoming connections will also inherit this
 +#ifdef __WXMSW__
      u_long nOne = 1;
-     if (ioctlsocket(hListenSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -22,7 +22,8 @@ enum
+     if (ioctlsocket(hListenSocket, FIONBIO, &amp;nOne) == SOCKET_ERROR)
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -22,7 +22,8 @@ enum
  
  bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
  bool GetMyExternalIP(unsigned int&amp; ipRet);
@@ -905,7 +917,8 @@
 +void AddressCurrentlyConnected(const CAddress&amp; addr);
  CNode* FindNode(unsigned int ip);
  CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
- void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -260,7 +260,8 @@ void AddPendingReplyEvent3(void* pevthandler, CDataStream&amp; vRecv)
+ void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -260,7 +260,8 @@ void AddPendingReplyEvent3(void* pevthandler, CDataStream&amp; vRecv)
  CDataStream GetStreamFromEvent(const wxCommandEvent&amp; event)
  {
      wxString strData = event.GetString();
@@ -1156,7 +1169,8 @@
 +#endif
  
  
- </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -7,6 +7,10 @@
+ 
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -7,6 +7,10 @@
  
  #include &quot;uibase.h&quot;
  
@@ -1186,7 +1200,8 @@
 +	m_bitmapCheckMark = new wxStaticBitmap( this, wxID_ANY, wxBitmap( check_xpm ), wxDefaultPosition, wxSize( 16,16 ), 0 );
  	bSizer47-&gt;Add( m_bitmapCheckMark, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
  	
- 	m_staticText36 = new wxStaticText( this, wxID_ANY, wxT(&quot;Pay &amp;To:&quot;), wxDefaultPosition, wxSize( -1,-1 ), wxALIGN_RIGHT );</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
+ 	m_staticText36 = new wxStaticText( this, wxID_ANY, wxT(&quot;Pay &amp;To:&quot;), wxDefaultPosition, wxSize( -1,-1 ), wxALIGN_RIGHT );
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
                      &lt;/object&gt;
                  &lt;/object&gt;
              &lt;/object&gt;
@@ -1230,7 +1245,8 @@
 +                                        &lt;property name=&quot;bitmap&quot;&gt;xpm/check.xpm; Load From File&lt;/property&gt;
                                          &lt;property name=&quot;context_help&quot;&gt;&lt;/property&gt;
                                          &lt;property name=&quot;enabled&quot;&gt;1&lt;/property&gt;
-                                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -38,8 +38,10 @@ public:
+                                         &lt;property name=&quot;fg&quot;&gt;&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -38,8 +38,10 @@ public:
              ppmutexOpenSSL[i] = new wxMutex();
          CRYPTO_set_locking_callback(locking_callback);
  
@@ -1264,7 +1280,8 @@
 +#endif
      if (pex)
          snprintf(pszMessage, 1000,
-             &quot;EXCEPTION: %s       \n%s       \n%s in %s       \n&quot;, typeid(*pex).name(), pex-&gt;what(), pszModule, pszThread);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -55,9 +55,34 @@ inline T&amp; REF(const T&amp; val)
+             &quot;EXCEPTION: %s       \n%s       \n%s in %s       \n&quot;, typeid(*pex).name(), pex-&gt;what(), pszModule, pszThread);
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -55,9 +55,34 @@ inline T&amp; REF(const T&amp; val)
  }
  
  #ifndef __WXMSW__
@@ -1332,7 +1349,8 @@
 -
  
  
- </code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -0,0 +1,278 @@
+ 
+</code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -0,0 +1,278 @@
 +/* XPM */
 +static char * addressbook16_xpm[] = {
 +/* columns rows colors chars-per-pixel */
@@ -1518,7 +1536,8 @@
 +&quot;&#x27;. c #0099CC&quot;,
 +&quot;]. c #3399CC&quot;,
 +&quot;[. c #6699CC&quot;,
-+&quot;{. c #9999CC&quot;,</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/bitcoin.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code></code></pre></details>
++&quot;{. c #9999CC&quot;,
+</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/bitcoin.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code></code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b7362c0/">← renamed build.txt to build-msw.txt</a><a rel="next" href="../../commits/300d460/">got rid of CheckForShutdown, replaced some thread-unsafe… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "block index checking on load, extra redundant checks, misc refactoring", "url": "https://satoshimail.vercel.app/commits/0545481/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-19T22:43:19Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/05454818dc7ed92f577a1a1ef6798049f17a52e7"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "block index checking on load, extra…", "item": "https://satoshimail.vercel.app/commits/0545481/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -73,7 +75,8 @@
 +                //    wtx.hashBlock.ToString().substr(0,20).c_str(),
                  //    wtx.mapValue[&quot;message&quot;].c_str());
              }
-             else if (strType == &quot;key&quot; || strType == &quot;wkey&quot;)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -500,8 +500,8 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+             else if (strType == &quot;key&quot; || strType == &quot;wkey&quot;)
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -500,8 +500,8 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
          return error(&quot;AcceptTransaction() : CheckTransaction failed&quot;);
  
      // To help v0.1.5 clients who would see it as a negative number
@@ -343,7 +346,8 @@
 +        printf(&quot;received block %s\n&quot;, pblock-&gt;GetHash().ToString().substr(0,20).c_str());
          // pblock-&gt;print();
  
-         CInv inv(MSG_BLOCK, pblock-&gt;GetHash());</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -19,8 +19,8 @@ static const unsigned int MAX_BLOCK_SIZE = 1000000;
+         CInv inv(MSG_BLOCK, pblock-&gt;GetHash());
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -19,8 +19,8 @@ static const unsigned int MAX_BLOCK_SIZE = 1000000;
  static const int64 COIN = 100000000;
  static const int64 CENT = 1000000;
  static const int64 MAX_MONEY = 21000000 * COIN;
@@ -546,7 +550,8 @@
 +            hashNext.ToString().substr(0,20).c_str());
          return str;
      }
- </code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -424,7 +424,7 @@ public:
+ 
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -424,7 +424,7 @@ public:
  
      string ToString() const
      {
@@ -554,7 +559,8 @@
 +        return strprintf(&quot;%s %s&quot;, GetCommand(), hash.ToString().substr(0,20).c_str());
      }
  
-     void print() const</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     void print() const
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 310;
@@ -576,7 +582,8 @@
 +
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/43deefa/">← do an extra CheckBlock in ConnectBlock</a><a rel="next" href="../../commits/2201a08/">warning message if clock is too far off →</a></nav>
 </main>
 <footer class="sf"><div class="in">

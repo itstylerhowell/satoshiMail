@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix for block 74638 overflow output transaction", "url": "https://satoshimail.vercel.app/commits/d4c6b90/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T21:35:24Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d4c6b90ca3f9b47adb1b2724a0c3514f80635c84"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix for block 74638 overflow output…", "item": "https://satoshimail.vercel.app/commits/d4c6b90/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +                return error(&quot;ConnectInputs() : txin total too high&quot;);
          }
  
-         // Tally transaction fees</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -18,6 +18,7 @@ static const unsigned int MAX_SIZE = 0x02000000;
+         // Tally transaction fees
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -18,6 +18,7 @@ static const unsigned int MAX_SIZE = 0x02000000;
  static const unsigned int MAX_BLOCK_SIZE = 1000000;
  static const int64 COIN = 100000000;
  static const int64 CENT = 1000000;
@@ -76,7 +79,8 @@
 +        }
  
          if (IsCoinBase())
-         {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+         {
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -84,7 +88,8 @@
 +static const int VERSION = 310;
  static const char* pszSubVer = &quot;.0&quot;;
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/4bd188c/">← misc changes</a><a rel="next" href="../../commits/85de7d7/">scanback check to prevent adding to the 74638 overflow chain →</a></nav>
 </main>
 <footer class="sf"><div class="in">

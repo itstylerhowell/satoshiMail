@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "bitcoind now compiles without wxWidgets or wxBase", "url": "https://satoshimail.vercel.app/commits/793200e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-26T17:15:18Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/793200e5e918a6e993ddf701967a8b6535a6828f"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "bitcoind now compiles without…", "item": "https://satoshimail.vercel.app/commits/793200e/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -64,7 +66,8 @@
 -ldconfig
  
  
- Boost</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -60,7 +60,7 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
+ Boost
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -60,7 +60,7 @@ CDB::CDB(const char* pszFile, const char* pszMode) : pdb(NULL)
                  return;
              string strDataDir = GetDataDir();
              string strLogDir = strDataDir + &quot;/database&quot;;
@@ -72,7 +75,8 @@
 +            filesystem::create_directory(strLogDir.c_str());
              string strErrorFile = strDataDir + &quot;/db.log&quot;;
              printf(&quot;dbenv.open strLogDir=%s strErrorFile=%s\n&quot;, strLogDir.c_str(), strErrorFile.c_str());
- </code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -18,13 +18,19 @@
+ 
+</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -18,13 +18,19 @@
  #define _WIN32_IE 0x0400
  #define WIN32_LEAN_AND_MEAN 1
  #define __STDC_LIMIT_MACROS // to enable UINT64_MAX from stdint.h
@@ -130,7 +134,8 @@
 +#endif
  #include &quot;init.h&quot;
  
- #include &quot;xpm/addressbook16.xpm&quot;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -7,6 +7,15 @@
+ #include &quot;xpm/addressbook16.xpm&quot;
+</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -7,6 +7,15 @@
  
  
  
@@ -429,14 +434,16 @@
 -        PrintException(&amp;e, &quot;OnInit()&quot;);
 +        PrintException(&amp;e, &quot;AppInit()&quot;);
      } catch (...) {
--        PrintException(NULL, &quot;OnInit()&quot;);</code></pre></details><details><summary><code>init.h</code></summary><pre><code>@@ -3,5 +3,5 @@
+-        PrintException(NULL, &quot;OnInit()&quot;);
+</code></pre></details><details><summary><code>init.h</code></summary><pre><code>@@ -3,5 +3,5 @@
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  void Shutdown(void* parg);
 -bool GetStartOnSystemStartup();
 -void SetStartOnSystemStartup(bool fAutoStart);
 +bool AppInit(int argc, char* argv[]);
-+bool AppInit2(int argc, char* argv[]);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -83,6 +83,7 @@ bool AddKey(const CKey&amp; key)
++bool AppInit2(int argc, char* argv[]);
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -83,6 +83,7 @@ bool AddKey(const CKey&amp; key)
  
  vector&lt;unsigned char&gt; GenerateNewKey()
  {
@@ -461,7 +468,8 @@
 +        int nProcessors = boost::thread::hardware_concurrency();
          printf(&quot;%d processors\n&quot;, nProcessors);
          if (nProcessors &lt; 1)
-             nProcessors = 1;</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -3,8 +3,6 @@
+             nProcessors = 1;
+</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -3,8 +3,6 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -525,7 +533,8 @@
 +	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
  
  
- clean:</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -20,22 +20,23 @@ LIBS= -dead_strip \
+ clean:
+</code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code>@@ -20,22 +20,23 @@ LIBS= -dead_strip \
   $(DEPSDIR)/lib/libboost_system.a \
   $(DEPSDIR)/lib/libboost_filesystem.a \
   $(DEPSDIR)/lib/libboost_program_options.a \
@@ -565,7 +574,8 @@
 +	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
  
  
- clean:</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,7 +3,6 @@
+ clean:
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,7 +3,6 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -622,7 +632,8 @@
 +	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
  
  
- clean:</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -3,8 +3,6 @@
+ clean:
+</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -3,8 +3,6 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -708,7 +719,8 @@
 -    -del *.pdb
 +	-del /Q obj\*
 +	-del *.ilk
-+	-del *.pdb</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -64,7 +64,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
++	-del *.pdb
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -64,7 +64,7 @@ bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet)
      SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
      if (hSocket == INVALID_SOCKET)
          return false;
@@ -725,7 +737,8 @@
 +#if defined(__BSD__) || defined(__WXMAC_OSX__)
      // Different way of disabling SIGPIPE on BSD
      setsockopt(hListenSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&amp;nOne, sizeof(int));
- #endif</code></pre></details><details><summary><code>noui.h</code></summary><pre><code>@@ -0,0 +1,34 @@
+ #endif
+</code></pre></details><details><summary><code>noui.h</code></summary><pre><code>@@ -0,0 +1,34 @@
 +// Copyright (c) 2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -759,7 +772,8 @@
 +
 +inline void MainFrameRepaint()
 +{
-+}</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -36,7 +36,7 @@ void PrintConsole(const char* format, ...)
++}
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -36,7 +36,7 @@ void PrintConsole(const char* format, ...)
          ret = limit - 1;
          buffer[limit-1] = 0;
      }
@@ -785,7 +799,8 @@
 +#if defined(__WXMSW__) &amp;&amp; defined(GUI)
          MyMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
  #else
-         fprintf(stderr, &quot;error: %s\n&quot;, e.what());</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+         fprintf(stderr, &quot;error: %s\n&quot;, e.what());
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -795,7 +810,8 @@
 +static const char* pszSubVer = &quot;.0&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -14,6 +14,7 @@ DEFINE_EVENT_TYPE(wxEVT_UITHREADCALL)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -14,6 +14,7 @@ DEFINE_EVENT_TYPE(wxEVT_UITHREADCALL)
  CMainFrame* pframeMain = NULL;
  CMyTaskBarIcon* ptaskbaricon = NULL;
  bool fClosedToTray = false;
@@ -1094,7 +1110,8 @@
 +
 +bool CMyApp::OnInit()
 +{
-+#if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__) &amp;&amp; defined(GUI)</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -4,24 +4,9 @@
++#if defined(__WXMSW__) &amp;&amp; defined(__WXDEBUG__) &amp;&amp; defined(GUI)
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -4,24 +4,9 @@
  
  DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
  
@@ -1190,7 +1207,8 @@
  DECLARE_EVENT_TABLE()
  };
 -
--#endif // wxUSE_GUI</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -134,7 +134,7 @@ uint64 GetRand(uint64 nMax)
+-#endif // wxUSE_GUI
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -134,7 +134,7 @@ uint64 GetRand(uint64 nMax)
  inline int OutputDebugStringF(const char* pszFormat, ...)
  {
      int ret = 0;
@@ -1270,7 +1288,8 @@
 +            filesystem::create_directory(pszCachedDir);
          }
          strlcpy(pszDir, pszCachedDir, MAX_PATH);
-     }</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -55,7 +55,6 @@ inline T&amp; REF(const T&amp; val)
+     }
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -55,7 +55,6 @@ inline T&amp; REF(const T&amp; val)
  }
  
  #ifdef __WXMSW__
@@ -1314,7 +1333,8 @@
 +
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6966768/">← Gavin: BIO_FLAGS_BASE64_NO_NL</a><a rel="next" href="../../commits/40cd036/">Gavin Andresen&#x27;s JSON-RPC HTTP authentication, faster… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "version 0.3.1 rc1", "url": "https://satoshimail.vercel.app/commits/d01eaf0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-15T16:46:46Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d01eaf0421b534b9d15b2376573fbc5e36c35928"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "version 0.3.1 rc1", "item": "https://satoshimail.vercel.app/commits/d01eaf0/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 -        SetThreadPriority(THREAD_PRIORITY_LOWEST);
          Sleep(50);
          if (fShutdown)
-             return;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+             return;
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 301;
@@ -57,7 +60,8 @@
 +static const char* pszSubVer = &quot;&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -80,7 +84,8 @@
 +VIProductVersion 0.3.1.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/a30b56e/">← fix openssl linkage problems, disable minimize to tray on…</a><a rel="next" href="../../commits/0bbc812/">Spanish translation by milkiway, French translation by aidos →</a></nav>
 </main>
 <footer class="sf"><div class="in">

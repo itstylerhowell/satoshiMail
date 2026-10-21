@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "cleanup, catch some recoverable exceptions and continue", "url": "https://satoshimail.vercel.app/commits/f1e1fb4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-07T01:12:53Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f1e1fb4bdef878c8fc1564fa418d44e7541a7e83"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "cleanup, catch some recoverable…", "item": "https://satoshimail.vercel.app/commits/f1e1fb4/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -1280,7 +1282,8 @@
 +VIProductVersion 0.3.12.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -87,6 +87,8 @@ static inline void dumpreg(__m128i x, char *msg) {
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -87,6 +87,8 @@ static inline void dumpreg(__m128i x, char *msg) {
  #else
  #define dumpstate()
  #endif

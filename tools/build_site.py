@@ -679,11 +679,36 @@ class Site:
 """, encoding="utf-8")
 
 
+# Vercel Web Analytics, the plain-HTML version (vercel.com/docs/analytics/quickstart, framework "html").
+# Static pages count themselves. The app switches views by #hash, which the script doesn't follow, so it
+# turns automatic tracking off and reports each view itself, e.g. path "/#wiki-adam-back", route "/#wiki".
+# Searches are counted as "/#search", without what was typed.
+VA_QUEUE = '<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>'
+VA_PAGE = VA_QUEUE + '\n<script defer src="/_vercel/insights/script.js"></script>\n'
+VA_APP = (VA_QUEUE + '\n<script defer src="/_vercel/insights/script.js" data-disable-auto-track="1"></script>\n'
+          '<script>(function () { var last; function view() { var h = location.hash || "#inbox", p = location.pathname + h;'
+          ' if (/^#search/.test(h)) p = location.pathname + "#search";' ' if (p === last) return; last = p; window.va("pageview", { route: location.pathname + (h.match(/^#[a-z]+/) || ["#"])[0], path: p }); }'
+          ' view(); addEventListener("hashchange", view); })();</script>\n')
+
+
+def add_analytics(out: Path) -> int:
+    n = 0
+    for f in out.rglob("*.html"):
+        html_ = f.read_text(encoding="utf-8")
+        if "/_vercel/insights/" in html_ or "</head>" not in html_:
+            continue
+        snippet = VA_APP if f == out / "index.html" else VA_PAGE
+        f.write_text(html_.replace("</head>", snippet + "</head>", 1), encoding="utf-8")
+        n += 1
+    return n
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("page", help="the built single-file app (satoshi-mail.html)")
     ap.add_argument("out", nargs="?", default="site", help="output folder (default: site)")
     ap.add_argument("--base-url", default="https://satoshimail.vercel.app/", help="public URL the site will live at (default: the Vercel address)")
+    ap.add_argument("--no-analytics", action="store_true", help="leave out Vercel Web Analytics")
     a = ap.parse_args(argv)
     out = Path(a.out)
     if out.exists():
@@ -697,6 +722,8 @@ def main(argv=None) -> int:
     s.build_commits()
     s.build_about()
     s.build_static_assets()
+    if not a.no_analytics:
+        add_analytics(out)
     n = sum(1 for _ in out.rglob("*.html"))
     size = sum(f.stat().st_size for f in out.rglob("*") if f.is_file())
     print(f"{n} pages, {len(s.urls)} URLs in sitemap.xml, {size / 1e6:.1f} MB → {out}")

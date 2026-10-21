@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "always make 8 outbound connections even if have inbound, limit one outbound connection per a.b.?.? range, switch -maxconnections=#", "url": "https://satoshimail.vercel.app/commits/94cfec0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-09T20:00:17Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/94cfec07fd302c9ff9b6a80c47418d4fe56596ae"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "always make 8 outbound connections…", "item": "https://satoshimail.vercel.app/commits/94cfec0/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -43,7 +45,8 @@
 +        printf(&quot;Lockdown: WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.\n&quot;);
  }
  
- </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
+ 
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
  
  #include &quot;headers.h&quot;
  
@@ -110,7 +113,8 @@
 +                if (!addr.IsIPv4() || !addr.IsValid() || setConnected.count(addr.ip &amp; 0x0000ffff))
                      continue;
                  int64 nSinceLastSeen = GetAdjustedTime() - addr.nTime;
-                 int64 nSinceLastTry = GetAdjustedTime() - addr.nLastTry;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+                 int64 nSinceLastTry = GetAdjustedTime() - addr.nLastTry;
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 308;
@@ -118,7 +122,8 @@
 +static const char* pszSubVer = &quot;.2&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1015,7 +1015,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1015,7 +1015,7 @@ void CMainFrame::OnPaintListCtrl(wxPaintEvent&amp; event)
      // Update status bar
      static bool fPrevLockdown;
      if (IsLockdown())
@@ -126,7 +131,8 @@
 +        m_statusBar-&gt;SetStatusText(string(&quot;    &quot;) + _(&quot;WARNING: Displayed transactions may not be correct!  You may need to upgrade, or other nodes may need to upgrade.&quot;), 0);
      else if (fPrevLockdown)
          m_statusBar-&gt;SetStatusText(&quot;&quot;, 0);
-     fPrevLockdown = IsLockdown();</code></pre></details>
+     fPrevLockdown = IsLockdown();
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e6b7ab5/">← enable SSE2 in all builds to fix crypto++ SHA-256 on 64-bit</a><a rel="next" href="../../commits/dd9e718/">correct typo for mac compile, update makefile to use llvm →</a></nav>
 </main>
 <footer class="sf"><div class="in">

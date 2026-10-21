@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "simplify AddAddress, readcompactsize limit, fixed a 64-bit compile error in serialize.h, change status \"# blocks\" to \"# confirmations\" and widen the column.", "url": "https://satoshimail.vercel.app/commits/cb0f896/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-01-28T00:31:00Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/cb0f89646f065800d38d7cfc10ba1e855563296a"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "simplify AddAddress, readcompactsize…", "item": "https://satoshimail.vercel.app/commits/cb0f896/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -52,7 +54,8 @@
 +                        AddAddress(addr);
                  }
              }
-             catch (...) { }</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -265,8 +265,7 @@ void ThreadIRCSeed(void* parg)
+             catch (...) { }
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -265,8 +265,7 @@ void ThreadIRCSeed(void* parg)
                  if (DecodeAddress(pszName, addr))
                  {
                      addr.nTime = GetAdjustedTime() - 51 * 60;
@@ -61,7 +64,8 @@
 +                    if (AddAddress(addr))
                          printf(&quot;IRC got new address\n&quot;);
                      nGotIRCAddresses++;
-                 }</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1734,6 +1734,11 @@ bool ProcessMessages(CNode* pfrom)
+                 }
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1734,6 +1734,11 @@ bool ProcessMessages(CNode* pfrom)
                  // Allow exceptions from underlength message on vRecv
                  printf(&quot;ProcessMessage(%s, %d bytes) : Exception &#x27;%s&#x27; caught, normally caused by a message being shorter than its stated length\n&quot;, strCommand.c_str(), nMessageSize, e.what());
              }
@@ -89,7 +93,8 @@
 +            AddAddress(addr, false);
              pfrom-&gt;AddAddressKnown(addr);
              if (!pfrom-&gt;fGetAddr &amp;&amp; addr.IsRoutable())
-             {</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -223,7 +223,7 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+             {
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -223,7 +223,7 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
  
  
  
@@ -129,7 +134,8 @@
 -            Sleep(2000);
          }
          vnThreadsRunning[1]++;
-         if (fShutdown)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -23,7 +23,7 @@ enum
+         if (fShutdown)
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -23,7 +23,7 @@ enum
  
  bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
  bool GetMyExternalIP(unsigned int&amp; ipRet);
@@ -146,7 +152,8 @@
 +        printf(&quot;askfor %s   %&quot;PRI64d&quot;\n&quot;, inv.ToString().c_str(), nRequestTime);
  
          // Make sure not to reuse time indexes to keep things in the same order
-         int64 nNow = (GetTime() - 1) * 1000000;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+         int64 nNow = (GetTime() - 1) * 1000000;
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 200;
@@ -200,7 +207,8 @@
 +        unsigned int blk = min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
          v.resize(i + blk);
          is.read((char*)&amp;v[i], blk * sizeof(T));
-         i += blk;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -349,7 +349,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+         i += blk;
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -349,7 +349,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
          nDateWidth += 12;
      m_listCtrl-&gt;InsertColumn(0, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
      m_listCtrl-&gt;InsertColumn(1, &quot;&quot;,             wxLIST_FORMAT_LEFT,  dResize * 0);
@@ -246,7 +254,8 @@
 +
 +
 +
-+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -158,7 +158,7 @@ class CMainFrameBase : public wxFrame
++
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -158,7 +158,7 @@ class CMainFrameBase : public wxFrame
  		wxListCtrl* m_listCtrlOrdersSent;
  		wxListCtrl* m_listCtrlProductsSent;
  		wxListCtrl* m_listCtrlOrdersReceived;
@@ -254,7 +263,8 @@
 +		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 725,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
  		~CMainFrameBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
              &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
              &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
              &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
@@ -271,7 +281,8 @@
 +            &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
                  &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
                  &lt;property name=&quot;name&quot;&gt;bSizer55&lt;/property&gt;
-                 &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -8,8 +8,8 @@
+                 &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -8,8 +8,8 @@
  map&lt;string, string&gt; mapArgs;
  map&lt;string, vector&lt;string&gt; &gt; mapMultiArgs;
  bool fDebug = false;
@@ -369,7 +380,8 @@
 +}
  
  
- // Safer snprintf</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -112,13 +112,14 @@ inline int myclosesocket(SOCKET&amp; hSocket)
+ // Safer snprintf
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -112,13 +112,14 @@ inline int myclosesocket(SOCKET&amp; hSocket)
  extern map&lt;string, string&gt; mapArgs;
  extern map&lt;string, vector&lt;string&gt; &gt; mapMultiArgs;
  extern bool fDebug;
@@ -499,7 +511,8 @@
 +    //    DebugBreak();
  #endif
  }
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/9a36562/">← command line switch -noui</a><a rel="next" href="../../commits/8be979d/">now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0… →</a></nav>
 </main>
 <footer class="sf"><div class="in">
