@@ -149,7 +149,7 @@ function senders(t) {
 }
 function lchip(slug) {
   const L = LISTS[slug];
-  return L ? `<a class="lchip" href="#label-${slug}" style="color:${L.color};background:color-mix(in srgb, ${L.color} 15%, transparent)">${esc(L.name)}</a>` : "";
+  return L ? `<a class="lchip" href="#label-${slug}" style="color:color-mix(in srgb, ${L.color} 75%, var(--ink));background:color-mix(in srgb, ${L.color} 15%, transparent)">${esc(L.name)}</a>` : "";
 }
 function firstText(m) { const s = m.b.find(x => x[0] === "t") || m.b[0]; return s ? s[1].replace(/\s+/g, " ").trim() : ""; }
 const msgText = m => m.b.map(s => s[1]).join("\n");
@@ -339,10 +339,10 @@ function renderRail() {
   $("#rail").innerHTML = `
     <button class="compose-btn" data-act="compose">${ic("edit")} Compose</button>
     <ul>${mail}</ul>
-    <h3>Topics</h3><ul>${topics}<li><button class="nav" data-act="more-topics">${ic(showAllTopics ? "expand_less" : "expand_more")}<span class="t">${showAllTopics ? "Less" : `More (${CATS.length - 6})`}</span></button></li></ul>
-    <h3>Labels</h3><ul>${labels}</ul>
-    ${privLabels ? `<h3>Private email</h3><ul>${privLabels}</ul>` : ""}
-    <h3>People</h3><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p><p class="made-by inspired">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>`;
+    <h2>Topics</h2><ul>${topics}<li><button class="nav" data-act="more-topics">${ic(showAllTopics ? "expand_less" : "expand_more")}<span class="t">${showAllTopics ? "Less" : `More (${CATS.length - 6})`}</span></button></li></ul>
+    <h2>Labels</h2><ul>${labels}</ul>
+    ${privLabels ? `<h2>Private email</h2><ul>${privLabels}</ul>` : ""}
+    <h2>People</h2><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p><p class="made-by inspired">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>`;
 }
 
 /* ═════════════ lists ═════════════ */
@@ -395,8 +395,8 @@ function pageInfo(base, sep, total) {
   const from = total ? (p - 1) * PER + 1 : 0, to = Math.min(total, p * PER);
   const href = n => `${base}${n > 1 ? sep + n : ""}`;
   return { p, html: `<span class="count">${fmtNum(from)}–${fmtNum(to)} of ${fmtNum(total)}</span>
-    <a class="ib sm${p > 1 ? "" : " off"}" ${p > 1 ? `href="${href(p - 1)}"` : 'aria-disabled="true"'} aria-label="Newer" title="Newer">${ic("chevron_left")}</a>
-    <a class="ib sm${p < pages ? "" : " off"}" ${p < pages ? `href="${href(p + 1)}"` : 'aria-disabled="true"'} aria-label="Older" title="Older">${ic("chevron_right")}</a>` };
+    ${p > 1 ? `<a class="ib sm" href="${href(p - 1)}" aria-label="Newer" title="Newer">${ic("chevron_left")}</a>` : `<span class="ib sm off" title="Newer">${ic("chevron_left")}</span>`}
+    ${p < pages ? `<a class="ib sm" href="${href(p + 1)}" aria-label="Older" title="Older">${ic("chevron_right")}</a>` : `<span class="ib sm off" title="Older">${ic("chevron_right")}</span>`}` };
 }
 function toolbar(pg, opts = {}) {
   const any = SELECTED.size > 0;

@@ -206,6 +206,23 @@ src = patch(src, """    if (!CINDEX) CINDEX = COMMITS.map(c => (c.s + "\\n" + c.
     if (!CINDEX) { const ix = COMMITS.map(c => (c.s + "\\n" + c.f.map(f => f[0] + "\\n" + (f[3] || "")).join("\\n")).toLowerCase()); if (diffsMissing()) tmpIx = ix; else CINDEX = ix; }""")
 src = patch(src, "      const tx = CINDEX[c.idx];", "      const tx = (CINDEX || tmpIx)[c.idx];")
 
+# Accessibility and crawlability fixes from a Lighthouse audit:
+# - the list pager's disabled arrows were <a> with no href and aria-disabled; now plain, inert <span>s
+for _side, _icon in (("Newer", "chevron_left"), ("Older", "chevron_right")):
+    _cond = "p > 1" if _side == "Newer" else "p < pages"
+    _hrefv = "href(p - 1)" if _side == "Newer" else "href(p + 1)"
+    src = patch(src, '<a class="ib sm${' + _cond + ' ? "" : " off"}" ${' + _cond + ' ? `href="${' + _hrefv + '}"` : \'aria-disabled="true"\'} aria-label="' + _side + '" title="' + _side + '">${ic("' + _icon + '")}</a>',
+                '${' + _cond + ' ? `<a class="ib sm" href="${' + _hrefv + '}" aria-label="' + _side + '" title="' + _side + '">${ic("' + _icon + '")}</a>` : `<span class="ib sm off" title="' + _side + '">${ic("' + _icon + '")}</span>`}')
+# - the sidebar's section titles were <h3> with no <h2> above them
+for _h in ("Topics", "Labels", "People"):
+    src = patch(src, "<h3>" + _h + "</h3>", "<h2>" + _h + "</h2>")
+src = patch(src, "`<h3>Private email</h3>", "`<h2>Private email</h2>")
+src = src.replace(".rail h3", ".rail :is(h2, h3)")
+
+# - label chips: text mixed 25% toward the page's ink colour (darker in light mode, lighter in dark) for 4.5:1
+src = patch(src, '<a class="lchip" href="#label-${slug}" style="color:${L.color};background:color-mix(in srgb, ${L.color} 15%, transparent)">',
+            '<a class="lchip" href="#label-${slug}" style="color:color-mix(in srgb, ${L.color} 75%, var(--ink));background:color-mix(in srgb, ${L.color} 15%, transparent)">')
+
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).
 import re as _re

@@ -100,7 +100,7 @@ mark { background: color-mix(in srgb, var(--star) 55%, transparent); color: inhe
 .rail { overflow-y: auto; padding: 8px 8px 24px 0; min-height: 0; }
 .compose-btn { display: inline-flex; align-items: center; gap: 12px; height: 56px; padding: 0 24px 0 18px; border-radius: 16px; border: 0; background: var(--compose); color: var(--compose-ink); font-weight: 500; cursor: pointer; margin: 0 0 16px 8px; }
 .compose-btn:hover { box-shadow: var(--shadow); }
-.rail h3 { font-size: 14px; font-weight: 500; margin: 16px 0 4px 26px; }
+.rail :is(h2, h3) { font-size: 14px; font-weight: 500; margin: 16px 0 4px 26px; }
 .rail ul { list-style: none; margin: 0; padding: 0; }
 .nav { display: flex; align-items: center; gap: 18px; width: 100%; box-sizing: border-box; height: 32px; padding: 0 12px 0 26px; border: 0; border-radius: 0 16px 16px 0; background: none; color: var(--ink); text-decoration: none; cursor: pointer; white-space: nowrap; min-width: 0; text-align: left; }
 .nav:hover { background: var(--hover); }
@@ -1002,7 +1002,7 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 }
 
 /* type: Google Sans for labels, tabs, headings and search; Roboto stays for message text */
-.tab, .banner b, .tb .title, .search input, .rail h3, .compose-btn, .dk, .conv-h h1 { font-family: var(--ui-head); }
+.tab, .banner b, .tb .title, .search input, .rail :is(h2, h3), .compose-btn, .dk, .conv-h h1 { font-family: var(--ui-head); }
 .row .date { font-size: 13px; }
 
 /* rows: white, hairline dividers, 500-weight sender and subject like the reference */
@@ -1100,7 +1100,7 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   --hover: #eeeeee;
   --ink: #222222;
   --ink-2: #444444;
-  --ink-3: #777777;
+  --ink-3: #6f6f6f;              /* 4.6:1 on the grey read rows */
   --line: #e5e5e5;
   --outline: #c6c6c6;
   --accent: #1155cc;             /* links */
@@ -1111,10 +1111,11 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
   --compose-ink: #ffffff;
   --search: #ffffff;
   --tab-accent: #dd4b39;
-  --pill-new: #dd4b39; --pill-new-ink: #ffffff;
+  --pill-new: #c53727; --pill-new-ink: #ffffff;   /* deeper red: 4.5:1 or better for small text */
+  --badge-red: #c53727; --badge-red-ink: #ffffff;
   --btn-top: #f5f5f5; --btn-bot: #f1f1f1; --btn-line: #dcdcdc; --btn-line-hover: #c6c6c6; --btn-ink: #444444;
   --blue-top: #4d90fe; --blue-bot: #4787ed; --blue-line: #3079ed;
-  --nav-on: #dd4b39;
+  --nav-on: #c53727;
   --ui: Arial, Helvetica, sans-serif;
   --ui-head: Arial, Helvetica, sans-serif;
   --row-h: 32px;
@@ -1163,7 +1164,7 @@ body { font: 13px/1.4 var(--ui); }
 .nav.on { background: var(--hover); color: var(--nav-on); font-weight: 700; }
 .nav.on .ms { color: var(--nav-on); }
 .nav .n { font-weight: 700; }
-.rail h3 { font: 700 11px var(--ui); text-transform: uppercase; letter-spacing: .4px; color: var(--ink-3); margin: 14px 0 2px 26px; }
+.rail :is(h2, h3) { font: 700 11px var(--ui); text-transform: uppercase; letter-spacing: .4px; color: var(--ink-3); margin: 14px 0 2px 26px; }
 
 /* the message list */
 .card { border-radius: 0; border-left: 1px solid var(--line); }
@@ -1231,4 +1232,7 @@ body { font: 13px/1.4 var(--ui); }
 .beta-pill { border-radius: 2px; }
 .beta-note { border-radius: 0; border-color: var(--info-line); background: var(--info); box-shadow: 0 2px 4px rgba(0, 0, 0, .2); font-family: var(--ui); }
 .brand span { color: var(--ink-3); }
+
+/* touch targets: checkboxes get room around them (Lighthouse target-size) */
+input.cbx { margin: 2px; }
 
