@@ -165,6 +165,12 @@ src = patch(src, '<span class="ms fill" style="color:${L.color}" aria-hidden="tr
 # a page heading for list views (conversations, Satoshipedia and Satoshi Map have their own h1)
 src = patch(src, '<div class="app" id="app">', '<div class="app" id="app">\n  <h1 class="sr-only" id="apph1">Satoshi Mail</h1>')
 
+# Satoshi appears by name in the message list ("Satoshi, Hal 3") rather than as "me"; from:me still works in search
+src = patch(src, 'if (isSatName(name)) return "me";', 'if (isSatName(name)) return "Satoshi";')
+src = patch(src, 'chip("from:me", "From me", "person")', 'chip("from:me", "From Satoshi", "person")')
+src = patch(src, 'placeholder="me, hal, gavin"', 'placeholder="satoshi, hal, gavin"')
+src = patch(src, '<span class="who">me <span class="n">→ ${where}</span></span>', '<span class="who">Satoshi <span class="n">→ ${where}</span></span>')
+
 TEMPLATE_OUT.write_text(src)
 data = json.load(open(DATA))
 djson = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")

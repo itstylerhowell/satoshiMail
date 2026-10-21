@@ -125,7 +125,7 @@ function avColor(name) { if (isSatName(name)) return "var(--satoshi)"; let h = 0
 function initial(name) { const m = String(name).match(/[A-Za-z0-9]/); return m ? m[0].toUpperCase() : "?"; }
 const avatar = (name, cls = "avatar") => `<span class="${cls}" style="background:${avColor(name)}" aria-hidden="true">${esc(initial(name))}</span>`;
 function shortName(name) {
-  if (isSatName(name)) return "me";
+  if (isSatName(name)) return "Satoshi";
   const p = name.trim().split(/\s+/);
   return p.length > 1 && /^[A-Z][a-z]+$/.test(p[0]) ? p[0] : name;
 }
@@ -369,7 +369,7 @@ function commitRow(c) {
     <span class="cb"></span>
     <button class="ib sm star${star ? " on" : ""}" data-act="star" data-id="${c.id}" aria-label="${star ? "Starred" : "Not starred"}" aria-pressed="${star}">${ic("star", star ? "fill" : "")}</button>
     ${avatar("Satoshi", "avatar av")}
-    <span class="who">me <span class="n">→ ${where}</span></span>
+    <span class="who">Satoshi <span class="n">→ ${where}</span></span>
     <span class="line"><span class="lchip cchip">commit</span><span class="subj">${subj}</span><span class="snip"><span class="sep"> - </span>${snip}</span></span>
     <span class="date" title="${esc(fullDate(c.d))}">${listDate(c.d)}</span>
   </div>`;
@@ -446,7 +446,7 @@ function renderList() {
   } else if (model.kind === "search") {
     const has = s => new RegExp(`(^|\\s)${escRe(s)}(\\s|$)`, "i").test(r.search);
     const chip = (s, label, icon) => `<button class="fchip${has(s) ? " on" : ""}" data-act="chip" data-v="${esc(s)}" aria-pressed="${has(s)}">${ic(icon)}${esc(label)}</button>`;
-    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me", "From me", "person")}${COMMITS.length ? chip("in:commits", "Commits", "commit") : ""}${chip("label:cryptography", "Cryptography", "label")}${chip("label:bitcointalk", "BitcoinTalk", "label")}${THREADS.some(t => t.k === "x") ? chip("label:private", "Private email", "lock") : ""}${chip("has:code", "Has code", "code")}${chip("has:attachment", "Has attachment", "attachment")}${chip("is:unread", "Is unread", "mark_email_unread")}<button class="fchip" data-act="adv">${ic("tune")}Advanced search</button></div>`;
+    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me", "From Satoshi", "person")}${COMMITS.length ? chip("in:commits", "Commits", "commit") : ""}${chip("label:cryptography", "Cryptography", "label")}${chip("label:bitcointalk", "BitcoinTalk", "label")}${THREADS.some(t => t.k === "x") ? chip("label:private", "Private email", "lock") : ""}${chip("has:code", "Has code", "code")}${chip("has:attachment", "Has attachment", "attachment")}${chip("is:unread", "Is unread", "mark_email_unread")}<button class="fchip" data-act="adv">${ic("tune")}Advanced search</button></div>`;
   } else if (model.kind === "topic") {
     head = `<div class="banner">${ic("sell", "fill")}<p><b>${esc(CAT_NAME[r.topic] || r.topic)}</b><br><span class="sub">Conversations with a message from The Quotable Satoshi on this topic.</span></p></div>`;
   } else if (model.kind === "label" && LISTS[r.label]) {
@@ -812,7 +812,7 @@ const HELP = `<h2><span>Keyboard shortcuts</span><button class="ib" data-act="cl
   </table>`;
 function openAdv() {
   const el = popover($("#searchform"), `<form class="adv" id="advform">
-    <label>From <input id="a-from" placeholder="me, hal, gavin"></label>
+    <label>From <input id="a-from" placeholder="satoshi, hal, gavin"></label>
     <label>To <select id="a-to"><option value="">Any list or forum</option>${Object.entries(LISTS).map(([k, L]) => `<option value="${k}">${esc(L.name)}</option>`).join("")}</select></label>
     <label>Subject <input id="a-subj"></label>
     <label>Has the words <input id="a-has"></label>
