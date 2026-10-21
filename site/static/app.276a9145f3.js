@@ -41,6 +41,19 @@ const THREADS = RAW.threads.map((t, idx) => {
 });
 const BY_ID = new Map(THREADS.map(t => [t.id, t]));
 const COMMITS = (RAW.commits || []).map((c, idx) => Object.assign(c, { idx, kind: "commit" }));
+let DIFFS_P = null;
+const diffsMissing = () => !!window.SM_DIFFS && COMMITS.some(c => c.f.some(f => f[3] === null));
+function loadDiffs() {
+  if (!DIFFS_P) DIFFS_P = fetch(window.SM_DIFFS).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(all => {
+    all.forEach((files, i) => files.forEach((t, j) => { if (COMMITS[i] && COMMITS[i].f[j]) COMMITS[i].f[j][3] = t; }));
+    CINDEX = null;
+  }).catch(e => { DIFFS_P = null; throw e; });
+  return DIFFS_P;
+}
+function whenDiffs(then) {
+  const at = location.hash;
+  loadDiffs().then(() => { if (location.hash === at) then(); }, () => {});
+}
 const BY_COMMIT = new Map(COMMITS.map(c => [c.id, c]));
 const isCommitId = id => /^c[0-9a-f]/.test(id);
 const SENT = THREADS.flatMap(t => t.m.map((m, i) => ({ t, i, m })).filter(x => x.m.s));
@@ -220,13 +233,15 @@ function runSearch(q) {
     && !Q.label.some(l => l !== "commits") && !Q.has.some(h => h !== "code") && !Q.to.some(v => !"bitcoin".includes(v))
     && (Q.in == null || ["all", "commits", "anywhere", "starred"].includes(Q.in));
   if (allow) {
-    if (!CINDEX) CINDEX = COMMITS.map(c => (c.s + "\n" + c.f.map(f => f[0] + "\n" + f[3]).join("\n")).toLowerCase());
+    if (diffsMissing()) whenDiffs(() => render(true));   // search the code too once the diffs arrive
+    let tmpIx = null;
+    if (!CINDEX) { const ix = COMMITS.map(c => (c.s + "\n" + c.f.map(f => f[0] + "\n" + (f[3] || "")).join("\n")).toLowerCase()); if (diffsMissing()) tmpIx = ix; else CINDEX = ix; }
     for (const c of COMMITS) {
       if ((Q.is.includes("starred") || Q.in === "starred") && !ST.star[c.id]) continue;
       if (Q.after != null && c.d < Q.after) continue;
       if (Q.before != null && c.d >= Q.before) continue;
       if (Q.subj.length && !Q.subj.every(x => c.s.toLowerCase().includes(x))) continue;
-      const tx = CINDEX[c.idx];
+      const tx = (CINDEX || tmpIx)[c.idx];
       if (Q.terms.length && !Q.terms.every(w => tx.includes(w))) continue;
       if (Q.neg.length && Q.neg.some(w => tx.includes(w))) continue;
       res.push({ c, hits: [] });
@@ -507,6 +522,11 @@ function bar5(a, d) {
 function renderCommit() {
   const c = BY_COMMIT.get(ROUTE.id);
   if (!c) { $("#main").innerHTML = emptyState("error", "This commit isn't in the archive", `<a href="#commits">Back to Commits</a>`); return; }
+  if (c.f.some(f => f[3] === null) && window.SM_DIFFS) {
+    $("#main").innerHTML = `<div class="scroll"><div class="page"><p class="lead muted">Loading the changes…</p></div></div>`;
+    whenDiffs(renderCommit);
+    return;
+  }
   const terms = HIT && HIT.id === c.id ? HIT.terms || [] : [];
   const pos = CURRENT_LIST.indexOf(c.id);
   const star = !!ST.star[c.id];

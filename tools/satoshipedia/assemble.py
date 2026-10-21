@@ -171,6 +171,52 @@ src = patch(src, 'chip("from:me", "From me", "person")', 'chip("from:me", "From 
 src = patch(src, 'placeholder="me, hal, gavin"', 'placeholder="satoshi, hal, gavin"')
 src = patch(src, '<span class="who">me <span class="n">→ ${where}</span></span>', '<span class="who">Satoshi <span class="n">→ ${where}</span></span>')
 
+# Commit diffs on demand. The website (build_site.py) ships the archive without the diff text (each file's
+# f[3] is null) and names a separate file in window.SM_DIFFS; it's fetched the first time a commit is opened
+# or a search runs. The single-file app has the diffs inline, so none of this applies to it.
+src = patch(src, 'const COMMITS = (RAW.commits || []).map((c, idx) => Object.assign(c, { idx, kind: "commit" }));',
+  """const COMMITS = (RAW.commits || []).map((c, idx) => Object.assign(c, { idx, kind: "commit" }));
+let DIFFS_P = null;
+const diffsMissing = () => !!window.SM_DIFFS && COMMITS.some(c => c.f.some(f => f[3] === null));
+function loadDiffs() {
+  if (!DIFFS_P) DIFFS_P = fetch(window.SM_DIFFS).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(all => {
+    all.forEach((files, i) => files.forEach((t, j) => { if (COMMITS[i] && COMMITS[i].f[j]) COMMITS[i].f[j][3] = t; }));
+    CINDEX = null;
+  }).catch(e => { DIFFS_P = null; throw e; });
+  return DIFFS_P;
+}
+function whenDiffs(then) {
+  const at = location.hash;
+  loadDiffs().then(() => { if (location.hash === at) then(); }, () => {});
+}""")
+src = patch(src, """function renderCommit() {
+  const c = BY_COMMIT.get(ROUTE.id);
+  if (!c) { $("#main").innerHTML = emptyState("error", "This commit isn't in the archive", `<a href="#commits">Back to Commits</a>`); return; }""",
+  """function renderCommit() {
+  const c = BY_COMMIT.get(ROUTE.id);
+  if (!c) { $("#main").innerHTML = emptyState("error", "This commit isn't in the archive", `<a href="#commits">Back to Commits</a>`); return; }
+  if (c.f.some(f => f[3] === null) && window.SM_DIFFS) {
+    $("#main").innerHTML = `<div class="scroll"><div class="page"><p class="lead muted">Loading the changes…</p></div></div>`;
+    whenDiffs(renderCommit);
+    return;
+  }""")
+src = patch(src, """    if (!CINDEX) CINDEX = COMMITS.map(c => (c.s + "\\n" + c.f.map(f => f[0] + "\\n" + f[3]).join("\\n")).toLowerCase());""",
+  """    if (diffsMissing()) whenDiffs(() => render(true));   // search the code too once the diffs arrive
+    let tmpIx = null;
+    if (!CINDEX) { const ix = COMMITS.map(c => (c.s + "\\n" + c.f.map(f => f[0] + "\\n" + (f[3] || "")).join("\\n")).toLowerCase()); if (diffsMissing()) tmpIx = ix; else CINDEX = ix; }""")
+src = patch(src, "      const tx = CINDEX[c.idx];", "      const tx = (CINDEX || tmpIx)[c.idx];")
+
+# Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
+# the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).
+import re as _re
+_names = set((tools / "material_symbols_names.txt").read_text().split())
+_text = src + json.dumps(json.load(open(DATA)), ensure_ascii=False)
+_icons = sorted(w for w in set(_re.findall(r'["\'`>:]([a-z][a-z0-9_]{1,})(?=["\'`<])', _text)) if w in _names)
+_ms = "family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&display=block"
+assert src.count(_ms) == 2, src.count(_ms)
+src = src.replace(_ms, _ms.replace("&display=block", "&icon_names=" + ",".join(_icons) + "&display=block"))
+print(len(_icons), "icons requested from Google Fonts")
+
 TEMPLATE_OUT.write_text(src)
 data = json.load(open(DATA))
 djson = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")

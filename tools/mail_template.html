@@ -15,7 +15,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap"></noscript>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"></noscript>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap"></noscript>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&display=block" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&display=block"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&icon_names=account_balance,account_balance_wallet,alternate_email,announcement,archive,arrow_back,arrow_drop_down,attachment,auto_awesome,block,calendar_month,call,campaign,category,check,chevron_left,chevron_right,chips,circle,clear,close,close_fullscreen,code,code_blocks,commit,computer,delete,deployed_code,description,details,dock,done,done_all,draft,drafts,edit,edit_note,email,error,expand_less,expand_more,feedback,filter,folder_open,folder_zip,format_quote,forum,forward,forward_to_inbox,function,gavel,group,hd,heat,height,help,history_edu,home,hov,html,hub,inbox,info,input,inventory_2,keep,key,keyboard,label,language,light,link,list,list_alt,local_pizza,lock,logout,mail,map,mark_email_unread,markunread,menu,menu_book,message,minimize,mobile,money,more,more_horiz,move_to_inbox,newspaper,note,open_in_full,open_in_new,pause,payments,people,person,person_off,person_search,picture_as_pdf,pill,play_arrow,privacy,problem,public,radio,refresh,reply,restart_alt,restore,savings,school,search,search_off,select,sell,send,send_money,settings,shuffle,sort,source,spoke,stack,star,start,style,subject,swap_vert,tab,table_rows,tabs,tag,terminal,timeline,title,token,toll,topic,translate,tune,unfold_more,unsubscribe,wallet,warning,weight,width&display=block" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&icon_names=account_balance,account_balance_wallet,alternate_email,announcement,archive,arrow_back,arrow_drop_down,attachment,auto_awesome,block,calendar_month,call,campaign,category,check,chevron_left,chevron_right,chips,circle,clear,close,close_fullscreen,code,code_blocks,commit,computer,delete,deployed_code,description,details,dock,done,done_all,draft,drafts,edit,edit_note,email,error,expand_less,expand_more,feedback,filter,folder_open,folder_zip,format_quote,forum,forward,forward_to_inbox,function,gavel,group,hd,heat,height,help,history_edu,home,hov,html,hub,inbox,info,input,inventory_2,keep,key,keyboard,label,language,light,link,list,list_alt,local_pizza,lock,logout,mail,map,mark_email_unread,markunread,menu,menu_book,message,minimize,mobile,money,more,more_horiz,move_to_inbox,newspaper,note,open_in_full,open_in_new,pause,payments,people,person,person_off,person_search,picture_as_pdf,pill,play_arrow,privacy,problem,public,radio,refresh,reply,restart_alt,restore,savings,school,search,search_off,select,sell,send,send_money,settings,shuffle,sort,source,spoke,stack,star,start,style,subject,swap_vert,tab,table_rows,tabs,tag,terminal,timeline,title,token,toll,topic,translate,tune,unfold_more,unsubscribe,wallet,warning,weight,width&display=block"></noscript>
 <style>
 /* Layout: modern webmail shell — top bar with pill search, 256px folder rail (Mail / Topics / Labels / People),
    one rounded card holding the list or conversation; the rail becomes a drawer under 900px. */
@@ -1437,6 +1437,19 @@ const THREADS = RAW.threads.map((t, idx) => {
 });
 const BY_ID = new Map(THREADS.map(t => [t.id, t]));
 const COMMITS = (RAW.commits || []).map((c, idx) => Object.assign(c, { idx, kind: "commit" }));
+let DIFFS_P = null;
+const diffsMissing = () => !!window.SM_DIFFS && COMMITS.some(c => c.f.some(f => f[3] === null));
+function loadDiffs() {
+  if (!DIFFS_P) DIFFS_P = fetch(window.SM_DIFFS).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(all => {
+    all.forEach((files, i) => files.forEach((t, j) => { if (COMMITS[i] && COMMITS[i].f[j]) COMMITS[i].f[j][3] = t; }));
+    CINDEX = null;
+  }).catch(e => { DIFFS_P = null; throw e; });
+  return DIFFS_P;
+}
+function whenDiffs(then) {
+  const at = location.hash;
+  loadDiffs().then(() => { if (location.hash === at) then(); }, () => {});
+}
 const BY_COMMIT = new Map(COMMITS.map(c => [c.id, c]));
 const isCommitId = id => /^c[0-9a-f]/.test(id);
 const SENT = THREADS.flatMap(t => t.m.map((m, i) => ({ t, i, m })).filter(x => x.m.s));
@@ -1616,13 +1629,15 @@ function runSearch(q) {
     && !Q.label.some(l => l !== "commits") && !Q.has.some(h => h !== "code") && !Q.to.some(v => !"bitcoin".includes(v))
     && (Q.in == null || ["all", "commits", "anywhere", "starred"].includes(Q.in));
   if (allow) {
-    if (!CINDEX) CINDEX = COMMITS.map(c => (c.s + "\n" + c.f.map(f => f[0] + "\n" + f[3]).join("\n")).toLowerCase());
+    if (diffsMissing()) whenDiffs(() => render(true));   // search the code too once the diffs arrive
+    let tmpIx = null;
+    if (!CINDEX) { const ix = COMMITS.map(c => (c.s + "\n" + c.f.map(f => f[0] + "\n" + (f[3] || "")).join("\n")).toLowerCase()); if (diffsMissing()) tmpIx = ix; else CINDEX = ix; }
     for (const c of COMMITS) {
       if ((Q.is.includes("starred") || Q.in === "starred") && !ST.star[c.id]) continue;
       if (Q.after != null && c.d < Q.after) continue;
       if (Q.before != null && c.d >= Q.before) continue;
       if (Q.subj.length && !Q.subj.every(x => c.s.toLowerCase().includes(x))) continue;
-      const tx = CINDEX[c.idx];
+      const tx = (CINDEX || tmpIx)[c.idx];
       if (Q.terms.length && !Q.terms.every(w => tx.includes(w))) continue;
       if (Q.neg.length && Q.neg.some(w => tx.includes(w))) continue;
       res.push({ c, hits: [] });
@@ -1903,6 +1918,11 @@ function bar5(a, d) {
 function renderCommit() {
   const c = BY_COMMIT.get(ROUTE.id);
   if (!c) { $("#main").innerHTML = emptyState("error", "This commit isn't in the archive", `<a href="#commits">Back to Commits</a>`); return; }
+  if (c.f.some(f => f[3] === null) && window.SM_DIFFS) {
+    $("#main").innerHTML = `<div class="scroll"><div class="page"><p class="lead muted">Loading the changes…</p></div></div>`;
+    whenDiffs(renderCommit);
+    return;
+  }
   const terms = HIT && HIT.id === c.id ? HIT.terms || [] : [];
   const pos = CURRENT_LIST.indexOf(c.id);
   const star = !!ST.star[c.id];

@@ -24,6 +24,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import hashlib
 import re
 import urllib.parse
 import shutil
@@ -582,11 +583,24 @@ class Site:
         p = self.p
         assets = self.out / "assets"
         assets.mkdir(parents=True, exist_ok=True)
-        (assets / "app.css").write_text(p["css"], encoding="utf-8")
-        (assets / "app.js").write_text(p["app_js"], encoding="utf-8")
         (self.out / "data").mkdir(exist_ok=True)
         clean = {**self.D, "threads": [{k: v for k, v in t.items() if not k.startswith("_")} for t in self.threads]}
-        (self.out / "data" / "archive.json").write_text(json.dumps(clean, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        dump = lambda x: json.dumps(x, ensure_ascii=False, separators=(",", ":"))
+        # the complete archive, for anyone who wants the data (the app doesn't load this one)
+        (self.out / "data" / "archive.json").write_text(dump(clean), encoding="utf-8")
+        # What the app loads: fingerprinted files in static/, which never change once published, so browsers
+        # and the CDN can keep them for a year (vercel.json); a new build gets new names. The commit diffs are
+        # split off and fetched only when someone opens a commit or searches.
+        lite = {**clean, "commits": [{**c, "f": [[*f[:3], None, *f[4:]] for f in c["f"]]} for c in clean.get("commits", [])]}
+        diffs = [[f[3] for f in c["f"]] for c in clean.get("commits", [])]
+        static = self.out / "static"
+        static.mkdir(exist_ok=True)
+        def put(stem, ext, text):
+            name = f"{stem}.{hashlib.sha256(text.encode()).hexdigest()[:10]}.{ext}"
+            (static / name).write_text(text, encoding="utf-8")
+            return "static/" + name
+        self.app_css, self.app_js = put("app", "css", p["css"]), put("app", "js", p["app_js"])
+        self.archive_url, self.diffs_url = put("archive", "json", dump(lite)), put("diffs", "json", dump(diffs))
         head = p["head"]
         head = re.sub(r"<title>.*?</title>", "<title>Satoshi Mail: Satoshi Nakamoto's emails, posts and commits</title>", head, count=1)
         head = head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
@@ -606,7 +620,7 @@ class Site:
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:image" content="{self.base}og.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="data/archive.json" as="fetch" crossorigin>
+<link rel="preload" href="{self.archive_url}" as="fetch" crossorigin>
 {ld_html}"""
         reset = (":root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}"
                  "html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}"
@@ -616,17 +630,18 @@ class Site:
 <p>The interactive reader needs JavaScript. You can still read everything here:</p>
 <ul><li><a href="conversations/">All {len(self.threads)} conversations</a></li><li><a href="commits/">All {len(self.commits)} commits</a></li><li><a href="satoshipedia/">Satoshipedia, the encyclopedia</a></li><li><a href="about/">About Satoshi Mail</a></li></ul></div></noscript>"""
         loader = """<script>
+window.SM_DIFFS = "%s";
 (function () {
   var q = new URLSearchParams(location.search).get("q");
   if (q && !location.hash) history.replaceState(null, "", location.pathname + "#search-" + encodeURIComponent(q));
-  fetch("data/archive.json").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+  fetch("%s").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
     document.getElementById("data").textContent = t;
-    var s = document.createElement("script"); s.src = "assets/app.js"; document.body.appendChild(s);
+    var s = document.createElement("script"); s.src = "%s"; document.body.appendChild(s);
   }).catch(function () {
     var l = document.getElementById("loading"); if (l) l.innerHTML = '<p style="font:15px system-ui;max-width:420px;text-align:center">The archive could not be loaded. <a href="conversations/">Read the conversations</a> instead.</p>';
   });
 })();
-</script>"""
+</script>""" % (self.diffs_url, self.archive_url, self.app_js)
         doc = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -635,7 +650,7 @@ class Site:
 <style>{reset}</style>
 {head.strip()}
 {extra}
-<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="{self.app_css}">
 </head>
 <body>
 {noscript}
@@ -665,11 +680,14 @@ class Site:
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
 
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /assets/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
 /data/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
 /og.png
   Cache-Control: public, max-age=604800

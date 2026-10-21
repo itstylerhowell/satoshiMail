@@ -21,7 +21,9 @@ Live site: <https://satoshimail.vercel.app/>
 
 ```
 site/                     the deployable website (Cloudflare Pages output directory)
-  index.html, assets/       the app; its archive loads from data/archive.json
+  index.html, static/       the app; its code and archive load from fingerprinted files in static/
+                            (cached for a year), commit diffs only when needed; data/archive.json is
+                            the complete archive for download
   satoshipedia/ conversations/ commits/   one static, search-friendly page per item
   sitemap.xml robots.txt _headers 404.html og.png favicon.svg
 tools/
