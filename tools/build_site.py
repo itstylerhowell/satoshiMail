@@ -35,6 +35,8 @@ from urllib.parse import quote
 HERE = Path(__file__).resolve().parent
 BUILD_DATE = dt.date.today().isoformat()
 SITE_NAME = "Satoshi Mail"
+GOOGLE_VERIFY = ""   # Google Search Console → HTML tag → the content="…" value
+SITE_ALT = ["SatoshiMail", "Satoshi Mail archive"]   # other names people search for (Google site names)
 TAGLINE = "Every email, forum post and commit by Satoshi Nakamoto in a Gmail-style archive, with Satoshipedia and a map of his connections and timeline, 2008–2011."
 FOUNDER = {"@type": "Person", "name": "Tyler Howell", "url": "https://x.com/TylerHowell88",
            "sameAs": ["https://x.com/TylerHowell88", "https://github.com/itstylerhowell"]}
@@ -245,7 +247,7 @@ class Site:
 {body}
 </main>
 <footer class="sf"><div class="in">
-  <p><b>Beta:</b> Satoshi Mail is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
+  <p><b>Beta:</b> Satoshi Mail (SatoshiMail) is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
   <p>Inspired by <a href="https://x.com/lukeigel" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" rel="noopener">Jmail</a>.</p>
   <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a></p>
 </div></footer>
@@ -604,8 +606,11 @@ class Site:
         head = p["head"]
         head = re.sub(r"<title>.*?</title>", "<title>Satoshi Mail: Satoshi Nakamoto's emails, posts and commits</title>", head, count=1)
         head = head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
+        head = re.sub(r'<meta name="description" content="[^"]*">', lambda m: f'<meta name="description" content="Satoshi Mail (SatoshiMail): {esc(TAGLINE)}">', head, count=1)
+        if self.google_verify:
+            head += f'\n<meta name="google-site-verification" content="{esc(self.google_verify)}">'
         ld = [
-            {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": self.base, "description": TAGLINE, "inLanguage": "en",
+            {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "alternateName": SITE_ALT, "url": self.base, "description": TAGLINE, "inLanguage": "en",
              "publisher": FOUNDER, "potentialAction": {"@type": "SearchAction", "target": self.base + "?q={search_term_string}", "query-input": "required name=search_term_string"}},
             {"@context": "https://schema.org", "@type": "Dataset", "name": "Satoshi Nakamoto's emails, forum posts and commits", "url": self.base, "description": TAGLINE,
              "creator": FOUNDER, "temporalCoverage": "2008-08/2011-04",
@@ -626,7 +631,7 @@ class Site:
                  "html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}"
                  "img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}")
         noscript = f"""<noscript><div style="max-width:720px;margin:40px auto;padding:0 16px;font:16px/1.6 system-ui,sans-serif">
-<h1>Satoshi Mail: Satoshi Nakamoto's emails, posts and commits</h1><p>{esc(TAGLINE)}</p>
+<h1>Satoshi Mail: Satoshi Nakamoto's emails, posts and commits</h1><p>SatoshiMail: {esc(TAGLINE)}</p>
 <p>The interactive reader needs JavaScript. You can still read everything here:</p>
 <ul><li><a href="conversations/">All {len(self.threads)} conversations</a></li><li><a href="commits/">All {len(self.commits)} commits</a></li><li><a href="satoshipedia/">Satoshipedia, the encyclopedia</a></li><li><a href="about/">About Satoshi Mail</a></li></ul></div></noscript>"""
         loader = """<script>
@@ -727,6 +732,7 @@ def main(argv=None) -> int:
     ap.add_argument("out", nargs="?", default="site", help="output folder (default: site)")
     ap.add_argument("--base-url", default="https://satoshimail.vercel.app/", help="public URL the site will live at (default: the Vercel address)")
     ap.add_argument("--no-analytics", action="store_true", help="leave out Vercel Web Analytics")
+    ap.add_argument("--google-verify", default=GOOGLE_VERIFY, help="Google Search Console verification code (meta tag content)")
     a = ap.parse_args(argv)
     out = Path(a.out)
     if out.exists():
@@ -734,6 +740,7 @@ def main(argv=None) -> int:
     out.mkdir(parents=True)
     parts = split_page(Path(a.page).read_text(encoding="utf-8"))
     s = Site(parts, out, a.base_url)
+    s.google_verify = a.google_verify
     s.build_app()
     s.build_wiki()
     s.build_conversations()
