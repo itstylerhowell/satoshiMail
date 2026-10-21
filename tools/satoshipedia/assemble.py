@@ -29,7 +29,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")

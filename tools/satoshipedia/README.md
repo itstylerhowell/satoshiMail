@@ -33,3 +33,6 @@ The encyclopedia built into Satoshi Mail (`#wiki`).
   cross-check with live counts. Conversations no longer carry per-source chips; they keep their Satoshipedia chips.
 * `feedback.js`, `feedback.css`: Send feedback (Settings → Help, the About page, the Satoshipedia footer). The form
   pre-fills an X post to @TylerHowell88 (one post, 280 characters); the page itself stores and sends nothing.
+* `retro.css`: the retro look, Gmail as it looked around 2010–2013 (Arial 13px, square corners, red COMPOSE,
+  grey gradient buttons, yellow notices and selected rows), layered last over `jlook.css`. Remove it from
+  `assemble.py` to go back to the modern look.

@@ -1086,3 +1086,147 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; }
 .fb-send[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
 #fbcount.low { color: var(--danger); }
 
+/* ── Retro look: Gmail as it looked around 2010–2013 ──
+   Arial at 13px, square corners, grey gradient buttons, a red COMPOSE button, blue links,
+   yellow notices and a yellow highlight on selected rows. Applies to the mail app, its menus,
+   dialogs and the dock; Satoshipedia and Satoshi Map keep their own looks.
+   Remove this file from assemble.py to go back to the modern look. */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f5f5;          /* read rows */
+  --hover: #eeeeee;
+  --ink: #222222;
+  --ink-2: #444444;
+  --ink-3: #777777;
+  --line: #e5e5e5;
+  --outline: #c6c6c6;
+  --accent: #1155cc;             /* links */
+  --accent-soft: #ffffcc;        /* selected rows: the classic yellow */
+  --info: #f9edbe;               /* Google's yellow notice */
+  --info-line: #f0c36d;
+  --compose: #d14836;
+  --compose-ink: #ffffff;
+  --search: #ffffff;
+  --tab-accent: #dd4b39;
+  --pill-new: #dd4b39; --pill-new-ink: #ffffff;
+  --btn-top: #f5f5f5; --btn-bot: #f1f1f1; --btn-line: #dcdcdc; --btn-line-hover: #c6c6c6; --btn-ink: #444444;
+  --blue-top: #4d90fe; --blue-bot: #4787ed; --blue-line: #3079ed;
+  --nav-on: #dd4b39;
+  --ui: Arial, Helvetica, sans-serif;
+  --ui-head: Arial, Helvetica, sans-serif;
+  --row-h: 32px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1b; --surface: #222222; --surface-2: #2a2a2a; --hover: #333333;
+    --ink: #e6e6e6; --ink-2: #cccccc; --ink-3: #9a9a9a; --line: #3a3a3a; --outline: #5a5a5a;
+    --accent: #8ab4f8; --accent-soft: #4a4520; --info: #3d3620; --info-line: #7a6a30;
+    --search: #2a2a2a; --tab-accent: #f28b82; --pill-new: #c5453a; --nav-on: #f28b82;
+    --btn-top: #3a3a3a; --btn-bot: #333333; --btn-line: #4a4a4a; --btn-line-hover: #666666; --btn-ink: #e0e0e0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1b; --surface: #222222; --surface-2: #2a2a2a; --hover: #333333;
+  --ink: #e6e6e6; --ink-2: #cccccc; --ink-3: #9a9a9a; --line: #3a3a3a; --outline: #5a5a5a;
+  --accent: #8ab4f8; --accent-soft: #4a4520; --info: #3d3620; --info-line: #7a6a30;
+  --search: #2a2a2a; --tab-accent: #f28b82; --pill-new: #c5453a; --nav-on: #f28b82;
+  --btn-top: #3a3a3a; --btn-bot: #333333; --btn-line: #4a4a4a; --btn-line-hover: #666666; --btn-ink: #e0e0e0;
+}
+
+/* type: 13px Arial everywhere in the mail app */
+body { font: 13px/1.4 var(--ui); }
+#app a:not(.nav):not(.tab):not(.pillbtn):not(.brand), .pop a:not(.mi), .dialog a:not(.pillbtn) { color: var(--accent); }
+.brand span { font: 22px var(--ui); letter-spacing: -.5px; }
+.brand b { font-weight: 700; color: #dd4b39; }
+
+/* top bar: a plain search box with a blue search button feel */
+.top { border-bottom: 1px solid var(--line); }
+.search form { height: 29px; border-radius: 1px; border: 1px solid #d9d9d9; border-top-color: #c0c0c0; background: var(--search); box-shadow: none; padding: 0 2px; }
+.search form:focus-within { border-color: #4d90fe; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .3); background: var(--search); }
+.search input { font: 16px var(--ui); }
+.search .kbd { border-radius: 2px; }
+.ib { border-radius: 2px; }
+.ib:hover { background: var(--hover); }
+.avatar-btn { border-radius: 2px; }
+
+/* COMPOSE: the red button */
+.compose-btn { height: 29px; padding: 0 16px; margin: 4px 0 14px 18px; border-radius: 2px; border: 1px solid #b0281a;
+  background: linear-gradient(#dd4b39, #d14836); color: #fff; font: 700 11px var(--ui); letter-spacing: .3px; text-transform: uppercase; box-shadow: none; }
+.compose-btn:hover { background: linear-gradient(#dd4b39, #c53727); border-color: #b0281a; box-shadow: 0 1px 1px rgba(0, 0, 0, .2); }
+.compose-btn .ms { display: none; }
+
+/* folder list: square rows, the current folder in bold red */
+.nav { height: 26px; border-radius: 0; padding-left: 26px; gap: 12px; }
+.nav.on { background: var(--hover); color: var(--nav-on); font-weight: 700; }
+.nav.on .ms { color: var(--nav-on); }
+.nav .n { font-weight: 700; }
+.rail h3 { font: 700 11px var(--ui); text-transform: uppercase; letter-spacing: .4px; color: var(--ink-3); margin: 14px 0 2px 26px; }
+
+/* the message list */
+.card { border-radius: 0; border-left: 1px solid var(--line); }
+.tb { min-height: 40px; border-bottom: 1px solid var(--line); }
+.row { background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.row.unread { background: var(--surface); }
+.row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px rgba(0, 0, 0, .15); }
+.row.checked { background: var(--accent-soft); }
+.row .who, .row .subj { font-weight: 400; }
+.row.unread .who, .row.unread .subj { font-weight: 700; }
+.row .date { font-size: 12px; }
+.row.unread .date { font-weight: 700; }
+.lchip { border-radius: 2px; font: 400 11px/16px var(--ui); padding: 0 4px; }
+
+/* tabs: 2013 inbox tabs with a coloured bar under the current one */
+.tab { height: 46px; font-family: var(--ui); }
+.tab.on::after { height: 4px; border-radius: 0; left: 0; right: 0; }
+.tab .pill { border-radius: 2px; padding: 0 5px; font: 700 11px/16px var(--ui); }
+
+/* notices: Google's yellow bar */
+.banner, .ask { border-radius: 0; background: var(--info); border: 1px solid var(--info-line); }
+.ask-ref { border-radius: 2px; }
+
+/* buttons: grey gradient, square */
+.fchip, .pillbtn, .sort, .linkbtn.btn, .fb-to .pillbtn:not(.primary) {
+  border-radius: 2px; border: 1px solid var(--btn-line); background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--btn-ink);
+  font: 700 11px var(--ui); height: 27px; box-shadow: none; }
+.fchip:hover, .pillbtn:hover, .sort:hover { border-color: var(--btn-line-hover); background: linear-gradient(#f8f8f8, #f1f1f1); box-shadow: 0 1px 1px rgba(0, 0, 0, .1); color: var(--ink); }
+.fchip.on { background: var(--hover); border-color: var(--btn-line-hover); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1); }
+.pillbtn.primary { background: linear-gradient(var(--blue-top), var(--blue-bot)); border-color: var(--blue-line); color: #fff; }
+.pillbtn.primary:hover { background: linear-gradient(#4d90fe, #357ae8); border-color: #2f5bb7; color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fchip:hover, :root:not([data-theme="light"]) .pillbtn:not(.primary):hover { background: linear-gradient(#444, #3a3a3a); } }
+:root[data-theme="dark"] .fchip:hover, :root[data-theme="dark"] .pillbtn:not(.primary):hover { background: linear-gradient(#444, #3a3a3a); }
+
+/* conversation view */
+.conv-h h1 { font: 18px var(--ui); }
+.mh .nm b { font-weight: 700; }
+.msg .mb { font: 13px/1.45 var(--ui); }
+.avatar, .avatar-btn { border-radius: 2px; }
+.details { border-radius: 0; }
+.conv-wiki a { border-radius: 2px; }
+
+/* menus and dialogs: square, with the old drop shadow */
+.pop { border-radius: 0; border: 1px solid rgba(0, 0, 0, .2); box-shadow: 0 2px 4px rgba(0, 0, 0, .2); padding: 6px 0; }
+.pop h4 { font: 700 11px var(--ui); }
+.pop .mi { padding: 6px 16px; font-size: 13px; }
+.dialog { border-radius: 0; border: 1px solid rgba(0, 0, 0, .333); box-shadow: 0 4px 16px rgba(0, 0, 0, .2); }
+.dialog h2, .fb-dlg h2 { font: 16px var(--ui); }
+#fbtext { border-radius: 1px; }
+.snack { border-radius: 0; background: #f9edbe; color: #222; border: 1px solid #f0c36d; }
+.snack button { color: #1155cc; }
+.snack .ib { color: #222; }
+
+/* pages (About, Sources, People, Activity) */
+.page h2 { font: 18px var(--ui); }
+.src { border-radius: 0; }
+
+/* the app bar along the bottom: a plain grey strip rather than glass */
+.dock { border-radius: 2px; background: linear-gradient(var(--btn-top), var(--btn-bot)); border: 1px solid var(--btn-line);
+  -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); }
+.dk { border-radius: 2px; font: 11px var(--ui); }
+.dk:hover { background: var(--hover); }
+.dk .tile { border-radius: 3px; box-shadow: inset 0 0 0 1px var(--btn-line); }
+.dk .new { border-radius: 2px; }
+.beta-pill { border-radius: 2px; }
+.beta-note { border-radius: 0; border-color: var(--info-line); background: var(--info); box-shadow: 0 2px 4px rgba(0, 0, 0, .2); font-family: var(--ui); }
+.brand span { color: var(--ink-3); }
+
