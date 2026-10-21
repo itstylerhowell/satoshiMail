@@ -3,6 +3,15 @@
   "updates": [
     {
       "date": "2026-10-21",
+      "title": "Licenses and terms",
+      "items": [
+        "The About page now lists the license and terms of everything in the archive: MIT for the code, CC BY-SA 4.0 for Satoshipedia, and each source's own terms for the messages.",
+        "Google's dataset listing for Satoshi Mail now links to those terms."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-21",
       "title": "A bigger, easier Satoshi Map",
       "items": [
         "Connections: zoom and pan the chart (scroll, pinch, drag or the + and − buttons); names stay readable and more appear as you zoom in.",

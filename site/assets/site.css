@@ -74,3 +74,10 @@ sup.ref a { display: inline-block; padding: 6px 3px; margin: -6px -1px; text-dec
   .prevnext { flex-direction: column; }
   .prevnext a { max-width: none; }
 }
+
+/* About → Licenses and terms */
+.tablewrap { overflow-x: auto; margin: 12px 0; }
+table.terms { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; }
+table.terms th { text-align: left; font-size: 12px; color: var(--ink-3); padding: 6px 10px; border-bottom: 2px solid var(--line); }
+table.terms td { vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+table.terms code { font-size: 12.5px; }

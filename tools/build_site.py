@@ -35,6 +35,7 @@ from urllib.parse import quote
 HERE = Path(__file__).resolve().parent
 BUILD_DATE = dt.date.today().isoformat()
 SITE_NAME = "Satoshi Mail"
+REPO_URL = "https://github.com/itstylerhowell/satoshiMail"
 GOOGLE_VERIFY = ""   # Google Search Console → HTML tag → the content="…" value
 HOME_DESC = "Satoshi Mail (SatoshiMail): every email, forum post and commit by Satoshi Nakamoto, 2008–2011, in a Gmail-style archive with Satoshipedia."
 SITE_ALT = ["SatoshiMail", "Satoshi Mail archive"]   # other names people search for (Google site names)
@@ -595,6 +596,23 @@ class Site:
 {rss_items}</channel></rss>
 """, encoding="utf-8")
 
+    def licenses_html(self) -> str:
+        """The "Licenses and terms" section of the About page, from NOTICE.md, so the two never disagree.
+        The homepage's Dataset data points its license field here (the archive has no single licence)."""
+        notice = (HERE.parent / "NOTICE.md").read_text(encoding="utf-8")
+        def md(t):
+            t = esc(t)
+            t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: f'<a href="{m.group(2) if m.group(2).startswith("http") else REPO_URL + "/blob/main/" + m.group(2)}" rel="noopener">{m.group(1)}</a>', t)
+            t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+            return re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", t)
+        rows = [[c.strip() for c in l.strip().strip("|").split("|")] for l in notice.splitlines() if l.startswith("| ") and not l.startswith("| Material")]
+        trs = "".join(f"<tr><td>{md(a)}</td><td>{md(b)}</td><td>{md(c)}</td></tr>" for a, b, c in rows)
+        return f"""
+<h2 id="licenses">Licenses and terms</h2>
+<p>The code and design of Satoshi Mail, Satoshipedia and Satoshi Map are open source under the <a href="{REPO_URL}/blob/main/LICENSE" rel="noopener">MIT license</a>. Satoshipedia's article text is shared under <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>. The archive itself keeps each source's own terms:</p>
+<div class="tablewrap"><table class="terms"><thead><tr><th>Material</th><th>Where it comes from</th><th>Terms</th></tr></thead><tbody>{trs}</tbody></table></div>
+<p class="muted">The same list is in <a href="{REPO_URL}/blob/main/NOTICE.md" rel="noopener">NOTICE.md</a>.</p>"""
+
     def build_about(self):
         body = f"""<h1>About Satoshi Mail</h1>
 <p class="lead">{esc(TAGLINE)}</p>
@@ -606,6 +624,7 @@ class Site:
 <li><a href="../#map">Satoshi Map</a>: everyone he corresponded with, and his timeline from 2008 to 2011.</li></ul>
 <h2>Sources</h2>
 <p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive: every message in either is also here. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
+        body += self.licenses_html()
         self.write("about/", self.page("about/", "About Satoshi Mail – Satoshi Nakamoto's emails, posts and commits",
                    clip(TAGLINE), body, [("About", "about/")], [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Satoshi Mail", "url": self.base + "about/"}],
                    app_href="#about", og_type="website"), priority=0.5)
@@ -650,6 +669,7 @@ class Site:
             {"@context": "https://schema.org", "@type": "Dataset", "name": "Satoshi Nakamoto's emails, forum posts and commits", "url": self.base, "description": TAGLINE,
              "creator": FOUNDER, "temporalCoverage": "2008-08/2011-04",
              "isBasedOn": ["https://satoshi.nakamotoinstitute.org/", "https://github.com/lugaxker/nakamoto-archive", "https://github.com/bitcoin/bitcoin", "https://bitcoin.org/bitcoin.pdf"],
+             "license": self.base + "about/#licenses",
              "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": self.base + "data/archive.json"}]},
             {"@context": "https://schema.org", **FOUNDER},
         ]
