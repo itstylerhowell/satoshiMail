@@ -79,6 +79,7 @@ const ST = (() => {
   s = s && typeof s === "object" ? s : {};
   for (const k of ["star", "read", "arch", "trash"]) s[k] = s[k] && typeof s[k] === "object" ? s[k] : {};
   s.trash = {};   // Trash was removed: nothing stays hidden in it
+  s.arch = {}; s.read = {};   // Archive and read/unread were removed too
   s.drafts = Array.isArray(s.drafts) ? s.drafts : [];
   s.sort = s.sort === "old" ? "old" : "new";
   s.theme = ["light", "dark"].includes(s.theme) ? s.theme : "system";
@@ -93,12 +94,12 @@ function applyPrefs() {
 }
 applyPrefs();
 // Unread by default = someone else had the last word.
-const isRead = t => (t.id in ST.read) ? !!ST.read[t.id] : t.lastIsSat;
+const isRead = t => true;   // no read/unread
 const isStar = t => !!ST.star[t.id];
 const inFolder = (t, f) => {
   if (f === "trash") return !!ST.trash[t.id];
   if (ST.trash[t.id]) return false;
-  if (f === "inbox") return !ST.arch[t.id];
+  if (f === "inbox") return true;   // nothing is ever archived out of the inbox
   if (f === "starred") return isStar(t);
   return true;
 };
@@ -407,10 +408,8 @@ function toolbar(pg, opts = {}) {
   const b = (act, icon, label) => `<button class="ib" data-act="${act}" title="${label}" aria-label="${label}">${ic(icon)}</button>`;
   return `<div class="tb">
     ${opts.commits ? `<span class="title">Commits</span>` : `<span class="selwrap"><input type="checkbox" class="cbx" data-act="selall" aria-label="Select all" ${allOn ? "checked" : ""}><button class="ib sm" data-act="selmenu" aria-label="Select options">${ic("arrow_drop_down")}</button></span>`}
-    ${opts.commits ? "" : any ? (inTrash ? b("untrash", "move_to_inbox", "Move to Inbox") : b("archive", "archive", "Archive")) +
-        b("markread", "drafts", "Mark as read") + b("markunread", "mark_email_unread", "Mark as unread") + b("starsel", "star", "Add star") +
-        (ROUTE.folder !== "inbox" && !inTrash ? b("toinbox", "move_to_inbox", "Move to Inbox") : "")
-      : b("refresh", "refresh", "Refresh") + b("markallread", "done_all", "Mark all as read")}
+    ${opts.commits ? "" : any ? b("starsel", "star", "Add star")
+      : ""}
     <span class="grow"></span>
     <button class="sort hide-sm" data-act="sort" title="Change sort order">${ST.sort === "old" ? "Oldest first" : "Newest first"}${ic("swap_vert")}</button>
     ${pg.html}
@@ -433,11 +432,7 @@ function rowHtml(t, opts) {
     <span class="who">${who}</span>
     <span class="line">${ROUTE.label ? "" : lchip(t.s)}<span class="subj">${esc(t.t)}</span><span class="snip"><span class="sep"> - </span>${snip}</span>${more}${attach}</span>
     <span class="date" title="${esc(fullDate(date))}">${listDate(date)}</span>
-    <span class="hov">
-      <button class="ib sm" data-act="archive" data-id="${t.id}" title="Archive" aria-label="Archive">${ic("archive")}</button>
-      <button class="ib sm" data-act="${read ? "markunread" : "markread"}" data-id="${t.id}" title="${read ? "Mark as unread" : "Mark as read"}" aria-label="${read ? "Mark as unread" : "Mark as read"}">${ic(read ? "mark_email_unread" : "drafts")}</button>
-    </span>
-  </div>`;
+      </div>`;
 }
 const emptyState = (icon, title, sub) => `<div class="empty">${ic(icon)}<b>${esc(title)}</b>${sub ? `<span>${sub}</span>` : ""}</div>`;
 function renderList() {
@@ -463,7 +458,7 @@ function renderList() {
   } else if (model.kind === "search") {
     const has = s => new RegExp(`(^|\\s)${escRe(s)}(\\s|$)`, "i").test(r.search);
     const chip = (s, label, icon) => `<button class="fchip${has(s) ? " on" : ""}" data-act="chip" data-v="${esc(s)}" aria-pressed="${has(s)}">${ic(icon)}${esc(label)}</button>`;
-    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me", "From Satoshi", "person")}${COMMITS.length ? chip("in:commits", "Commits", "commit") : ""}${chip("label:cryptography", "Cryptography", "label")}${chip("label:bitcointalk", "BitcoinTalk", "label")}${THREADS.some(t => t.k === "x") ? chip("label:private", "Private email", "lock") : ""}${chip("has:code", "Has code", "code")}${chip("has:attachment", "Has attachment", "attachment")}${chip("is:unread", "Is unread", "mark_email_unread")}<button class="fchip" data-act="adv">${ic("tune")}Advanced search</button></div>`;
+    head = askCardHtml(r.search, r.page) + `<div class="chips">${chip("from:me", "From Satoshi", "person")}${COMMITS.length ? chip("in:commits", "Commits", "commit") : ""}${chip("label:cryptography", "Cryptography", "label")}${chip("label:bitcointalk", "BitcoinTalk", "label")}${THREADS.some(t => t.k === "x") ? chip("label:private", "Private email", "lock") : ""}${chip("has:code", "Has code", "code")}${chip("has:attachment", "Has attachment", "attachment")}<button class="fchip" data-act="adv">${ic("tune")}Advanced search</button></div>`;
   } else if (model.kind === "topic") {
     head = `<div class="banner">${ic("sell", "fill")}<p><b>${esc(CAT_NAME[r.topic] || r.topic)}</b><br><span class="sub">Conversations with a message from The Quotable Satoshi on this topic.</span></p></div>`;
   } else if (model.kind === "label" && LISTS[r.label]) {
@@ -615,8 +610,7 @@ function renderThread() {
       <a class="ib sm${pos < CURRENT_LIST.length - 1 ? "" : " off"}" ${pos < CURRENT_LIST.length - 1 ? `href="#t-${CURRENT_LIST[pos + 1]}"` : ""} aria-label="Older" title="Older">${ic("chevron_right")}</a>` : "";
   $("#main").innerHTML = `<div class="tb">
       <a class="ib" href="${esc(LAST_LIST)}" aria-label="Back to list" title="Back">${ic("arrow_back")}</a>
-      ${ST.trash[t.id] ? b("untrash", "move_to_inbox", "Move to Inbox") : (ST.arch[t.id] ? b("toinbox", "move_to_inbox", "Move to Inbox") : b("archive", "archive", "Archive"))}
-      ${b("markunread", "mark_email_unread", "Mark as unread")}
+      
       <a class="ib" href="${esc(t.su)}" target="_blank" rel="noopener" title="${t.k === "x" ? "Open in nakamoto-archive" : "Open on the Satoshi Nakamoto Institute"}" aria-label="${t.k === "x" ? "Open in nakamoto-archive" : "Open on the Satoshi Nakamoto Institute"}">${ic("open_in_new")}</a>
       <span class="grow"></span>${nav}</div>
     <div class="scroll" id="scroller"><div class="conv">
@@ -779,11 +773,11 @@ function renderAbout() {
     <p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>
     <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
-    <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi. Conversations where someone else had the last word start out unread.</p>
+    <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi.</p>
     <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>
     <p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi's BitcoinTalk posts and mailing-list emails): every one is here too. All sources are listed under Settings → Archive → <a href="#sources">Sources</a>.</p>
     <p class="lead">One 2014 P2P Foundation post carries the Institute's note about its uncertain authenticity and is shown with that note. Times are in UTC.</p>
-    <p class="lead">Stars, read state, archive and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On satoshimail.vercel.app, visits are counted with Vercel Web Analytics, which uses no cookies and doesn't record what you search for. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Nicholas Bohm's emails (COPA v Wright exhibit NB1); the forum's saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
+    <p class="lead">Stars and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On satoshimail.vercel.app, visits are counted with Vercel Web Analytics, which uses no cookies and doesn't record what you search for. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Nicholas Bohm's emails (COPA v Wright exhibit NB1); the forum's saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
   </div></div>`;
 }
 
@@ -818,8 +812,8 @@ const HELP = `<h2><span>Keyboard shortcuts</span><button class="ib" data-act="cl
     <tr><td><kbd>n</kbd> <kbd>p</kbd></td><td>Next / previous message in a conversation</td></tr>
     <tr><td><kbd>u</kbd></td><td>Back to the list</td></tr>
     <tr><td><kbd>x</kbd> <kbd>s</kbd></td><td>Select / star</td></tr>
-    <tr><td><kbd>e</kbd></td><td>Archive</td></tr>
-    <tr><td><kbd>Shift</kbd>+<kbd>i</kbd> <kbd>Shift</kbd>+<kbd>u</kbd></td><td>Mark as read / unread</td></tr>
+    
+    
     <tr><td><kbd>c</kbd></td><td>Compose (try it)</td></tr>
     <tr><td><kbd>g</kbd> then <kbd>i</kbd> <kbd>s</kbd> <kbd>t</kbd> <kbd>c</kbd> <kbd>a</kbd> <kbd>w</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Satoshipedia</td></tr>
     <tr><td><kbd>?</kbd></td><td>This list</td></tr>
@@ -830,7 +824,7 @@ const HELP = `<h2><span>Keyboard shortcuts</span><button class="ib" data-act="cl
     <tr><td><kbd>to:cryptography</kbd> <kbd>label:bitcointalk</kbd> <kbd>label:private</kbd> <kbd>label:hal-finney</kbd></td><td>Mailing list, forum or correspondent</td></tr>
     <tr><td><kbd>topic:mining</kbd></td><td>Quotable Satoshi topic</td></tr>
     <tr><td><kbd>subject:mac</kbd></td><td>Words in the subject</td></tr>
-    <tr><td><kbd>in:sent</kbd> <kbd>in:commits</kbd> <kbd>is:starred</kbd> <kbd>is:unread</kbd></td><td>Folder and state</td></tr>
+    <tr><td><kbd>in:sent</kbd> <kbd>in:commits</kbd> <kbd>is:starred</kbd></td><td>Folder and state</td></tr>
     <tr><td><kbd>after:2010/07/01</kbd> <kbd>before:2010/09/01</kbd></td><td>Date, UTC</td></tr>
     <tr><td><kbd>has:code</kbd> <kbd>has:quote</kbd> <kbd>has:attachment</kbd></td><td>Content</td></tr>
     <tr><td><kbd>"proof-of-work"</kbd> <kbd>-mac</kbd></td><td>Exact phrase, exclude a word</td></tr>
@@ -975,7 +969,7 @@ const ACTIONS = {
   "open-draft"() { composeJoke(); },
   check(el, e) { stop(e); el.checked ? SELECTED.add(el.dataset.id) : SELECTED.delete(el.dataset.id); render(); },
   selall(el) { if (el.checked) CURRENT_LIST.forEach(id => SELECTED.add(id)); else SELECTED.clear(); render(); },
-  selmenu(el) { popover(el, ["All", "None", "Read", "Unread", "Starred", "Unstarred"].map(v => `<button class="mi" data-act="sel" data-v="${v.toLowerCase()}">${v}</button>`).join(""), "left"); },
+  selmenu(el) { popover(el, ["All", "None", "Starred", "Unstarred"].map(v => `<button class="mi" data-act="sel" data-v="${v.toLowerCase()}">${v}</button>`).join(""), "left"); },
   sel(el) {
     const v = el.dataset.v; SELECTED.clear();
     for (const id of CURRENT_LIST) { const t = BY_ID.get(id); if (v === "all" || (v === "read" && isRead(t)) || (v === "unread" && !isRead(t)) || (v === "starred" && isStar(t)) || (v === "unstarred" && !isStar(t))) SELECTED.add(id); }
@@ -1027,7 +1021,7 @@ const ACTIONS = {
   settings(el) {
     const r = (name, val, label) => `<label class="mi"><input type="radio" name="${name}" value="${val}" ${ST[name] === val ? "checked" : ""} data-act="pref"> ${label}</label>`;
     popover(el, `<h4>Theme</h4>${r("theme", "system", "Device default")}${r("theme", "light", "Light")}${r("theme", "dark", "Dark")}
-      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><a class="mi" href="#updates">${ic("history")} Update log</a><a class="mi" href="#verify">${ic("verified")} Verify the archive</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars and read state</button>
+      <h4>Archive</h4><a class="mi" href="#about">${ic("info")} About this archive</a><a class="mi" href="#sources">${ic("source")} Sources</a><a class="mi" href="#updates">${ic("history")} Update log</a><a class="mi" href="#verify">${ic("verified")} Verify the archive</a><button class="mi" data-act="resetstate">${ic("restart_alt")} Reset stars</button>
       <h4>Help</h4><button class="mi" data-act="feedback">${ic("feedback")} Send feedback</button><button class="mi" data-act="help">${ic("keyboard")} Keyboard shortcuts</button>`);
   },
   pref(el) { ST[el.name] = el.value; save(); applyPrefs(); },
@@ -1140,9 +1134,6 @@ document.addEventListener("keydown", e => {
     case "u": if (inThread) { H(); go(LAST_LIST); } break;
     case "x": if (inList && curId) { H(); SELECTED.has(curId) ? SELECTED.delete(curId) : SELECTED.add(curId); render(); } break;
     case "s": if (curId) { H(); ACTIONS.star({ dataset: { id: curId } }); } break;
-    case "e": case "y": if (curId && !isCommitId(curId)) { H(); bulk([curId], id => { ST.arch[id] = 1; }, "{n} archived."); } break;
-    case "I": if (curId) { H(); bulk(inList && SELECTED.size ? [...SELECTED] : [curId], id => { ST.read[id] = 1; }); } break;
-    case "U": if (curId) { H(); ACTIONS.markunread({ dataset: inList && SELECTED.size ? {} : { id: curId } }); } break;
   }
 });
 

@@ -3,6 +3,15 @@
   "updates": [
     {
       "date": "2026-10-21",
+      "title": "Nothing disappears from the inbox",
+      "items": [
+        "Archive, read and unread, and Refresh have been removed: Satoshi Mail is a reading archive, so every conversation now always stays where it belongs.",
+        "Anything archived or marked read in your browser before is back in place. Stars still work."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-21",
       "title": "Verify the archive, timestamped in Bitcoin",
       "items": [
         "Every email, forum post and commit now has a fingerprint (a SHA-256 hash of its exact contents), and each version of the archive's list of fingerprints is timestamped in the Bitcoin blockchain with OpenTimestamps.",

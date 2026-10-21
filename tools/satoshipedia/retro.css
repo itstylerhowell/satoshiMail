@@ -79,8 +79,7 @@ body { font: 13px/1.4 var(--ui); }
 /* the message list */
 .card { border-radius: 0; border-left: 1px solid var(--line); }
 .tb { min-height: 40px; border-bottom: 1px solid var(--line); }
-.row { background: var(--surface-2); border-bottom: 1px solid var(--line); }
-.row.unread { background: var(--surface); }
+.row { background: var(--surface); border-bottom: 1px solid var(--line); }   /* no read/unread: every row alike */
 .row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px rgba(0, 0, 0, .15); }
 .row.checked { background: var(--accent-soft); }
 .row .who, .row .subj { font-weight: 400; }
@@ -145,3 +144,6 @@ body { font: 13px/1.4 var(--ui); }
 
 /* touch targets: checkboxes get room around them (Lighthouse target-size) */
 input.cbx { margin: 2px; }
+
+/* the hover buttons (archive, mark read) were removed, so hovering a row keeps its date */
+@media (hover: hover) and (min-width: 901px) { .row:hover .date { opacity: 1; } }

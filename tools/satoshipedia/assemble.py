@@ -242,6 +242,35 @@ src = patch(src, '''      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" t
 src = patch(src, '''          <dt>commit:</dt><dd>${esc(c.sha)}</dd>''', '''          <dt>commit:</dt><dd>${esc(c.sha)}</dd>
           <dt>fingerprint:</dt><dd><a href="#verify~c/${c.id}">${ic("verified")} Verify this commit</a></dd>''')
 
+# A reading archive, not a mailbox: no Archive, no read/unread and no Refresh. Every conversation always stays
+# in its folder, everything shows the same way, and any archive or read state saved by older versions is cleared.
+src = patch(src, '  s.trash = {};   // Trash was removed: nothing stays hidden in it\n',
+            '  s.trash = {};   // Trash was removed: nothing stays hidden in it\n  s.arch = {}; s.read = {};   // Archive and read/unread were removed too\n')
+src = patch(src, 'const isRead = t => (t.id in ST.read) ? !!ST.read[t.id] : t.lastIsSat;', 'const isRead = t => true;   // no read/unread')
+src = patch(src, '  if (f === "inbox") return !ST.arch[t.id];', '  if (f === "inbox") return true;   // nothing is ever archived out of the inbox')
+src = patch(src, '''(inTrash ? b("untrash", "move_to_inbox", "Move to Inbox") : b("archive", "archive", "Archive")) +
+        b("markread", "drafts", "Mark as read") + b("markunread", "mark_email_unread", "Mark as unread") + b("starsel", "star", "Add star") +
+        (ROUTE.folder !== "inbox" && !inTrash ? b("toinbox", "move_to_inbox", "Move to Inbox") : "")''', 'b("starsel", "star", "Add star")')
+src = patch(src, ': b("refresh", "refresh", "Refresh") + b("markallread", "done_all", "Mark all as read")}', ': ""}')
+src = patch(src, '''<span class="hov">
+      <button class="ib sm" data-act="archive" data-id="${t.id}" title="Archive" aria-label="Archive">${ic("archive")}</button>
+      <button class="ib sm" data-act="${read ? "markunread" : "markread"}" data-id="${t.id}" title="${read ? "Mark as unread" : "Mark as read"}" aria-label="${read ? "Mark as unread" : "Mark as read"}">${ic(read ? "mark_email_unread" : "drafts")}</button>
+    </span>
+''', '')
+src = patch(src, '${ST.trash[t.id] ? b("untrash", "move_to_inbox", "Move to Inbox") : (ST.arch[t.id] ? b("toinbox", "move_to_inbox", "Move to Inbox") : b("archive", "archive", "Archive"))}', '')
+src = patch(src, '      ${b("markunread", "mark_email_unread", "Mark as unread")}\n', '')
+src = patch(src, '    case "e": case "y": if (curId && !isCommitId(curId)) { H(); bulk([curId], id => { ST.arch[id] = 1; }, "{n} archived."); } break;\n', '')
+src = patch(src, '    case "I": if (curId) { H(); bulk(inList && SELECTED.size ? [...SELECTED] : [curId], id => { ST.read[id] = 1; }); } break;\n', '')
+src = patch(src, '    case "U": if (curId) { H(); ACTIONS.markunread({ dataset: inList && SELECTED.size ? {} : { id: curId } }); } break;\n', '')
+src = patch(src, '<tr><td><kbd>e</kbd></td><td>Archive</td></tr>', '')
+src = patch(src, '<tr><td><kbd>Shift</kbd>+<kbd>i</kbd> <kbd>Shift</kbd>+<kbd>u</kbd></td><td>Mark as read / unread</td></tr>', '')
+src = patch(src, ' <kbd>is:unread</kbd>', '')
+src = patch(src, 'Stars, read state, archive and settings are stored only in this browser.', 'Stars and settings are stored only in this browser.')
+src = patch(src, ' Conversations where someone else had the last word start out unread.', '')
+src = patch(src, 'Reset stars and read state</button>', 'Reset stars</button>')
+src = patch(src, '["All", "None", "Read", "Unread", "Starred", "Unstarred"]', '["All", "None", "Starred", "Unstarred"]')
+src = patch(src, '${chip("is:unread", "Is unread", "mark_email_unread")}', '')
+
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).
 import re as _re
