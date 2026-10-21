@@ -715,14 +715,19 @@ VA_APP = (VA_QUEUE + '\n<script defer src="/_vercel/insights/script.js" data-dis
           ' if (/^#search/.test(h)) p = location.pathname + "#search";' ' if (p === last) return; last = p; window.va("pageview", { route: location.pathname + (h.match(/^#[a-z]+/) || ["#"])[0], path: p }); }'
           ' view(); addEventListener("hashchange", view); })();</script>\n')
 
+# Vercel Speed Insights, the plain-HTML version (vercel.com/docs/speed-insights/quickstart, framework "vanilla/other frameworks").
+SI_SNIPPET = ('<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>\n'
+              '<script defer src="/_vercel/speed-insights/script.js"></script>\n')
+
 
 def add_analytics(out: Path) -> int:
     n = 0
     for f in out.rglob("*.html"):
         html_ = f.read_text(encoding="utf-8")
-        if "/_vercel/insights/" in html_ or "</head>" not in html_:
+        if ("/_vercel/insights/" in html_ or "/_vercel/speed-insights/" in html_ or "</head>" not in html_):
             continue
         snippet = VA_APP if f == out / "index.html" else VA_PAGE
+        snippet = snippet + SI_SNIPPET  # Add Speed Insights to all pages
         f.write_text(html_.replace("</head>", snippet + "</head>", 1), encoding="utf-8")
         n += 1
     return n
