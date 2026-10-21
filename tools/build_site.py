@@ -36,6 +36,7 @@ HERE = Path(__file__).resolve().parent
 BUILD_DATE = dt.date.today().isoformat()
 SITE_NAME = "Satoshi Mail"
 GOOGLE_VERIFY = ""   # Google Search Console → HTML tag → the content="…" value
+HOME_DESC = "Satoshi Mail (SatoshiMail): every email, forum post and commit by Satoshi Nakamoto, 2008–2011, in a Gmail-style archive with Satoshipedia."
 SITE_ALT = ["SatoshiMail", "Satoshi Mail archive"]   # other names people search for (Google site names)
 TAGLINE = "Every email, forum post and commit by Satoshi Nakamoto in a Gmail-style archive, with Satoshipedia and a map of his connections and timeline, 2008–2011."
 FOUNDER = {"@type": "Person", "name": "Tyler Howell", "url": "https://x.com/TylerHowell88",
@@ -218,6 +219,7 @@ class Site:
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
+<meta name="robots" content="max-image-preview:large">
 <link rel="canonical" href="{esc(url)}">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="{og_type}">
@@ -312,7 +314,7 @@ class Site:
 <p class="lead">{len(lst)} conversation{"s" if len(lst) != 1 else ""} with Satoshi Nakamoto, oldest first{f", page {pi + 1} of {len(pages)}" if len(pages) > 1 else ""}.</p>
 <ol class="list">{items}</ol>{pager}"""
                 title = f"{self.lists.get(s, {}).get('name', s)} – Satoshi Nakamoto's conversations" + (f", page {pi + 1}" if pi else "")
-                self.write(path, self.page(path, title, clip(f"{len(lst)} conversations with Satoshi Nakamoto from the {name}, with every message and reply, in date order."),
+                self.write(path, self.page(path, title, clip((f"Page {pi + 1} of {len(pages)}. " if pi else "") + f"{len(lst)} conversations with Satoshi Nakamoto from the {name}, with every message and reply, in date order."),
                            body, [("Conversations", "conversations/"), (name, f"conversations/{s}/")] + ([(f"Page {pi + 1}", path)] if pi else []),
                            [{"@context": "https://schema.org", "@type": "CollectionPage", "name": title, "url": self.base + path}], app_href=f"#label-{s}", og_type="website"), priority=0.6)
 
@@ -350,7 +352,10 @@ class Site:
 {rel_html}
 {pn}"""
         title = t["_title"]
-        desc = clip(f"Satoshi Nakamoto, {long_day(sat_first['d'])}: " + self.plain(sat_first))
+        desc = clip(f"Satoshi Nakamoto on {self.src_long(t)}, {long_day(sat_first['d'])}: " + self.plain(sat_first))
+        if len(desc) < 90:   # a one-line message: say where and with whom too
+            desc = clip(f"{desc.rstrip('.')}. {self.src_long(t)}, {len(t['m'])} message{'s' if len(t['m']) != 1 else ''}"
+                        + (f" with {', '.join(o[:3])}" if (o := [x for x in people if x != "Satoshi Nakamoto"]) else "") + ".")
         if t["k"] == "x":
             ld = {"@context": "https://schema.org", "@type": "CreativeWork", "name": t["t"], "url": self.base + path,
                   "about": {"@type": "Person", "name": "Satoshi Nakamoto"}, "dateCreated": iso(first),
@@ -385,9 +390,10 @@ class Site:
 <p class="actions"><a class="btn" href="{up}#t-{c['id']}">Open in Satoshi Mail</a> <a class="btn ghost" href="{esc(c['u'])}" rel="noopener">View on GitHub</a></p>
 <h2>Files changed</h2>{fl or '<p class="muted">No diff stored for this commit.</p>'}
 <nav class="prevnext" aria-label="More commits">{f'<a rel="prev" href="{up}{self.commit_path(cs[i - 1])}">← {esc(clip(cs[i - 1]["s"], 60))}</a>' if i else '<span></span>'}{f'<a rel="next" href="{up}{self.commit_path(cs[i + 1])}">{esc(clip(cs[i + 1]["s"], 60))} →</a>' if i + 1 < len(cs) else ''}</nav>"""
-            suffix = (f" (r{c['r']})" if c.get("r") else "") + " – Satoshi Nakamoto commit"
+            same = dup or sum(1 for x in cs if x["s"][:30] == c["s"][:30]) > 1   # tell same-message commits apart
+            suffix = (f" (r{c['r']}{', ' + c['sha'][:7] if same else ''})" if c.get("r") else (f" ({c['sha'][:7]})" if same else "")) + " – Satoshi Nakamoto commit"
             title = clip(c["s"], 68 - len(suffix)) + suffix
-            desc = clip(f"Satoshi Nakamoto's commit to Bitcoin, {long_day(c['d'])}: {c['s']}. {c.get('fc', len(files))} files changed.")
+            desc = clip(f"Satoshi Nakamoto's commit {c['sha'][:7]} to Bitcoin, {long_day(c['d'])}: {c['s']}. {c.get('fc', len(files))} files changed.")
             ld = {"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": c["s"], "url": self.base + path,
                   "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": iso(c["d"]),
                   "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": c["u"]}
@@ -401,7 +407,7 @@ class Site:
             pager = '<nav class="pager" aria-label="Pages">' + "".join(f'<a href="{up}commits/{f"page-{k + 1}/" if k else ""}"{" aria-current=page" if k == pi else ""}>{k + 1}</a>' for k in range(len(pages))) + "</nav>" if len(pages) > 1 else ""
             body = f'<h1>Satoshi Nakamoto\'s commits</h1><p class="lead">His {len(cs)} commits to Bitcoin\'s source code, {long_day(cs[0]["d"])} to {long_day(cs[-1]["d"])}, oldest first.</p><ol class="list">{items}</ol>{pager}'
             self.write(path, self.page(path, "Satoshi Nakamoto's commits to Bitcoin" + (f", page {pi + 1}" if pi else "") + " – Satoshi Mail",
-                       clip(f"All {len(cs)} commits Satoshi Nakamoto made to Bitcoin's source code, from {long_day(cs[0]['d'])} to {long_day(cs[-1]['d'])}, each with its message and diff."),
+                       clip((f"Page {pi + 1} of {len(pages)}. " if pi else "") + f"All {len(cs)} commits Satoshi Nakamoto made to Bitcoin's source code, from {long_day(cs[0]['d'])} to {long_day(cs[-1]['d'])}, each with its message and diff."),
                        body, [("Commits", "commits/")] + ([(f"Page {pi + 1}", path)] if pi else []),
                        [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Satoshi Nakamoto's commits", "url": self.base + path}], app_href="#commits", og_type="website"), priority=0.6 if not pi else 0.4)
 
@@ -533,7 +539,7 @@ class Site:
 <p class="cats">Categories: {" · ".join(esc(c) for c in a["cats"])}</p>
 </article>"""
             title = f"{a['title']} – Satoshipedia"
-            if len(title) < 40:
+            if len(f"{a['title']} – Satoshipedia, the Satoshi Nakamoto encyclopedia") <= 65:
                 title = f"{a['title']} – Satoshipedia, the Satoshi Nakamoto encyclopedia"
             lead_txt = re.sub(r"<[^>]+>", "", re.sub(r'<sup class="ref">.*?</sup>', "", a["lead"]))
             desc = clip(html.unescape(lead_txt))
@@ -606,7 +612,7 @@ class Site:
         head = p["head"]
         head = re.sub(r"<title>.*?</title>", "<title>Satoshi Mail: Satoshi Nakamoto's emails, posts and commits</title>", head, count=1)
         head = head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
-        head = re.sub(r'<meta name="description" content="[^"]*">', lambda m: f'<meta name="description" content="Satoshi Mail (SatoshiMail): {esc(TAGLINE)}">', head, count=1)
+        head = re.sub(r'<meta name="description" content="[^"]*">', lambda m: f'<meta name="description" content="{esc(HOME_DESC)}">', head, count=1)
         if self.google_verify:
             head += f'\n<meta name="google-site-verification" content="{esc(self.google_verify)}">'
         ld = [
@@ -619,7 +625,8 @@ class Site:
             {"@context": "https://schema.org", **FOUNDER},
         ]
         ld_html = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
-        extra = f"""<link rel="canonical" href="{self.base}">
+        extra = f"""<meta name="robots" content="max-image-preview:large">
+<link rel="canonical" href="{self.base}">
 <meta property="og:url" content="{self.base}">
 <meta property="og:image" content="{self.base}og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
