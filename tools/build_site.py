@@ -37,6 +37,17 @@ BUILD_DATE = dt.date.today().isoformat()
 SITE_NAME = "Satoshi Mail"
 REPO_URL = "https://github.com/itstylerhowell/satoshiMail"
 GOOGLE_VERIFY = ""   # Google Search Console → HTML tag → the content="…" value
+VERIFY_REFRESH_JS = r"""
+<script>
+// the timestamps are added after the page is built (by the GitHub Action), so refresh the status from index.json
+fetch("index.json", { cache: "no-cache" }).then(r => r.json()).then(ix => {
+  const cur = ix.current && ix.versions.find(v => v.root === ix.current.root), esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const st = v => v && v.status === "confirmed" ? `In Bitcoin <a href="https://blockstream.info/block-height/${v.block}" rel="noopener">block ${v.block.toLocaleString("en-US")}</a>` : v && v.status === "pending" ? "Waiting for a Bitcoin block" : "Not timestamped yet";
+  document.getElementById("vfstatus").innerHTML = st(cur);
+  if (ix.versions.length) document.getElementById("vfversions").innerHTML = `<h2>Every version</h2><div class="tablewrap"><table class="terms"><thead><tr><th>Date</th><th>Fingerprint</th><th>Proof</th><th>Files</th></tr></thead><tbody>${ix.versions.map(v => `<tr><td>${esc(v.date.slice(0, 10))}</td><td><code>${esc(v.root.slice(0, 16))}…</code></td><td>${st(v)}</td><td><a href="${esc(v.manifest)}">manifest</a>${v.ots ? ` · <a href="${esc(v.ots)}">.ots</a>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
+}).catch(() => {});
+</script>
+"""
 HOME_DESC = "Satoshi Mail (SatoshiMail): every email, forum post and commit by Satoshi Nakamoto, 2008–2011, in a Gmail-style archive with Satoshipedia."
 SITE_ALT = ["SatoshiMail", "Satoshi Mail archive"]   # other names people search for (Google site names)
 TAGLINE = "Every email, forum post and commit by Satoshi Nakamoto in a Gmail-style archive, with Satoshipedia and a map of his connections and timeline, 2008–2011."
@@ -257,7 +268,7 @@ class Site:
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail (SatoshiMail) is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
   <p>Inspired by <a href="https://x.com/lukeigel" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" rel="noopener">Jmail</a>.</p>
-  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a> · <a href="{up}updates/">Update log</a></p>
+  <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a> · <a href="{up}updates/">Update log</a> · <a href="{up}verify/">Verify</a></p>
 </div></footer>
 </body>
 </html>
@@ -572,6 +583,39 @@ class Site:
                    app_href="#wiki", og_type="website"), priority=0.9)
 
     # ── about, 404, app ──
+    def build_verify(self):
+        """/verify/: the archive's fingerprint and its Bitcoin timestamps (tools/timestamp.py), plus the proof files."""
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("timestamp", HERE / "timestamp.py"); ts = importlib.util.module_from_spec(spec); spec.loader.exec_module(ts)
+        clean = {**self.D, "threads": [{k: v for k, v in t.items() if not k.startswith("_")} for t in self.threads]}
+        text = ts.manifest(clean); root = ts.root_of(text)
+        ts.sync(text, self.out / "verify")
+        vs = ts.load_index(); cur = next((v for v in vs if v["root"] == root), None)
+        def status(v):
+            if v and v["status"] == "confirmed": return f'In Bitcoin <a href="https://blockstream.info/block-height/{v["block"]}" rel="noopener">block {v["block"]:,}</a>'
+            if v and v["status"] == "pending": return "Waiting for a Bitcoin block"
+            return "Not timestamped yet"
+        rows = "".join(f'<tr><td>{esc(v["date"][:10])}</td><td><code>{esc(v["root"][:16])}…</code></td><td>{status(v)}</td><td><a href="{esc(v["manifest"])}">manifest</a>{f""" · <a href="{esc(v["ots"])}">.ots</a>""" if v.get("ots") else ""}</td></tr>' for v in vs)
+        body = f"""<h1>Verify the archive</h1>
+<p class="lead">Every email, forum post and commit in Satoshi Mail has a fingerprint: a SHA-256 hash of its exact words, sender and date. The list of all {text.count(chr(10)) - 1:,} fingerprints is timestamped in the Bitcoin blockchain with OpenTimestamps, so anyone can prove each message existed, word for word, by that date, and hasn't been edited since.</p>
+<p class="actions"><a class="btn" href="../#verify">Verify a message in Satoshi Mail</a></p>
+<h2>This version</h2>
+<p>Fingerprint: <code style="word-break:break-all">{root}</code><br>Status: <span id="vfstatus">{status(cur)}</span></p>
+<p><a href="{esc(cur["manifest"]) if cur else "current.txt"}">Download the manifest</a>{f' · <a href="{esc(cur["ots"])}">download the .ots proof</a>' if cur and cur.get("ots") else ""}</p>
+<div id="vfversions">{f'<h2>Every version</h2><div class="tablewrap"><table class="terms"><thead><tr><th>Date</th><th>Fingerprint</th><th>Proof</th><th>Files</th></tr></thead><tbody>{rows}</tbody></table></div>' if rows else ""}</div>
+<h2>Check it yourself</h2>
+<ol><li>Download a version's manifest and its .ots proof.</li>
+<li>Drop both on <a href="https://opentimestamps.org/" rel="noopener">opentimestamps.org</a>, or run <code>ots verify</code> with the <a href="https://github.com/opentimestamps/opentimestamps-client" rel="noopener">OpenTimestamps client</a>, to see the Bitcoin block that proves when the manifest existed.</li>
+<li>Each line of the manifest is one message's fingerprint. In Satoshi Mail, open a message's details and choose <b>Verify this message</b> to recompute it in your browser, or see <a href="{REPO_URL}/blob/main/tools/timestamp.py" rel="noopener">tools/timestamp.py</a> for exactly what is hashed.</li></ol>
+<p class="muted">The fingerprints prove the archive hasn't changed since it was timestamped. They don't prove who first wrote a message: for that, each message links to its original source.</p>
+"""
+        body += VERIFY_REFRESH_JS
+        ld = {"@context": "https://schema.org", "@type": "WebPage", "name": "Verify the Satoshi Mail archive", "url": self.base + "verify/",
+              "isPartOf": {"@type": "WebSite", "name": SITE_NAME, "url": self.base}}
+        self.write("verify/", self.page("verify/", "Verify the archive: Bitcoin timestamps – Satoshi Mail",
+                   "Every message in Satoshi Mail has a SHA-256 fingerprint, and the list of fingerprints is timestamped in Bitcoin with OpenTimestamps. Check it yourself.",
+                   body, [("Verify", "verify/")], [ld], app_href="#verify", og_type="website"), priority=0.5)
+
     def build_updates(self):
         """The update log (tools/satoshipedia/updates.json) as a page and an RSS feed."""
         ups = json.loads((HERE / "satoshipedia" / "updates.json").read_text(encoding="utf-8"))["updates"]
@@ -834,6 +878,7 @@ def main(argv=None) -> int:
     s.build_commits()
     s.build_about()
     s.build_updates()
+    s.build_verify()
     s.build_static_assets()
     if not a.no_analytics:
         add_analytics(out)

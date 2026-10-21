@@ -36,7 +36,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + (tools / "updates.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + (tools / "updates.css").read_text() + "\n" + (tools / "verify.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -45,7 +45,7 @@ ujson = json.dumps(json.load(open(tools / "updates.json")), ensure_ascii=False, 
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="updates-data" type="application/json">{ujson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + (tools / "verify.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -230,6 +230,17 @@ src = patch(src, '  if (h === "sources") return { view: "sources" };', '  if (h 
 src = patch(src, 'sources: renderSources }[ROUTE.view]', 'sources: renderSources, updates: renderUpdates }[ROUTE.view]')
 src = patch(src, '<p class="made-by inspired">' + INSPIRED + '.</p>`;', '<p class="made-by inspired">' + INSPIRED + '.</p><p class="made-by upd-link"><a href="#updates">Update log</a> · last updated ${esc(UPDATES.length ? updDate(UPDATES[0].date) : "")}</p>`;')
 src = patch(src, '<p class="lead made-by-lead">' + INSPIRED + '.</p>', '<p class="lead made-by-lead">' + INSPIRED + '.</p>\n    <p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>')
+
+# Verify (#verify): Settings → Archive, and a fingerprint row in every message's and commit's details
+src = patch(src, '<a class="mi" href="#updates">${ic("history")} Update log</a>', '<a class="mi" href="#updates">${ic("history")} Update log</a><a class="mi" href="#verify">${ic("verified")} Verify the archive</a>')
+src = patch(src, '  if (h === "updates") return { view: "updates" };', '  if (h === "updates") return { view: "updates" };\n  if (h === "verify" || h.startsWith("verify~")) return { view: "verify", key: h.startsWith("verify~") ? h.slice(7) : null };')
+src = patch(src, 'updates: renderUpdates }[ROUTE.view]', 'updates: renderUpdates, verify: renderVerify }[ROUTE.view]')
+src = patch(src, '''      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}
+    </dl></div>''', '''      ${m.u ? `<dt>original:</dt><dd><a href="${esc(m.u)}" target="_blank" rel="noopener">${esc(m.u.replace(/^https?:\\/\\//, ""))}</a></dd>` : ""}
+      <dt>fingerprint:</dt><dd><a href="#verify~t/${t.id}/${i}">${ic("verified")} Verify this message</a> · timestamped in Bitcoin</dd>
+    </dl></div>''')
+src = patch(src, '''          <dt>commit:</dt><dd>${esc(c.sha)}</dd>''', '''          <dt>commit:</dt><dd>${esc(c.sha)}</dd>
+          <dt>fingerprint:</dt><dd><a href="#verify~c/${c.id}">${ic("verified")} Verify this commit</a></dd>''')
 
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).

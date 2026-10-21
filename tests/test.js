@@ -217,6 +217,8 @@ const $ = s => d.querySelector(s);
     check("wei dai dates", wd.m[0].d === 1219423080 && wd.m[2].d === 1231586220 && wd.m[2].dp === "local");
     await go("#updates"); check("update log", d.querySelectorAll("#main .upd").length >= 10 && /Update log/.test(d.querySelector("#main").textContent));
     check("update log in settings", /href="#updates"/.test(html));
+    await go("#verify"); check("verify page", !!d.querySelector("#main .vf-page") && /Bitcoin/.test(d.querySelector("#main").textContent));
+    check("verify links", /href="#verify~t\/\$\{t\.id\}\/\$\{i\}"/.test(html) && /href="#verify~c\/\$\{c\.id\}"/.test(html));
     await go("#label-nicholas-bohm"); check("bohm label", d.querySelectorAll("#main .row").length === 16);
     await go("#wiki-nicholas-bohm");
     const fee = [...main.querySelectorAll("a.ml")].find(a => a.dataset.date === "2009-05-24");

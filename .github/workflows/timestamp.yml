@@ -1,0 +1,42 @@
+# Timestamp every version of the archive in Bitcoin with OpenTimestamps.
+# On each push that changes the archive, the manifest of message fingerprints is saved in proofs/ and
+# submitted to the OpenTimestamps calendars; every few hours, pending timestamps are upgraded once their
+# Bitcoin block is confirmed. Results are committed to proofs/ and site/verify/ (the Verify page).
+name: Timestamp the archive in Bitcoin
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/data/archive.json", "tools/timestamp.py", ".github/workflows/timestamp.yml"]
+  schedule:
+    - cron: "17 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: timestamp
+  cancel-in-progress: false
+
+jobs:
+  timestamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install opentimestamps-client==0.7.2
+      - name: Stamp the current archive (if it's new)
+        run: python tools/timestamp.py stamp
+      - name: Upgrade pending timestamps
+        run: python tools/timestamp.py upgrade
+      - name: Commit proofs
+        run: |
+          git config user.name "satoshimail-timestamp[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add proofs site/verify
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -m "Timestamp proofs: $(python -c 'import json;v=json.load(open("proofs/index.json"))[0];print(v["root"][:12], v["status"], v["block"] or "")')"
+          git push

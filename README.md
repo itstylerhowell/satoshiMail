@@ -37,6 +37,8 @@ tools/
   extra_sources.py          adds Nicholas Bohm's emails, the forum's saved staff topics and Gavin Andresen's reply
   sources/first_topics.txt  text of bitcointalk.org/first_topics (1.pdf, 2.pdf, 4.pdf), checked against the PDFs
   site-assets/              styles, favicon and share image for the static pages
+  timestamp.py              fingerprints every message and timestamps the archive in Bitcoin (OpenTimestamps)
+proofs/                     each archive version's manifest and .ots proof (added by .github/workflows/timestamp.yml)
   satoshipedia/             encyclopedia sources (articles.py), its builder, and the
                             Satoshipedia / Satoshi Map / SEO code merged into the template
     template_v6.html          the base mail app that assemble.py builds on
