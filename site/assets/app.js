@@ -2693,6 +2693,8 @@ function renderSources() {
         <p>Three test topics from the forum's staff area, written before it opened in November 2009 and preserved as PDF files in 2012: ${n(staff.m)} posts, ${n(staff.s)} by Satoshi. Shown under <a href="#label-forum-staff">Forum staff board</a>; see <a href="#wiki-forum-staff-board">Satoshipedia</a>.</p></section>
       <section class="src"><h4>${ext("https://riski.wiki/wiki/User:Gavinandresen/Blog/2022-04-26_Eleven_years_ago_today%E2%80%A6", "Gavin Andresen's blog")}</h4>
         <p>Andresen's own copy of Satoshi's last email to him (26 April 2011) and his reply, which gives the email's time.</p></section>
+      <section class="src"><h4>${ext("https://gwern.net/doc/bitcoin/2008-nakamoto", "Wei Dai's copies")} <span class="muted">on Gwern.net</span></h4>
+        <p>The headers of Satoshi's two emails to Wei Dai, which date them to 22 August 2008 and 10 January 2009.</p></section>
       <section class="src"><h4>${ext("https://github.com/bitcoin/bitcoin", "Bitcoin Core")} <span class="muted">on GitHub</span></h4>
         <p>Satoshi's ${n(COMMITS.length)} commits to Bitcoin's source code, each with its diff. Shown under <a href="#commits">Commits</a>.</p></section>
       <section class="src"><h4>${ext("https://bitcoin.org/bitcoin.pdf", "bitcoin.org")}</h4>
@@ -2711,7 +2713,7 @@ function renderSources() {
     <h3>Court records</h3>
     <div class="src-list">
       <section class="src"><h4><a href="#wiki-copa-v-wright">COPA v Wright</a> <span class="muted">High Court of England and Wales</span></h4>
-        <p>The ${ext("https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198", "judgment of 20 May 2024")}, [2024] EWHC 1198 (Ch), and the witness statement of Nicholas Bohm.</p></section>
+        <p>The ${ext("https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198", "judgment of 20 May 2024")}, [2024] EWHC 1198 (Ch), the witness statement of Nicholas Bohm, and the ${ext("https://www.dropbox.com/scl/fo/4y3gdele4foy15006z8ch/h?rlkey=scs42wew1o3vwfv0nduhc43dm&dl=0", "trial documents")}: Adam Back's exhibit AB1 gives the exact send times of his ${conv("adam-back", "Citation of your Hashcash paper")} emails, and Wei Dai's October 2023 answers to COPA's solicitors are cited in <a href="#wiki-wei-dai">Satoshipedia</a>.</p></section>
       <section class="src"><h4><a href="#wiki-kleiman-v-wright">Kleiman v. Wright</a> <span class="muted">US District Court, Southern District of Florida</span></h4>
         <p>Case 9:18-cv-80176: the ${ext("https://www.govinfo.gov/app/details/USCOURTS-flsd-9_18-cv-80176", "case record on GovInfo")} and filings on CourtListener.</p></section>
     </div>

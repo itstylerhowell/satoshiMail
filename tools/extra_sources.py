@@ -271,6 +271,43 @@ def fix_gavin(D: dict) -> bool:
     return True
 
 
+# Exact send times of the five Satoshi–Adam Back emails, from Adam Back's exhibit AB1 in COPA v Wright
+# (his own Outlook copies, printed with their UTC offsets), converted to UTC.
+ADAM_BACK_TIMES = [
+    (1219253439, "Wed 8/20/2008 6:30:39 PM (UTC+01:00)"),
+    (1219323359, "Thu 8/21/2008 1:55:59 PM (UTC+01:00)"),
+    (1219341589, "Thu 8/21/2008 6:59:49 PM (UTC+01:00)"),
+    (1219342637, "Thu 8/21/2008 7:17:17 PM (UTC+01:00)"),
+    (1231613205, "Sat 1/10/2009 6:46:45 PM (UTC)"),
+]
+
+
+def fix_adam_back(D: dict) -> bool:
+    t = next((t for t in D["threads"] if t["s"] == "adam-back" and t["t"] == "Citation of your Hashcash paper"), None)
+    if not t or len(t["m"]) != len(ADAM_BACK_TIMES):
+        return False
+    for m, (d, od) in zip(t["m"], ADAM_BACK_TIMES):
+        m["d"] = d
+        m["od"] = od + "; Adam Back's copy, COPA v Wright exhibit AB1"
+        m.pop("dp", None)
+    return True
+
+
+def fix_wei_dai(D: dict) -> bool:
+    """Wei Dai's own copies (gwern.net/doc/bitcoin/2008-nakamoto) give the dates and local times; the
+    archive had all three on 22 Aug 2008, but Satoshi's release note was sent on 10 Jan 2009."""
+    t = next((t for t in D["threads"] if t["s"] == "wei-dai" and t["t"] == "Citation of your b-money page"), None)
+    if not t or len(t["m"]) != 3:
+        return False
+    a, r, b = t["m"]
+    a.update(d=int(dt.datetime(2008, 8, 22, 16, 38, tzinfo=dt.timezone.utc).timestamp()), dp="local",
+             od="Friday, August 22, 2008 4:38 PM; Wei Dai's copy")
+    r.update(d=a["d"] + 60, dp="inferred")
+    b.update(d=int(dt.datetime(2009, 1, 10, 11, 17, tzinfo=dt.timezone.utc).timestamp()), dp="local",
+             od="Saturday, January 10, 2009 11:17 AM; Wei Dai's copy")
+    return True
+
+
 def main(argv: list[str]) -> int:
     data_p, txt_dir, ft = Path(argv[1]), Path(argv[2]), Path(argv[3])
     commit = argv[argv.index("--bohm-commit") + 1] if "--bohm-commit" in argv else "main"
@@ -282,6 +319,8 @@ def main(argv: list[str]) -> int:
     bt, skipped = bohm_threads(txt_dir, existing, commit)
     ft_threads = forum_threads(ft)
     gav = fix_gavin(D)
+    ab, wd = fix_adam_back(D), fix_wei_dai(D)
+    print(f"adam-back times fixed: {ab}; wei-dai dates fixed: {wd}")
     n = max(int(t["id"][1:]) for t in D["threads"] if t["k"] == "x")
     for t in bt:
         n += 1; t["id"] = f"x{n}"

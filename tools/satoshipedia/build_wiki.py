@@ -23,7 +23,7 @@ ALLOWED_HOSTS = {"nakamotoinstitute.org", "satoshi.nakamotoinstitute.org", "gith
                  "www.blocktrainer.de", "satoshin.name",
                  # primary sources, allowed from 21 October 2026: court records, the forum, correspondents' own copies
                  "caselaw.nationalarchives.gov.uk", "www.judiciary.uk", "www.govinfo.gov", "storage.courtlistener.com",
-                 "bitcoindefense.org", "bitcointalk.org", "riski.wiki"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
+                 "bitcoindefense.org", "bitcointalk.org", "riski.wiki", "www.dropbox.com", "gwern.net"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
 
 
 def check_hosts(where, text):

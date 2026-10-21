@@ -179,12 +179,12 @@ dict(
 '''Adam Back''' is a British cryptographer and cypherpunk who invented Hashcash in 1997,[^wp-back] a proof-of-work scheme for spam control.[^wp-bitcoin] Bitcoin's white paper cites it,[^paper] and Back was one of the first two people Satoshi is known to have emailed.[^wp-back]
 
 == The August 2008 emails ==
-On 20 August 2008 Satoshi, writing from satoshi@anonymousspeech.com, asked Back to confirm a citation: “I'm getting ready to release a paper that references your Hashcash paper and I wanted to make sure I have the citation right.” He described the paper under its working title, ''Electronic Cash Without a Trusted Third Party''. Back replied that the citation looked fine and suggested Wei Dai's b-money proposal. Satoshi answered: “I wasn't aware of the b-money page, but my ideas start from exactly that point.” ({{mail:adam-back|Citation of your Hashcash paper|the emails}}). [[nakamoto-archive|nakamoto-archive]] keeps a copy of the exchange.[^na]
+On 20 August 2008 Satoshi, writing from satoshi@anonymousspeech.com, asked Back to confirm a citation: “I'm getting ready to release a paper that references your Hashcash paper and I wanted to make sure I have the citation right.” He described the paper under its working title, ''Electronic Cash Without a Trusted Third Party''. Back replied the next day that the citation looked fine and suggested Wei Dai's b-money proposal. Satoshi answered that evening: “I wasn't aware of the b-money page, but my ideas start from exactly that point.” ({{mail:adam-back|Citation of your Hashcash paper|the emails}}). [[nakamoto-archive|nakamoto-archive]] keeps a copy of the exchange.[^na] Back's own copies, with their exact send times, were an exhibit to his witness statement in [[copa-v-wright|COPA v Wright]], which also has Satoshi's last email to him, of 10 January 2009.[^ab1]
 
 == Identity claims ==
 Back co-founded Blockstream in 2014. He has been named as a possible Satoshi several times: by the ''Financial Times'' in 2016, and in April 2026 by a ''New York Times'' investigation by John Carreyrou, which pointed to less common phrases, shared niche interests and the timing of Satoshi's last communication and Back's first public comment on Bitcoin. Back denied it again.[^wp-back] See [[identity-of-satoshi-nakamoto]].
 """,
- refs={}, see=["wei-dai", "precursors-of-bitcoin", "bitcoin-white-paper"],
+ refs={"ab1": "Exhibit AB1 to the witness statement of Adam Back, COPA v Wright, in [https://www.dropbox.com/scl/fo/4y3gdele4foy15006z8ch/h?rlkey=scs42wew1o3vwfv0nduhc43dm&dl=0 the trial documents]."}, see=["wei-dai", "precursors-of-bitcoin", "bitcoin-white-paper", "copa-v-wright"],
 ),
 dict(
  slug="wei-dai", title="Wei Dai", kind="person", img="avatar",
@@ -197,12 +197,16 @@ dict(
 '''Wei Dai''' is a computer engineer who in 1998 published “b-money, an anonymous, distributed electronic cash system”.[^wp-dai] B-money is reference [1] in the [[bitcoin-white-paper|white paper]].[^paper]
 
 == With Satoshi ==
-After [[adam-back|Adam Back]] pointed him to b-money, Satoshi wrote to Dai in August 2008: “I was very interested to read your b-money page. I'm getting ready to release a paper that expands on your ideas into a complete working system.” He asked for the year of publication so he could cite it. In January 2009 he wrote again to say he had released v0.1, which he thought “achieves nearly all the goals you set out to solve in your b-money paper” ({{mail:wei-dai|Citation of your b-money page|the emails}}).
+After [[adam-back|Adam Back]] pointed him to b-money, Satoshi wrote to Dai in August 2008: “I was very interested to read your b-money page. I'm getting ready to release a paper that expands on your ideas into a complete working system.” He asked for the year of publication so he could cite it. In January 2009 he wrote again to say he had released v0.1, which he thought “achieves nearly all the goals you set out to solve in your b-money paper” ({{mail:wei-dai|Citation of your b-money page|the emails}}). Dai later published his copies of the emails, which give their dates: 22 August 2008 and 10 January 2009.[^gwern]
+
+In October 2023, answering questions from the solicitors for COPA in [[copa-v-wright|COPA v Wright]], Dai said he had never sent Satoshi any code, that Satoshi had learned of b-money from Adam Back after drafting the paper, and that these emails were the whole of his correspondence with Satoshi.[^dai-bb]
 
 == Crypto++ ==
 Dai also wrote Crypto++, a C++ cryptography library first released in 1995.[^wp-dai] In 2010 Satoshi added part of it to Bitcoin for a faster SHA-256 ({{commit:813505cc13|SVN r114}}).
 """,
- refs={}, see=["precursors-of-bitcoin", "adam-back"],
+ refs={"gwern": "[https://gwern.net/doc/bitcoin/2008-nakamoto Satoshi Nakamoto's emails to Wei Dai], Wei Dai's copies, hosted on Gwern.net.",
+       "dai-bb": "Email exchange between Bird & Bird and Wei Dai, 13–20 October 2023, hearsay statement in [https://www.dropbox.com/scl/fo/4y3gdele4foy15006z8ch/h?rlkey=scs42wew1o3vwfv0nduhc43dm&dl=0 the COPA v Wright trial documents]."},
+ see=["precursors-of-bitcoin", "adam-back", "copa-v-wright"],
 ),
 dict(
  slug="nick-szabo", title="Nick Szabo", kind="person", img="avatar",
