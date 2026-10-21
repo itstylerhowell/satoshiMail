@@ -3,6 +3,15 @@
   "updates": [
     {
       "date": "2026-10-21",
+      "title": "The envelope logo in Google and on phones",
+      "items": [
+        "Satoshi Mail's envelope logo now comes in every size Google, browsers and phones look for, so search results can show it instead of a grey globe once Google recrawls the site.",
+        "Add Satoshi Mail to your phone's home screen and it gets the logo too."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-21",
       "title": "Licenses and terms",
       "items": [
         "The About page now lists the license and terms of everything in the archive: MIT for the code, CC BY-SA 4.0 for Satoshipedia, and each source's own terms for the messages.",

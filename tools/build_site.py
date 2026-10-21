@@ -235,7 +235,12 @@ class Site:
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
 <meta name="twitter:image" content="{self.base}og.png">
-<link rel="icon" href="{up}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="{up}assets/site.css">
 {ld_txt}
 </head>
@@ -672,6 +677,8 @@ class Site:
              "license": self.base + "about/#licenses",
              "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": self.base + "data/archive.json"}]},
             {"@context": "https://schema.org", **FOUNDER},
+            {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "alternateName": SITE_ALT, "url": self.base,
+             "logo": {"@type": "ImageObject", "url": self.base + "logo-512.png", "width": 512, "height": 512}, "founder": FOUNDER, "sameAs": [REPO_URL]},
         ]
         ld_html = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
         extra = f"""<meta name="robots" content="max-image-preview:large">
@@ -680,7 +687,12 @@ class Site:
 <meta property="og:image" content="{self.base}og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:image" content="{self.base}og.png">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f7931a">
 <link rel="preload" href="{self.archive_url}" as="fetch" crossorigin>
 {ld_html}"""
         reset = (":root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}"
@@ -730,10 +742,17 @@ window.SM_DIFFS = "%s";
     def build_static_assets(self):
         assets = HERE / "site-assets"
         shutil.copy(assets / "site.css", self.out / "assets" / "site.css")
-        for f in ("favicon.svg", "og.png"):
+        # Icons: Google's search results use the site's favicon (a square at least 48 px, /favicon.ico or a
+        # <link rel="icon">); phones use the apple-touch and manifest icons; logo-512 is the Organization logo.
+        for f in ("favicon.svg", "og.png", "favicon.ico", "icon-48.png", "icon-96.png", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "logo-512.png"):
             shutil.copy(assets / f, self.out / f)
         for f in assets.glob("google*.html"):   # Google Search Console verification files, served as-is
             shutil.copy(f, self.out / f.name)
+        (self.out / "site.webmanifest").write_text(json.dumps({
+            "name": SITE_NAME, "short_name": SITE_NAME, "description": TAGLINE, "start_url": "/", "display": "standalone",
+            "background_color": "#ffffff", "theme_color": "#f7931a",
+            "icons": [{"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"},
+                      {"src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml"}]}, indent=2), encoding="utf-8")
         (self.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {self.base}sitemap.xml\n", encoding="utf-8")
         urls = "".join(f"  <url><loc>{esc(self.base + p)}</loc><lastmod>{lm}</lastmod><priority>{pr:.1f}</priority></url>\n" for p, lm, pr in self.urls)
         (self.out / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n', encoding="utf-8")
@@ -757,6 +776,15 @@ window.SM_DIFFS = "%s";
   Cache-Control: public, max-age=604800
 
 /favicon.svg
+  Cache-Control: public, max-age=604800
+
+/favicon.ico
+  Cache-Control: public, max-age=604800
+
+/icon-*
+  Cache-Control: public, max-age=604800
+
+/apple-touch-icon.png
   Cache-Control: public, max-age=604800
 """, encoding="utf-8")
 
