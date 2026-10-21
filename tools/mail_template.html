@@ -799,6 +799,7 @@ body.in-wiki .dialog { z-index: 81; }
 .made-by a, .made-by-foot a, .made-by-lead a { color: var(--accent); font-weight: 500; text-decoration: none; }
 .made-by a:hover, .made-by-foot a:hover, .made-by-lead a:hover { text-decoration: underline; }
 .made-by-foot { margin-top: 6px; color: var(--ink-2); }
+.made-by.inspired { margin-top: 0; }
 
 /* ── compose jokes ── */
 .dialog:has(.cj) { width: min(460px, calc(100vw - 32px)); }
@@ -1721,7 +1722,7 @@ function renderRail() {
     <h3>Topics</h3><ul>${topics}<li><button class="nav" data-act="more-topics">${ic(showAllTopics ? "expand_less" : "expand_more")}<span class="t">${showAllTopics ? "Less" : `More (${CATS.length - 6})`}</span></button></li></ul>
     <h3>Labels</h3><ul>${labels}</ul>
     ${privLabels ? `<h3>Private email</h3><ul>${privLabels}</ul>` : ""}
-    <h3>People</h3><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p>`;
+    <h3>People</h3><ul>${people}<li><a class="nav${r.view === "people" ? " on" : ""}" href="#people">${ic("group")}<span class="t">Browse all people →</span></a></li></ul><p class="made-by">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a></p><p class="made-by inspired">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>`;
 }
 
 /* ═════════════ lists ═════════════ */
@@ -2145,6 +2146,7 @@ function renderAbout() {
   CURRENT_LIST = [];
   $("#main").innerHTML = `<div class="scroll"><div class="page"><h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>
     <p class="lead made-by-lead">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>
+    <p class="lead made-by-lead">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>
     <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
     <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi. Conversations where someone else had the last word start out unread.</p>
@@ -2791,6 +2793,7 @@ function wkFoot() {
   $("#wkfoot").innerHTML = `<div>
     <nav><a href="#wiki">Satoshipedia</a><a href="#wiki~about">About</a><a href="#wiki~all">All articles</a><a href="#inbox">Satoshi Mail inbox</a><a href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Wikipedia: Satoshi Nakamoto</a><button class="linkbtn" data-act="feedback">Send feedback</button></nav>
     <div class="made-by-foot">${MADE_BY} · <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a> · <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">Open source (MIT) on GitHub</a></div>
+    <div class="made-by-foot">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</div>
     <div><b>Beta:</b> Satoshi Mail and Satoshipedia are still in development. Satoshipedia is the encyclopedia of Satoshi Mail. Its ${WA.length} articles were written with AI assistance using only the Satoshi Nakamoto Institute, GitHub (nakamoto-archive and the Bitcoin Core repository), bitcoin.org, Blocktrainer's archive, satoshin.name and Wikipedia (CC BY-SA 4.0), and link to their sources; check them before relying on a claim. Quotations are from the archive. Updated ${esc(WIKI.updated)}.</div>
   </div>`;
 }

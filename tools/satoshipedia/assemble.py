@@ -70,8 +70,9 @@ src = patch(src, '<h2>About Satoshi Mail</h2>', '<h2>About Satoshi Mail<span cla
 
 # credit: founder line at the foot of the rail and on the About page
 MADE_BY = 'Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a>'
-src = patch(src, '<span class="t">Browse all people →</span></a></li></ul>`;', '<span class="t">Browse all people →</span></a></li></ul><p class="made-by">' + MADE_BY + '</p>`;')
-src = patch(src, '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>', '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>\n    <p class="lead made-by-lead">' + MADE_BY + ' (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>')
+INSPIRED = 'Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>'
+src = patch(src, '<span class="t">Browse all people →</span></a></li></ul>`;', '<span class="t">Browse all people →</span></a></li></ul><p class="made-by">' + MADE_BY + '</p><p class="made-by inspired">' + INSPIRED + '.</p>`;')
+src = patch(src, '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>', '<h2>About Satoshi Mail<span class="beta-pill static">Beta</span></h2>\n    <p class="lead made-by-lead">' + MADE_BY + ' (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>\n    <p class="lead made-by-lead">' + INSPIRED + '.</p>')
 
 # compose is just for fun: no emails or drafts are ever created
 src = patch(src, 'function openCompose(draft) {\n', 'function openCompose(draft) {\n  return composeJoke(draft);   // read-only archive: show a joke instead of a compose window\n')

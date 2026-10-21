@@ -356,6 +356,7 @@ body.in-wiki .dialog { z-index: 81; }
 .made-by a, .made-by-foot a, .made-by-lead a { color: var(--accent); font-weight: 500; text-decoration: none; }
 .made-by a:hover, .made-by-foot a:hover, .made-by-lead a:hover { text-decoration: underline; }
 .made-by-foot { margin-top: 6px; color: var(--ink-2); }
+.made-by.inspired { margin-top: 0; }
 
 /* ── compose jokes ── */
 .dialog:has(.cj) { width: min(460px, calc(100vw - 32px)); }
