@@ -2066,10 +2066,12 @@ const MILESTONES = (() => {
   return out.sort((a, b) => a.d - b.d);
 })();
 
+
 /* ── window ── */
 let MAP_OPEN = false, VZ_HIDE_T = null, VZ_VIEW = "net", VZ_SEL = null, VZ_T = MAP.N - 1, VZ_FILTER = "all", VZ_MODE = "diagram", VZ_PLAY = null, VZ_BUILT = { net: false, tl: false };
-let VZ_MAX = false;
+let VZ_MAX = false, VZ_FOCUS_NEXT = 0;
 try { VZ_MAX = localStorage.getItem("satoshimap-max") === "1"; } catch (e) {}
+const vzRaf = window.requestAnimationFrame ? f => window.requestAnimationFrame(f) : f => setTimeout(f, 16);
 const inMap = () => location.hash === "#map" || location.hash.startsWith("#map~");
 function mapShow(on) {
   const win = $("#vzwin");
@@ -2106,17 +2108,22 @@ function mapRoute() {
   vzSelect(sel, false);
 }
 function mapClose() { mapShow(false); if (inMap()) location.hash = WK_BEHIND; updateDock(); }
-function mapToggleMax() { VZ_MAX = !VZ_MAX; try { localStorage.setItem("satoshimap-max", VZ_MAX ? "1" : "0"); } catch (e) {} mapShow(true); }
+function mapToggleMax() { VZ_MAX = !VZ_MAX; try { localStorage.setItem("satoshimap-max", VZ_MAX ? "1" : "0"); } catch (e) {} mapShow(true); vzApply(); }
+const mileMonth = o => Math.max(0, Math.min(MAP.N - 1, MAP.ym(o.d) - MAP.M0));
+const MILES = MILESTONES.filter(m => !m.off);
+MILES.forEach((m, i) => { m.n = i + 1; m.month = mileMonth(m); });
 
-/* ── connections: a radial clock ── */
+/* ── connections: a radial clock you can zoom into ──
+   Angle = order of first contact (clockwise from the top), distance from Satoshi = how much they exchanged,
+   size = messages exchanged so far. Names, rings and strokes keep their on-screen size at every zoom, and more
+   names appear as there's room for them. */
 const VZ_C = 500, VZ_RIN = 120, VZ_ROUT = 430, VZ_SWEEP = 320;
-// Angle follows the ORDER of first contact (evenly spread so busy months don't pile up); year spokes mark where each year begins.
 const VZ_ORDER = MAP.P.slice().sort((a, b) => a.first - b.first || b.score - a.score);
 VZ_ORDER.forEach((p, i) => { p.order = i; });
 const vzAngleFrac = f => (-90 + 18 + VZ_SWEEP * f) * Math.PI / 180;
 const vzAngleOf = p => vzAngleFrac((p.order + .5) / VZ_ORDER.length);
 const vzAngle = sec => vzAngleFrac(VZ_ORDER.filter(p => p.first < sec).length / VZ_ORDER.length);
-const vzNodeR = n => 4 + 17 * Math.sqrt(n / MAP.P[0].ex);
+const vzNodeR = n => 5 + 19 * Math.sqrt(n / MAP.P[0].ex);
 function vzLayout() {
   const P = MAP.P, maxS = Math.log(P[0].score + 1), minS = Math.log(Math.min(...P.map(p => p.score)) + 1);
   P.forEach(p => {
@@ -2146,22 +2153,118 @@ function vzLayout() {
     }
   }
 }
-const nodeShape = (p, r) => p.main === "x"
-  ? `<rect class="node" data-p="${p.slug}" x="${(p.x - r * .8).toFixed(1)}" y="${(p.y - r * .8).toFixed(1)}" width="${(r * 1.6).toFixed(1)}" height="${(r * 1.6).toFixed(1)}" rx="2" transform="rotate(45 ${p.x.toFixed(1)} ${p.y.toFixed(1)})" fill="${chColor(p.main)}"/>`
-  : `<circle class="node" data-p="${p.slug}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${chColor(p.main)}"/>`;
+const nodeShape = p => p.main === "x"
+  ? `<rect class="node" data-p="${p.slug}" rx="2" transform="rotate(45 ${p.x.toFixed(1)} ${p.y.toFixed(1)})" fill="${chColor(p.main)}" vector-effect="non-scaling-stroke"/>`
+  : `<circle class="node" data-p="${p.slug}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" fill="${chColor(p.main)}" vector-effect="non-scaling-stroke"/>`;
+function vzSize(n, p, r) {
+  p.rd = r;
+  if (n.tagName === "circle") n.setAttribute("r", r.toFixed(2));
+  else { const h = r * .82; n.setAttribute("x", (p.x - h).toFixed(2)); n.setAttribute("y", (p.y - h).toFixed(2)); n.setAttribute("width", (2 * h).toFixed(2)); n.setAttribute("height", (2 * h).toFixed(2)); }
+}
+
+// the view: a viewBox that zooms and pans over a 1000 × 1000 chart
+const VZ_FIT = { x: -14, y: -14, w: 1028, h: 1028 };
+let VZ_VB = { ...VZ_FIT }, VZ_PENDING = false, VZ_ANIM = 0;
+const vzZoom = () => VZ_FIT.w / VZ_VB.w;
+function vzScale() { const st = $("#vzstage"); return st && st.clientWidth ? Math.min(st.clientWidth / VZ_VB.w, st.clientHeight / VZ_VB.h) || .5 : .5; }
+function vzClamp(v) {
+  if (v.w >= VZ_FIT.w - .01) return { ...VZ_FIT };
+  const cx = Math.max(VZ_FIT.x, Math.min(VZ_FIT.x + VZ_FIT.w, v.x + v.w / 2)), cy = Math.max(VZ_FIT.y, Math.min(VZ_FIT.y + VZ_FIT.h, v.y + v.h / 2));
+  return { x: cx - v.w / 2, y: cy - v.h / 2, w: v.w, h: v.h };
+}
+function vzApply() { if (VZ_PENDING) return; VZ_PENDING = true; vzRaf(() => { VZ_PENDING = false; vzApplyNow(); }); }
+function vzApplyNow() {
+  const svg = $("#vzsvg"); if (!svg) return;
+  svg.setAttribute("viewBox", `${VZ_VB.x.toFixed(2)} ${VZ_VB.y.toFixed(2)} ${VZ_VB.w.toFixed(2)} ${VZ_VB.h.toFixed(2)}`);
+  const s = vzScale(), k = 1 / s, z = vzZoom();
+  svg.style.setProperty("--k", k.toFixed(4));
+  const sat = svg.querySelector(".sat"), sz = z ** -.6;
+  if (sat) sat.setAttribute("transform", `translate(${VZ_C} ${VZ_C}) scale(${sz.toFixed(4)}) translate(${-VZ_C} ${-VZ_C})`);
+  const sn = svg.querySelector(".satname"); if (sn) sn.setAttribute("y", (VZ_C + 46 * sz + 4 * k).toFixed(2));
+  document.querySelectorAll("#vznodes .node").forEach(n => {
+    const p = MAP.BY.get(n.dataset.p);
+    vzSize(n, p, Math.max(vzNodeR(Math.max(1, p.cum[VZ_T])) * z ** -.5, 3.2 * k));
+  });
+  vzLabels(s);
+  const st = $("#vzstage"); st.classList.toggle("zoomed", z > 1.01);
+  const zz = $("#vzzoom");
+  if (zz) { zz.querySelector('[data-vzz="fit"]').disabled = z <= 1.01; zz.querySelector('[data-vzz="out"]').disabled = z <= 1.01; zz.querySelector('[data-vzz="in"]').disabled = z >= 13.9; }
+}
+function vzLabels(s) {
+  const g = $("#vzlabels"); if (!g) return;
+  const k = 1 / s, fs = 13 * k, z = vzZoom();
+  const x0 = VZ_VB.x, y0 = VZ_VB.y, x1 = x0 + VZ_VB.w, y1 = y0 + VZ_VB.h;
+  const boxes = [{ x0: VZ_C - 50, x1: VZ_C + 50, y0: VZ_C - 50, y1: VZ_C + 50 + 26 * k }];
+  const sel = VZ_SEL && MAP.BY.get(VZ_SEL);
+  const cands = (sel ? [sel] : []).concat(MAP.P.filter(p => p !== sel && vzVisible(p)));
+  const limit = Math.round(16 + 10 * (z - 1));
+  const out = [];
+  for (const p of cands) {
+    if (out.length >= limit && p !== sel) break;
+    if (p.x < x0 || p.x > x1 || p.y < y0 || p.y > y1) continue;
+    const dx = p.x - VZ_C, dy = p.y - VZ_C, d = Math.hypot(dx, dy) || 1, off = (p.rd || p.r) + 5 * k, right = dx >= 0;
+    const lx = p.x + dx / d * off, ly = p.y + dy / d * off + fs * .35, w = p.name.length * fs * .58 + 2 * k;
+    const box = { x0: right ? lx : lx - w, x1: right ? lx + w : lx, y0: ly - fs, y1: ly + fs * .3 };
+    if (p !== sel && boxes.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;
+    boxes.push(box);
+    out.push(`<text class="lbl${p === sel ? " sel" : sel ? " dim" : ""}" data-p="${p.slug}" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(p.name)}</text>`);
+  }
+  g.innerHTML = out.join("");
+}
+function vzPt(e) {
+  const svg = $("#vzsvg"), m = svg && svg.getScreenCTM && svg.getScreenCTM();
+  if (!m) return { x: VZ_VB.x + VZ_VB.w / 2, y: VZ_VB.y + VZ_VB.h / 2 };
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const q = pt.matrixTransform(m.inverse()); return { x: q.x, y: q.y };
+}
+function vzZoomAt(f, p) {
+  cancelAnimationFrame && cancelAnimationFrame(VZ_ANIM);
+  const z = vzZoom(), nz = Math.max(1, Math.min(14, z * f)); f = nz / z;
+  if (Math.abs(f - 1) < 1e-3) return;
+  VZ_VB = vzClamp({ x: p.x - (p.x - VZ_VB.x) / f, y: p.y - (p.y - VZ_VB.y) / f, w: VZ_VB.w / f, h: VZ_VB.h / f });
+  vzApply();
+}
+function vzAnimTo(t) {
+  t = vzClamp(t);
+  if (REDUCED || !window.requestAnimationFrame) { VZ_VB = t; vzApply(); return; }
+  const a = { ...VZ_VB }, t0 = performance.now(), D = 360;
+  const step = now => {
+    const u = Math.min(1, (now - t0) / D), e = 1 - (1 - u) ** 3;
+    // interpolate the zoom level geometrically so it feels even
+    const w = a.w * (t.w / a.w) ** e, cx = a.x + a.w / 2 + (t.x + t.w / 2 - a.x - a.w / 2) * e, cy = a.y + a.h / 2 + (t.y + t.h / 2 - a.y - a.h / 2) * e;
+    VZ_VB = { x: cx - w / 2, y: cy - w / 2, w, h: w };
+    vzApplyNow();
+    if (u < 1) VZ_ANIM = requestAnimationFrame(step);
+  };
+  cancelAnimationFrame(VZ_ANIM); VZ_ANIM = requestAnimationFrame(step);
+}
+function vzFocusOn(p, zoom) {
+  const z = Math.max(vzZoom(), zoom), w = VZ_FIT.w / z;
+  vzAnimTo({ x: p.x - w / 2, y: p.y - w / 2, w, h: w });
+}
+function vzFit() { vzAnimTo({ ...VZ_FIT }); }
+
 function renderNet() {
   const body = $("#vzbody");
   if (body.dataset.view !== "net") {
     body.dataset.view = "net";
     if (!VZ_BUILT.net) { vzLayout(); VZ_BUILT.net = true; }
+    const pct = i => (i / (MAP.N - 1) * 100).toFixed(3);
+    const years = [];
+    for (let i = 0; i < MAP.N; i++) { const v = MAP.M0 + i; if (v % 12 === 0) years.push(`<span class="y" style="--f:${pct(i)}">${Math.floor(v / 12)}</span>`); }
+    const ticks = MILES.map(o => `<button class="m" type="button" data-vzti="${o.month}" style="--f:${pct(o.month)}" title="${esc(MAP.monthLabel(o.month))}: ${esc(o.t)}" aria-label="${esc(MAP.monthLabel(o.month))}: ${esc(o.t)}"></button>`).join("");
     body.innerHTML = `<div class="vz-net">
       <div class="vz-bar">
-        <div class="vz-chips" role="group" aria-label="Filter by channel">
+        <div class="vz-find" role="search">
+          ${ic("search")}<input id="vzfind" type="search" placeholder="Find a person" autocomplete="off" spellcheck="false" aria-label="Find a person" aria-controls="vzfindres" aria-expanded="false">
+          <div class="vz-findres" id="vzfindres" role="listbox" hidden></div>
+        </div>
+        <div class="vz-chips" role="group" aria-label="Show">
           <button class="vz-chip" data-vzf="all" aria-pressed="true">Everyone</button>
           ${["e", "p", "x"].map(k => `<button class="vz-chip" data-vzf="${k}" aria-pressed="false"><i class="${k}" style="background:${chColor(k)}"></i>${CH_NAME[k]}</button>`).join("")}
         </div>
         <div class="vz-seg" role="group" aria-label="Display">
-          <button data-vzm="diagram" aria-pressed="true">${ic("hub")}<span class="t">Diagram</span></button>
+          <button data-vzm="diagram" aria-pressed="true">${ic("hub")}<span class="t">Chart</span></button>
           <button data-vzm="list" aria-pressed="false">${ic("table_rows")}<span class="t">List</span></button>
         </div>
       </div>
@@ -2169,64 +2272,92 @@ function renderNet() {
       <div class="vz-list" id="vzlist" hidden></div>
       <aside class="vz-side" id="vzside" aria-live="polite"></aside>
       <div class="vz-scrub">
-        <button class="play" type="button" id="vzplay" aria-label="Play from the start">${ic("play_arrow")}</button>
-        <input type="range" id="vzt" min="0" max="${MAP.N - 1}" value="${VZ_T}" aria-label="Month">
-        <output id="vzto" for="vzt"></output>
-        <small id="vzts"></small>
+        <button class="play" type="button" id="vzplay" aria-label="Play from the start" title="Play month by month (space)">${ic("play_arrow")}</button>
+        <div class="vz-now"><output id="vzto" for="vzt"></output><small id="vzts"></small></div>
+        <div class="vz-track">
+          <input type="range" id="vzt" min="0" max="${MAP.N - 1}" value="${VZ_T}" aria-label="Month" aria-describedby="vzts">
+          <div class="vz-marks" aria-hidden="false">${years.join("")}${ticks}</div>
+        </div>
       </div>
     </div>`;
     drawNet();
     $("#vzt").addEventListener("input", e => { vzStop(); vzSetT(+e.target.value); });
+    vzFindWire();
     vzFilter(VZ_FILTER); vzMode(VZ_MODE);
+    if (window.ResizeObserver) { const ro = new ResizeObserver(() => vzApply()); ro.observe($("#vzstage")); }
   }
   vzSetT(VZ_T);
 }
 function drawNet() {
   const P = MAP.P;
-  let s = `<svg viewBox="0 0 1000 1000" role="img" aria-label="Everyone Satoshi corresponded with, placed by when they first exchanged messages (clockwise from August 2008) and how much (closer to the centre is more). The list view has the same data as a table.">`;
-  [VZ_RIN, (VZ_RIN + VZ_ROUT) / 2, VZ_ROUT].forEach(r => { s += `<circle class="ring" cx="${VZ_C}" cy="${VZ_C}" r="${r}"/>`; });
+  let s = `<svg id="vzsvg" viewBox="${VZ_VB.x} ${VZ_VB.y} ${VZ_VB.w} ${VZ_VB.h}" role="img" aria-label="Everyone Satoshi corresponded with, placed clockwise by when they first exchanged messages and closer to the centre the more they exchanged. The list view has the same data as a table."<defs><marker id="vzarrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-3)"/></marker></defs>`;
+  [VZ_RIN, (VZ_RIN + VZ_ROUT) / 2, VZ_ROUT].forEach(r => { s += `<circle class="ring" cx="${VZ_C}" cy="${VZ_C}" r="${r}" vector-effect="non-scaling-stroke"/>`; });
   for (let y = 2009; y <= 2011; y++) {
-    const a = vzAngle(Date.UTC(y, 0, 1) / 1000), x2 = VZ_C + 480 * Math.cos(a), y2 = VZ_C + 480 * Math.sin(a);
-    s += `<line class="spoke" x1="${VZ_C + 60 * Math.cos(a)}" y1="${VZ_C + 60 * Math.sin(a)}" x2="${x2}" y2="${y2}"/>`;
-    s += `<text class="yr" x="${VZ_C + 492 * Math.cos(a)}" y="${VZ_C + 492 * Math.sin(a) + 5}" text-anchor="${Math.cos(a) > .2 ? "start" : Math.cos(a) < -.2 ? "end" : "middle"}">${y}</text>`;
+    const a = vzAngle(Date.UTC(y, 0, 1) / 1000);
+    s += `<line class="spoke" x1="${VZ_C + 60 * Math.cos(a)}" y1="${VZ_C + 60 * Math.sin(a)}" x2="${VZ_C + 484 * Math.cos(a)}" y2="${VZ_C + 484 * Math.sin(a)}" vector-effect="non-scaling-stroke"/>`;
+    s += `<text class="yr" x="${VZ_C + 496 * Math.cos(a)}" y="${VZ_C + 496 * Math.sin(a)}" dominant-baseline="middle" text-anchor="${Math.cos(a) > .2 ? "start" : Math.cos(a) < -.2 ? "end" : "middle"}">${y}</text>`;
   }
-  const a0 = vzAngle(MAP.START);
-  s += `<text class="yr" x="${VZ_C + 492 * Math.cos(a0)}" y="${VZ_C + 492 * Math.sin(a0) - 2}" text-anchor="start">Aug 2008</text>`;
-  s += `<text class="hint" x="${VZ_C - 14}" y="${VZ_C - 476}" text-anchor="end">first contact, clockwise →</text>`;
-  s += `<g id="vzedges">${P.map(p => `<line class="edge" data-p="${p.slug}" x1="${VZ_C}" y1="${VZ_C}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="${chColor(p.main)}" stroke-opacity="${(.12 + .5 * (p.score / P[0].score) ** .5).toFixed(2)}"/>`).join("")}</g>`;
-  s += `<g id="vznodes">${P.slice().reverse().map(p => nodeShape(p, p.r)).join("")}</g>`;
-  // label the most connected people, skipping any label that would collide with one already placed
-  const boxes = [], labels = [];
-  for (const p of P.slice(0, 40)) {
-    if (labels.length >= 16) break;
-    const dx = p.x - VZ_C, dy = p.y - VZ_C, d = Math.hypot(dx, dy) || 1, off = p.r + 7;
-    const lx = p.x + dx / d * off, ly = p.y + dy / d * off + 6, w = p.name.length * 9.6 + 4, right = dx > 0;
-    const box = { x0: right ? lx : lx - w, x1: right ? lx + w : lx, y0: ly - 16, y1: ly + 4 };
-    if (boxes.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;
-    if (Math.hypot((box.x0 + box.x1) / 2 - VZ_C, (box.y0 + box.y1) / 2 - VZ_C) < 64) continue;
-    boxes.push(box);
-    labels.push(`<text class="lbl" data-p="${p.slug}" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(p.name)}</text>`);
-  }
-  s += `<g id="vzlabels">${labels.join("")}</g>`;
+  // where the clock starts: a small arrow at the top, so it reads clockwise from August 2008
+  s += `<path class="start" d="M${VZ_C + 6} ${VZ_C - 488}a488 488 0 0 1 ${(488 * Math.sin(.14)).toFixed(1)} ${(488 - 488 * Math.cos(.14)).toFixed(1)}" vector-effect="non-scaling-stroke" marker-end="url(#vzarrow)"/>`;
+  s += `<g id="vzedges">${P.map(p => `<line class="edge" data-p="${p.slug}" x1="${VZ_C}" y1="${VZ_C}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="${chColor(p.main)}" stroke-opacity="${(.1 + .45 * (p.score / P[0].score) ** .5).toFixed(2)}" vector-effect="non-scaling-stroke"/>`).join("")}</g>`;
+  s += `<g id="vznodes">${P.slice().reverse().map(nodeShape).join("")}</g>`;
+  s += `<g id="vzlabels"></g>`;
   s += `<g class="sat"><circle cx="${VZ_C}" cy="${VZ_C}" r="46" fill="#f7931a"/>
     <g transform="translate(${VZ_C - 20 * 2.2} ${VZ_C - 18 * 2.2}) scale(2.2)" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(0 1.5) rotate(14 20 17)"><path d="M17.2 12.2v9.6M17.2 12.2h3.1a2.35 2.35 0 0 1 0 4.7h-3.1M17.2 16.9h3.6a2.45 2.45 0 0 1 0 4.9h-3.6"/><path d="M18.5 10.7v1.5M20.4 10.7v1.5M18.5 21.8v1.5M20.4 21.8v1.5"/></g></g>
-    <text x="${VZ_C}" y="${VZ_C + 70}" text-anchor="middle">Satoshi</text></g>`;
-  s += `</svg><div class="vz-tip" id="vztip" hidden></div>`;
+</g><text class="satname" x="${VZ_C}" y="${VZ_C + 50}" dominant-baseline="hanging" text-anchor="middle">Satoshi</text>`;
+  s += `</svg>
+    <div class="vz-legendbox">
+      <div class="vz-key">${["e", "p", "x"].map(k => `<span><i class="${k}" style="background:${chColor(k)}"></i>${CH_NAME[k]}</span>`).join("")}</div>
+      <p>${ic("rotate_right")}Clockwise from the top, Aug 2008 on: when they first wrote</p>
+      <p>${ic("adjust")}Closer to Satoshi: more messages with him</p>
+    </div>
+    <div class="vz-zoom" id="vzzoom" role="group" aria-label="Zoom">
+      <button type="button" data-vzz="in" aria-label="Zoom in" title="Zoom in (+)">${ic("add")}</button>
+      <button type="button" data-vzz="out" aria-label="Zoom out" title="Zoom out (−)">${ic("remove")}</button>
+      <button type="button" data-vzz="fit" aria-label="Show everyone" title="Show everyone (0)">${ic("fit_screen")}</button>
+    </div>
+    <div class="vz-tip" id="vztip" hidden></div>`;
   $("#vzstage").innerHTML = s;
+  vzWireStage();
+}
+function vzWireStage() {
   const stage = $("#vzstage");
-  stage.addEventListener("pointermove", e => {
-    const n = e.target.closest && e.target.closest(".node");
+  const ptrs = new Map(); let moved = false, pinch = null, last = null;
+  const tip = (e, n) => {
     if (!n) { vzTipHide(); vzHover(null); return; }
-    const p = MAP.BY.get(n.dataset.p), tip = $("#vztip"), r = stage.getBoundingClientRect();
-    tip.innerHTML = `<b>${esc(p.name)}</b>${fmtNum(vzEx(p))} messages exchanged · ${p.nthreads} conversation${p.nthreads === 1 ? "" : "s"}<br>${CH_NAME[p.main]} · first ${esc(shortDate(p.first))}`;
-    tip.hidden = false;
-    const x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
-    tip.style.left = Math.min(x, r.width - tip.offsetWidth - 8) + "px";
-    tip.style.top = Math.min(y, r.height - tip.offsetHeight - 8) + "px";
+    const p = MAP.BY.get(n.dataset.p), t = $("#vztip"), r = stage.getBoundingClientRect();
+    t.innerHTML = `<b>${esc(p.name)}</b>${fmtNum(vzEx(p))} message${vzEx(p) === 1 ? "" : "s"} exchanged · ${p.nthreads} conversation${p.nthreads === 1 ? "" : "s"}<br>${CH_NAME[p.main]} · first ${esc(shortDate(p.first))}`;
+    t.hidden = false;
+    t.style.left = Math.max(8, Math.min(e.clientX - r.left + 14, r.width - t.offsetWidth - 8)) + "px";
+    t.style.top = Math.max(8, Math.min(e.clientY - r.top + 14, r.height - t.offsetHeight - 8)) + "px";
     vzHover(p.slug);
+  };
+  stage.addEventListener("pointerdown", e => {
+    if (e.target.closest("button, .vz-legendbox")) return;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = false; last = { x: e.clientX, y: e.clientY };
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: vzZoom() }; }
   });
-  stage.addEventListener("pointerleave", () => { vzTipHide(); vzHover(null); });
+  stage.addEventListener("pointermove", e => {
+    if (!ptrs.has(e.pointerId)) { if (e.pointerType === "mouse") tip(e, e.target.closest && e.target.closest(".node")); return; }
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2 && pinch) {
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      vzZoomAt(pinch.z * d / pinch.d / vzZoom(), vzPt({ clientX: (a.x + b.x) / 2, clientY: (a.y + b.y) / 2 }));
+      moved = true; return;
+    }
+    const dx = e.clientX - last.x, dy = e.clientY - last.y;
+    if (!moved && Math.hypot(e.clientX - [...ptrs.values()][0].x, e.clientY - [...ptrs.values()][0].y) < 4 && Math.hypot(dx, dy) < 4) return;
+    moved = true; last = { x: e.clientX, y: e.clientY };
+    if (vzZoom() > 1.01) { const s = vzScale(); VZ_VB = vzClamp({ ...VZ_VB, x: VZ_VB.x - dx / s, y: VZ_VB.y - dy / s }); vzApply(); stage.classList.add("dragging"); vzTipHide(); }
+  });
+  const up = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) stage.classList.remove("dragging"); };
+  stage.addEventListener("pointerup", up); stage.addEventListener("pointercancel", up);
+  stage.addEventListener("pointerleave", e => { up(e); vzTipHide(); vzHover(null); });
+  stage.addEventListener("wheel", e => { e.preventDefault(); vzZoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? .012 : .0016)), vzPt(e)); }, { passive: false });
+  stage.addEventListener("dblclick", e => { if (e.target.closest("button, .vz-legendbox")) return; e.preventDefault(); vzZoomAt(2, vzPt(e)); });
   stage.addEventListener("click", e => {
+    if (moved) { moved = false; return; }
+    if (e.target.closest("button, .vz-legendbox")) return;
     const n = e.target.closest(".node");
     location.hash = n ? "#map~p~" + n.dataset.p : "#map";
   });
@@ -2245,19 +2376,14 @@ function vzSetT(t) {
   VZ_T = t;
   const inp = $("#vzt"); if (!inp) return;
   inp.value = t;
+  inp.style.setProperty("--fill", (t / (MAP.N - 1) * 100).toFixed(2) + "%");
   $("#vzto").textContent = MAP.monthLabel(t);
   const shown = MAP.P.filter(p => p.firstI <= t);
-  $("#vzts").textContent = `${fmtNum(shown.length)} people · ${fmtNum(MAP.satCum[t])} messages and ${fmtNum(MAP.comCum[t])} commits by Satoshi so far`;
-  document.querySelectorAll("#vznodes .node").forEach(n => {
-    const p = MAP.BY.get(n.dataset.p), vis = vzVisible(p);
-    n.classList.toggle("off", !vis);
-    if (vis) {
-      const r = vzNodeR(Math.max(1, p.cum[t]));
-      if (n.tagName === "circle") n.setAttribute("r", r.toFixed(1));
-      else { n.setAttribute("x", (p.x - r * .8).toFixed(1)); n.setAttribute("y", (p.y - r * .8).toFixed(1)); n.setAttribute("width", (r * 1.6).toFixed(1)); n.setAttribute("height", (r * 1.6).toFixed(1)); }
-    }
-  });
-  document.querySelectorAll("#vzedges .edge, #vzlabels .lbl").forEach(el => { const vis = vzVisible(MAP.BY.get(el.dataset.p)); el.style.display = vis ? "" : "none"; });
+  $("#vzts").textContent = `${fmtNum(shown.length)} people · ${fmtNum(MAP.satCum[t])} messages · ${fmtNum(MAP.comCum[t])} commits by Satoshi so far`;
+  document.querySelectorAll("#vzwin .vz-marks .m").forEach(b => b.classList.toggle("past", +b.dataset.vzti <= t));
+  document.querySelectorAll("#vznodes .node").forEach(n => n.classList.toggle("off", !vzVisible(MAP.BY.get(n.dataset.p))));
+  document.querySelectorAll("#vzedges .edge").forEach(el => { el.style.display = vzVisible(MAP.BY.get(el.dataset.p)) ? "" : "none"; });
+  vzApplyNow();
   if (VZ_MODE === "list") drawList();
   drawSide();
 }
@@ -2270,7 +2396,7 @@ function vzMode(m) {
   VZ_MODE = m;
   document.querySelectorAll("#vzbody [data-vzm]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.vzm === m)));
   $("#vzstage").hidden = m !== "diagram"; $("#vzlist").hidden = m !== "list";
-  if (m === "list") drawList();
+  if (m === "list") drawList(); else vzApply();
 }
 function drawList() {
   const rows = MAP.P.filter(vzVisible).sort((a, b) => b.cum[VZ_T] - a.cum[VZ_T] || a.name.localeCompare(b.name));
@@ -2282,17 +2408,43 @@ function vzSelect(slug, push = true) {
   VZ_SEL = slug;
   document.querySelectorAll("#vznodes .node").forEach(n => { n.classList.toggle("sel", n.dataset.p === slug); n.classList.toggle("dim", !!slug && n.dataset.p !== slug); });
   document.querySelectorAll("#vzedges .edge").forEach(n => n.classList.toggle("dim", !!slug && n.dataset.p !== slug));
-  document.querySelectorAll("#vzlabels .lbl").forEach(n => { n.classList.toggle("sel", n.dataset.p === slug); n.classList.toggle("dim", !!slug && n.dataset.p !== slug); });
-  if (slug && !document.querySelector(`#vzlabels .lbl[data-p="${slug}"]`)) {
-    const p = MAP.BY.get(slug), dx = p.x - VZ_C, dy = p.y - VZ_C, d = Math.hypot(dx, dy) || 1, off = p.r + 6;
-    $("#vzlabels").insertAdjacentHTML("beforeend", `<text class="lbl sel tmp" data-p="${slug}" x="${(p.x + dx / d * off).toFixed(1)}" y="${(p.y + dy / d * off + 5).toFixed(1)}" text-anchor="${dx > 0 ? "start" : "end"}">${esc(p.name)}</text>`);
-  }
-  document.querySelectorAll("#vzlabels .tmp").forEach(n => { if (n.dataset.p !== slug) n.remove(); });
-  if (slug) { const p = MAP.BY.get(slug); if (p.firstI > VZ_T) vzSetT(MAP.N - 1); }
+  const p = slug && MAP.BY.get(slug);
+  if (p && p.firstI > VZ_T) vzSetT(MAP.N - 1);
+  if (p && (VZ_FOCUS_NEXT || (vzZoom() > 1.01 && (p.x < VZ_VB.x || p.x > VZ_VB.x + VZ_VB.w || p.y < VZ_VB.y || p.y > VZ_VB.y + VZ_VB.h)))) vzFocusOn(p, VZ_FOCUS_NEXT || 1);
+  VZ_FOCUS_NEXT = 0;
   vzHover(null);
+  vzApply();
   drawSide();
   if (MAP_OPEN) updateTitle();
 }
+function vzGo(slug, zoom = 2.6) { VZ_FOCUS_NEXT = zoom; if (VZ_MODE !== "diagram") vzMode("diagram"); if (location.hash === "#map~p~" + slug) vzSelect(slug, false); else vzSelect(slug); }
+
+// find a person
+function vzFindWire() {
+  const inp = $("#vzfind"), res = $("#vzfindres");
+  let hits = [], cur = 0;
+  const close = () => { res.hidden = true; inp.setAttribute("aria-expanded", "false"); };
+  const draw = () => {
+    res.innerHTML = hits.length ? hits.map((p, i) => `<button type="button" role="option" aria-selected="${i === cur}" data-vzgo="${p.slug}"><i class="${p.main}" style="background:${chColor(p.main)}"></i><span>${esc(p.name)}</span><small>${fmtNum(p.ex)}</small></button>`).join("")
+      : `<p>No one by that name</p>`;
+    res.hidden = false; inp.setAttribute("aria-expanded", "true");
+  };
+  inp.addEventListener("input", () => {
+    const q = inp.value.trim().toLowerCase();
+    if (!q) { close(); return; }
+    hits = MAP.P.filter(p => p.name.toLowerCase().includes(q) || [...p.aliases].some(a => a.toLowerCase().includes(q)))
+      .sort((a, b) => (b.name.toLowerCase().startsWith(q) - a.name.toLowerCase().startsWith(q)) || b.score - a.score).slice(0, 8);
+    cur = 0; draw();
+  });
+  inp.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { if (!hits.length) return; e.preventDefault(); cur = (cur + (e.key === "ArrowDown" ? 1 : hits.length - 1)) % hits.length; draw(); }
+    else if (e.key === "Enter") { e.preventDefault(); if (hits[cur]) { vzGo(hits[cur].slug); inp.value = hits[cur].name; close(); inp.blur(); } }
+    else if (e.key === "Escape") { e.stopPropagation(); inp.value = ""; close(); }
+  });
+  inp.addEventListener("blur", () => setTimeout(close, 150));
+  inp.addEventListener("focus", () => { if (inp.value.trim()) inp.dispatchEvent(new Event("input")); });
+}
+
 function drawSide() {
   const side = $("#vzside"); if (!side) return;
   const p = VZ_SEL && MAP.BY.get(VZ_SEL);
@@ -2301,11 +2453,9 @@ function drawSide() {
     side.innerHTML = `<h2>Satoshi's circle</h2><p class="sub">${esc(shortDate(MAP.START))} – ${esc(MAP.monthLabel(VZ_T))}</p>
       <div class="vz-stats"><div><b>${fmtNum(MAP.P.filter(q => q.firstI <= VZ_T).length)}</b><small>people</small></div><div><b>${fmtNum(MAP.satCum[VZ_T])}</b><small>messages by Satoshi</small></div>
         <div><b>${fmtNum(MAP.comCum[VZ_T])}</b><small>commits</small></div><div><b>${fmtNum(MAP.P.filter(q => q.firstI <= VZ_T && q.main === "x").length)}</b><small>private correspondents</small></div></div>
-      <h3>How to read it</h3>
-      <div class="vz-key">${["e", "p", "x"].map(k => `<span><i class="${k}" style="background:${chColor(k)}"></i>${CH_NAME[k]}${k === "x" ? " (diamonds)" : ""}</span>`).join("")}
-        <span class="note">Each mark is a person. Clockwise from the top: when they first exchanged messages with Satoshi. Closer to the centre: more messages and conversations with him. Size: messages exchanged so far.</span></div>
       <h3>Most connected${VZ_T < MAP.N - 1 ? " so far" : ""}</h3>
-      <ol class="vz-top10">${top.map((q, i) => `<li><button data-vzp="${q.slug}"><span class="c">${i + 1}</span><i class="${q.main}" style="background:${chColor(q.main)}"></i><span>${esc(q.name)}</span><span class="n">${fmtNum(q.cum[VZ_T])}</span></button></li>`).join("")}</ol>`;
+      <ol class="vz-top10">${top.map((q, i) => `<li><button data-vzgo="${q.slug}" data-vzp="${q.slug}"><span class="c">${i + 1}</span><i class="${q.main}" style="background:${chColor(q.main)}"></i><span>${esc(q.name)}</span><span class="n">${fmtNum(q.cum[VZ_T])}</span></button></li>`).join("")}</ol>
+      <p class="vz-hint">${ic("touch_app")}Select anyone on the chart, or scroll and pinch to zoom.</p>`;
     return;
   }
   const max = Math.max(...p.month, 1), w = 100 / MAP.N;
@@ -2313,110 +2463,164 @@ function drawSide() {
   const threads = [...p.threads.entries()].sort((a, b) => b[1] - a[1] || a[0].first - b[0].first).slice(0, 6);
   const art = p.art && WBY.get(p.art);
   const q = [...p.aliases].find(a => !a.includes("@")) || p.name;
-  side.innerHTML = `<button class="vz-back" data-vzp="">${ic("arrow_back")}All connections</button>
+  side.innerHTML = `<button class="vz-back" data-vzp="">${ic("arrow_back")}Everyone</button>
     <h2>${esc(p.name)}</h2><p class="sub">${CH_NAME[p.main]}${p.aliases.size > 1 ? ` · also ${esc([...p.aliases].filter(a => a !== p.name).slice(0, 2).join(", "))}` : ""}</p>
     <div class="vz-stats"><div><b>${fmtNum(p.ex)}</b><small>messages exchanged</small></div><div><b>${p.nthreads}</b><small>conversations</small></div>
       <div><b>${esc(shortDate(p.first))}</b><small>first</small></div><div><b>${esc(shortDate(p.last))}</b><small>last</small></div></div>
     <h3>Month by month, ${esc(MAP.monthLabel(0))} – ${esc(MAP.monthLabel(MAP.N - 1))}</h3>${spark}
     <h3>Conversations with Satoshi</h3>
     <div class="vz-threads">${threads.map(([t, n]) => `<a href="#t-${t.id}"><span>${esc(t.t)}</span><small>${n}</small></a>`).join("")}</div>
-    <div class="vz-acts">${art ? `<a class="pillbtn" href="#wiki-${art.slug}">${ic("menu_book")}Satoshipedia</a>` : ""}<a class="pillbtn" href="#search-${encodeURIComponent(`from:"${q.toLowerCase()}"`)}">${ic("mail")}Messages</a></div>`;
+    <div class="vz-acts">${art ? `<a class="pillbtn" href="#wiki-${art.slug}">${ic("menu_book")}Satoshipedia</a>` : ""}<a class="pillbtn" href="#search-${encodeURIComponent(`from:"${q.toLowerCase()}"`)}">${ic("mail")}Messages</a><button class="pillbtn" type="button" data-vzgo="${p.slug}">${ic("center_focus_strong")}Zoom to</button></div>`;
 }
 function vzStop() { if (VZ_PLAY) { clearInterval(VZ_PLAY); VZ_PLAY = null; const b = $("#vzplay"); if (b) { b.innerHTML = ic("play_arrow"); b.setAttribute("aria-label", "Play from the start"); } } }
 function vzPlay() {
   if (VZ_PLAY) { vzStop(); return; }
   if (VZ_T >= MAP.N - 1) vzSetT(0);
   const b = $("#vzplay"); b.innerHTML = ic("pause"); b.setAttribute("aria-label", "Pause");
-  VZ_PLAY = setInterval(() => { if (VZ_T >= MAP.N - 1) { vzStop(); return; } vzSetT(VZ_T + 1); }, REDUCED ? 600 : 320);
+  VZ_PLAY = setInterval(() => { if (VZ_T >= MAP.N - 1) { vzStop(); return; } vzSetT(VZ_T + 1); }, REDUCED ? 600 : 360);
 }
 
-/* ── timeline ── */
+/* ── timeline: one big chart; select a month to see what he wrote ── */
+let TL_SEL = null, TL_W = 0;
+const tlTot = i => MAP.sat.e[i] + MAP.sat.p[i] + MAP.sat.x[i] + MAP.sat.c[i];
+function tlRange(i) {
+  const v = MAP.M0 + i, y = Math.floor(v / 12), m = v % 12, n = v + 1;
+  return [`${y}/${String(m + 1).padStart(2, "0")}/01`, `${Math.floor(n / 12)}/${String(n % 12 + 1).padStart(2, "0")}/01`];
+}
+const tlMonthName = i => { const v = MAP.M0 + i; return `${["January","February","March","April","May","June","July","August","September","October","November","December"][v % 12]} ${Math.floor(v / 12)}`; };
 function renderTimeline() {
   const body = $("#vzbody");
   if (body.dataset.view === "tl") return;
   body.dataset.view = "tl";
-  const N = MAP.N, L = 56, R = 16, CW = 30, W = L + R + N * CW, H = 230, top = 16, base = top + 170;
-  const tot = i => MAP.sat.e[i] + MAP.sat.p[i] + MAP.sat.x[i] + MAP.sat.c[i];
-  const max = Math.max(...Array.from({ length: N }, (_, i) => tot(i)));
+  const N = MAP.N;
+  let busiest = 0; for (let i = 0; i < N; i++) if (tlTot(i) > tlTot(busiest)) busiest = i;
+  if (TL_SEL == null) TL_SEL = busiest;
+  const list = MILESTONES.map(o => `<li class="${o.off ? "off" : ""}" data-tli="${mileMonth(o)}">${o.n ? `<span class="num">${o.n}</span>` : ""}<time>${esc(longDay(o.d))}${o.approx ? " (approx.)" : ""}</time><b>${esc(o.t)}</b><p>${esc(o.s)}</p>
+    <div class="acts">${o.href ? `<a href="${o.href}" data-vzmi="${o.mi ?? ""}">${o.href.startsWith("#t-c") ? "Open commit" : "Open message"}</a>` : ""}${o.wiki ? `<a href="#wiki-${o.wiki}">Satoshipedia</a>` : ""}${o.n ? `<button type="button" class="linkbtn" data-tlpick="${mileMonth(o)}">Show month</button>` : ""}</div></li>`).join("");
+  body.innerHTML = `<div class="vz-tl">
+    <div class="vz-tlhead">
+      <div><h2>Satoshi, start to finish</h2>
+      <p class="lead">Every message and commit in the archive, month by month, from ${esc(longDay(MAP.START))} to ${esc(longDay(MAP.END))}. Select a month to see what he wrote.</p></div>
+      <div class="vz-legend">${["e", "p", "x", "c"].map(k => `<span><i style="background:${chColor(k)}"></i>${k === "c" ? "Commits" : CH_NAME[k]}</span>`).join("")}<span><b class="pinkey">1</b>Milestone</span></div>
+    </div>
+    <div class="vz-tlgrid">
+      <div class="vz-chartbox">
+        <div class="vz-scroll" id="vzbars" tabindex="0" role="group" aria-label="Messages and commits per month. Use the left and right arrow keys to move between months."></div>
+        <div class="vz-tip" id="vztip2" hidden></div>
+      </div>
+      <aside class="vz-month" id="vzmonth" aria-live="polite"></aside>
+    </div>
+    <h3>Milestones</h3>
+    <ol class="vz-mlist">${list}</ol>
+    <h3>Who he was talking to</h3>
+    <p class="note">The 14 people who exchanged the most with Satoshi, month by month: bigger dots mean more messages. Select a name to find them on the map.</p>
+    <div class="vz-scroll" id="vzlanes"></div>
+  </div>`;
+  TL_W = 0;
+  tlDraw();
+  tlPick(TL_SEL, false);
+  const bars = $("#vzbars");
+  bars.addEventListener("pointermove", e => {
+    const h = e.target.closest && e.target.closest("[data-i]"), tip = $("#vztip2");
+    if (!h || e.pointerType !== "mouse") { tip.hidden = true; return; }
+    const i = +h.dataset.i, box = bars.parentElement.getBoundingClientRect();
+    tip.innerHTML = `<b>${MAP.monthLabel(i)}</b>${["e", "p", "x", "c"].map(k => `${k === "c" ? "Commits" : CH_NAME[k]}: ${fmtNum(MAP.sat[k][i])}`).join("<br>")}`;
+    tip.hidden = false;
+    tip.style.left = Math.max(4, Math.min(e.clientX - box.left + 12, box.width - tip.offsetWidth - 4)) + "px";
+    tip.style.top = Math.max(4, e.clientY - box.top - tip.offsetHeight - 10) + "px";
+  });
+  bars.addEventListener("pointerleave", () => { $("#vztip2").hidden = true; });
+  bars.addEventListener("click", e => { const h = e.target.closest("[data-i]"); if (h) tlPick(+h.dataset.i, false); });
+  bars.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); tlPick(Math.max(0, Math.min(MAP.N - 1, TL_SEL + (e.key === "ArrowRight" ? 1 : -1))), false); }
+    else if (e.key === "Home" || e.key === "End") { e.preventDefault(); tlPick(e.key === "Home" ? 0 : MAP.N - 1, false); }
+  });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(() => { if (bars.isConnected && Math.abs((bars.clientWidth || 0) - TL_W) > 2) { tlDraw(); tlPick(TL_SEL, false); } }); ro.observe(bars); }
+}
+function tlGeom() {
+  const box = $("#vzbars"), avail = (box && box.clientWidth) || 900, N = MAP.N;
+  const L = 38, R = 10, CW = Math.max(22, (avail - L - R) / N);
+  return { L, R, CW, W: L + R + CW * N, N, avail };
+}
+function tlDraw() {
+  const g = tlGeom(), { L, R, CW, W, N } = g, H = 320, top = 40, base = H - 30;
+  TL_W = g.avail;
+  const max = Math.max(...Array.from({ length: N }, (_, i) => tlTot(i)));
   const step = max > 120 ? 50 : max > 60 ? 25 : 10, yMax = Math.ceil(max / step) * step;
-  const y = v => base - (base - top) * v / yMax;
-  const X = i => L + i * CW;
-  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Satoshi's messages and commits per month, ${MAP.monthLabel(0)} to ${MAP.monthLabel(N - 1)}">`;
+  const y = v => base - (base - top) * v / yMax, X = i => L + i * CW, bw = Math.min(CW * .7, 30);
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Satoshi's messages and commits per month, ${MAP.monthLabel(0)} to ${MAP.monthLabel(N - 1)}">`;
+  s += `<rect class="selcol" id="tlsel" x="0" y="${top - 30}" width="${CW}" height="${base - top + 30}" rx="6"/>`;
   for (let v = 0; v <= yMax; v += step) s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
   for (let i = 0; i < N; i++) {
     let acc = 0;
+    s += `<g class="bar" data-bar="${i}">`;
     for (const k of ["e", "p", "x", "c"]) {
       const v = MAP.sat[k][i]; if (!v) continue;
       const y0 = y(acc), y1 = y(acc + v); acc += v;
-      s += `<rect x="${X(i) + 5}" y="${(y1 + 1).toFixed(1)}" width="${CW - 10}" height="${Math.max(1, y0 - y1 - 2).toFixed(1)}" rx="3" fill="${chColor(k)}"/>`;
+      s += `<rect x="${(X(i) + (CW - bw) / 2).toFixed(1)}" y="${(y1 + .75).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, y0 - y1 - 1.5).toFixed(1)}" rx="2" fill="${chColor(k)}"/>`;
     }
-    const v = MAP.M0 + i;
-    s += `<text class="ax${v % 12 === 0 || i === 0 ? " yr" : ""}" x="${X(i) + CW / 2}" y="${base + 16}" text-anchor="middle">${v % 12 === 0 || i === 0 ? Math.floor(v / 12) : MON[v % 12][0]}</text>`;
-    s += `<rect class="hit" data-i="${i}" x="${X(i)}" y="${top}" width="${CW}" height="${base - top}"/>`;
+    s += `</g>`;
+    const v = MAP.M0 + i, yr = v % 12 === 0 || i === 0;
+    s += `<text class="ax${yr ? " yr" : ""}" x="${X(i) + CW / 2}" y="${base + 17}" text-anchor="middle">${yr ? Math.floor(v / 12) : CW >= 34 ? MON[v % 12] : MON[v % 12][0]}</text>`;
   }
-  s += `<line class="base" x1="${L}" x2="${W - R}" y1="${base}" y2="${base}"/></svg>`;
-
-  // milestones on the same month axis
-  const ms = MILESTONES.filter(m => !m.off);
-  const placed = [], lanes = [];
-  ms.forEach(o => {
-    const i = Math.max(0, Math.min(N - 1, MAP.ym(o.d) - MAP.M0)), frac = (dt(o.d).getUTCDate() - .5) / 31, x = X(i) + frac * CW;
-    const wpx = o.t.length * 6.4 + 12, left = x + wpx > W - R;            // near the right edge, put the label left of its dot
-    const iv = left ? [x - wpx, x + 6] : [x - 6, x + wpx];
-    let lane = lanes.findIndex(L => L.every(([a, b]) => iv[1] + 6 < a || iv[0] - 6 > b));
-    if (lane < 0) { lanes.push([]); lane = lanes.length - 1; }
-    lanes[lane].push(iv);
-    placed.push({ o, x, lane, left });
+  s += `<line class="base" x1="${L}" x2="${W - R}" y1="${base}" y2="${base}"/>`;
+  // numbered milestone pins, stacked above their month's bar
+  const stack = {};
+  MILES.forEach(o => {
+    const i = o.month, j = stack[i] = (stack[i] || 0) + 1, cx = X(i) + CW / 2, cy = Math.max(12, y(tlTot(i)) - 14 - (j - 1) * 21);
+    s += `<g class="pin" data-i="${i}" data-pin="${o.n}"><line x1="${cx}" x2="${cx}" y1="${cy + 9}" y2="${y(tlTot(i)) - 2}"/><circle cx="${cx}" cy="${cy}" r="9.5"/><text x="${cx}" y="${cy + 3.8}" text-anchor="middle">${o.n}</text><title>${esc(longDay(o.d))}: ${esc(o.t)}</title></g>`;
   });
-  const MH = 30 + lanes.length * 22;
-  let m = `<svg viewBox="0 0 ${W} ${MH}" role="img" aria-label="Milestones">`;
-  placed.forEach(({ o, x, lane, left }) => {
-    const ly = 22 + lane * 22;
-    m += `<line class="ms-line" x1="${x}" x2="${x}" y1="0" y2="${ly - 4}"/><circle class="ms-dot" cx="${x}" cy="${ly - 4}" r="4.5"/>`;
-    m += `<a href="${o.wiki ? "#wiki-" + o.wiki : o.href}"><text class="ms-lbl" x="${left ? x - 8 : x + 8}" y="${ly}" text-anchor="${left ? "end" : "start"}">${esc(o.t)}</text><title>${esc(longDay(o.d))}: ${esc(o.s)}</title></a>`;
-  });
-  m += `</svg>`;
+  for (let i = 0; i < N; i++) s += `<rect class="hit" data-i="${i}" x="${X(i)}" y="0" width="${CW}" height="${H}"><title>${MAP.monthLabel(i)}</title></rect>`;
+  s += `</svg>`;
+  $("#vzbars").innerHTML = s;
 
-  // who he was talking to, month by month
-  const lanesP = MAP.P.slice(0, 14), RH = 26, SH = lanesP.length * RH + 8, LW = 150;
-  const SW = LW + N * CW + R;
-  const maxM = Math.max(...lanesP.flatMap(p => p.month));
-  let sw = `<svg viewBox="0 0 ${SW} ${SH}" role="img" aria-label="Messages exchanged with Satoshi per month, top 14 correspondents">`;
-  lanesP.forEach((p, r) => {
-    const cy = 4 + r * RH + RH / 2;
-    if (r % 2 === 0) sw += `<rect class="lane-bg" x="0" y="${cy - RH / 2}" width="${SW}" height="${RH}" rx="4"/>`;
-    sw += `<text class="lane-name" data-vzgo="${p.slug}" x="8" y="${cy + 4}">${esc(p.name)}</text>`;
-    p.month.forEach((v, i) => { if (v) sw += `<circle cx="${LW + i * CW + CW / 2}" cy="${cy}" r="${(2.5 + 8 * Math.sqrt(v / maxM)).toFixed(1)}" fill="${chColor(p.main)}" stroke="var(--surface)" stroke-width="1.5"><title>${esc(p.name)}, ${MAP.monthLabel(i)}: ${v}</title></circle>`; });
+  // who he was talking to: the same month columns, so the two charts line up
+  const P = MAP.P.slice(0, 14), RH = 30, LW = Math.max(L, 132), SW = LW + CW * N + R, SH = P.length * RH + 6;
+  const maxM = Math.max(...P.flatMap(p => p.month));
+  let sw = `<svg width="${SW}" height="${SH}" viewBox="0 0 ${SW} ${SH}" role="img" aria-label="Messages exchanged with Satoshi per month, top 14 correspondents">`;
+  P.forEach((p, r) => {
+    const cy = 3 + r * RH + RH / 2;
+    if (r % 2 === 0) sw += `<rect class="lane-bg" x="0" y="${cy - RH / 2}" width="${SW}" height="${RH}" rx="5"/>`;
+    sw += `<text class="lane-name" data-vzgo="${p.slug}" x="8" y="${cy + 4.5}">${esc(p.name)}</text>`;
+    p.month.forEach((v, i) => { if (v) sw += `<circle cx="${LW + i * CW + CW / 2}" cy="${cy}" r="${(3 + 9 * Math.sqrt(v / maxM)).toFixed(1)}" fill="${chColor(p.main)}" stroke="var(--surface)" stroke-width="1.5"><title>${esc(p.name)}, ${MAP.monthLabel(i)}: ${v}</title></circle>`; });
   });
   sw += `</svg>`;
-
-  const list = MILESTONES.map(o => `<li class="${o.off ? "off" : ""}"><time>${esc(longDay(o.d))}${o.approx ? " (approx.)" : ""}</time><b>${esc(o.t)}</b><p>${esc(o.s)}</p>
-    ${o.href ? `<a href="${o.href}" data-vzmi="${o.mi ?? ""}">${o.href.startsWith("#t-c") ? "Open commit" : "Open message"}</a>` : ""}${o.wiki ? `<a href="#wiki-${o.wiki}">Satoshipedia</a>` : ""}</li>`).join("");
-
-  body.innerHTML = `<div class="vz-tl">
-    <h2>Satoshi, start to finish</h2>
-    <p class="lead">From his first known email on ${esc(longDay(MAP.START))} to his last on ${esc(longDay(MAP.END))}: every message and commit in the archive, month by month, with the moments that mattered.</p>
-    <div class="vz-legend">${["e", "p", "x", "c"].map(k => `<span><i style="background:${chColor(k)}"></i>${k === "c" ? "Commits" : CH_NAME[k]}</span>`).join("")}</div>
-    <div class="vz-scroll" id="vzbars">${s}<div class="vz-tip" id="vztip2" hidden></div></div>
-    <div class="vz-scroll">${m}</div>
-    <p class="note">Busiest month: ${(() => { let bi = 0; for (let i = 0; i < N; i++) if (tot(i) > tot(bi)) bi = i; return `${MAP.monthLabel(bi)}, with ${fmtNum(tot(bi))} messages and commits`; })()}. Hover a month for the breakdown; select a milestone for its Satoshipedia article.</p>
-    <h3>Who he was talking to</h3>
-    <p class="note">The 14 people who exchanged the most with Satoshi. Each dot is a month; bigger means more messages. Select a name to see them on the map.</p>
-    <div class="vz-scroll">${sw}</div>
-    <h3>Milestones</h3>
-    <ol class="vz-mlist">${list}</ol>
-  </div>`;
+  $("#vzlanes").innerHTML = sw;
+}
+function tlPick(i, scroll = true) {
+  TL_SEL = i;
+  const g = tlGeom(), sel = $("#tlsel");
+  if (sel) sel.setAttribute("x", g.L + i * g.CW);
+  document.querySelectorAll("#vzbars .bar").forEach(b => b.classList.toggle("fade", +b.dataset.bar !== i));
+  document.querySelectorAll("#vzbars .pin").forEach(b => b.classList.toggle("on", +b.dataset.i === i));
+  document.querySelectorAll(".vz-mlist li").forEach(li => li.classList.toggle("on", +li.dataset.tli === i && !li.classList.contains("off")));
+  // keep the chosen month in view when the chart scrolls sideways (phones)
   const bars = $("#vzbars");
-  bars.addEventListener("pointermove", e => {
-    const h = e.target.closest && e.target.closest(".hit"), tip = $("#vztip2");
-    if (!h) { tip.hidden = true; return; }
-    const i = +h.dataset.i, r = bars.getBoundingClientRect();
-    tip.innerHTML = `<b>${MAP.monthLabel(i)}</b>${["e", "p", "x", "c"].map(k => `${k === "c" ? "Commits" : CH_NAME[k]}: ${fmtNum(MAP.sat[k][i])}`).join("<br>")}`;
-    tip.hidden = false;
-    tip.style.left = Math.min(e.clientX - r.left + 12 + bars.scrollLeft, bars.scrollWidth - tip.offsetWidth - 8) + "px";
-    tip.style.top = Math.max(0, e.clientY - r.top - tip.offsetHeight - 8) + "px";
-  });
-  bars.addEventListener("pointerleave", () => { $("#vztip2").hidden = true; });
+  if (bars && bars.scrollWidth > bars.clientWidth) {
+    const x = g.L + i * g.CW;
+    if (x < bars.scrollLeft + 40 || x > bars.scrollLeft + bars.clientWidth - 60) bars.scrollLeft = x - bars.clientWidth / 2;
+  }
+  const [after, before] = tlRange(i);
+  const sent = SENT.filter(x => !x.m.w && x.m.d >= Date.UTC(+after.slice(0, 4), +after.slice(5, 7) - 1, 1) / 1000 && x.m.d < Date.UTC(+before.slice(0, 4), +before.slice(5, 7) - 1, 1) / 1000);
+  const byT = new Map(); sent.forEach(x => byT.set(x.t, (byT.get(x.t) || 0) + 1));
+  const threads = [...byT.entries()].sort((a, b) => b[1] - a[1] || a[0].t.localeCompare(b[0].t)).slice(0, 8);
+  const miles = MILES.filter(o => o.month === i);
+  const counts = ["e", "p", "x", "c"].map(k => `<span><i style="background:${chColor(k)}"></i><b>${fmtNum(MAP.sat[k][i])}</b>${k === "c" ? "commits" : CH_NAME[k].toLowerCase()}</span>`).join("");
+  const q = s => "#search-" + encodeURIComponent(s);
+  $("#vzmonth").innerHTML = `<div class="vz-mhead">
+      <button class="ib" type="button" data-tlstep="-1" aria-label="Previous month" ${i ? "" : "disabled"}>${ic("chevron_left")}</button>
+      <h3>${esc(tlMonthName(i))}</h3>
+      <button class="ib" type="button" data-tlstep="1" aria-label="Next month" ${i < MAP.N - 1 ? "" : "disabled"}>${ic("chevron_right")}</button>
+    </div>
+    <div class="vz-mcounts">${counts}</div>
+    ${miles.length ? `<ul class="vz-mmiles">${miles.map(o => `<li><span class="num">${o.n}</span><div><b>${esc(o.t)}</b><small>${esc(longDay(o.d))}</small></div></li>`).join("")}</ul>` : ""}
+    ${threads.length ? `<h4>What he wrote</h4><div class="vz-threads">${threads.map(([t, n]) => `<a href="#t-${t.id}"><span>${esc(t.t)}</span><small>${n}</small></a>`).join("")}</div>` : `<p class="muted">No messages from Satoshi this month${MAP.sat.c[i] ? ", only commits" : ""}.</p>`}
+    <div class="vz-acts">
+      ${sent.length ? `<a class="pillbtn" href="${q(`from:me after:${after} before:${before}`)}">${ic("mail")}All ${fmtNum(sent.length)} messages</a>` : ""}
+      ${MAP.sat.c[i] ? `<a class="pillbtn" href="${q(`in:commits after:${after} before:${before}`)}">${ic("commit")}${fmtNum(MAP.sat.c[i])} commits</a>` : ""}
+      <button class="pillbtn" type="button" data-tlmap="${i}">${ic("hub")}On the map</button>
+    </div>`;
+  if (scroll) { const box = $("#vzbars"); box && box.scrollIntoView && box.scrollIntoView({ block: "nearest", behavior: REDUCED ? "auto" : "smooth" }); }
 }
 
 /* ── interactions ── */
@@ -2428,9 +2632,15 @@ $("#vzwin").addEventListener("click", e => {
   const t = e.target;
   const f = t.closest("[data-vzf]"); if (f) { vzFilter(f.dataset.vzf); return; }
   const md = t.closest("[data-vzm]"); if (md) { vzMode(md.dataset.vzm); return; }
-  const pp = t.closest("[data-vzp]"); if (pp) { vzSelect(pp.dataset.vzp || null); return; }
-  const go = t.closest("[data-vzgo]"); if (go) { location.hash = "#map~p~" + go.dataset.vzgo; return; }
+  const zz = t.closest("[data-vzz]"); if (zz) { const c = { x: VZ_VB.x + VZ_VB.w / 2, y: VZ_VB.y + VZ_VB.h / 2 }; if (zz.dataset.vzz === "fit") vzFit(); else vzZoomAt(zz.dataset.vzz === "in" ? 1.8 : 1 / 1.8, c); return; }
+  const go = t.closest("[data-vzgo]");
+  if (go) { if (VZ_VIEW === "tl") { VZ_FOCUS_NEXT = 2.6; location.hash = "#map~p~" + go.dataset.vzgo; } else vzGo(go.dataset.vzgo); return; }
+  const pp = t.closest("[data-vzp]"); if (pp) { vzSelect(pp.dataset.vzp || null); if (!pp.dataset.vzp) vzFit(); return; }
+  const tk = t.closest("[data-vzti]"); if (tk) { vzStop(); vzSetT(+tk.dataset.vzti); return; }
   if (t.closest("#vzplay")) { vzPlay(); return; }
+  const st = t.closest("[data-tlstep]"); if (st) { tlPick(Math.max(0, Math.min(MAP.N - 1, TL_SEL + +st.dataset.tlstep)), false); return; }
+  const pk = t.closest("[data-tlpick]"); if (pk) { tlPick(+pk.dataset.tlpick); return; }
+  const tm = t.closest("[data-tlmap]"); if (tm) { vzStop(); VZ_T = +tm.dataset.tlmap; location.hash = "#map"; return; }
   const a = t.closest("a[href]");
   if (a && /^#t-/.test(a.getAttribute("href") || "")) {
     LAST_LIST = location.hash;
@@ -2442,12 +2652,22 @@ function mapKey(e) {
   const tag = (e.target.tagName || "").toLowerCase();
   if (e.key === "Escape") {
     if ($("#layer").childElementCount) closeLayer();
-    else if (VZ_SEL) vzSelect(null);
+    else if (VZ_SEL) { vzSelect(null); vzFit(); }
+    else if (vzZoom() > 1.01 && VZ_VIEW === "net") vzFit();
     else mapClose();
     return;
   }
-  if (tag === "input" || e.metaKey || e.ctrlKey || e.altKey) return;
-  if (VZ_VIEW === "net" && (e.key === " " || e.key === "k") && tag !== "button") { e.preventDefault(); vzPlay(); }
+  if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (VZ_VIEW === "net") {
+    if ((e.key === " " || e.key === "k") && tag !== "button") { e.preventDefault(); vzPlay(); }
+    else if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); vzStop(); vzSetT(Math.max(0, Math.min(MAP.N - 1, VZ_T + (e.key === "ArrowRight" ? 1 : -1)))); }
+    else if (e.key === "+" || e.key === "=") vzZoomAt(1.5, { x: VZ_VB.x + VZ_VB.w / 2, y: VZ_VB.y + VZ_VB.h / 2 });
+    else if (e.key === "-" || e.key === "_") vzZoomAt(1 / 1.5, { x: VZ_VB.x + VZ_VB.w / 2, y: VZ_VB.y + VZ_VB.h / 2 });
+    else if (e.key === "0") vzFit();
+    else if (e.key === "/" || e.key === "f") { const f = $("#vzfind"); if (f) { e.preventDefault(); f.focus(); } }
+  } else if (VZ_VIEW === "tl" && (e.key === "ArrowLeft" || e.key === "ArrowRight") && TL_SEL != null) {
+    e.preventDefault(); tlPick(Math.max(0, Math.min(MAP.N - 1, TL_SEL + (e.key === "ArrowRight" ? 1 : -1))), false);
+  }
 }
 
 /* ── page titles and the hidden page heading follow the current view ── */

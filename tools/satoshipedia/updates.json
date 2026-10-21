@@ -3,6 +3,18 @@
   "updates": [
     {
       "date": "2026-10-21",
+      "title": "A bigger, easier Satoshi Map",
+      "items": [
+        "Connections: zoom and pan the chart (scroll, pinch, drag or the + and − buttons); names stay readable and more appear as you zoom in.",
+        "Find anyone with the new “Find a person” box; picking someone zooms to them.",
+        "A bigger month slider with year marks and milestone dots you can jump to, and a compact key on the chart.",
+        "Timeline: one big chart with numbered milestone pins. Select any month to see what Satoshi wrote then, with links to every message and commit.",
+        "Arrow keys step through months, and Escape steps back out one level at a time."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-21",
       "title": "Update log",
       "items": [
         "This page: a log of every update to Satoshi Mail, newest first, with an RSS feed to follow along."
@@ -17,7 +29,12 @@
         "Clearer contrast for grey text, labels and badges, bigger touch targets for checkboxes, and tidier headings for screen readers.",
         "The site is registered with Google Search Console and its sitemap submitted."
       ],
-      "commits": ["c8fff6d", "d82d386", "4ea5e89", "d7de37d"]
+      "commits": [
+        "c8fff6d",
+        "d82d386",
+        "4ea5e89",
+        "d7de37d"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -26,7 +43,9 @@
         "The first visit downloads less than half as much: commit diffs load only when you open a commit or search, and only the icons in use are downloaded.",
         "Repeat visits load almost instantly, because the app's files are now cached for a year and renamed whenever they change."
       ],
-      "commits": ["01f42ee"]
+      "commits": [
+        "01f42ee"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -34,7 +53,9 @@
       "items": [
         "The message list says “Satoshi” where it used to say “me”, as in “Satoshi, Hal 3”. Searching from:me still works."
       ],
-      "commits": ["71867ae"]
+      "commits": [
+        "71867ae"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -44,7 +65,12 @@
         "Visits are counted with Vercel Web Analytics, which uses no cookies and doesn't record what you search for.",
         "The “page not found” page keeps its styling at any address."
       ],
-      "commits": ["5e2ba6a", "42b9158", "9beadaf", "5649fc9"]
+      "commits": [
+        "5e2ba6a",
+        "42b9158",
+        "9beadaf",
+        "5649fc9"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -55,7 +81,11 @@
         "Satoshipedia's Adam Back and Wei Dai articles cite both, including Dai's 2023 answers to COPA's lawyers.",
         "A credit to Luke Igel and Riley Walz's Jmail, which inspired Satoshi Mail, in the sidebar, About and the beta notice."
       ],
-      "commits": ["62edda7", "f76e28b", "0d94a6f"]
+      "commits": [
+        "62edda7",
+        "f76e28b",
+        "0d94a6f"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -63,7 +93,9 @@
       "items": [
         "Arial, square corners, grey buttons, the red COMPOSE button and yellow highlights, as Gmail looked when Satoshi was writing."
       ],
-      "commits": ["a878e56"]
+      "commits": [
+        "a878e56"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -74,7 +106,9 @@
         "The exact time of Satoshi's last email to Gavin Andresen, with Gavin's reply.",
         "New Satoshipedia articles: Nicholas Bohm, COPA v Wright, Kleiman v. Wright and the forum staff board."
       ],
-      "commits": ["c4d508e"]
+      "commits": [
+        "c4d508e"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -84,7 +118,14 @@
         "A Sources page under Settings → Archive lists where everything comes from, instead of source chips on every conversation.",
         "The density setting, the apps grid and the People and More apps were removed."
       ],
-      "commits": ["33d9f0c", "cb84e6b", "b4d3af9", "b6a6a41", "069a119", "aa6f327"]
+      "commits": [
+        "33d9f0c",
+        "cb84e6b",
+        "b4d3af9",
+        "b6a6a41",
+        "069a119",
+        "aa6f327"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -92,7 +133,9 @@
       "items": [
         "Searches like “Hal Finney” or “did Satoshi have any photos” get a short AI-written overview, answered only from this archive and Satoshipedia, with links to the sources."
       ],
-      "commits": ["0c069e0"]
+      "commits": [
+        "0c069e0"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -100,7 +143,10 @@
       "items": [
         "Jmail's colours, rows and app dock, with an overview banner at the top of search results."
       ],
-      "commits": ["0d506b8", "9f36ea2"]
+      "commits": [
+        "0d506b8",
+        "9f36ea2"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -108,7 +154,9 @@
       "items": [
         "Every one of satoshin.name's 567 posts and emails was matched to the archive, and Satoshi Mail has six BitcoinTalk posts it lacks."
       ],
-      "commits": ["57d7744"]
+      "commits": [
+        "57d7744"
+      ]
     },
     {
       "date": "2026-10-20",
@@ -116,7 +164,9 @@
       "items": [
         "Satoshi Mail, Satoshipedia and Satoshi Map, open source under the MIT license: every email, forum post and commit by Satoshi Nakamoto, 2008–2011."
       ],
-      "commits": ["ea26fbd"]
+      "commits": [
+        "ea26fbd"
+      ]
     }
   ]
 }

@@ -157,7 +157,7 @@ const $ = s => d.querySelector(s);
   const vml = d.querySelector('.vz-mlist a[href^="#t-"]'); const mh = vml.getAttribute("href"); vml.click(); await go(mh); await wait(220);
   check("map -> thread", $("#vzwin").hidden && !!$("#msgs") && !d.body.classList.contains("in-map"), mh);
   await go("#wiki-hal-finney"); check("wiki map link", !!$('#wkmain a[href="#map~p~hal-finney"]'));
-  await go("#map"); d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); await wait(220);
+  await go("#map"); for (let n = 0; n < 3 && !$("#vzwin").hidden && w.location.hash.startsWith("#map"); n++) { d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); await wait(400); }   // Esc: deselect, then zoom out, then close
   check("map esc closes", $("#vzwin").hidden && !w.location.hash.startsWith("#map"), w.location.hash);
   await go("#t-x68"); await wait(20);
   check("no source chips on conversations", !$(".conv-src") && !d.querySelector("#main a[href^='https://www.blocktrainer'], #main a[href^='https://satoshin.name/']"), [!!$(".conv-src"), w.location.hash, [...d.querySelectorAll("#main a[href^='https://www.blocktrainer'], #main a[href^='https://satoshin.name/']")].map(a => a.href + " in " + a.parentElement.className).join(" ")].join(" / "));

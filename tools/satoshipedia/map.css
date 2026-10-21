@@ -17,54 +17,85 @@
 body.in-map .scrim { z-index: 65; }
 body.in-map .dialog { z-index: 81; }
 
-/* connections */
-.vz-net { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 330px; grid-template-rows: auto minmax(0, 1fr) auto; }
-.vz-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+/* connections: the chart fills its space; names and strokes keep their on-screen size at any zoom (--k) */
+.vz-net { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-rows: auto minmax(0, 1fr) auto; }
+.vz-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.vz-find { position: relative; display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); min-width: 0; flex: 0 1 240px; }
+.vz-find:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.vz-find > .ms { font-size: 19px; color: var(--ink-3); }
+.vz-find input { border: 0; outline: 0; background: none; font: 14px var(--ui); color: var(--ink); width: 100%; min-width: 0; }
+.vz-findres { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max(100%, 260px); background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .18); padding: 4px; display: grid; gap: 1px; }
+.vz-findres button { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 7px 8px; border: 0; border-radius: 7px; background: none; color: var(--ink); font: 14px var(--ui); text-align: left; cursor: pointer; }
+.vz-findres button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vz-findres button small { color: var(--ink-3); font-size: 12px; }
+.vz-findres button[aria-selected="true"], .vz-findres button:hover { background: var(--hover); }
+.vz-findres i { width: 10px; height: 10px; border-radius: 50%; }
+.vz-findres i.x { border-radius: 2px; transform: rotate(45deg) scale(.86); }
+.vz-findres p { margin: 6px 8px; color: var(--ink-3); font-size: 13px; }
+.vz-findres[hidden], .vz-tip[hidden] { display: none; }
 .vz-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.vz-chip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 15px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font: 500 13px var(--ui); cursor: pointer; }
+.vz-chip { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font: 500 13px var(--ui); cursor: pointer; }
 .vz-chip[aria-pressed="true"] { background: var(--accent-soft); border-color: transparent; color: var(--ink); }
 .vz-chip i, .vz-key i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .vz-chip i.x, .vz-key i.x { border-radius: 2px; transform: rotate(45deg) scale(.86); }
-.vz-seg { display: inline-flex; margin-left: auto; border: 1px solid var(--line); border-radius: 15px; overflow: hidden; }
-.vz-seg button { border: 0; background: none; height: 30px; padding: 0 12px; color: var(--ink-2); font: 500 13px var(--ui); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.vz-seg { display: inline-flex; margin-left: auto; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.vz-seg button { border: 0; background: none; height: 32px; padding: 0 12px; color: var(--ink-2); font: 500 13px var(--ui); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .vz-seg button .ms { font-size: 18px; }
 .vz-seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); }
-.vz-stage { position: relative; min-height: 0; min-width: 0; overflow: hidden; }
-.vz-stage svg { width: 100%; height: 100%; display: block; }
-.vz-stage .ring { fill: none; stroke: var(--line); stroke-dasharray: 2 5; }
-.vz-stage .spoke { stroke: var(--line); }
-.vz-stage .yr { fill: var(--ink-2); font: 700 19px var(--ui); letter-spacing: .5px; }
-.vz-stage .hint { fill: var(--ink-3); font: 16px var(--ui); }
-.vz-stage .edge { stroke-width: 1; }
-.vz-stage .node { cursor: pointer; stroke: var(--surface); stroke-width: 2; transition: opacity 240ms var(--ease); }
+
+.vz-stage { position: relative; min-height: 0; min-width: 0; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--satoshi) 6%, var(--surface)) 0, var(--surface) 62%); }
+.vz-stage.zoomed { touch-action: none; cursor: grab; }
+.vz-stage.dragging { cursor: grabbing; }
+.vz-stage svg { width: 100%; height: 100%; display: block; --k: 2; }
+.vz-stage .ring { fill: none; stroke: var(--line); stroke-dasharray: 3 6; }
+.vz-stage .spoke { stroke: var(--line); stroke-width: 1.5; }
+.vz-stage .yr { fill: var(--ink-2); font-weight: 700; font-family: var(--ui); font-size: calc(14px * var(--k)); letter-spacing: .3px; }
+.vz-stage .edge { stroke-width: 1; transition: stroke-opacity 160ms; }
+.vz-stage .node { cursor: pointer; stroke: var(--surface); stroke-width: 1.5; transition: opacity 240ms var(--ease); }
+.vz-stage .node:hover { stroke: var(--ink); }
 .vz-stage .node.off { opacity: 0; pointer-events: none; }
-.vz-stage .node.dim, .vz-stage .edge.dim, .vz-stage .lbl.dim { opacity: .14; }
+.vz-stage .node.dim, .vz-stage .edge.dim, .vz-stage .lbl.dim { opacity: .16; }
 .vz-stage .node.sel { stroke: var(--ink); stroke-width: 3; }
-.vz-stage .lbl { fill: var(--ink-2); font: 600 17px var(--ui); pointer-events: none; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
-.vz-stage .lbl.sel { fill: var(--ink); font-weight: 700; }
-.vz-stage .sat text { fill: var(--ink); font: 700 19px var(--ui); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; }
+.vz-stage .lbl { fill: var(--ink-2); font-weight: 600; font-family: var(--ui); font-size: calc(13px * var(--k)); pointer-events: none;
+  paint-order: stroke; stroke: var(--surface); stroke-width: calc(4px * var(--k)); stroke-linejoin: round; }
+.vz-stage .lbl.sel { fill: var(--ink); font-weight: 700; font-size: calc(15px * var(--k)); }
+.vz-stage .satname { fill: var(--ink); font-weight: 700; font-family: var(--ui); font-size: calc(15px * var(--k)); paint-order: stroke; stroke: var(--surface); stroke-width: calc(5px * var(--k)); }
+.vz-legendbox { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: grid; gap: 3px; max-width: 290px; padding: 8px 10px; border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0, 0, 0, .08); font-size: 12px; color: var(--ink-2); }
+.vz-legendbox .vz-key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--ink); }
+.vz-legendbox p { margin: 0; display: flex; align-items: center; gap: 6px; color: var(--ink-3); }
+.vz-legendbox p .ms { font-size: 16px; }
+.vz-key span { display: inline-flex; align-items: center; gap: 6px; }
+.vz-zoom { position: absolute; right: 12px; bottom: 12px; z-index: 2; display: grid; border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+  background: var(--surface); box-shadow: 0 2px 8px rgba(0, 0, 0, .12); }
+.vz-zoom button { width: 40px; height: 40px; border: 0; background: none; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.vz-zoom button + button { border-top: 1px solid var(--line); }
+.vz-zoom button:hover:not(:disabled) { background: var(--hover); }
+.vz-zoom button:disabled { color: var(--ink-3); opacity: .5; cursor: default; }
 .vz-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 18px rgba(0, 0, 0, .16);
   padding: 8px 10px; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); max-width: 240px; }
 .vz-tip b { display: block; color: var(--ink); font-size: 13.5px; }
+
 .vz-side { grid-row: 2; grid-column: 2; border-left: 1px solid var(--line); overflow: auto; padding: 16px; min-height: 0; scrollbar-width: thin; }
 .vz-side h2 { margin: 0 0 2px; font: 600 22px/1.2 var(--serif); }
 .vz-side .sub { color: var(--ink-3); font-size: 12.5px; margin: 0 0 12px; }
-.vz-side h3 { margin: 18px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-3); }
+.vz-side h3, .vz-month h4 { margin: 18px 0 8px; font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-3); }
 .vz-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .vz-stats div { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
 .vz-stats b { display: block; font-size: 19px; font-weight: 600; color: var(--ink); }
 .vz-stats small { color: var(--ink-3); font-size: 12px; }
-.vz-key { display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
-.vz-key span { display: flex; align-items: center; gap: 8px; }
-.vz-key .note { color: var(--ink-3); font-size: 12px; }
-.vz-top10 { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: n; }
-.vz-top10 button, .vz-threads a { display: grid; grid-template-columns: 20px 12px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; padding: 5px 6px; border: 0; border-radius: 8px;
+.vz-top10 { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.vz-top10 button, .vz-threads a { display: grid; grid-template-columns: 20px 12px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; padding: 6px; border: 0; border-radius: 8px;
   background: none; color: var(--ink); font: 13.5px var(--ui); text-align: left; cursor: pointer; text-decoration: none; }
 .vz-top10 button:hover, .vz-threads a:hover { background: var(--hover); }
 .vz-top10 .n { color: var(--ink-3); font-size: 12px; text-align: right; }
 .vz-top10 i { width: 10px; height: 10px; border-radius: 50%; }
 .vz-top10 i.x { border-radius: 2px; transform: rotate(45deg) scale(.86); }
 .vz-top10 .c { color: var(--ink-3); font-size: 12px; }
+.vz-hint { display: flex; gap: 6px; align-items: flex-start; margin: 16px 0 0; color: var(--ink-3); font-size: 12.5px; line-height: 1.4; }
+.vz-hint .ms { font-size: 17px; }
 .vz-threads { display: grid; gap: 2px; }
 .vz-threads a { grid-template-columns: minmax(0, 1fr) auto; }
 .vz-threads a span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -73,72 +104,132 @@ body.in-map .dialog { z-index: 81; }
 .vz-acts .pillbtn { height: 34px; }
 .vz-back { border: 0; background: none; color: var(--accent); font: 500 13px var(--ui); cursor: pointer; padding: 0; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 4px; }
 .vz-back .ms { font-size: 18px; }
-.vz-spark { display: block; width: 100%; height: 44px; }
-.vz-spark rect { fill: var(--ch-e); }
-.vz-scrub { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
-.vz-scrub .play { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; display: grid; place-items: center; flex: none; }
-.vz-scrub input { flex: 1; min-width: 80px; accent-color: var(--satoshi); }
-.vz-scrub output { min-width: 78px; font: 600 15px var(--ui); color: var(--ink); text-align: right; }
-.vz-scrub small { color: var(--ink-3); font-size: 12.5px; min-width: 0; }
+.vz-spark { display: block; width: 100%; height: 48px; }
+
+/* the time scrubber: big play button, the month in large type, year marks and milestone ticks on the track */
+.vz-scrub { grid-column: 1 / -1; display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 6px 16px;
+  padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--surface); }
+.vz-scrub .play { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--satoshi); color: #fff; cursor: pointer; display: grid; place-items: center; flex: none;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--satoshi) 40%, transparent); }
+.vz-scrub .play .ms { font-size: 28px; }
+.vz-now { display: grid; min-width: 150px; }
+.vz-now output { font: 700 22px/1.1 var(--ui); color: var(--ink); font-variant-numeric: tabular-nums; }
+.vz-now small { color: var(--ink-3); font-size: 12px; line-height: 1.3; }
+.vz-track { position: relative; padding-bottom: 20px; min-width: 0; }
+.vz-track input { --fill: 100%; width: 100%; margin: 0; height: 22px; background: transparent; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.vz-track input::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--satoshi) var(--fill), var(--line) var(--fill)); }
+.vz-track input::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line); }
+.vz-track input::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--satoshi); }
+.vz-track input::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: var(--surface); border: 3px solid var(--satoshi); box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+.vz-track input::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--satoshi); box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+.vz-marks { position: absolute; left: 10px; right: 10px; top: 0; bottom: 0; pointer-events: none; }
+.vz-marks .y { position: absolute; left: calc(var(--f) * 1%); bottom: 0; transform: translateX(-50%); font-size: 11.5px; font-weight: 700; color: var(--ink-2); }
+.vz-marks .y::before { content: ""; position: absolute; left: 50%; bottom: 17px; height: 7px; border-left: 1.5px solid var(--ink-3); }
+.vz-marks .m { position: absolute; left: calc(var(--f) * 1%); top: -3px; width: 18px; height: 10px; transform: translateX(-50%); padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto; }
+.vz-marks .m::after { content: ""; position: absolute; left: 6px; top: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+.vz-marks .m.past::after { background: var(--satoshi); }
+.vz-marks .m:hover::after { transform: scale(1.5); }
+
 .vz-list { grid-row: 2; grid-column: 1; overflow: auto; padding: 0 16px 16px; min-height: 0; }
-.vz-list table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.vz-list table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .vz-list th { position: sticky; top: 0; background: var(--surface); text-align: left; font-size: 12px; color: var(--ink-3); font-weight: 600; padding: 10px 8px 8px; border-bottom: 1px solid var(--line); }
-.vz-list td { padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.vz-list td { padding: 8px; border-bottom: 1px solid var(--line); }
 .vz-list td.num, .vz-list th.num { text-align: right; font-variant-numeric: tabular-nums; }
-.vz-list button { border: 0; background: none; padding: 0; color: var(--accent); font: 500 13.5px var(--ui); cursor: pointer; text-align: left; }
+.vz-list button { border: 0; background: none; padding: 0; color: var(--accent); font: 500 14px var(--ui); cursor: pointer; text-align: left; }
 .vz-list i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
 .vz-list i.x { border-radius: 2px; transform: rotate(45deg) scale(.86); }
 
-/* timeline */
-.vz-tl { padding: 16px max(16px, env(safe-area-inset-left, 0px)) 32px; max-width: 1220px; margin: 0 auto; box-sizing: border-box; }
-.vz-tl h2 { font: 600 24px/1.2 var(--serif); margin: 4px 0 4px; }
-.vz-tl .lead { color: var(--ink-2); margin: 0 0 14px; max-width: 70ch; line-height: 1.5; }
-.vz-tl h3 { font: 600 17px var(--serif); margin: 26px 0 6px; }
-.vz-tl .note { color: var(--ink-3); font-size: 12.5px; margin: 4px 0 0; }
-.vz-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); margin: 0 0 6px; }
+/* timeline: one big chart with numbered milestone pins; the selected month's details beside it */
+.vz-tl { padding: 18px max(18px, env(safe-area-inset-left, 0px)) 36px; max-width: 1320px; margin: 0 auto; box-sizing: border-box; }
+.vz-tlhead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; margin-bottom: 10px; }
+.vz-tl h2 { font: 600 26px/1.2 var(--serif); margin: 0 0 4px; }
+.vz-tl .lead { color: var(--ink-2); margin: 0; max-width: 64ch; line-height: 1.5; }
+.vz-tl > h3 { font: 600 19px var(--serif); margin: 30px 0 8px; }
+.vz-tl .note { color: var(--ink-3); font-size: 12.5px; margin: 0 0 8px; }
+.vz-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
 .vz-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.vz-legend i { width: 10px; height: 10px; border-radius: 2px; }
+.vz-legend i { width: 11px; height: 11px; border-radius: 3px; }
+.vz-legend .pinkey { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--satoshi); color: #fff; font-size: 10.5px; }
+.vz-tlgrid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.vz-chartbox { position: relative; min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px 4px; background: var(--surface); }
 .vz-scroll { overflow-x: auto; position: relative; scrollbar-width: thin; }
-.vz-scroll svg { display: block; min-width: 940px; width: 100%; height: auto; }
-.vz-scroll .ax { fill: var(--ink-3); font: 11px var(--ui); }
+.vz-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.vz-scroll svg { display: block; }
+.vz-scroll .ax { fill: var(--ink-3); font: 11.5px var(--ui); }
 .vz-scroll .ax.yr { font-weight: 700; fill: var(--ink-2); }
 .vz-scroll .grid { stroke: var(--line); }
 .vz-scroll .base { stroke: var(--ink-3); }
-.vz-scroll .hit { fill: transparent; cursor: default; }
+.vz-scroll .hit { fill: transparent; cursor: pointer; }
 .vz-scroll .hit:hover { fill: color-mix(in srgb, var(--ink) 5%, transparent); }
-.vz-scroll .ms-line { stroke: var(--ink-3); stroke-dasharray: 2 3; }
-.vz-scroll .ms-dot { fill: var(--satoshi); stroke: var(--surface); stroke-width: 2; }
-.vz-scroll a .ms-lbl { fill: var(--ink); font: 500 11.5px var(--ui); }
-.vz-scroll a:hover .ms-lbl { fill: var(--accent); text-decoration: underline; }
-.vz-scroll .lane-name { fill: var(--accent); font: 500 12.5px var(--ui); cursor: pointer; }
+.vz-scroll .selcol { fill: color-mix(in srgb, var(--satoshi) 13%, transparent); transition: x 200ms var(--ease); }
+.vz-scroll .bar { transition: opacity 200ms; }
+.vz-scroll .bar.fade { opacity: .55; }
+.vz-scroll .pin { cursor: pointer; }
+.vz-scroll .pin circle { fill: var(--surface); stroke: var(--satoshi); stroke-width: 2; }
+.vz-scroll .pin text { fill: var(--ink); font: 700 10.5px var(--ui); pointer-events: none; }
+.vz-scroll .pin line { stroke: var(--satoshi); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.vz-scroll .pin.on circle { fill: var(--satoshi); }
+.vz-scroll .pin.on text { fill: #fff; }
+.vz-scroll .lane-name { fill: var(--accent); font: 500 13px var(--ui); cursor: pointer; }
 .vz-scroll .lane-name:hover { text-decoration: underline; }
 .vz-scroll .lane-bg { fill: var(--surface-2); }
-.vz-scroll .tip { position: absolute; }
-.vz-mlist { list-style: none; margin: 8px 0 0; padding: 0 0 0 18px; border-left: 2px solid var(--line); display: grid; gap: 12px; }
-.vz-mlist li { position: relative; }
-.vz-mlist li::before { content: ""; position: absolute; left: -25px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--satoshi); border: 2px solid var(--surface); }
-.vz-mlist li.off::before { background: var(--ink-3); }
-.vz-mlist time { display: block; font-size: 12px; color: var(--ink-3); font-weight: 600; letter-spacing: .3px; }
-.vz-mlist b { font-weight: 600; }
-.vz-mlist p { margin: 2px 0 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
-.vz-mlist a { color: var(--accent); text-decoration: none; font-size: 13px; margin-right: 12px; }
-.vz-mlist a:hover { text-decoration: underline; }
+.vz-month { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 14px; background: var(--surface); position: sticky; top: 8px; }
+.vz-mhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px; }
+.vz-mhead h3 { margin: 0; text-align: center; font: 600 18px var(--serif); }
+.vz-mcounts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.vz-mcounts span { display: flex; align-items: center; gap: 6px; background: var(--surface-2); border-radius: 8px; padding: 6px 8px; font-size: 12px; color: var(--ink-3); }
+.vz-mcounts b { font-size: 15px; color: var(--ink); }
+.vz-mcounts i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.vz-mmiles { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.vz-mmiles li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.vz-mmiles b { display: block; font-size: 13.5px; }
+.vz-mmiles small { color: var(--ink-3); font-size: 12px; }
+.vz-tl .num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--satoshi); color: #fff; font: 700 11px var(--ui); }
+.vz-month .muted { color: var(--ink-3); font-size: 13px; margin: 12px 0 0; }
 
+.vz-mlist { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.vz-mlist li { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 46px; background: var(--surface); transition: border-color 160ms, box-shadow 160ms; }
+.vz-mlist li .num { position: absolute; left: 13px; top: 13px; }
+.vz-mlist li.on { border-color: var(--satoshi); box-shadow: 0 0 0 2px color-mix(in srgb, var(--satoshi) 25%, transparent); }
+.vz-mlist li.off { padding-left: 14px; opacity: .8; }
+.vz-mlist time { display: block; font-size: 12px; color: var(--ink-3); font-weight: 600; letter-spacing: .2px; }
+.vz-mlist b { font-weight: 700; }
+.vz-mlist p { margin: 3px 0 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
+.vz-mlist .acts { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; }
+.vz-mlist a, .vz-mlist .linkbtn { color: var(--accent); text-decoration: none; font-size: 13px; }
+.vz-mlist a:hover, .vz-mlist .linkbtn:hover { text-decoration: underline; }
+
+@container wk (max-width: 980px) {
+  .vz-tlgrid { grid-template-columns: minmax(0, 1fr); }
+  .vz-month { position: static; }
+}
 @container wk (max-width: 860px) {
   .vz-net { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto; height: auto; }
-  .vz-stage { aspect-ratio: 1 / 1; max-height: 78vh; }
+  .vz-stage { aspect-ratio: 1 / 1; max-height: 74vh; }
   .vz-side { grid-row: 4; grid-column: 1; border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
-  .vz-scrub { grid-row: 3; position: sticky; bottom: 0; background: var(--surface); z-index: 3; }
+  .vz-scrub { grid-row: 3; position: sticky; bottom: 0; z-index: 3; }
   .vz-list { grid-row: 2; overflow: visible; }
+  .vz-legendbox p { display: none; }
 }
 @container wk (max-width: 620px) {
   .vz-top .wk-brand > span, .vz-top .grow { display: none; }
   .vz-tabs { margin-left: 0; }
   .vz-tabs a { padding: 6px 10px; }
   .vz-seg button span.t { display: none; }
-  .vz-scrub small { display: none; }
+  .vz-find { flex: 1 1 100%; order: -1; }
+  .vz-scrub { grid-template-columns: auto minmax(0, 1fr); padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .vz-scrub .play { width: 40px; height: 40px; }
+  .vz-now { min-width: 0; }
+  .vz-now output { font-size: 18px; }
+  .vz-now small { display: none; }
+  .vz-track { grid-column: 1 / -1; }
+  .vz-legendbox { left: 8px; bottom: 8px; padding: 6px 8px; max-width: calc(100% - 70px); }
+  .vz-zoom { right: 8px; bottom: 8px; }
+  .vz-zoom button { width: 36px; height: 36px; }
+  .vz-tl h2 { font-size: 22px; }
 }
 @media (max-width: 440px) {
   .dk { min-width: 48px; padding: 0 2px; font-size: 9.5px; }
   .dock { padding: 0 3px; }
 }
+.vz-stage .start { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
