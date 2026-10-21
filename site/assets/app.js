@@ -1212,6 +1212,7 @@ $("#suggest").addEventListener("pointerdown", e => { const sg = e.target.closest
 
 /* ═════════════ Satoshipedia (the Satoshi Mail encyclopedia) ═════════════ */
 const MADE_BY = `Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a>`;
+const INSPIRED = `Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>`;
 const WIKI = JSON.parse(document.getElementById("wiki-data").textContent);
 const WA = WIKI.articles;
 const WBY = new Map(WA.map(a => [a.slug, a]));
@@ -1398,7 +1399,7 @@ function wkFoot() {
   $("#wkfoot").innerHTML = `<div>
     <nav><a href="#wiki">Satoshipedia</a><a href="#wiki~about">About</a><a href="#wiki~all">All articles</a><a href="#inbox">Satoshi Mail inbox</a><a href="https://en.wikipedia.org/wiki/Satoshi_Nakamoto" target="_blank" rel="noopener">Wikipedia: Satoshi Nakamoto</a><button class="linkbtn" data-act="feedback">Send feedback</button></nav>
     <div class="made-by-foot">${MADE_BY} · <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a> · <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">Open source (MIT) on GitHub</a></div>
-    <div class="made-by-foot">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</div>
+    <div class="made-by-foot">${INSPIRED}.</div>
     <div><b>Beta:</b> Satoshi Mail and Satoshipedia are still in development. Satoshipedia is the encyclopedia of Satoshi Mail. Its ${WA.length} articles were written with AI assistance using only the Satoshi Nakamoto Institute, GitHub (nakamoto-archive and the Bitcoin Core repository), bitcoin.org, Blocktrainer's archive, satoshin.name and Wikipedia (CC BY-SA 4.0), and link to their sources; check them before relying on a claim. Quotations are from the archive. Updated ${esc(WIKI.updated)}.</div>
   </div>`;
 }
@@ -1873,6 +1874,7 @@ const BETA_INFO = () => `<div class="beta-dlg"><h2><span>Satoshi Mail is in beta
   <ul><li>features that change, move or aren't finished yet;</li><li>bugs, or screens that don't work well on every device;</li><li>articles and data that are still being checked and expanded.</li></ul>
   <p>The messages come from the Satoshi Nakamoto Institute, nakamoto-archive and the Bitcoin Core repository on GitHub, and bitcoin.org, and are cross-checked against Blocktrainer's archive and satoshin.name. Satoshipedia's articles were written with AI assistance and cite Wikipedia and those sources, so check the original before relying on a detail.</p>
   <p class="muted">${MADE_BY} (@TylerHowell88) · Beta · last updated ${esc(WIKI.updated)}</p>
+  <p class="muted beta-inspired">${INSPIRED}.</p>
   <div class="end"><button class="pillbtn" data-act="beta-ok">Got it</button></div></div>`;
 ACTIONS.beta = () => { $("#betanote").hidden = true; dialog(BETA_INFO()); };
 ACTIONS["beta-ok"] = () => {
