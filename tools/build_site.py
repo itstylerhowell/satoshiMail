@@ -25,6 +25,7 @@ import datetime as dt
 import html
 import json
 import re
+import urllib.parse
 import shutil
 import sys
 from pathlib import Path
@@ -572,7 +573,10 @@ class Site:
                    app_href="#about", og_type="website"), priority=0.5)
         nf = self.page("404.html", "Page not found – Satoshi Mail", "This page doesn't exist. Browse Satoshi Nakamoto's emails, forum posts and commits, or Satoshipedia, instead.",
                        '<h1>Page not found</h1><p class="lead">That page isn\'t here. Try <a href="./satoshipedia/">Satoshipedia</a>, the <a href="./conversations/">conversations</a> or <a href="./">Satoshi Mail</a>.</p>', [], [])
-        (self.out / "404.html").write_text(nf.replace('href="../', 'href="./'), encoding="utf-8")
+        # Cloudflare serves 404.html at whatever address was asked for, so its links must be absolute
+        root = urllib.parse.urlsplit(self.base).path or "/"
+        nf = re.sub(r'(href|src)="(?:\.\./|\./)*(?![a-z]+:|#|/)([^"]*)"', lambda m: f'{m.group(1)}="{root}{m.group(2)}"', nf)
+        (self.out / "404.html").write_text(nf, encoding="utf-8")
 
     def build_app(self):
         p = self.p
