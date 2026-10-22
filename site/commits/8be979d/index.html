@@ -6,20 +6,20 @@
 <title>now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 8be979d to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/8be979d/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8be979d/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 8be979d to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/8be979d/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8be979d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="now compiles on 64-bit Ubuntu… (r54) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 8be979d to Bitcoin, 28 January 2010: now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added superfluous GetEventHandler()'s, there's still a bug on wx2.9.0 that the status number is mashed up for some reason otherwise seems to run fine", "url": "https://satoshimail.vercel.app/commits/8be979d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-01-28T21:49:20Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8be979d9aef606f2a196a2addcf80473d571185b"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "now compiles on 64-bit Ubuntu Karmic…", "item": "https://satoshimail.vercel.app/commits/8be979d/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "now compiles on 64-bit Ubuntu Karmic with wxWidgets-2.9.0, fixes for wxWidgets-2.9.0, added superfluous GetEventHandler()'s, there's still a bug on wx2.9.0 that the status number is mashed up for some reason otherwise seems to run fine", "url": "https://satoshimail.pages.dev/commits/8be979d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-01-28T21:49:20Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8be979d9aef606f2a196a2addcf80473d571185b"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "now compiles on 64-bit Ubuntu Karmic…", "item": "https://satoshimail.pages.dev/commits/8be979d/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -89,8 +87,7 @@
 +cd /usr/local/wxWidgets-2.8.9 or 2.9.0
  mkdir buildgtk
  cd buildgtk
- ../configure --with-gtk --enable-debug --disable-shared --enable-monolithic
-</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -0,0 +1,89 @@
+ ../configure --with-gtk --enable-debug --disable-shared --enable-monolithic</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -0,0 +1,89 @@
 +# Copyright (c) 2009 Satoshi Nakamoto
 +# Distributed under the MIT/X11 software license, see the accompanying
 +# file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -179,8 +176,7 @@
 +
 +clean:
 +	-rm obj/*
-+	-rm headers.h.gch
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
++	-rm headers.h.gch</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1,4 +1,4 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
  // Distributed under the MIT/X11 software license, see the accompanying
@@ -319,8 +315,7 @@
 +    printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, ((string)wxGetOsDescription()).c_str());
  
      if (mapArgs.count(&quot;-loadblockindextest&quot;))
-     {
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,3 +1,7 @@
+     {</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,3 +1,7 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -336,8 +331,7 @@
 +	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
  	fgSizer1-&gt;AddGrowableCol( 1 );
  	fgSizer1-&gt;SetFlexibleDirection( wxBOTH );
- 	fgSizer1-&gt;SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,3 +1,7 @@
+ 	fgSizer1-&gt;SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,3 +1,7 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -353,8 +347,7 @@
 +		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = wxT(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 727,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
  		~CMainFrameBase();
  	
- };
-</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -32,7 +32,7 @@
              &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
              &lt;property name=&quot;name&quot;&gt;CMainFrameBase&lt;/property&gt;
              &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
@@ -416,8 +409,7 @@
 +                    &lt;object class=&quot;wxBoxSizer&quot; expanded=&quot;0&quot;&gt;
                          &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
                          &lt;property name=&quot;name&quot;&gt;bSizer23&lt;/property&gt;
-                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;
-</code></pre></details>
+                         &lt;property name=&quot;orient&quot;&gt;wxHORIZONTAL&lt;/property&gt;</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/cb0f896/">← simplify AddAddress, readcompactsize limit, fixed a 64-bit…</a><a rel="next" href="../../commits/53d5080/">update fSpent flag on wallet transactions if they&#x27;re seen… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

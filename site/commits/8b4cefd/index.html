@@ -6,20 +6,20 @@
 <title>UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 8b4cefd to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR)…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/8b4cefd/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/8b4cefd/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 8b4cefd to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR)…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/8b4cefd/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/8b4cefd/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="UI tweaks, use BindListenPort to… (r35) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 8b4cefd to Bitcoin, 7 November 2009: UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR)…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can bind during TIME_WAIT after exit and restart", "url": "https://satoshimail.vercel.app/commits/8b4cefd/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-07T05:05:03Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8b4cefd3245c349cad14baaf2ba42380dcc88112"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "UI tweaks, use BindListenPort to…", "item": "https://satoshimail.vercel.app/commits/8b4cefd/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UI tweaks, use BindListenPort to detect instance already running, setsockopt(SO_REUSEADDR) so can bind during TIME_WAIT after exit and restart", "url": "https://satoshimail.pages.dev/commits/8b4cefd/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-07T05:05:03Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8b4cefd3245c349cad14baaf2ba42380dcc88112"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "UI tweaks, use BindListenPort to…", "item": "https://satoshimail.pages.dev/commits/8b4cefd/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,8 +49,7 @@
 +    printf(&quot;DBFlush(%s)%s\n&quot;, fShutdown ? &quot;true&quot; : &quot;false&quot;, fDbEnvInit ? &quot;&quot; : &quot; db not started&quot;);
      if (!fDbEnvInit)
          return;
-     CRITICAL_BLOCK(cs_db)
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,8 +42,6 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
+     CRITICAL_BLOCK(cs_db)</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,8 +42,6 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
  CCriticalSection cs_mapKeys;
  CKey keyUser;
  
@@ -81,16 +78,14 @@
 +                return;
          }
  
-         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,7 +34,6 @@ extern int nBestHeight;
+         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,7 +34,6 @@ extern int nBestHeight;
  extern uint256 hashBestChain;
  extern CBlockIndex* pindexBest;
  extern unsigned int nTransactionsUpdated;
 -extern int nDropMessagesTest;
  
  // Settings
- extern int fGenerateBitcoins;
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -511,11 +511,6 @@ void ThreadSocketHandler(void* parg)
+ extern int fGenerateBitcoins;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -511,11 +511,6 @@ void ThreadSocketHandler(void* parg)
          PrintException(NULL, &quot;ThreadSocketHandler()&quot;);
      }
  
@@ -243,8 +238,7 @@
 -    WSACleanup();
 -#endif
      return true;
- }
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -28,6 +28,7 @@ CNode* FindNode(unsigned int ip);
+ }</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -28,6 +28,7 @@ CNode* FindNode(unsigned int ip);
  CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
  void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
  bool AnySubscribed(unsigned int nChannel);
@@ -270,8 +264,7 @@
 +        if (mapArgs.count(&quot;-dropmessagestest&quot;) &amp;&amp; GetRand(atoi(mapArgs[&quot;-dropmessagestest&quot;])) == 0)
          {
              printf(&quot;dropmessages DROPPING SEND MESSAGE\n&quot;);
-             AbortMessage();
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -181,17 +181,30 @@ void AddToMyProducts(CProduct product)
+             AbortMessage();</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -181,17 +181,30 @@ void AddToMyProducts(CProduct product)
                  &quot;&quot;);
  }
  
@@ -527,8 +520,7 @@
 -    }
  
      RandAddSeedPerfmon();
- 
-</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -24,7 +24,7 @@ extern int fMinimizeOnClose;
+ </code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -24,7 +24,7 @@ extern int fMinimizeOnClose;
  
  extern void HandleCtrlA(wxKeyEvent&amp; event);
  extern string FormatTxStatus(const CWalletTx&amp; wtx);
@@ -536,8 +528,7 @@
 +extern void UIThreadCall(boost::function0&lt;void&gt;);
  extern void MainFrameRepaint();
  extern void Shutdown(void* parg);
- extern int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -89,7 +89,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+ extern int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -89,7 +89,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	
  	bSizer85-&gt;Add( m_textCtrlAddress, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
  	
@@ -788,8 +779,7 @@
 +	bSizer80-&gt;Add( m_buttonCancel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
  	
  	bSizer79-&gt;Add( bSizer80, 0, wxEXPAND, 5 );
- 	
-</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -277,7 +277,7 @@ class CSendDialogBase : public wxDialog
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -277,7 +277,7 @@ class CSendDialogBase : public wxDialog
  	protected:
  		
  		
@@ -797,8 +787,7 @@
 +		wxStaticText* m_staticTextInstructions;
  		
  		wxStaticBitmap* m_bitmapCheckMark;
- 		wxStaticText* m_staticText36;
-</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
+ 		wxStaticText* m_staticText36;</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -225,7 +225,7 @@
                      &lt;/object&gt;
                  &lt;/object&gt;
              &lt;/object&gt;
@@ -1097,8 +1086,7 @@
 +                                                &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
 +                                            &lt;/object&gt;
 +                                        &lt;/object&gt;
-                                     &lt;/object&gt;
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -53,6 +53,17 @@ public:
+                                     &lt;/object&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -53,6 +53,17 @@ public:
          for (int i = 0; i &lt; CRYPTO_num_locks(); i++)
              delete ppmutexOpenSSL[i];
          OPENSSL_free(ppmutexOpenSSL);
@@ -1115,8 +1103,7 @@
 +#endif
      }
  }
- instance_of_cinit;
-</code></pre></details>
+ instance_of_cinit;</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/8acda00/">← UIThreadCall, ThreadSafeMessageBox</a><a rel="next" href="../../commits/b4e235f/">ui tweaks, multiple xpm icon sizes →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -6,20 +6,20 @@
 <title>flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 99cef99 to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/99cef99/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/99cef99/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 99cef99 to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/99cef99/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/99cef99/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="flush wallet.dat, multi-proc… (r15) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 99cef99 to Bitcoin, 21 October 2009: flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut. 20 files…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut", "url": "https://satoshimail.vercel.app/commits/99cef99/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-21T01:08:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/99cef996c788755af95a0a614d7154a30928d4b9"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "flush wallet.dat, multi-proc, reorg…", "item": "https://satoshimail.vercel.app/commits/99cef99/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "flush wallet.dat, multi-proc, reorg options, revert to startup folder shortcut", "url": "https://satoshimail.pages.dev/commits/99cef99/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-21T01:08:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/99cef996c788755af95a0a614d7154a30928d4b9"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "flush wallet.dat, multi-proc, reorg…", "item": "https://satoshimail.pages.dev/commits/99cef99/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -101,8 +99,7 @@
 -version 1.37 to compile with MSVC 6.0.
 +If you have trouble compiling Boost with Microsoft Visual C++ 6.0, try going
 +back to Boost version 1.35.  It looks like they may be starting to reduce
-+support for MSVC 6.0.
-</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -453,11 +453,7 @@ bool CAddrDB::LoadAddresses()
++support for MSVC 6.0.</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -453,11 +453,7 @@ bool CAddrDB::LoadAddresses()
              }
          }
  
@@ -200,8 +197,7 @@
 +    fFirstRunRet = vchDefaultKey.empty();
  
      if (mapKeys.count(vchDefaultKey))
-     {
-</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -338,6 +338,7 @@ class CWalletDB : public CDB
+     {</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -338,6 +338,7 @@ class CWalletDB : public CDB
  {
  public:
      CWalletDB(const char* pszMode=&quot;r+&quot;, bool fTxn=false) : CDB(&quot;wallet.dat&quot;, pszMode, fTxn) { }
@@ -217,8 +213,7 @@
 +bool LoadWallet(bool&amp; fFirstRunRet);
  
  inline bool SetAddressBookName(const string&amp; strAddress, const string&amp; strName)
- {
-</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -10,11 +10,11 @@
+ {</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -10,11 +10,11 @@
  #ifdef _WIN32_WINNT
  #undef _WIN32_WINNT
  #endif
@@ -240,8 +235,7 @@
 +#include &lt;shlwapi.h&gt;
  #include &lt;stdio.h&gt;
  #include &lt;stdlib.h&gt;
- #include &lt;io.h&gt;
-</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -52,7 +52,7 @@ bool DecodeAddress(string str, CAddress&amp; addr)
+ #include &lt;io.h&gt;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -52,7 +52,7 @@ bool DecodeAddress(string str, CAddress&amp; addr)
  static bool Send(SOCKET hSocket, const char* pszSend)
  {
      if (strstr(pszSend, &quot;PONG&quot;) != pszSend)
@@ -309,8 +303,7 @@
 +                    printf(&quot;IRC decode failed\n&quot;);
                  }
              }
-         }
-</code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -44,6 +44,7 @@ class CKey
+         }</code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -44,6 +44,7 @@ class CKey
  {
  protected:
      EC_KEY* pkey;
@@ -373,8 +366,7 @@
 +        fSet = true;
          return true;
      }
- 
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -34,7 +34,7 @@ map&lt;uint256, CDataStream*&gt; mapOrphanTransactions;
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -34,7 +34,7 @@ map&lt;uint256, CDataStream*&gt; mapOrphanTransactions;
  multimap&lt;uint256, CDataStream*&gt; mapOrphanTransactionsByPrev;
  
  map&lt;uint256, CWalletTx&gt; mapWallet;
@@ -673,8 +665,7 @@
 +        // maybe makes sense; please don&#x27;t do it anywhere else.  Keeping databases
 +        // open longer than necessary can create deadlocks.
 +        CWalletDB walletdb(&quot;r&quot;);
-+
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -41,6 +41,9 @@ extern int nDropMessagesTest;
++</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -41,6 +41,9 @@ extern int nDropMessagesTest;
  extern int fGenerateBitcoins;
  extern int64 nTransactionFee;
  extern CAddress addrIncoming;
@@ -713,8 +704,7 @@
 +extern vector&lt;uint256&gt; vWalletUpdated;
  extern CCriticalSection cs_mapWallet;
  extern map&lt;vector&lt;unsigned char&gt;, CPrivKey&gt; mapKeys;
- extern map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
-</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -12,7 +12,7 @@ ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
+ extern map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -12,7 +12,7 @@ ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
  D=d
  # note: gcc 3.x profile doesn&#x27;t work
  #DEBUGFLAGS=-O0 -g -pg -D__WXDEBUG__
@@ -731,8 +721,7 @@
 + -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
  WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
  CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
- HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
-</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -18,8 +18,8 @@ LIBPATHS=/LIBPATH:&quot;/DB/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/OpenSSL/out&quot; /LIBPATH:
+ HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -18,8 +18,8 @@ LIBPATHS=/LIBPATH:&quot;/DB/build_windows/$(BUILD)&quot; /LIBPATH:&quot;/OpenSSL/out&quot; /LIBPATH:
  LIBS= \
      libdb47s$(D).lib \
      libeay32.lib \
@@ -742,8 +731,7 @@
 +    kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
  WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
  CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 /YX /Fpobj/headers.pch $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
- HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -23,7 +23,8 @@ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
+ HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -23,7 +23,8 @@ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
  CNode nodeLocalHost(INVALID_SOCKET, CAddress(&quot;127.0.0.1&quot;, nLocalServices));
  CNode* pnodeLocalHost = &amp;nodeLocalHost;
  bool fShutdown = false;
@@ -1007,8 +995,7 @@
 +            vnThreadsRunning[n] = false;
          if (n == 0)
              foreach(CNode* pnode, vNodes)
-                 closesocket(pnode-&gt;hSocket);
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -20,8 +20,6 @@ enum
+                 closesocket(pnode-&gt;hSocket);</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -20,8 +20,6 @@ enum
  
  
  
@@ -1069,8 +1056,7 @@
 +        printf(&quot;(%d bytes) &quot;, nSize);
          printf(&quot;\n&quot;);
  
-         nPushPos = -1;
-</code></pre></details><details><summary><code>readme.txt</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+         nPushPos = -1;</code></pre></details><details><summary><code>readme.txt</code></summary><pre><code></code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -1078,8 +1064,7 @@
 +static const int VERSION = 106;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,6 +7,13 @@
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,6 +7,13 @@
  #include &lt;crtdbg.h&gt;
  #endif
  
@@ -1378,8 +1363,7 @@
 +    fTmpMinimizeOnClose = fMinimizeOnClose;
      m_buttonOK-&gt;SetFocus();
 -    m_treeCtrl-&gt;AddRoot(wxT(&quot;Settings&quot;));
--    m_treeCtrl-&gt;AppendItem(m_treeCtrl-&gt;GetRootItem(), wxT(&quot;Bitcoin&quot;));
-</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -21,21 +21,25 @@ enum
+-    m_treeCtrl-&gt;AppendItem(m_treeCtrl-&gt;GetRootItem(), wxT(&quot;Bitcoin&quot;));</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -21,21 +21,25 @@ enum
  
  
  
@@ -1542,8 +1526,7 @@
  
  public:
 -	void Show();
--	void Hide();
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code></code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details>
+-	void Hide();</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code></code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><span></span><a rel="next" href="../../commits/fa2a033/">fix display of new generated coins, fix assertion in… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

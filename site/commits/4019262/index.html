@@ -6,20 +6,20 @@
 <title>alert system -- version… (r142, 4019262) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 4019262 to Bitcoin, 25 August 2010: alert system -- version 0.3.11. 8 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/4019262/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/4019262/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="alert system -- version… (r142, 4019262) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 4019262 to Bitcoin, 25 August 2010: alert system -- version 0.3.11. 8 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/4019262/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/4019262/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="alert system -- version… (r142, 4019262) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 4019262 to Bitcoin, 25 August 2010: alert system -- version 0.3.11. 8 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "alert system -- version 0.3.11", "url": "https://satoshimail.vercel.app/commits/4019262/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-25T00:05:37Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/401926283a200994ecd7df8eae8ced8e0b067c46"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "alert system -- version 0.3.11", "item": "https://satoshimail.vercel.app/commits/4019262/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "alert system -- version 0.3.11", "url": "https://satoshimail.pages.dev/commits/4019262/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-25T00:05:37Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/401926283a200994ecd7df8eae8ced8e0b067c46"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "alert system -- version 0.3.11", "item": "https://satoshimail.pages.dev/commits/4019262/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -342,8 +340,7 @@
          CAddress addrFrom;
          uint64 nNonce = 1;
 -        string strSubVer;
-         vRecv &gt;&gt; pfrom-&gt;nVersion &gt;&gt; pfrom-&gt;nServices &gt;&gt; nTime &gt;&gt; addrMe;
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -14,7 +14,6 @@ class CBlockIndex;
+         vRecv &gt;&gt; pfrom-&gt;nVersion &gt;&gt; pfrom-&gt;nServices &gt;&gt; nTime &gt;&gt; addrMe;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -14,7 +14,6 @@ class CBlockIndex;
  class CWalletTx;
  class CKeyItem;
  
@@ -602,8 +599,7 @@
 +
  extern map&lt;uint256, CTransaction&gt; mapTransactions;
  extern map&lt;uint256, CWalletTx&gt; mapWallet;
- extern vector&lt;uint256&gt; vWalletUpdated;
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -504,6 +504,7 @@ public:
+ extern vector&lt;uint256&gt; vWalletUpdated;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -504,6 +504,7 @@ public:
      unsigned int nMessageStart;
      CAddress addr;
      int nVersion;
@@ -631,8 +627,7 @@
 +        strSubVer = &quot;&quot;;
          fClient = false; // set by version message
          fInbound = fInboundIn;
-         fNetworkNode = false;
-</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -247,7 +247,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
+         fNetworkNode = false;</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -247,7 +247,7 @@ Value getinfo(const Array&amp; params, bool fHelp)
      obj.push_back(Pair(&quot;genproclimit&quot;,  (int)(fLimitProcessors ? nLimitProcessors : -1)));
      obj.push_back(Pair(&quot;difficulty&quot;,    (double)GetDifficulty()));
      obj.push_back(Pair(&quot;hashespersec&quot;,  gethashespersec(params, false)));
@@ -652,8 +647,7 @@
 +                    throw runtime_error(strWarning);
  
                  // Execute
-                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,11 @@ class CScript;
+                 map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,11 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -675,8 +669,7 @@
 +    if (nSizeRet &gt; (uint64)MAX_SIZE)
          throw std::ios_base::failure(&quot;ReadCompactSize() : size too large&quot;);
      return nSizeRet;
- }
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,7 +196,7 @@ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* pa
+ }</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,7 +196,7 @@ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* pa
  
  void CalledSetStatusBar(const string&amp; strText, int nField)
  {
@@ -703,8 +696,7 @@
 +    strPrevWarning = strWarning;
  
      string strGen = &quot;&quot;;
-     if (fGenerateBitcoins)
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,7 +14,7 @@ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
+     if (fGenerateBitcoins)</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -14,7 +14,7 @@ char pszSetDataDir[MAX_PATH] = &quot;&quot;;
  bool fShutdown = false;
  bool fDaemon = false;
  bool fCommandLine = false;
@@ -782,8 +774,7 @@
 +                strMiscWarning = strMessage;
                  printf(&quot;*** %s\n&quot;, strMessage.c_str());
                  boost::thread(bind(ThreadSafeMessageBox, strMessage+&quot; &quot;, string(&quot;Bitcoin&quot;), wxOK | wxICON_EXCLAMATION, (wxWindow*)NULL, -1, -1));
-             }
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -143,7 +143,7 @@ extern char pszSetDataDir[MAX_PATH];
+             }</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -143,7 +143,7 @@ extern char pszSetDataDir[MAX_PATH];
  extern bool fShutdown;
  extern bool fDaemon;
  extern bool fCommandLine;
@@ -809,8 +800,7 @@
 +        return &quot;&quot;;
      const unsigned char* pbegin = (const unsigned char*)&amp;itbegin[0];
      const unsigned char* pend = pbegin + (itend - itbegin) * sizeof(itbegin[0]);
-     string str = (f0x ? &quot;0x&quot; : &quot;&quot;);
-</code></pre></details>
+     string str = (f0x ? &quot;0x&quot; : &quot;&quot;);</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2201a08/">← warning message if clock is too far off</a><a rel="next" href="../../commits/7d7797b/">more rpc methods allowed in safe mode →</a></nav>
 </main>
 <footer class="sf"><div class="in">

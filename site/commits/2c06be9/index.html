@@ -6,20 +6,20 @@
 <title>new safety feature… (r122, 2c06be9) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 2c06be9 to Bitcoin, 3 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/2c06be9/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/2c06be9/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="new safety feature… (r122, 2c06be9) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 2c06be9 to Bitcoin, 3 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/2c06be9/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/2c06be9/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="new safety feature… (r122, 2c06be9) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 2c06be9 to Bitcoin, 3 August 2010: new safety feature displays a warning message and locks down RPC if it detects a problem…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "new safety feature displays a warning message and locks down RPC if it detects a problem that may require an upgrade -- version 0.3.8", "url": "https://satoshimail.vercel.app/commits/2c06be9/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-03T18:25:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2c06be915de967494920bdbb3096bbb455ccf99f"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "new safety feature displays a warning…", "item": "https://satoshimail.vercel.app/commits/2c06be9/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "new safety feature displays a warning message and locks down RPC if it detects a problem that may require an upgrade -- version 0.3.8", "url": "https://satoshimail.pages.dev/commits/2c06be9/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-03T18:25:05Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/2c06be915de967494920bdbb3096bbb455ccf99f"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "new safety feature displays a warning…", "item": "https://satoshimail.pages.dev/commits/2c06be9/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -69,8 +67,7 @@
 +
      return true;
  }
- 
-</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -280,6 +280,8 @@ public:
+ </code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -280,6 +280,8 @@ public:
      bool EraseBlockIndex(uint256 hash);
      bool ReadHashBestChain(uint256&amp; hashBestChain);
      bool WriteHashBestChain(uint256 hashBestChain);
@@ -78,8 +75,7 @@
 +    bool WriteBestInvalidWork(CBigNum bnBestInvalidWork);
      bool LoadBlockIndex();
  };
- 
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ const uint256 hashGenesisBlock(&quot;0x000000000019d6689c085ae165831e934ff763ae46a2a6
  CBlockIndex* pindexGenesisBlock = NULL;
  int nBestHeight = -1;
  CBigNum bnBestChainWork = 0;
@@ -240,8 +236,7 @@
 +        pblock-&gt;vtx[0].vout[0].nValue = pblock-&gt;GetBlockValue(pindexPrev-&gt;nHeight+1, nFees);
          printf(&quot;Running BitcoinMiner with %d transactions in block\n&quot;, pblock-&gt;vtx.size());
  
- 
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -33,6 +33,7 @@ extern const uint256 hashGenesisBlock;
+ </code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -33,6 +33,7 @@ extern const uint256 hashGenesisBlock;
  extern CBlockIndex* pindexGenesisBlock;
  extern int nBestHeight;
  extern CBigNum bnBestChainWork;
@@ -286,8 +281,7 @@
 +    int64 GetBlockValue(int nHeight, int64 nFees) const;
      bool DisconnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
      bool ConnectBlock(CTxDB&amp; txdb, CBlockIndex* pindex);
-     bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
-</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -946,6 +946,10 @@ void ThreadRPCServer2(void* parg)
+     bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -946,6 +946,10 @@ void ThreadRPCServer2(void* parg)
  
                  printf(&quot;ThreadRPCServer method=%s\n&quot;, strMethod.c_str());
  
@@ -297,8 +291,7 @@
 +
                  // Execute
                  map&lt;string, rpcfn_type&gt;::iterator mi = mapCallTable.find(strMethod);
-                 if (mi == mapCallTable.end())
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+                 if (mi == mapCallTable.end())</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -306,8 +299,7 @@
 +static const int VERSION = 308;
  static const char* pszSubVer = &quot;&quot;;
  
- 
-</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -330,8 +322,7 @@
 +VIProductVersion 0.3.8.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,6 +196,8 @@ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* pa
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -196,6 +196,8 @@ bool ThreadSafeAskFee(int64 nFeeRequired, const string&amp; strCaption, wxWindow* pa
  
  void CalledSetStatusBar(const string&amp; strText, int nField)
  {
@@ -380,8 +371,7 @@
 +#if defined(__WXGTK__) || defined(__WXMAC_OSX__)
      if (!mapArgs.count(&quot;-minimizetotray&quot;))
          fMinimizeToTray = false;
- #endif
-</code></pre></details>
+ #endif</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/73aa262/">← fixed segfault in bignum.h, additional security limits…</a><a rel="next" href="../../commits/b34e8c3/">new safety feature displays a warning message and locks… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -6,20 +6,20 @@
 <title>fixed segfault in… (r121, 6ff5f71) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 6ff5f71 to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/6ff5f71/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/6ff5f71/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="fixed segfault in… (r121, 6ff5f71) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 6ff5f71 to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/6ff5f71/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/6ff5f71/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="fixed segfault in… (r121, 6ff5f71) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 6ff5f71 to Bitcoin, 31 July 2010: fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7. 6 files…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7", "url": "https://satoshimail.vercel.app/commits/6ff5f71/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-31T19:15:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6ff5f718b6a67797b2b3bab8905d607ad216ee21"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed segfault in bignum.h, additional…", "item": "https://satoshimail.vercel.app/commits/6ff5f71/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fixed segfault in bignum.h, additional security limits, refactoring -- version 0.3.7", "url": "https://satoshimail.pages.dev/commits/6ff5f71/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-31T19:15:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6ff5f718b6a67797b2b3bab8905d607ad216ee21"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fixed segfault in bignum.h, additional…", "item": "https://satoshimail.pages.dev/commits/6ff5f71/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -74,8 +72,7 @@
 +    r &gt;&gt;= shift;
      return r;
  }
- 
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -3036,7 +3036,8 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -3036,7 +3036,8 @@ bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CK
                  foreach(CWalletTx* pcoin, setCoins)
                      for (int nOut = 0; nOut &lt; pcoin-&gt;vout.size(); nOut++)
                          if (pcoin-&gt;vout[nOut].IsMine())
@@ -84,8 +81,7 @@
 +                                return false;
  
                  // Check that enough fee is included
-                 if (nFee &lt; wtxNew.GetMinFee())
-</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -42,20 +42,17 @@ void MakeSameSize(valtype&amp; vch1, valtype&amp; vch2)
+                 if (nFee &lt; wtxNew.GetMinFee())</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -42,20 +42,17 @@ void MakeSameSize(valtype&amp; vch1, valtype&amp; vch2)
  #define stacktop(i)  (stack.at(stack.size()+(i)))
  #define altstacktop(i)  (altstack.at(altstack.size()+(i)))
  
@@ -166,8 +162,7 @@
 +    if (!VerifyScript(txin.scriptSig, txout.scriptPubKey, txTo, nIn, nHashType))
          return false;
  
-     // Anytime a signature is successfully verified, it&#x27;s proof the outpoint is spent,
-</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -657,8 +657,6 @@ public:
+     // Anytime a signature is successfully verified, it&#x27;s proof the outpoint is spent,</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -657,8 +657,6 @@ public:
  
  
  
@@ -175,8 +170,7 @@
 -                vector&lt;vector&lt;unsigned char&gt; &gt;* pvStackRet=NULL);
  uint256 SignatureHash(CScript scriptCode, const CTransaction&amp; txTo, unsigned int nIn, int nHashType);
  bool IsMine(const CScript&amp; scriptPubKey);
- bool ExtractPubKey(const CScript&amp; scriptPubKey, bool fMineOnly, vector&lt;unsigned char&gt;&amp; vchPubKeyRet);
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ bool ExtractPubKey(const CScript&amp; scriptPubKey, bool fMineOnly, vector&lt;unsigned char&gt;&amp; vchPubKeyRet);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -184,8 +178,7 @@
 +static const int VERSION = 307;
  static const char* pszSubVer = &quot;&quot;;
  
- 
-</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -208,8 +201,7 @@
 +VIProductVersion 0.3.7.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
-</code></pre></details>
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e1cb7ce/">← simplified makefile.unix, updated build-unix.txt…</a><a rel="next" href="../../commits/73aa262/">fixed segfault in bignum.h, additional security limits… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

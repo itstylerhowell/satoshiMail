@@ -6,20 +6,20 @@
 <title>restrict file permissions on linux… (r47) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit e899779 to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/e899779/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/e899779/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="restrict file permissions on linux… (r47) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit e899779 to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/e899779/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/e899779/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="restrict file permissions on linux… (r47) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit e899779 to Bitcoin, 13 December 2009: restrict file permissions on linux to the user only. 2 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "restrict file permissions on linux to the user only", "url": "https://satoshimail.vercel.app/commits/e899779/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-13T02:13:43Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e899779450bcd940dcdb0108d27c35eae92cc1e1"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "restrict file permissions on linux to…", "item": "https://satoshimail.vercel.app/commits/e899779/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "restrict file permissions on linux to the user only", "url": "https://satoshimail.pages.dev/commits/e899779/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-13T02:13:43Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e899779450bcd940dcdb0108d27c35eae92cc1e1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "restrict file permissions on linux to…", "item": "https://satoshimail.pages.dev/commits/e899779/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,16 +49,14 @@
 +                             S_IRUSR | S_IWUSR);
              if (ret &gt; 0)
                  throw runtime_error(strprintf(&quot;CDB() : error %d opening database environment\n&quot;, ret));
-             fDbEnvInit = true;
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3494,6 +3494,7 @@ bool CMyApp::OnInit2()
+             fDbEnvInit = true;</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -3494,6 +3494,7 @@ bool CMyApp::OnInit2()
      SetAppName(&quot;Bitcoin&quot;);
  #else
      SetAppName(&quot;bitcoin&quot;);
 +    umask(077);
  #endif
  
-     //
-</code></pre></details>
+     //</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/e39bc50/">← misc exit code, updated setup.nsi</a><a rel="next" href="../../commits/adb50ff/">misc →</a></nav>
 </main>
 <footer class="sf"><div class="in">

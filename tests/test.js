@@ -115,7 +115,7 @@ const $ = s => d.querySelector(s);
   $('#wiki [data-wkwin="max"]').click(); await wait(20);
   check("max", $("#wkwin").classList.contains("max") && $("#wkscrim").hidden);
   $('#wiki [data-wkwin="max"]').click();
-  check("banner", (d.querySelector("#app") && d.body.innerHTML.includes('Satoshipedia</a>, in the dock')));
+  check("banner", (d.querySelector("#app") && d.body.innerHTML.includes('Satoshipedia</a>, linked at the top')));
   await go("#inbox");
   await go("#wiki"); check("credit wiki footer", !!$("#wkfoot .made-by-foot a[href='https://x.com/TylerHowell88']"));
   await go("#wiki~about"); check("credit wiki about", main.innerHTML.includes("TylerHowell88"));

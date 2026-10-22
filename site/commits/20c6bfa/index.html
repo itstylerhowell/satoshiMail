@@ -6,20 +6,20 @@
 <title>Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 20c6bfa to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/20c6bfa/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/20c6bfa/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 20c6bfa to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/20c6bfa/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/20c6bfa/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="Gavin Andresen: implementation of… (r101) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 20c6bfa to Bitcoin, 9 July 2010: Gavin Andresen: implementation of autostart on system startup option on Linux. 5 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen: implementation of autostart on system startup option on Linux", "url": "https://satoshimail.vercel.app/commits/20c6bfa/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-09T02:11:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/20c6bfad1e0f5438b6f016f53d0eac9a0415236a"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen: implementation of…", "item": "https://satoshimail.vercel.app/commits/20c6bfa/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Gavin Andresen: implementation of autostart on system startup option on Linux", "url": "https://satoshimail.pages.dev/commits/20c6bfa/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-09T02:11:50Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/20c6bfad1e0f5438b6f016f53d0eac9a0415236a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Gavin Andresen: implementation of…", "item": "https://satoshimail.pages.dev/commits/20c6bfa/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -50,8 +48,7 @@
 +#include &lt;boost/filesystem/fstream.hpp&gt;
  #include &lt;boost/algorithm/string.hpp&gt;
  #include &lt;boost/interprocess/sync/interprocess_mutex.hpp&gt;
- #include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;
-</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -117,9 +117,86 @@ void SetStartOnSystemStartup(bool fAutoStart)
+ #include &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -117,9 +117,86 @@ void SetStartOnSystemStartup(bool fAutoStart)
          CoUninitialize();
      }
  }
@@ -137,8 +134,7 @@
 +
  #endif
  
- 
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 300;
@@ -146,8 +142,7 @@
 +static const char* pszSubVer = &quot;.2&quot;;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1444,8 +1444,10 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1444,8 +1444,10 @@ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
      //m_listBox-&gt;Append(_(&quot;Test 2&quot;));
      m_listBox-&gt;SetSelection(0);
      SelectPage(0);
@@ -159,8 +154,7 @@
 +#ifdef __WXMAC_OSX__
      m_checkBoxStartOnSystemStartup-&gt;Enable(false); // not implemented yet
  #endif
- 
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -559,9 +559,9 @@ string MyGetSpecialFolderPath(int nFolder, bool fCreate)
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -559,9 +559,9 @@ string MyGetSpecialFolderPath(int nFolder, bool fCreate)
  
  string GetDefaultDataDir()
  {
@@ -172,8 +166,7 @@
 +    // Unix: ~/.bitcoin
  #ifdef __WXMSW__
      // Windows
-     return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + &quot;\\Bitcoin&quot;;
-</code></pre></details>
+     return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + &quot;\\Bitcoin&quot;;</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/50d49d9/">← Portuguese translation by Tiago Faria</a><a rel="next" href="../../commits/6e5d67e/">switched from wxStandardPaths to GetDefaultDataDir, fixes… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

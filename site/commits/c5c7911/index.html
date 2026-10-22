@@ -6,20 +6,20 @@
 <title>bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit c5c7911 to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/c5c7911/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c5c7911/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit c5c7911 to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/c5c7911/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c5c7911/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="bugfix Db::open/close and zombie… (r40) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit c5c7911 to Bitcoin, 18 November 2009: bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases open, close db cursors, initial block download in batches of 500 blocks, fix misc warnings, subver linux-test8", "url": "https://satoshimail.vercel.app/commits/c5c7911/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-18T19:19:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c5c7911dab8732861affbe66849a100da62f7464"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "bugfix Db::open/close and zombie…", "item": "https://satoshimail.vercel.app/commits/c5c7911/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "bugfix Db::open/close and zombie sockets bugs fix double-close of socket handle, keep databases open, close db cursors, initial block download in batches of 500 blocks, fix misc warnings, subver linux-test8", "url": "https://satoshimail.pages.dev/commits/c5c7911/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-18T19:19:41Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c5c7911dab8732861affbe66849a100da62f7464"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "bugfix Db::open/close and zombie…", "item": "https://satoshimail.pages.dev/commits/c5c7911/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -82,8 +80,7 @@
 +If you download and build Boost yourself
  cd /usr/local/boost_1_40_0
  su
- ./bootstrap.sh
-</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -20,6 +20,7 @@ static CCriticalSection cs_db;
+ ./bootstrap.sh</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -20,6 +20,7 @@ static CCriticalSection cs_db;
  static bool fDbEnvInit = false;
  DbEnv dbenv(0);
  static map&lt;string, int&gt; mapFileUseCount;
@@ -358,8 +355,7 @@
 +                        printf(&quot;Flushed wallet.dat %&quot;PRI64d&quot;ms\n&quot;, GetTimeMillis() - nStart);
                      }
                  }
-             }
-</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -32,8 +32,9 @@ protected:
+             }</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -32,8 +32,9 @@ protected:
      Db* pdb;
      string strFile;
      vector&lt;DbTxn*&gt; vTxn;
@@ -432,8 +428,7 @@
 +    CWalletDB(const char* pszMode=&quot;r+&quot;) : CDB(&quot;wallet.dat&quot;, pszMode) { }
  private:
      CWalletDB(const CWalletDB&amp;);
-     void operator=(const CWalletDB&amp;);
-</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -159,15 +159,12 @@ void ThreadIRCSeed(void* parg)
+     void operator=(const CWalletDB&amp;);</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -159,15 +159,12 @@ void ThreadIRCSeed(void* parg)
      SetThreadPriority(THREAD_PRIORITY_NORMAL);
      int nErrorWait = 10;
      int nRetryWait = 10;
@@ -478,8 +473,7 @@
 +            return;
  
          if (GetTime() - nStart &gt; 20 * 60)
-         {
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -760,7 +760,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
+         {</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -760,7 +760,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast)
          bnNew = bnProofOfWorkLimit;
  
      /// debug print
@@ -690,8 +684,7 @@
 +        // maybe makes sense; please don&#x27;t do it anywhere else.
          CWalletDB walletdb(&quot;r&quot;);
  
-         // Add the change&#x27;s private key to wallet
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1009,9 +1009,9 @@ public:
+         // Add the change&#x27;s private key to wallet</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1009,9 +1009,9 @@ public:
      void print() const
      {
          printf(&quot;CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%d)\n&quot;,
@@ -722,8 +715,7 @@
 +            hashNext.ToString().substr(0,16).c_str());
          return str;
      }
- 
-</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -17,24 +17,21 @@ endif
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -17,24 +17,21 @@ endif
  
  INCLUDEPATHS= \
   -I&quot;/usr/include&quot; \
@@ -749,8 +741,7 @@
 +CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
  HEADERS=headers.h util.h main.h serialize.h uint256.h key.h bignum.h script.h db.h base58.h
  
- 
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -148,8 +148,8 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -148,8 +148,8 @@ bool GetMyExternalIP2(const CAddress&amp; addrConnect, const char* pszGet, const cha
  bool GetMyExternalIP(unsigned int&amp; ipRet)
  {
      CAddress addrConnect;
@@ -1013,8 +1004,7 @@
 +        if (GetTime() - nStart &gt; 20)
              break;
          Sleep(20);
-     }
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -414,7 +414,7 @@ public:
+     }</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -414,7 +414,7 @@ public:
  
      string ToString() const
      {
@@ -1089,16 +1079,14 @@
 +    void Cleanup();
  };
  
- 
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,6 +20,7 @@ class CDataStream;
+ </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,6 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 106;
 +static const char* pszSubVer = &quot; linux-test8&quot;;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1664,7 +1664,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1664,7 +1664,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
  
  CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
  {
@@ -1172,8 +1160,7 @@
 +        HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL,
                                  CLSCTX_INPROC_SERVER, IID_IShellLink,
                                  reinterpret_cast&lt;void**&gt;(&amp;psl));
- 
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -56,9 +56,11 @@ public:
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -56,9 +56,11 @@ public:
  
          // Close sockets
          foreach(CNode* pnode, vNodes)
@@ -1196,8 +1183,7 @@
 +        char* pszValue = (char*)&quot;&quot;;
          if (strchr(psz, &#x27;=&#x27;))
          {
-             pszValue = strchr(psz, &#x27;=&#x27;);
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -57,9 +57,11 @@ inline T&amp; REF(const T&amp; val)
+             pszValue = strchr(psz, &#x27;=&#x27;);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -57,9 +57,11 @@ inline T&amp; REF(const T&amp; val)
  #ifdef __WXMSW__
  #define MSG_NOSIGNAL        0
  #define MSG_DONTWAIT        0
@@ -1250,22 +1236,19 @@
 +    const char* pszFile;
      int nLine;
  };
- 
-</code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ </code></pre></details><details><summary><code>xpm/addressbook16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * addressbook16_xpm[] = {
 +static const char * addressbook16_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;16 16 256 2&quot;,
- &quot;   c #FFFFFF&quot;,
-</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;   c #FFFFFF&quot;,</code></pre></details><details><summary><code>xpm/addressbook20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * addressbook20_xpm[] = {
 +static const char * addressbook20_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;20 20 256 2&quot;,
- &quot;   c #FFFFFF&quot;,
-</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;   c #FFFFFF&quot;,</code></pre></details><details><summary><code>xpm/bitcoin16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * bitcoin16_xpm[] = {
 +static const char * bitcoin16_xpm[] = {
@@ -1289,36 +1272,31 @@
 +static const char * bitcoin48_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;48 48 224 2&quot;,
- &quot;   c #715103&quot;,
-</code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;   c #715103&quot;,</code></pre></details><details><summary><code>xpm/check.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * check_xpm[] = {
 +static const char * check_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;32 32 3 1&quot;,
- &quot;  c #008000&quot;,
-</code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;  c #008000&quot;,</code></pre></details><details><summary><code>xpm/send16.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * send16_xpm[] = {
 +static const char * send16_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;16 16 256 2&quot;,
- &quot;   c #ADF7AD&quot;,
-</code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;   c #ADF7AD&quot;,</code></pre></details><details><summary><code>xpm/send16noshadow.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * send16noshadow_xpm[] = {
 +static const char * send16noshadow_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;16 16 256 2&quot;,
- &quot;   c #ADF7AD&quot;,
-</code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
+ &quot;   c #ADF7AD&quot;,</code></pre></details><details><summary><code>xpm/send20.xpm</code></summary><pre><code>@@ -1,5 +1,5 @@
  /* XPM */
 -static char * send20_xpm[] = {
 +static const char * send20_xpm[] = {
  /* columns rows colors chars-per-pixel */
  &quot;20 20 256 2&quot;,
- &quot;   c #CEFFCE&quot;,
-</code></pre></details>
+ &quot;   c #CEFFCE&quot;,</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b349e3d/">← misc compile error</a><a rel="next" href="../../commits/52f4cb4/">minor fix to batched initial download in case requester… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

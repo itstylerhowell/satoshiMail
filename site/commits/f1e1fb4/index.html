@@ -6,20 +6,20 @@
 <title>cleanup, catch some… (r148, f1e1fb4) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit f1e1fb4 to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/f1e1fb4/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/f1e1fb4/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="cleanup, catch some… (r148, f1e1fb4) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit f1e1fb4 to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/f1e1fb4/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/f1e1fb4/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="cleanup, catch some… (r148, f1e1fb4) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit f1e1fb4 to Bitcoin, 7 September 2010: cleanup, catch some recoverable exceptions and continue. 18 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "cleanup, catch some recoverable exceptions and continue", "url": "https://satoshimail.vercel.app/commits/f1e1fb4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-07T01:12:53Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f1e1fb4bdef878c8fc1564fa418d44e7541a7e83"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "cleanup, catch some recoverable…", "item": "https://satoshimail.vercel.app/commits/f1e1fb4/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "cleanup, catch some recoverable exceptions and continue", "url": "https://satoshimail.pages.dev/commits/f1e1fb4/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-09-07T01:12:53Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f1e1fb4bdef878c8fc1564fa418d44e7541a7e83"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "cleanup, catch some recoverable…", "item": "https://satoshimail.pages.dev/commits/f1e1fb4/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -1288,8 +1286,7 @@
 +VIProductVersion 0.3.12.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
-</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -87,6 +87,8 @@ static inline void dumpreg(__m128i x, char *msg) {
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -87,6 +87,8 @@ static inline void dumpreg(__m128i x, char *msg) {
  #else
  #define dumpstate()
  #endif

@@ -6,20 +6,20 @@
 <title>monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 70e7952 to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/70e7952/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/70e7952/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 70e7952 to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/70e7952/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/70e7952/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="monitor ThreadSocketHandler and… (r38) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 70e7952 to Bitcoin, 13 November 2009: monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to CreateThread wrapper, disconnect inactive connections, ping, break up long messages to speed up initial download, better priorities for initiating connections, track how many nodes have requested our blocks and transactions, status #/offline and warning message on unsent blocks, minimize on close as separate option -- linux-test5", "url": "https://satoshimail.vercel.app/commits/70e7952/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-13T01:23:08Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/70e79525c97c33a5fca8674d47d86cc2b7ae197a"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "monitor ThreadSocketHandler and…", "item": "https://satoshimail.vercel.app/commits/70e7952/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "monitor ThreadSocketHandler and terminate and restart if hung, convert _beginthread to CreateThread wrapper, disconnect inactive connections, ping, break up long messages to speed up initial download, better priorities for initiating connections, track how many nodes have requested our blocks and transactions, status #/offline and warning message on unsent blocks, minimize on close as separate option -- linux-test5", "url": "https://satoshimail.pages.dev/commits/70e7952/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-13T01:23:08Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/70e79525c97c33a5fca8674d47d86cc2b7ae197a"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "monitor ThreadSocketHandler and…", "item": "https://satoshimail.pages.dev/commits/70e7952/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,16 +49,14 @@
 +WINDOWS BUILD NOTES
  
  
- Compilers Supported
-</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -13,6 +13,7 @@ UNIX BUILD NOTES
+ Compilers Supported</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -13,6 +13,7 @@ UNIX BUILD NOTES
  
  Dependencies
  ------------
 +Install the dev files for the shared libraries:
  apt-get install build-essential
  apt-get install libgtk2.0-dev
- apt-get install libssl-dev
-</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -505,6 +505,13 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ apt-get install libssl-dev</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -505,6 +505,13 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
  {
      vchDefaultKeyRet.clear();
  
@@ -82,16 +78,14 @@
 +    CreateThread(ThreadFlushWalletDB, NULL);
      return true;
  }
- 
-</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -75,7 +75,6 @@
+ </code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -75,7 +75,6 @@
  #include &lt;net/if.h&gt;
  #include &lt;ifaddrs.h&gt;
  #include &lt;boost/filesystem.hpp&gt;
 -#include &lt;boost/thread/thread.hpp&gt;
  #include &lt;boost/algorithm/string.hpp&gt;
  #endif
- 
-</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -54,7 +54,7 @@ static bool Send(SOCKET hSocket, const char* pszSend)
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -54,7 +54,7 @@ static bool Send(SOCKET hSocket, const char* pszSend)
      const char* pszEnd = psz + strlen(psz);
      while (psz &lt; pszEnd)
      {
@@ -116,8 +110,7 @@
 +                    addr.nTime = GetAdjustedTime() - 51 * 60;
                      CAddrDB addrdb;
                      if (AddAddress(addrdb, addr))
-                         printf(&quot;IRC got new address\n&quot;);
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,6 +42,9 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
+                         printf(&quot;IRC got new address\n&quot;);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -42,6 +42,9 @@ map&lt;uint160, vector&lt;unsigned char&gt; &gt; mapPubKeys;
  CCriticalSection cs_mapKeys;
  CKey keyUser;
  
@@ -416,8 +409,7 @@
 -        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
 +        SetThreadPriority(THREAD_PRIORITY_LOWEST);
          Sleep(50);
-         if (fShutdown)
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,6 +34,8 @@ extern int nBestHeight;
+         if (fShutdown)</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -34,6 +34,8 @@ extern int nBestHeight;
  extern uint256 hashBestChain;
  extern CBlockIndex* pindexBest;
  extern unsigned int nTransactionsUpdated;
@@ -483,8 +475,7 @@
 +    bool ReadFromDisk(const CBlockIndex* blockindex, bool fReadTransactions=true);
      bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos);
      bool CheckBlock() const;
-     bool AcceptBlock();
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -13,7 +13,6 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect);
+     bool AcceptBlock();</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -13,7 +13,6 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect);
  
  
  
@@ -783,8 +774,7 @@
 +                    printf(&quot;socket no message in first 60 seconds, %d %d\n&quot;, pnode-&gt;nLastRecv != 0, pnode-&gt;nLastSend != 0);
 +                    pnode-&gt;fDisconnect = true;
 +                }
-+                else if (GetTime() - pnode-&gt;nLastSend &gt; 10 * 60 &amp;&amp; GetTime() - pnode-&gt;nLastSendEmpty &gt; 10 * 60)
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -29,7 +29,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
++                else if (GetTime() - pnode-&gt;nLastSend &gt; 10 * 60 &amp;&amp; GetTime() - pnode-&gt;nLastSendEmpty &gt; 10 * 60)</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -29,7 +29,7 @@ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
  void AbandonRequests(void (*fn)(void*, CDataStream&amp;), void* param1);
  bool AnySubscribed(unsigned int nChannel);
  bool BindListenPort(string&amp; strError=REF(string()));
@@ -878,8 +868,7 @@
 +            printf(&quot;%s &quot;, DateTimeStrFormat(&quot;%x %H:%M:%S&quot;, GetTime()).c_str());
          printf(&quot;sending: %s &quot;, pszCommand);
      }
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ map&lt;string, string&gt; mapAddressBook;
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -25,6 +25,7 @@ map&lt;string, string&gt; mapAddressBook;
  bool fRandSendTest = false;
  void RandSend();
  extern int g_isPainting;
@@ -1178,8 +1167,7 @@
      pframeMain-&gt;Show(true);  // have to show first to get taskbar button to hide
 -    pframeMain-&gt;Show(!fMinimizeToTray || !pframeMain-&gt;IsIconized());
 -    ptaskbaricon-&gt;Show(fMinimizeToTray);
-+    if (fMinimizeToTray &amp;&amp; pframeMain-&gt;IsIconized())
-</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -112,7 +112,6 @@ protected:
++    if (fMinimizeToTray &amp;&amp; pframeMain-&gt;IsIconized())</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -112,7 +112,6 @@ protected:
      void OnListBox(wxCommandEvent&amp; event);
      void OnKillFocusTransactionFee(wxFocusEvent&amp; event);
      void OnCheckBoxLimitProcessors(wxCommandEvent&amp; event);
@@ -1194,8 +1182,7 @@
 +    void OnMenuOptions(wxCommandEvent&amp; event);
      void OnUpdateUIGenerate(wxUpdateUIEvent&amp; event);
      void OnMenuGenerate(wxCommandEvent&amp; event);
-     void OnMenuExit(wxCommandEvent&amp; event);
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -45,7 +45,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+     void OnMenuExit(wxCommandEvent&amp; event);</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -45,7 +45,7 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	m_menuOptions-&gt;Append( m_menuOptionsChangeYourAddress );
  	
  	wxMenuItem* m_menuOptionsOptions;
@@ -1228,8 +1215,7 @@
 +	bSizer69-&gt;Add( m_checkBoxMinimizeOnClose, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
  	
  	wxBoxSizer* bSizer102;
- 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );
-</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -43,51 +43,52 @@
+ 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -43,51 +43,52 @@
  #define wxID_MAINFRAME 1000
  #define wxID_VIEWSHOWGENERATED 1001
  #define wxID_OPTIONSGENERATEBITCOINS 1002
@@ -1334,8 +1320,7 @@
 -		
  		wxCheckBox* m_checkBoxMinimizeOnClose;
  		wxCheckBox* m_checkBoxUseProxy;
- 		
-</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
+ 		</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -70,7 +70,7 @@
              &lt;event name=&quot;OnSetFocus&quot;&gt;&lt;/event&gt;
              &lt;event name=&quot;OnSize&quot;&gt;&lt;/event&gt;
              &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
@@ -1484,8 +1469,7 @@
 +                                                        &lt;event name=&quot;OnUpdateUI&quot;&gt;&lt;/event&gt;
                                                      &lt;/object&gt;
                                                  &lt;/object&gt;
-                                                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -85,14 +85,14 @@ void RandAddSeed()
+                                                 &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -85,14 +85,14 @@ void RandAddSeed()
  
  void RandAddSeedPerfmon()
  {
@@ -1542,8 +1526,7 @@
 -    if (nMax == 0)
 -        return 0;
 -
--    // The range of the random source must be a multiple of the modulus
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+-    // The range of the random source must be a multiple of the modulus</code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/956468c/">← Get local host IP on Linux, Shutdown() a little cleaner --…</a><a rel="next" href="../../commits/b349e3d/">misc compile error →</a></nav>
 </main>
 <footer class="sf"><div class="in">

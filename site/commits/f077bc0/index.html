@@ -6,20 +6,20 @@
 <title>reduced max outbound connections… (r96) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit f077bc0 to Bitcoin, 2 July 2010: reduced max outbound connections from 15 to 8 --version 0.3 rc4. 6 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/f077bc0/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/f077bc0/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="reduced max outbound connections… (r96) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit f077bc0 to Bitcoin, 2 July 2010: reduced max outbound connections from 15 to 8 --version 0.3 rc4. 6 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/f077bc0/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/f077bc0/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="reduced max outbound connections… (r96) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit f077bc0 to Bitcoin, 2 July 2010: reduced max outbound connections from 15 to 8 --version 0.3 rc4. 6 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reduced max outbound connections from 15 to 8 --version 0.3 rc4", "url": "https://satoshimail.vercel.app/commits/f077bc0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-02T23:43:29Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f077bc0f48bf0853cbe5d01b0e10df93c04917ab"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "reduced max outbound connections from…", "item": "https://satoshimail.vercel.app/commits/f077bc0/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reduced max outbound connections from 15 to 8 --version 0.3 rc4", "url": "https://satoshimail.pages.dev/commits/f077bc0/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-02T23:43:29Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/f077bc0f48bf0853cbe5d01b0e10df93c04917ab"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "reduced max outbound connections from…", "item": "https://satoshimail.pages.dev/commits/f077bc0/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,16 +49,14 @@
 +    printf(&quot;Bitcoin version %d.%d.%d%s, OS version %s\n&quot;, VERSION/10000, (VERSION/100)%100, VERSION%100, pszSubVer, ((string)wxGetOsDescription()).c_str());
      printf(&quot;System default language is %d %s\n&quot;, m_locale.GetSystemLanguage(), ((string)m_locale.GetSysName()).c_str());
      printf(&quot;Language file %s (%s)\n&quot;, (string(&quot;locale/&quot;) + (string)m_locale.GetCanonicalName() + &quot;/LC_MESSAGES/bitcoin.mo&quot;).c_str(), ((string)m_locale.GetLocale()).c_str());
- 
-</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -204,7 +204,6 @@ void ThreadIRCSeed(void* parg)
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -204,7 +204,6 @@ void ThreadIRCSeed(void* parg)
          else
              strMyName = strprintf(&quot;x%u&quot;, GetRand(1000000000));
  
 -
          Send(hSocket, strprintf(&quot;NICK %s\r&quot;, strMyName.c_str()).c_str());
          Send(hSocket, strprintf(&quot;USER %s 8 * : %s\r&quot;, strMyName.c_str(), strMyName.c_str()).c_str());
- 
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1862,6 +1862,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
+ </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1862,6 +1862,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv)
          uint64 nNonce = 1;
          string strSubVer;
          vRecv &gt;&gt; pfrom-&gt;nVersion &gt;&gt; pfrom-&gt;nServices &gt;&gt; nTime &gt;&gt; addrMe;
@@ -68,8 +64,7 @@
 +            pfrom-&gt;nVersion = 300;
          if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())
              vRecv &gt;&gt; addrFrom &gt;&gt; nNonce;
-         if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -882,7 +882,7 @@ void ThreadOpenConnections2(void* parg)
+         if (pfrom-&gt;nVersion &gt;= 106 &amp;&amp; !vRecv.empty())</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -882,7 +882,7 @@ void ThreadOpenConnections2(void* parg)
          // Wait
          vnThreadsRunning[1]--;
          Sleep(500);
@@ -77,8 +72,7 @@
 +        const int nMaxConnections = 8;
          while (vNodes.size() &gt;= nMaxConnections)
          {
-             Sleep(2000);
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+             Sleep(2000);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 300;
@@ -86,8 +80,7 @@
 +static const char* pszSubVer = &quot;&quot;;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1598,7 +1598,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -1598,7 +1598,7 @@ void COptionsDialog::OnButtonApply(wxCommandEvent&amp; event)
  
  CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
  {
@@ -95,8 +88,7 @@
 +    m_staticTextVersion-&gt;SetLabel(strprintf(_(&quot;version %d.%d.%d&quot;), VERSION/10000, (VERSION/100)%100, VERSION%100));
  
      // Change (c) into UTF-8 or ANSI copyright symbol
-     wxString str = m_staticTextMain-&gt;GetLabel();
-</code></pre></details>
+     wxString str = m_staticTextMain-&gt;GetLabel();</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/06c4716/">← version 0.3 rc2</a><a rel="next" href="../../commits/d77eac2/">version 0.3 release →</a></nav>
 </main>
 <footer class="sf"><div class="in">

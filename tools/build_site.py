@@ -2,7 +2,7 @@
 
     python tools/build_mail.py data satoshi-mail.html          # the single-file app, as before
     python tools/build_site.py satoshi-mail.html site \\
-        --base-url https://satoshimail.vercel.app/
+        --base-url https://satoshimail.pages.dev/
 
 Output (upload the folder as-is to Cloudflare Pages, GitHub Pages, Netlify or any static host):
 
@@ -861,8 +861,9 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("page", help="the built single-file app (satoshi-mail.html)")
     ap.add_argument("out", nargs="?", default="site", help="output folder (default: site)")
-    ap.add_argument("--base-url", default="https://satoshimail.vercel.app/", help="public URL the site will live at (default: the Vercel address)")
-    ap.add_argument("--no-analytics", action="store_true", help="leave out Vercel Web Analytics")
+    ap.add_argument("--base-url", default="https://satoshimail.pages.dev/", help="public URL the site will live at (default: the Cloudflare Pages address)")
+    ap.add_argument("--analytics", choices=["none", "vercel"], default="none",
+                    help="analytics script to add: none (default; on Cloudflare Pages, switch on Web Analytics in the dashboard instead) or vercel")
     ap.add_argument("--google-verify", default=GOOGLE_VERIFY, help="Google Search Console verification code (meta tag content)")
     a = ap.parse_args(argv)
     out = Path(a.out)
@@ -880,7 +881,7 @@ def main(argv=None) -> int:
     s.build_updates()
     s.build_verify()
     s.build_static_assets()
-    if not a.no_analytics:
+    if a.analytics == "vercel":
         add_analytics(out)
     n = sum(1 for _ in out.rglob("*.html"))
     size = sum(f.stat().st_size for f in out.rglob("*") if f.is_file())

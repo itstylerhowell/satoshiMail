@@ -6,20 +6,20 @@
 <title>renamed a few rpc methods (r63) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 64a474a to Bitcoin, 14 February 2010: renamed a few rpc methods. 5 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/64a474a/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/64a474a/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="renamed a few rpc methods (r63) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 64a474a to Bitcoin, 14 February 2010: renamed a few rpc methods. 5 files changed.">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/64a474a/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/64a474a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="renamed a few rpc methods (r63) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 64a474a to Bitcoin, 14 February 2010: renamed a few rpc methods. 5 files changed.">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "renamed a few rpc methods", "url": "https://satoshimail.vercel.app/commits/64a474a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-14T22:27:13Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/64a474a49b20a66453fbcd2382e4b042427b0a0f"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "renamed a few rpc methods", "item": "https://satoshimail.vercel.app/commits/64a474a/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "renamed a few rpc methods", "url": "https://satoshimail.pages.dev/commits/64a474a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-14T22:27:13Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/64a474a49b20a66453fbcd2382e4b042427b0a0f"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "renamed a few rpc methods", "item": "https://satoshimail.pages.dev/commits/64a474a/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -51,8 +49,7 @@
 +CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
  HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
  
- 
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -655,11 +655,7 @@ void ThreadSocketHandler2(void* parg)
+ </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -655,11 +655,7 @@ void ThreadSocketHandler2(void* parg)
          if (FD_ISSET(hListenSocket, &amp;fdsetRecv))
          {
              struct sockaddr_in sockaddr;
@@ -63,8 +60,7 @@
 -#endif
              SOCKET hSocket = accept(hListenSocket, (struct sockaddr*)&amp;sockaddr, &amp;len);
              CAddress addr(sockaddr);
-             if (hSocket == INVALID_SOCKET)
-</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -157,12 +157,12 @@ Value listtransactions(const Array&amp; params)
+             if (hSocket == INVALID_SOCKET)</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -157,12 +157,12 @@ Value listtransactions(const Array&amp; params)
  }
  
  
@@ -126,8 +122,7 @@
 +        if (strMethod == &quot;getallreceived&quot;    &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
  
          // Execute
-         Value result = CallRPC(strMethod, params);
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+         Value result = CallRPC(strMethod, params);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 201;
@@ -135,16 +130,14 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- 
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -68,6 +68,7 @@ static const bool fWindows = true;
+ </code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -68,6 +68,7 @@ static const bool fWindows = true;
  #define S_IWUSR             0200
  #endif
  #define unlink              _unlink
 +typedef int socklen_t;
  #else
  static const bool fWindows = false;
- #define WSAGetLastError()   errno
-</code></pre></details>
+ #define WSAGetLastError()   errno</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c4319e6/">← Workaround for bug on wxWidgets 2.9.0 Ubuntu 9.10 64-bit…</a><a rel="next" href="../../commits/5253d1a/">strip out unfinished product, review and market stuff… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

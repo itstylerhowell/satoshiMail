@@ -6,20 +6,20 @@
 <title>GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit c243012 to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/c243012/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/c243012/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit c243012 to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/c243012/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/c243012/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="GUI-less build target bitcoind… (r71) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit c243012 to Bitcoin, 25 February 2010: GUI-less build target bitcoind that links to wxBase and shouldn&#x27;t need GTK, split init…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "GUI-less build target bitcoind that links to wxBase and shouldn't need GTK, split init and shutdown from ui.cpp into init.cpp, support wxUSE_GUI=0 -- version 0.2.7", "url": "https://satoshimail.vercel.app/commits/c243012/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-25T21:55:27Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c2430126d75318508836a24f90d3524320190465"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "GUI-less build target bitcoind that…", "item": "https://satoshimail.vercel.app/commits/c243012/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "GUI-less build target bitcoind that links to wxBase and shouldn't need GTK, split init and shutdown from ui.cpp into init.cpp, support wxUSE_GUI=0 -- version 0.2.7", "url": "https://satoshimail.pages.dev/commits/c243012/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-25T21:55:27Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/c2430126d75318508836a24f90d3524320190465"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "GUI-less build target bitcoind that…", "item": "https://satoshimail.pages.dev/commits/c243012/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -67,8 +65,7 @@
 +#include &quot;init.h&quot;
  
  #include &quot;xpm/addressbook16.xpm&quot;
- #include &quot;xpm/addressbook20.xpm&quot;
-</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -0,0 +1,625 @@
+ #include &quot;xpm/addressbook20.xpm&quot;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -0,0 +1,625 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -367,16 +364,14 @@
 +#else
 +    SetAppName(&quot;bitcoin&quot;);
 +    umask(077);
-+#endif
-</code></pre></details><details><summary><code>init.h</code></summary><pre><code>@@ -0,0 +1,7 @@
++#endif</code></pre></details><details><summary><code>init.h</code></summary><pre><code>@@ -0,0 +1,7 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
 +
 +void Shutdown(void* parg);
 +bool GetStartOnSystemStartup();
-+void SetStartOnSystemStartup(bool fAutoStart);
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -55,6 +55,8 @@ int64 nTransactionFee = 0;
++void SetStartOnSystemStartup(bool fAutoStart);</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -55,6 +55,8 @@ int64 nTransactionFee = 0;
  CAddress addrIncoming;
  int fLimitProcessors = false;
  int nLimitProcessors = 1;
@@ -393,8 +388,7 @@
 +        return _(&quot;Insufficient funds&quot;);
  
      // Parse bitcoin address
-     CScript scriptPubKey;
-</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -45,6 +45,8 @@ extern int64 nTransactionFee;
+     CScript scriptPubKey;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -45,6 +45,8 @@ extern int64 nTransactionFee;
  extern CAddress addrIncoming;
  extern int fLimitProcessors;
  extern int nLimitProcessors;
@@ -402,8 +396,7 @@
 +extern int fMinimizeOnClose;
  
  
- 
-</code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -18,69 +18,59 @@ LIBPATHS= \
+ </code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -18,69 +18,59 @@ LIBPATHS= \
   -L&quot;/openssl/out&quot; \
   -L&quot;/wxwidgets/lib/gcc_lib&quot;
  
@@ -498,8 +491,7 @@
  clean:
  	-del /Q obj\*
 +	-del /Q obj\nogui\*
- 	-del /Q headers.h.gch
-</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -13,66 +13,61 @@ LIBPATHS= \
+ 	-del /Q headers.h.gch</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -13,66 +13,61 @@ LIBPATHS= \
   -L&quot;/usr/lib&quot; \
   -L&quot;/usr/local/lib&quot;
  
@@ -593,8 +585,7 @@
  clean:
  	-rm obj/*
 +	-rm obj/nogui/*
- 	-rm headers.h.gch
-</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -28,57 +28,80 @@ LIBS= \
+ 	-rm headers.h.gch</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -28,57 +28,80 @@ LIBS= \
  WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
  DEBUGFLAGS=/Zi /Od /D__WXDEBUG__
  CFLAGS=/c /nologo /Ob0 /MDd /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
@@ -706,8 +697,7 @@
 -    -del *.pdb
 +	-del /Q obj\*
 +	-del *.ilk
-+	-del *.pdb
-</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -676,18 +676,18 @@ int CommandLineRPC(int argc, char *argv[])
++	-del *.pdb</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -676,18 +676,18 @@ int CommandLineRPC(int argc, char *argv[])
          string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));
          if (result.type() != null_type)
          {
@@ -730,8 +720,7 @@
 +            MyMessageBox(strprintf(&quot;error: %s\n&quot;, e.what()).c_str(), &quot;Bitcoin&quot;, wxOK);
          else
              fprintf(stderr, &quot;error: %s\n&quot;, e.what());
-     } catch (...) {
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+     } catch (...) {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -739,8 +728,7 @@
 +static const int VERSION = 207;
  static const char* pszSubVer = &quot;.0&quot;;
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,38 +7,18 @@
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,38 +7,18 @@
  #include &lt;crtdbg.h&gt;
  #endif
  
@@ -1039,8 +1027,7 @@
 -            &quot;  -gen=0          \t\t  &quot; + _(&quot;Don&#x27;t generate coins\n&quot;) +
 -            &quot;  -min            \t\t  &quot; + _(&quot;Start minimized\n&quot;) +
 -            &quot;  -datadir=&lt;dir&gt;  \t  &quot;   + _(&quot;Specify data directory\n&quot;) +
--            &quot;  -proxy=&lt;ip:port&gt;\t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +
-</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -4,26 +4,61 @@
+-            &quot;  -proxy=&lt;ip:port&gt;\t  &quot;   + _(&quot;Connect through socks4 proxy\n&quot;) +</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -4,26 +4,61 @@
  
  DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
  
@@ -1113,8 +1100,7 @@
  DECLARE_EVENT_TABLE()
  };
 +
-+#endif // wxUSE_GUI
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -459,6 +459,7 @@ const char* wxGetTranslation(const char* pszEnglish)
++#endif // wxUSE_GUI</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -459,6 +459,7 @@ const char* wxGetTranslation(const char* pszEnglish)
          mapCache[pszEnglish] = pszCached;
          return pszCached;
      }
@@ -1132,8 +1118,7 @@
 +        MyMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
      throw;
      //DebugBreak();
- }
-</code></pre></details>
+ }</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/cb420a1/">← run as daemon without GUI, hooked wxApp::Initialize to…</a><a rel="next" href="../../commits/6557910/">wx/utils.h and wx/clipbrd.h not needed on bitcoind wxbase… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

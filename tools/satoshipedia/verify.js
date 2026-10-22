@@ -2,7 +2,7 @@
    Every message and commit has a SHA-256 fingerprint of its exact contents; each version of the archive's
    list of fingerprints (its manifest) is timestamped in Bitcoin with OpenTimestamps (tools/timestamp.py and
    the GitHub Action). This page recomputes fingerprints in the browser and checks them against the proofs. */
-const VF_SITE = "https://satoshimail.vercel.app/verify/";
+const VF_SITE = SITE_URL + "verify/";
 const VF_BASE = window.SM_SITE ? "verify/" : VF_SITE;
 let VF_INDEX = null;
 const VF_TEXT = new Map();
@@ -65,7 +65,7 @@ async function vfFill(item) {
   if (!still()) return;
   const box = $("#vfarchive");
   if (!ix) {
-    box.innerHTML = `<p>The Bitcoin proofs are published with the website. <a href="${VF_SITE}" target="_blank" rel="noopener">Open the proofs on satoshimail.vercel.app</a>.</p>`;
+    box.innerHTML = `<p>The Bitcoin proofs are published with the website. <a href="${VF_SITE}" target="_blank" rel="noopener">Open the proofs on ${SITE_URL.replace(/^https:\/\/|\/$/g, "")}</a>.</p>`;
   } else {
     const vs = ix.versions || [], cur = ix.current, curV = cur && vs.find(v => v.root === cur.root);
     box.innerHTML = `<div class="vf-head"><h3>This version of the archive</h3>${vfStatus(curV)}</div>
@@ -102,7 +102,7 @@ async function vfFill(item) {
     : found ? `<p class="vf-wait">${ic("schedule")}<span><b>In the latest manifest.</b> Its Bitcoin timestamp is waiting for a block, which usually takes a few hours.</span></p>`
     : inCurrent ? `<p class="vf-wait">${ic("schedule")}<span><b>In the current archive</b>, which hasn't been timestamped yet. It will be within a few hours.</span></p>`
     : ix ? `<p class="vf-bad">${ic("error", "fill")}<span><b>Not found in any timestamped version.</b> This copy of the ${item.kind} differs from the published archive.</span></p>`
-    : `<p class="vf-wait">${ic("info")}<span>Its fingerprint is below. Compare it with the manifests on <a href="${VF_SITE}" target="_blank" rel="noopener">satoshimail.vercel.app/verify</a>.</span></p>`;
+    : `<p class="vf-wait">${ic("info")}<span>Its fingerprint is below. Compare it with the manifests on <a href="${VF_SITE}" target="_blank" rel="noopener">${SITE_URL.replace(/^https:\/\//, "")}verify</a>.</span></p>`;
   const cmd = `printf '%s' '${item.canon.replace(/'/g, `'\\''`)}' | shasum -a 256`;
   $("#vfitem").innerHTML = `<div class="vf-head"><h3>${esc(item.kind === "commit" ? "Commit" : "Message")}: <a href="${item.href}" data-vfmi="${item.mi ?? ""}">${esc(item.title)}</a></h3></div>
     <p class="muted">${esc(item.who)} · ${esc(fullDate(item.d))}</p>

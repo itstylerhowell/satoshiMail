@@ -7,6 +7,8 @@ In a working folder with tools/, wiki/ and out/: writes out/mail_template.html a
 """
 import json, sys, pathlib
 
+SITE_URL = "https://satoshimail.pages.dev/"   # the public website (Cloudflare Pages); keep in step with build_site.py --base-url
+
 root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[2]).resolve()
 if (root / "tools" / "satoshipedia" / "assemble.py").exists():  # the repository layout
     tools = wk = root / "tools" / "satoshipedia"
@@ -36,7 +38,7 @@ src = patch(src, roboto, roboto + '\n<link rel="stylesheet" href="https://fonts.
 
 # 3. css before the first </style> after the main stylesheet
 i = src.index("</style>", src.index("--bg: #f6f8fc"))
-src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + (tools / "updates.css").read_text() + "\n" + (tools / "verify.css").read_text() + "\n" + src[i:]
+src = src[:i] + "\n" + (tools / "wiki.css").read_text() + "\n" + (tools / "map.css").read_text() + "\n" + (tools / "seo.css").read_text() + "\n" + (tools / "jlook.css").read_text() + "\n" + (tools / "ask.css").read_text() + "\n" + (tools / "sources.css").read_text() + "\n" + (tools / "feedback.css").read_text() + "\n" + (tools / "retro.css").read_text() + "\n" + (tools / "updates.css").read_text() + "\n" + (tools / "verify.css").read_text() + "\n" + (tools / "classic.css").read_text() + "\n" + src[i:]
 
 # 4. markup, 5. article data
 wjson = json.dumps(json.load(open(wk / "wiki.json")), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -45,7 +47,7 @@ ujson = json.dumps(json.load(open(tools / "updates.json")), ensure_ascii=False, 
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="updates-data" type="application/json">{ujson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + (tools / "verify.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + f"const SITE_URL = {json.dumps(SITE_URL)};\n" + (tools / "verify.js").read_text() + (tools / "classic.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -89,7 +91,7 @@ src = patch(src, '    item("#drafts", "draft", "Drafts", ST.drafts.length || "",
 src = patch(src, 'a: "#all", d: "#drafts" }[k];', 'a: "#all" }[k];')
 src = patch(src, '<td><kbd>c</kbd></td><td>Compose</td>', '<td><kbd>c</kbd></td><td>Compose (try it)</td>')
 src = patch(src, '<kbd>a</kbd> <kbd>d</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Drafts</td>', '<kbd>a</kbd> <kbd>w</kbd></td><td>Inbox, Starred, Sent, Commits, All Mail, Satoshipedia</td>')
-src = patch(src, 'Stars, read state, archive, trash, drafts and settings are stored only in this browser. Nothing is sent anywhere.', 'Stars, read state, archive, trash and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On satoshimail.vercel.app, visits are counted with Vercel Web Analytics, which uses no cookies and doesn\'t record what you search for.')
+src = patch(src, 'Stars, read state, archive, trash, drafts and settings are stored only in this browser. Nothing is sent anywhere.', 'Stars, read state, archive, trash and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On the website, visits are counted with Cloudflare Web Analytics, which uses no cookies.')
 
 # no trash: remove every delete button, the Trash folder and the # shortcut; restore anything trashed before
 src = patch(src, '  for (const k of ["star", "read", "arch", "trash"]) s[k] = s[k] && typeof s[k] === "object" ? s[k] : {};\n',
@@ -271,6 +273,16 @@ src = patch(src, 'Reset stars and read state</button>', 'Reset stars</button>')
 src = patch(src, '["All", "None", "Read", "Unread", "Starred", "Unstarred"]', '["All", "None", "Starred", "Unstarred"]')
 src = patch(src, '${chip("is:unread", "Is unread", "mark_email_unread")}', '')
 
+# Classic look (classic.css / classic.js): Quick Contacts, the Web Clip, the footer, "Compose Mail", the loading line
+src = patch(src, '`<h2>Private email</h2><ul>${privLabels}</ul>`', '`<h2>Quick Contacts</h2><ul class="qc">${QC_ME}${privLabels}</ul>`')
+src = patch(src, '<span class="t">${esc(L.name)}</span></a></li>`;\n  };', '<span class="t">${esc(L.name)}${L.priv ? `<small>${esc(qcStatus(slug))}</small>` : ""}</span></a></li>`;\n  };')
+src = patch(src, '${ic("edit")} Compose</button>', '${ic("edit")} Compose Mail</button>')
+src = patch(src, '  $("#main").innerHTML = toolbar(pg) + `<div class="scroll" id="scroller">${head}<div class="list">${items.map(x => x.c ? commitRow(x.c) : rowHtml(x.t, x)).join("")}</div>${empty}</div>`;',
+            '  $("#main").innerHTML = (model.kind === "inbox" && (r.page || 1) === 1 ? clipHtml() : "") + toolbar(pg) + `<div class="scroll" id="scroller">${head}<div class="list">${items.map(x => x.c ? commitRow(x.c) : rowHtml(x.t, x)).join("")}</div>${empty}${gfootHtml()}</div>`;')
+src = patch(src, '<div class="ld-beta"><span class="beta-pill static">Beta</span>In development</div>',
+            f'<p class="ld-text">Loading satoshin@gmx.com&hellip;</p><p class="ld-basic"><a href="{SITE_URL}conversations/">Load basic HTML</a> (for slow connections)</p>')
+
+src = patch(src, '<a href="#wiki">Satoshipedia</a>, in the dock below.', '<a href="#wiki">Satoshipedia</a>, linked at the top of the page.')
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).
 import re as _re

@@ -6,20 +6,20 @@
 <title>retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 4ea3f3d to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/4ea3f3d/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/4ea3f3d/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 4ea3f3d to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/4ea3f3d/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/4ea3f3d/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="retry IRC if name in use, resize… (r44) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 4ea3f3d to Bitcoin, 11 December 2009: retry IRC if name in use, resize to fit ubuntu&#x27;s giant default font, scroll debug.log…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "retry IRC if name in use, resize to fit ubuntu's giant default font, scroll debug.log, pause gen during initial block download", "url": "https://satoshimail.vercel.app/commits/4ea3f3d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-11T16:49:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4ea3f3da1a0c00ea74e85c31a22ea94d18bbdf06"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "retry IRC if name in use, resize to…", "item": "https://satoshimail.vercel.app/commits/4ea3f3d/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "retry IRC if name in use, resize to fit ubuntu's giant default font, scroll debug.log, pause gen during initial block download", "url": "https://satoshimail.pages.dev/commits/4ea3f3d/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-11T16:49:21Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4ea3f3da1a0c00ea74e85c31a22ea94d18bbdf06"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "retry IRC if name in use, resize to…", "item": "https://satoshimail.pages.dev/commits/4ea3f3d/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -69,8 +67,7 @@
 +The UI layout is edited with wxFormBuilder.  The project file is
  uiproject.fbp.  It generates uibase.cpp and uibase.h, which define base
  classes that do the rote work of constructing all the UI elements.
- 
-</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -9,7 +9,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
+ </code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -9,7 +9,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
  
  
  UNIX BUILD NOTES
@@ -111,8 +108,7 @@
 +If you want to build Boost yourself,
  cd /usr/local/boost_1_40_0
  su
- ./bootstrap.sh
-</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -445,7 +445,7 @@ bool CAddrDB::LoadAddresses()
+ ./bootstrap.sh</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -445,7 +445,7 @@ bool CAddrDB::LoadAddresses()
      CRITICAL_BLOCK(cs_mapAddresses)
      {
          // Load user provided addresses
@@ -170,8 +166,7 @@
 +    if (!CWalletDB(&quot;cr+&quot;).LoadWallet(vchDefaultKey))
          return false;
      fFirstRunRet = vchDefaultKey.empty();
- 
-</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -121,20 +121,20 @@ bool RecvLineIRC(SOCKET hSocket, string&amp; strLine)
+ </code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -121,20 +121,20 @@ bool RecvLineIRC(SOCKET hSocket, string&amp; strLine)
      }
  }
  
@@ -233,8 +228,7 @@
 +            }
              nErrorWait = nErrorWait * 11 / 10;
              if (Wait(nErrorWait += 60))
-                 continue;
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2530,7 +2530,7 @@ void BitcoinMiner()
+                 continue;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2530,7 +2530,7 @@ void BitcoinMiner()
          //
          // Search
          //
@@ -273,8 +267,7 @@
 +                }
                  tmp.block.nTime = pblock-&gt;nTime = max(pindexPrev-&gt;GetMedianTimePast()+1, GetAdjustedTime());
              }
-         }
-</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -10,8 +10,6 @@ endif
+         }</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -10,8 +10,6 @@ endif
  endif
  ifeq &quot;$(BUILD)&quot; &quot;debug&quot;
  D=d
@@ -338,8 +331,7 @@
 +        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/ui_res.o
  
  bitcoin.exe: headers.h.gch $(OBJS)
- 	-kill /f bitcoin.exe
-</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -22,13 +22,16 @@ INCLUDEPATHS= \
+ 	-kill /f bitcoin.exe</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -22,13 +22,16 @@ INCLUDEPATHS= \
  
  LIBPATHS= \
   -L&quot;/usr/lib&quot; \
@@ -413,8 +405,7 @@
 +        obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
  
  bitcoin: headers.h.gch $(OBJS)
- 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ uint64 nLocalServices = (fClient ? 0 : NODE_NETWORK);
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -21,7 +21,6 @@ uint64 nLocalServices = (fClient ? 0 : NODE_NETWORK);
  CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
  CNode* pnodeLocalHost = NULL;
  uint64 nLocalHostNonce = 0;
@@ -449,16 +440,14 @@
 +#endif
 +    }
 +}
-+instance_of_cnetcleanup;
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -454,7 +454,6 @@ extern uint64 nLocalServices;
++instance_of_cnetcleanup;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -454,7 +454,6 @@ extern uint64 nLocalServices;
  extern CAddress addrLocalHost;
  extern CNode* pnodeLocalHost;
  extern uint64 nLocalHostNonce;
 -extern bool fShutdown;
  extern array&lt;int, 10&gt; vnThreadsRunning;
  extern SOCKET hListenSocket;
- extern int64 nThreadSocketHandlerHeartbeat;
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ extern int64 nThreadSocketHandlerHeartbeat;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 106;
@@ -466,8 +455,7 @@
 +static const char* pszSubVer = &quot; test11&quot;;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -317,6 +317,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -317,6 +317,7 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
      fOnSetFocusAddress = false;
      fRefresh = false;
      m_choiceFilter-&gt;SetSelection(0);
@@ -579,8 +567,7 @@
 +        ShrinkDebugFile();
      printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
      printf(&quot;Bitcoin version %d%s, OS version %s\n&quot;, VERSION, pszSubVer, wxGetOsDescription().mb_str());
- 
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -11,6 +11,7 @@ bool fDebug = false;
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -11,6 +11,7 @@ bool fDebug = false;
  bool fPrintToDebugger = false;
  bool fPrintToConsole = false;
  char pszSetDataDir[MAX_PATH] = &quot;&quot;;
@@ -662,8 +649,7 @@
 +
  
  
- 
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -111,6 +111,7 @@ extern bool fDebug;
+ </code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -111,6 +111,7 @@ extern bool fDebug;
  extern bool fPrintToDebugger;
  extern bool fPrintToConsole;
  extern char pszSetDataDir[MAX_PATH];
@@ -678,8 +664,7 @@
 +void ShrinkDebugFile();
  uint64 GetRand(uint64 nMax);
  int64 GetTime();
- int64 GetAdjustedTime();
-</code></pre></details>
+ int64 GetAdjustedTime();</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b075bbf/">← misc</a><a rel="next" href="../../commits/651d335/">misc →</a></nav>
 </main>
 <footer class="sf"><div class="in">

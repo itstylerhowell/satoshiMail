@@ -6,20 +6,20 @@
 <title>strip out unfinished product… (r64) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 5253d1a to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/5253d1a/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/5253d1a/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="strip out unfinished product… (r64) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 5253d1a to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/5253d1a/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/5253d1a/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="strip out unfinished product… (r64) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 5253d1a to Bitcoin, 15 February 2010: strip out unfinished product, review and market stuff, enable _() instead of wxT() in…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "strip out unfinished product, review and market stuff, enable _() instead of wxT() in uiproject.fbp so it uses wxGetTranslation for the wxFormBuilder generated part of the UI", "url": "https://satoshimail.vercel.app/commits/5253d1a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-15T04:03:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/5253d1ab77fab1995ede03fb934edd67f1359ba8"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "strip out unfinished product, review…", "item": "https://satoshimail.vercel.app/commits/5253d1a/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "strip out unfinished product, review and market stuff, enable _() instead of wxT() in uiproject.fbp so it uses wxGetTranslation for the wxFormBuilder generated part of the UI", "url": "https://satoshimail.pages.dev/commits/5253d1a/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-15T04:03:07Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/5253d1ab77fab1995ede03fb934edd67f1359ba8"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "strip out unfinished product, review…", "item": "https://satoshimail.pages.dev/commits/5253d1a/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -70,8 +68,7 @@
 -
  //
  // CWalletDB
- //
-</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -285,45 +285,6 @@ public:
+ //</code></pre></details><details><summary><code>db.h</code></summary><pre><code>@@ -285,45 +285,6 @@ public:
  
  
  
@@ -116,16 +113,14 @@
 -
  class CAddrDB : public CDB
  {
- public:
-</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -99,7 +99,6 @@ using namespace boost;
+ public:</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -99,7 +99,6 @@ using namespace boost;
  #include &quot;net.h&quot;
  #include &quot;irc.h&quot;
  #include &quot;main.h&quot;
 -#include &quot;market.h&quot;
  #include &quot;rpc.h&quot;
  #include &quot;uibase.h&quot;
- #include &quot;ui.h&quot;
-</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1706,10 +1706,8 @@ bool AlreadyHave(CTxDB&amp; txdb, const CInv&amp; inv)
+ #include &quot;ui.h&quot;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1706,10 +1706,8 @@ bool AlreadyHave(CTxDB&amp; txdb, const CInv&amp; inv)
  {
      switch (inv.type)
      {
@@ -162,8 +157,7 @@
 -
      else if (strCommand == &quot;block&quot;)
      {
-         auto_ptr&lt;CBlock&gt; pblock(new CBlock);
-</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -25,7 +25,7 @@ LIBS= \
+         auto_ptr&lt;CBlock&gt; pblock(new CBlock);</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -25,7 +25,7 @@ LIBS= \
   -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l shlwapi
  WXDEFS=-DWIN32 -D__WXMSW__ -D_WINDOWS -DNOPCH
  CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
@@ -190,36 +184,7 @@
 +OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
          obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o \
          obj/ui_res.o
- 
-</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
- 
- WXDEFS=-D__WXGTK__ -DNOPCH
- CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
--HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
-+HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
- 
- 
- 
-@@ -60,9 +60,6 @@ obj/net.o: net.cpp                  $(HEADERS)
- obj/main.o: main.cpp                $(HEADERS) sha.h
- 	g++ -c $(CFLAGS) -o $@ $&lt;
- 
--obj/market.o: market.cpp            $(HEADERS)
--	g++ -c $(CFLAGS) -o $@ $&lt;
--
- obj/ui.o: ui.cpp                    $(HEADERS)
- 	g++ -c $(CFLAGS) -o $@ $&lt;
- 
-@@ -80,7 +77,7 @@ obj/rpc.o: rpc.cpp                  $(HEADERS)
- 
- 
- 
--OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
-+OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
-         obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
- 
- bitcoin: headers.h.gch $(OBJS)
-</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
+ </code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
  
  WXDEFS=-D__WXGTK__ -DNOPCH
  CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
@@ -246,8 +211,34 @@
 +OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
          obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
  
- bitcoin: headers.h.gch $(OBJS)
-</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -23,7 +23,7 @@ LIBS= \
+ bitcoin: headers.h.gch $(OBJS)</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code>@@ -35,7 +35,7 @@ LIBS= \
+ 
+ WXDEFS=-D__WXGTK__ -DNOPCH
+ CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
+-HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h market.h rpc.h uibase.h ui.h
++HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
+ 
+ 
+ 
+@@ -60,9 +60,6 @@ obj/net.o: net.cpp                  $(HEADERS)
+ obj/main.o: main.cpp                $(HEADERS) sha.h
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+-obj/market.o: market.cpp            $(HEADERS)
+-	g++ -c $(CFLAGS) -o $@ $&lt;
+-
+ obj/ui.o: ui.cpp                    $(HEADERS)
+ 	g++ -c $(CFLAGS) -o $@ $&lt;
+ 
+@@ -80,7 +77,7 @@ obj/rpc.o: rpc.cpp                  $(HEADERS)
+ 
+ 
+ 
+-OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o obj/market.o \
++OBJS=obj/util.o obj/script.o obj/db.o obj/net.o obj/main.o \
+         obj/ui.o obj/uibase.o obj/sha.o obj/irc.o obj/rpc.o
+ 
+ bitcoin: headers.h.gch $(OBJS)</code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -23,7 +23,7 @@ LIBS= \
      kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib ws2_32.lib shlwapi.lib
  WXDEFS=/DWIN32 /D__WXMSW__ /D_WINDOWS /DNOPCH
  CFLAGS=/c /nologo /Ob0 /MD$(D) /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
@@ -274,8 +265,7 @@
 +OBJS=obj\util.obj obj\script.obj obj\db.obj obj\net.obj obj\main.obj \
      obj\ui.obj obj\uibase.obj obj\sha.obj obj\irc.obj obj\rpc.obj \
      obj\ui.res
- 
-</code></pre></details><details><summary><code>market.cpp</code></summary><pre><code>@@ -1,264 +0,0 @@
+ </code></pre></details><details><summary><code>market.cpp</code></summary><pre><code>@@ -1,264 +0,0 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 -// Distributed under the MIT/X11 software license, see the accompanying
 -// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -539,8 +529,7 @@
 -    //    mapProducts[GetHash()] = *this;
 -
 -    return true;
--}
-</code></pre></details><details><summary><code>market.h</code></summary><pre><code>@@ -1,182 +0,0 @@
+-}</code></pre></details><details><summary><code>market.h</code></summary><pre><code>@@ -1,182 +0,0 @@
 -// Copyright (c) 2009 Satoshi Nakamoto
 -// Distributed under the MIT/X11 software license, see the accompanying
 -// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -722,8 +711,7 @@
 -
 -extern map&lt;uint256, CProduct&gt; mapProducts;
 -extern CCriticalSection cs_mapProducts;
--extern map&lt;uint256, CProduct&gt; mapMyProducts;
-</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -381,11 +381,6 @@ void CNode::CancelSubscribe(unsigned int nChannel)
+-extern map&lt;uint256, CProduct&gt; mapMyProducts;</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -381,11 +381,6 @@ void CNode::CancelSubscribe(unsigned int nChannel)
              foreach(CNode* pnode, vNodes)
                  if (pnode != this)
                      pnode-&gt;PushMessage(&quot;sub-cancel&quot;, nChannel);
@@ -745,8 +733,7 @@
 -
      // Cancel subscriptions
      for (unsigned int nChannel = 0; nChannel &lt; vfSubscribe.size(); nChannel++)
-         if (vfSubscribe[nChannel])
-</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -341,9 +341,6 @@ enum
+         if (vfSubscribe[nChannel])</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -341,9 +341,6 @@ enum
  {
      MSG_TX = 1,
      MSG_BLOCK,
@@ -765,8 +752,7 @@
 -    &quot;table&quot;,
  };
  
- class CInv
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ class CInv</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 201;
@@ -774,8 +760,7 @@
 +static const char* pszSubVer = &quot;.2&quot;;
  
  
- 
-</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,22 +7,15 @@
+ </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -7,22 +7,15 @@
  #include &lt;crtdbg.h&gt;
  #endif
  
@@ -1074,8 +1059,7 @@
 -    m_textCtrlLabel[2 ] = m_textCtrlLabel2;
 -    m_textCtrlLabel[3 ] = m_textCtrlLabel3;
 -    m_textCtrlLabel[4 ] = m_textCtrlLabel4;
--    m_textCtrlLabel[5 ] = m_textCtrlLabel5;
-</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -6,12 +6,6 @@
+-    m_textCtrlLabel[5 ] = m_textCtrlLabel5;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -6,12 +6,6 @@
  
  
  DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
@@ -1245,8 +1229,7 @@
 +            SetSize(1.14 * GetSize().GetWidth(), 1.14 * GetSize().GetHeight());
      }
  
-     // Custom
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -27,39 +27,39 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+     // Custom</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -27,39 +27,39 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	
  	m_menuFile = new wxMenu();
  	wxMenuItem* m_menuFileExit;
@@ -1542,8 +1525,7 @@
 -	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, wxT(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
 +	m_staticTextInstructions = new wxStaticText( this, wxID_ANY, _(&quot;Enter the recipient&#x27;s IP address (e.g. 123.45.6.7) for online transfer with comments and confirmation, \nor Bitcoin address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJED9L) if recipient is not online.&quot;), wxDefaultPosition, wxDefaultSize, 0 );
  	m_staticTextInstructions-&gt;Wrap( -1 );
- 	fgSizer1-&gt;Add( m_staticTextInstructions, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
-</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details>
+ 	fgSizer1-&gt;Add( m_staticTextInstructions, 0, wxTOP|wxRIGHT|wxLEFT, 5 );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code></code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/64a474a/">← renamed a few rpc methods</a><a rel="next" href="../../commits/2b63e68/">fix mingw makefile to use correct wxWidgets include, this… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

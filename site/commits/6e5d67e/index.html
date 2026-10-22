@@ -6,20 +6,20 @@
 <title>switched from wxStandardPaths to… (r102) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 6e5d67e to Bitcoin, 9 July 2010: switched from wxStandardPaths to GetDefaultDataDir, fixes bug reported by m0mchil when…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/6e5d67e/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/6e5d67e/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="switched from wxStandardPaths to… (r102) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 6e5d67e to Bitcoin, 9 July 2010: switched from wxStandardPaths to GetDefaultDataDir, fixes bug reported by m0mchil when…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/6e5d67e/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/6e5d67e/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="switched from wxStandardPaths to… (r102) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 6e5d67e to Bitcoin, 9 July 2010: switched from wxStandardPaths to GetDefaultDataDir, fixes bug reported by m0mchil when…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "switched from wxStandardPaths to GetDefaultDataDir, fixes bug reported by m0mchil when username contains non-lower-ASCII characters -- version 0.3.1", "url": "https://satoshimail.vercel.app/commits/6e5d67e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-09T15:29:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6e5d67e827904571658213054fab6f0399b48801"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "switched from wxStandardPaths to…", "item": "https://satoshimail.vercel.app/commits/6e5d67e/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "switched from wxStandardPaths to GetDefaultDataDir, fixes bug reported by m0mchil when username contains non-lower-ASCII characters -- version 0.3.1", "url": "https://satoshimail.pages.dev/commits/6e5d67e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-09T15:29:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/6e5d67e827904571658213054fab6f0399b48801"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "switched from wxStandardPaths to…", "item": "https://satoshimail.pages.dev/commits/6e5d67e/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -68,8 +66,7 @@
 +    printf(&quot;Default data directory %s\n&quot;, GetDefaultDataDir().c_str());
  
      if (mapArgs.count(&quot;-loadblockindextest&quot;))
-     {
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+     {</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -79,8 +76,7 @@
 +static const char* pszSubVer = &quot;.0&quot;;
  
  
- 
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -604,7 +604,8 @@ void GetDataDir(char* pszDir)
+ </code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -604,7 +604,8 @@ void GetDataDir(char* pszDir)
          static char pszCachedDir[MAX_PATH];
          if (pszCachedDir[0] == 0)
          {
@@ -89,16 +85,14 @@
 +            strlcpy(pszCachedDir, GetDefaultDataDir().c_str(), sizeof(pszCachedDir));
              _mkdir(pszCachedDir);
          }
-         strlcpy(pszDir, pszCachedDir, MAX_PATH);
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -144,6 +144,7 @@ void GetDataDir(char* pszDirRet);
+         strlcpy(pszDir, pszCachedDir, MAX_PATH);</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -144,6 +144,7 @@ void GetDataDir(char* pszDirRet);
  #ifdef __WXMSW__
  string MyGetSpecialFolderPath(int nFolder, bool fCreate);
  #endif
 +string GetDefaultDataDir();
  string GetDataDir();
  void ShrinkDebugFile();
- uint64 GetRand(uint64 nMax);
-</code></pre></details>
+ uint64 GetRand(uint64 nMax);</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/20c6bfa/">← Gavin Andresen: implementation of autostart on system…</a><a rel="next" href="../../commits/a30b56e/">fix openssl linkage problems, disable minimize to tray on… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

@@ -6,20 +6,20 @@
 <title>Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit d882773 to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.vercel.app/commits/d882773/">
+<link rel="canonical" href="https://satoshimail.pages.dev/commits/d882773/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit d882773 to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase…">
-<meta property="og:url" content="https://satoshimail.vercel.app/commits/d882773/">
-<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
+<meta property="og:url" content="https://satoshimail.pages.dev/commits/d882773/">
+<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="Laszlo&#x27;s fix to make generate… (r99) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit d882773 to Bitcoin, 8 July 2010: Laszlo&#x27;s fix to make generate threads idle priority on Linux, replaced some wxBase…">
-<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
+<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,10 +27,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Laszlo's fix to make generate threads idle priority on Linux, replaced some wxBase dependencies: wxMutex, wxFileExists, wxStandardPaths, wxGetLocalTimeMillis", "url": "https://satoshimail.vercel.app/commits/d882773/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-08T16:14:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d882773789ea3894de7163f7bb880c5b23072882"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Laszlo's fix to make generate threads…", "item": "https://satoshimail.vercel.app/commits/d882773/"}]}</script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Laszlo's fix to make generate threads idle priority on Linux, replaced some wxBase dependencies: wxMutex, wxFileExists, wxStandardPaths, wxGetLocalTimeMillis", "url": "https://satoshimail.pages.dev/commits/d882773/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-08T16:14:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/d882773789ea3894de7163f7bb880c5b23072882"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Laszlo's fix to make generate threads…", "item": "https://satoshimail.pages.dev/commits/d882773/"}]}</script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -53,8 +51,7 @@
 +#include &lt;boost/date_time/posix_time/posix_time_types.hpp&gt;
  
  #ifdef __WXMSW__
- #include &lt;windows.h&gt;
-</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
+ #include &lt;windows.h&gt;</code></pre></details><details><summary><code>init.cpp</code></summary><pre><code>@@ -4,6 +4,8 @@
  
  #include &quot;headers.h&quot;
  
@@ -176,8 +173,7 @@
 +
      if (mapArgs.count(&quot;-loadblockindextest&quot;))
      {
-         CTxDB txdb(&quot;r&quot;);
-</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -692,6 +692,8 @@ msgstr &quot;Version&quot;
+         CTxDB txdb(&quot;r&quot;);</code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.mo</code></summary><pre><code></code></pre></details><details><summary><code>locale/de/LC_MESSAGES/bitcoin.po</code></summary><pre><code>@@ -692,6 +692,8 @@ msgstr &quot;Version&quot;
  msgid &quot;&quot;
  &quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n&quot;
  &quot;\n&quot;
@@ -287,8 +283,7 @@
 +                        }
                      }
                  }
- 
-</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -68,6 +68,6 @@ bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
+ </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -68,6 +68,6 @@ bitcoind: $(OBJS:obj/%=obj/nogui/%) obj/sha.o
  
  
  clean:
@@ -297,8 +292,7 @@
 -	-rm headers.h.gch
 +	-rm -f obj/*.o
 +	-rm -f obj/nogui/*.o
-+	-rm -f headers.h.gch
-</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -927,20 +927,22 @@ int CommandLineRPC(int argc, char *argv[])
++	-rm -f headers.h.gch</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -927,20 +927,22 @@ int CommandLineRPC(int argc, char *argv[])
          string strResult = (result.type() == str_type ? result.get_str() : write_string(result, true));
          if (result.type() != null_type)
          {
@@ -330,8 +324,7 @@
 +#endif
      } catch (...) {
          PrintException(NULL, &quot;CommandLineRPC()&quot;);
-     }
-</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     }</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 300;
@@ -339,8 +332,7 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- 
-</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -554,7 +554,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
+ </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -554,7 +554,7 @@ CAboutDialogBase::CAboutDialogBase( wxWindow* parent, wxWindowID id, const wxStr
  	
  	bSizer631-&gt;Add( 0, 4, 0, wxEXPAND, 5 );
  	
@@ -348,8 +340,7 @@
 +	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
  	m_staticTextMain-&gt;Wrap( -1 );
  	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
- 	
-</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
+ 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -227,7 +227,7 @@ class CAboutDialogBase : public wxDialog
  	
  	public:
  		wxStaticText* m_staticTextVersion;
@@ -357,8 +348,7 @@
 +		CAboutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = _(&quot;About Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 532,329 ), long style = wxDEFAULT_DIALOG_STYLE );
  		~CAboutDialogBase();
  	
- };
-</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
+ };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2866,7 +2866,7 @@
              &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
              &lt;property name=&quot;name&quot;&gt;CAboutDialogBase&lt;/property&gt;
              &lt;property name=&quot;pos&quot;&gt;&lt;/property&gt;
@@ -375,8 +365,7 @@
 +                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
                                                  &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
                                                  &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
-                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;
-</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -20,13 +20,13 @@ bool fCommandLine = false;
+                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -20,13 +20,13 @@ bool fCommandLine = false;
  
  
  // Init openssl library multithreading support
@@ -495,8 +484,7 @@
 -        //  Mac: ~/Library/Application Support/appname
          static char pszCachedDir[MAX_PATH];
          if (pszCachedDir[0] == 0)
-         {
-</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,9 @@ void ParseParameters(int argc, char* argv[]);
+         {</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -141,6 +141,9 @@ void ParseParameters(int argc, char* argv[]);
  const char* wxGetTranslation(const char* psz);
  int GetFilesize(FILE* file);
  void GetDataDir(char* pszDirRet);
@@ -543,8 +531,7 @@
 +#define THREAD_PRIORITY_LOWEST          PRIO_MAX
  #define THREAD_PRIORITY_BELOW_NORMAL    2
  #define THREAD_PRIORITY_NORMAL          0
- #define THREAD_PRIORITY_ABOVE_NORMAL    0
-</code></pre></details>
+ #define THREAD_PRIORITY_ABOVE_NORMAL    0</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/d77eac2/">← version 0.3 release</a><a rel="next" href="../../commits/50d49d9/">Portuguese translation by Tiago Faria →</a></nav>
 </main>
 <footer class="sf"><div class="in">
