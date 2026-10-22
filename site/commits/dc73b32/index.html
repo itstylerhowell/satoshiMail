@@ -6,20 +6,20 @@
 <title>CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit dc73b32 to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/dc73b32/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/dc73b32/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit dc73b32 to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/dc73b32/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/dc73b32/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="CCriticalSection using wxWidgets… (r19) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit dc73b32 to Bitcoin, 29 October 2009: CCriticalSection using wxWidgets instead of Windows OS calls. 3 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "CCriticalSection using wxWidgets instead of Windows OS calls", "url": "https://satoshimail.pages.dev/commits/dc73b32/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T05:55:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dc73b326f97f2ed7ec7b7e8485ebc9eb46e05ddb"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "CCriticalSection using wxWidgets…", "item": "https://satoshimail.pages.dev/commits/dc73b32/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "CCriticalSection using wxWidgets instead of Windows OS calls", "url": "https://satoshimail.vercel.app/commits/dc73b32/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T05:55:56Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dc73b326f97f2ed7ec7b7e8485ebc9eb46e05ddb"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "CCriticalSection using wxWidgets…", "item": "https://satoshimail.vercel.app/commits/dc73b32/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -67,7 +69,8 @@
 +        cs_vSend.Leave();
      }
  
-     void EndMessageAbortIfEmpty()</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,14 +13,14 @@ bool fPrintToConsole = false;
+     void EndMessageAbortIfEmpty()
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,14 +13,14 @@ bool fPrintToConsole = false;
  
  
  // Init openssl library multithreading support
@@ -119,7 +122,8 @@
 +
  void RandAddSeed()
  {
-     // Seed with CPU performance counter</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -106,28 +106,38 @@ void AddTimeData(unsigned int ip, int64 nTime);
+     // Seed with CPU performance counter
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -106,28 +106,38 @@ void AddTimeData(unsigned int ip, int64 nTime);
  // Could use wxCriticalSection for portability, but it doesn&#x27;t support TryEnterCriticalSection
  class CCriticalSection
  {
@@ -179,7 +183,8 @@
 +    ~CTryCriticalBlock() { if (pcs) pcs-&gt;Leave(); }
      bool Entered() { return pcs != NULL; }
  };
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/dd51920/">← addr relaying fixes, proxy option and privacy patches…</a><a rel="next" href="../../commits/e8474be/">better wallet.dat flush, consolidated… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

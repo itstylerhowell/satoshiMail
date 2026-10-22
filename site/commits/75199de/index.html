@@ -6,20 +6,20 @@
 <title>Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 75199de to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/75199de/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/75199de/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 75199de to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/75199de/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/75199de/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="Address Book with tabs instead of… (r68) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 75199de to Bitcoin, 20 February 2010: Address Book with tabs instead of separate Your Address book, with live update of default…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Address Book with tabs instead of separate Your Address book, with live update of default address in main window, New... button on main window for creating new receiving address, made receiving address labels more visible, ask user before paying transaction fee, when sending to bitcoin address also use a bitcoin address for the change, added some event.Skip() to fix UI glitches -- version 0.2.4", "url": "https://satoshimail.pages.dev/commits/75199de/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-20T21:59:59Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/75199de534a590329a3b636d63fade2e4544ce97"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Address Book with tabs instead of…", "item": "https://satoshimail.pages.dev/commits/75199de/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Address Book with tabs instead of separate Your Address book, with live update of default address in main window, New... button on main window for creating new receiving address, made receiving address labels more visible, ask user before paying transaction fee, when sending to bitcoin address also use a bitcoin address for the change, added some event.Skip() to fix UI glitches -- version 0.2.4", "url": "https://satoshimail.vercel.app/commits/75199de/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-20T21:59:59Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/75199de534a590329a3b636d63fade2e4544ce97"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Address Book with tabs instead of…", "item": "https://satoshimail.vercel.app/commits/75199de/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -208,7 +210,8 @@
  
 -    return SendMoney(scriptPubKey, nValue, wtxNew);
 +    return SendMoney(scriptPubKey, nValue, wtxNew, fAskFee);
- }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -67,9 +67,10 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
+ }
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -67,9 +67,10 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream&amp; vRecv);
  bool SendMessages(CNode* pto);
  int64 GetBalance();
  bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx&amp; wtxNew, CKey&amp; keyRet, int64&amp; nFeeRequiredRet);
@@ -221,7 +224,8 @@
 +string SendMoneyToBitcoinAddress(string strAddress, int64 nValue, CWalletTx&amp; wtxNew, bool fAskFee=false);
  void GenerateBitcoins(bool fGenerate);
  void ThreadBitcoinMiner(void* parg);
- void BitcoinMiner();</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -580,6 +580,11 @@ public:
+ void BitcoinMiner();
+</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -580,6 +580,11 @@ public:
          *this &lt;&lt; OP_DUP &lt;&lt; OP_HASH160 &lt;&lt; hash160 &lt;&lt; OP_EQUALVERIFY &lt;&lt; OP_CHECKSIG;
      }
  
@@ -232,7 +236,8 @@
 +
      bool SetBitcoinAddress(const string&amp; strAddress)
      {
-         this-&gt;clear();</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+         this-&gt;clear();
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -240,7 +245,8 @@
 +static const int VERSION = 204;
  static const char* pszSubVer = &quot;.0&quot;;
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -35,13 +35,54 @@ int fMinimizeOnClose = true;
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -35,13 +35,54 @@ int fMinimizeOnClose = true;
  // Util
  //
  
@@ -539,7 +545,8 @@
 +    event.Skip();
 +
      if (ptaskbaricon)
-         ptaskbaricon-&gt;UpdateTooltip();</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -2,11 +2,9 @@
+         ptaskbaricon-&gt;UpdateTooltip();
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -2,11 +2,9 @@
  // Distributed under the MIT/X11 software license, see the accompanying
  // file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
@@ -665,7 +672,8 @@
 +        SetSize(x, y);
      }
  
-     // Custom</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -42,14 +42,14 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+     // Custom
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -42,14 +42,14 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	m_menuOptions-&gt;Append( m_menuOptionsGenerateBitcoins );
  	
  	wxMenuItem* m_menuOptionsChangeYourAddress;
@@ -859,7 +867,8 @@
 -	m_buttonDelete-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonDelete ), NULL, this );
  	m_buttonOK-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonOK ), NULL, this );
  	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CAddressBookDialogBase::OnButtonCancel ), NULL, this );
- }</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -36,6 +36,7 @@
+ }
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -36,6 +36,7 @@
  #include &lt;wx/spinctrl.h&gt;
  #include &lt;wx/scrolwin.h&gt;
  #include &lt;wx/statbmp.h&gt;
@@ -964,7 +973,8 @@
 +		CGetTextFromUserDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString&amp; title = wxEmptyString, const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 440,138 ), long style = wxDEFAULT_DIALOG_STYLE );
  		~CGetTextFromUserDialogBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -155,7 +155,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -155,7 +155,7 @@
                      &lt;/object&gt;
                  &lt;/object&gt;
                  &lt;object class=&quot;wxMenu&quot; expanded=&quot;1&quot;&gt;
@@ -1263,7 +1273,8 @@
 +                                        &lt;/object&gt;
 +                                    &lt;/object&gt;
 +                                    &lt;object class=&quot;sizeritem&quot; expanded=&quot;1&quot;&gt;
-+                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -445,10 +445,14 @@ const char* wxGetTranslation(const char* pszEnglish)
++                                        &lt;property name=&quot;border&quot;&gt;5&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -445,10 +445,14 @@ const char* wxGetTranslation(const char* pszEnglish)
  
          // wxWidgets translation
          const char* pszTranslated = wxGetTranslation(wxString(pszEnglish, wxConvUTF8)).utf8_str();
@@ -1278,7 +1289,8 @@
 +        // we must pass back a pointer to permanently allocated memory.
          char* pszCached = new char[strlen(pszTranslated)+1];
          strcpy(pszCached, pszTranslated);
-         mapCache[pszEnglish] = pszCached;</code></pre></details>
+         mapCache[pszEnglish] = pszCached;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/c6ab3cf/">← safer wxGetTranslation wrapper</a><a rel="next" href="../../commits/0184604/">transaction filter tabs instead of view-&gt;show generated --… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

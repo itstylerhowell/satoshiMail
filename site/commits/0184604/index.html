@@ -6,20 +6,20 @@
 <title>transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 0184604 to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/0184604/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/0184604/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 0184604 to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/0184604/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/0184604/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="transaction filter tabs instead of… (r69) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 0184604 to Bitcoin, 21 February 2010: transaction filter tabs instead of view-&gt;show generated -- version 0.2.5. 9 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "transaction filter tabs instead of view->show generated -- version 0.2.5", "url": "https://satoshimail.pages.dev/commits/0184604/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-21T21:42:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/0184604aaf21f8279df9ecbee7be4fbf0bbf99c1"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "transaction filter tabs instead of…", "item": "https://satoshimail.pages.dev/commits/0184604/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "transaction filter tabs instead of view->show generated -- version 0.2.5", "url": "https://satoshimail.vercel.app/commits/0184604/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-21T21:42:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/0184604aaf21f8279df9ecbee7be4fbf0bbf99c1"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "transaction filter tabs instead of…", "item": "https://satoshimail.vercel.app/commits/0184604/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +cd /usr/local/boost_1_38_0
  su
  ./bootstrap.sh
- ./bjam install</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -599,7 +599,6 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
+ ./bjam install
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -599,7 +599,6 @@ bool CWalletDB::LoadWallet(vector&lt;unsigned char&gt;&amp; vchDefaultKeyRet)
                  ssKey &gt;&gt; strKey;
  
                  // Menu state
@@ -64,7 +67,8 @@
 -    printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
      printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
      printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);
-     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1335,7 +1335,9 @@ bool CBlock::AcceptBlock()
+     printf(&quot;addrIncoming = %s\n&quot;, addrIncoming.ToString().c_str());
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1335,7 +1335,9 @@ bool CBlock::AcceptBlock()
      if (!AddToBlockIndex(nFile, nBlockPos))
          return error(&quot;AcceptBlock() : AddToBlockIndex failed&quot;);
  
@@ -74,7 +78,8 @@
 +    if (hashBestChain == hash &amp;&amp; nBestHeight &gt; 40000)
          RelayInventory(CInv(MSG_BLOCK, hash));
  
-     // // Add atoms to user reviews for coins created</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+     // // Add atoms to user reviews for coins created
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -82,7 +87,8 @@
 +static const int VERSION = 205;
  static const char* pszSubVer = &quot;.0&quot;;
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -20,7 +20,6 @@ extern int g_isPainting;
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -20,7 +20,6 @@ extern int g_isPainting;
  bool fClosedToTray = false;
  
  // Settings
@@ -245,7 +251,8 @@
 -
  void CMainFrame::OnMenuOptionsGenerate(wxCommandEvent&amp; event)
  {
-     // Options-&gt;Generate Coins</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -8,7 +8,6 @@ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
+     // Options-&gt;Generate Coins
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -8,7 +8,6 @@ DECLARE_EVENT_TYPE(wxEVT_UITHREADCALL, -1)
  extern map&lt;string, string&gt; mapArgs;
  
  // Settings
@@ -288,7 +295,8 @@
 +    bool fShowReceived;
      bool fRefreshListCtrl;
      bool fRefreshListCtrlRunning;
-     bool fOnSetFocusAddress;</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -29,13 +29,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
+     bool fOnSetFocusAddress;
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -29,13 +29,6 @@ CMainFrameBase::CMainFrameBase( wxWindow* parent, wxWindowID id, const wxString&amp;
  	
  	m_menubar-&gt;Append( m_menuFile, _(&quot;&amp;File&quot;) );
  	
@@ -421,7 +429,8 @@
 +	m_listCtrlReceived-&gt;Disconnect( wxEVT_PAINT, wxPaintEventHandler( CMainFrameBase::OnPaintListCtrl ), NULL, this );
  }
  
- CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -28,6 +28,7 @@
+ CTxDetailsDialogBase::CTxDetailsDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -28,6 +28,7 @@
  #include &lt;wx/panel.h&gt;
  #include &lt;wx/choice.h&gt;
  #include &lt;wx/listctrl.h&gt;
@@ -540,7 +549,8 @@
 +		CMainFrameBase( wxWindow* parent, wxWindowID id = wxID_MAINFRAME, const wxString&amp; title = _(&quot;Bitcoin&quot;), const wxPoint&amp; pos = wxDefaultPosition, const wxSize&amp; size = wxSize( 723,484 ), long style = wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL );
  		~CMainFrameBase();
  	
- };</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
+ };
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -18,7 +18,7 @@
          &lt;property name=&quot;relative_path&quot;&gt;1&lt;/property&gt;
          &lt;property name=&quot;use_enum&quot;&gt;0&lt;/property&gt;
          &lt;property name=&quot;use_microsoft_bom&quot;&gt;0&lt;/property&gt;
@@ -839,7 +849,8 @@
 +                                    &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
 +                                    &lt;property name=&quot;name&quot;&gt;bSizer111&lt;/property&gt;
 +                                    &lt;property name=&quot;orient&quot;&gt;wxVERTICAL&lt;/property&gt;
-+                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;</code></pre></details>
++                                    &lt;property name=&quot;permission&quot;&gt;none&lt;/property&gt;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/75199de/">← Address Book with tabs instead of separate Your Address…</a><a rel="next" href="../../commits/cb420a1/">run as daemon without GUI, hooked wxApp::Initialize to… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

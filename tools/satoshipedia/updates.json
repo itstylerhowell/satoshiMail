@@ -24,14 +24,6 @@
     },
     {
       "date": "2026-10-22",
-      "title": "New home at satoshimail.pages.dev",
-      "items": [
-        "Satoshi Mail now runs on Cloudflare Pages at satoshimail.pages.dev. Old satoshimail.vercel.app links forward to the same page here."
-      ],
-      "commits": []
-    },
-    {
-      "date": "2026-10-22",
       "title": "Back to 2008",
       "items": [
         "Satoshi Mail now looks the way Gmail did in 2008: the light-blue frame, text links instead of icons, “Compose Mail”, blue-grey rows and grey buttons.",

@@ -6,20 +6,20 @@
 <title>UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 8acda00 to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/8acda00/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/8acda00/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 8acda00 to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/8acda00/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/8acda00/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="UIThreadCall, ThreadSafeMessageBox (r34) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 8acda00 to Bitcoin, 6 November 2009: UIThreadCall, ThreadSafeMessageBox. 7 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UIThreadCall, ThreadSafeMessageBox", "url": "https://satoshimail.pages.dev/commits/8acda00/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-06T18:53:26Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8acda009d921a65dab87bd0a40f63981a1586561"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "UIThreadCall, ThreadSafeMessageBox", "item": "https://satoshimail.pages.dev/commits/8acda00/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "UIThreadCall, ThreadSafeMessageBox", "url": "https://satoshimail.vercel.app/commits/8acda00/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-06T18:53:26Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/8acda009d921a65dab87bd0a40f63981a1586561"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "UIThreadCall, ThreadSafeMessageBox", "item": "https://satoshimail.vercel.app/commits/8acda00/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +#include &lt;boost/function.hpp&gt;
  
  #ifdef __WXMSW__
- #include &lt;windows.h&gt;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1381,7 +1381,7 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
+ #include &lt;windows.h&gt;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1381,7 +1381,7 @@ bool CheckDiskSpace(int64 nAdditionalBytes)
      if (nFreeBytesAvailable &lt; (int64)15000000 + nAdditionalBytes)
      {
          fShutdown = true;
@@ -57,7 +60,8 @@
 +        ThreadSafeMessageBox(&quot;Warning: Your disk space is low  &quot;, &quot;Bitcoin&quot;, wxOK | wxICON_EXCLAMATION);
          _beginthread(Shutdown, 0, NULL);
          return false;
-     }</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -14,13 +14,10 @@ void SetStartOnSystemStartup(bool fAutoStart);
+     }
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -14,13 +14,10 @@ void SetStartOnSystemStartup(bool fAutoStart);
  
  
  
@@ -175,7 +179,8 @@
 -
  //////////////////////////////////////////////////////////////////////////////
  //
- // CMyApp</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -5,19 +5,10 @@
+ // CMyApp
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -5,19 +5,10 @@
  
  
  
@@ -226,7 +231,8 @@
 -
 -
 -
--</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1702,166 +1702,6 @@ CEditReviewDialogBase::~CEditReviewDialogBase()
+-
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1702,166 +1702,6 @@ CEditReviewDialogBase::~CEditReviewDialogBase()
  	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CEditReviewDialogBase::OnButtonCancel ), NULL, this );
  }
  
@@ -392,7 +398,8 @@
 -
  CGetTextFromUserDialogBase::CGetTextFromUserDialogBase( wxWindow* parent, wxWindowID id, const wxString&amp; title, const wxPoint&amp; pos, const wxSize&amp; size, long style ) : wxDialog( parent, id, title, pos, size, style )
  {
- 	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -37,7 +37,6 @@
+ 	this-&gt;SetSizeHints( wxDefaultSize, wxDefaultSize );
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -37,7 +37,6 @@
  #include &lt;wx/statbmp.h&gt;
  #include &lt;wx/combobox.h&gt;
  #include &lt;wx/richtext/richtextctrl.h&gt;
@@ -494,7 +501,8 @@
 -
  ///////////////////////////////////////////////////////////////////////////////
  /// Class CGetTextFromUserDialogBase
- ///////////////////////////////////////////////////////////////////////////////</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -11581,998 +11581,6 @@
+ ///////////////////////////////////////////////////////////////////////////////
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -11581,998 +11581,6 @@
                  &lt;/object&gt;
              &lt;/object&gt;
          &lt;/object&gt;
@@ -793,7 +801,8 @@
 -            &lt;event name=&quot;OnIdle&quot;&gt;&lt;/event&gt;
 -            &lt;event name=&quot;OnKeyDown&quot;&gt;&lt;/event&gt;
 -            &lt;event name=&quot;OnKeyUp&quot;&gt;&lt;/event&gt;
--            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;</code></pre></details>
+-            &lt;event name=&quot;OnKillFocus&quot;&gt;&lt;/event&gt;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/300d460/">← got rid of CheckForShutdown, replaced some thread-unsafe…</a><a rel="next" href="../../commits/8b4cefd/">UI tweaks, use BindListenPort to detect instance already… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

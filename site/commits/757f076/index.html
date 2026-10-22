@@ -6,20 +6,20 @@
 <title>reverted makefile.unix… (r119, 757f076) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 757f076 to Bitcoin, 29 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/757f076/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/757f076/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="reverted makefile.unix… (r119, 757f076) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 757f076 to Bitcoin, 29 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/757f076/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/757f076/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="reverted makefile.unix… (r119, 757f076) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 757f076 to Bitcoin, 29 July 2010: reverted makefile.unix wx-config -- version 0.3.6. 6 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reverted makefile.unix wx-config -- version 0.3.6", "url": "https://satoshimail.pages.dev/commits/757f076/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-29T20:27:12Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/757f0769d8360ea043f469f3a35f6ec204740446"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "reverted makefile.unix wx-config --…", "item": "https://satoshimail.pages.dev/commits/757f076/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "reverted makefile.unix wx-config -- version 0.3.6", "url": "https://satoshimail.vercel.app/commits/757f076/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-29T20:27:12Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/757f0769d8360ea043f469f3a35f6ec204740446"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "reverted makefile.unix wx-config --…", "item": "https://satoshimail.vercel.app/commits/757f076/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -50,7 +52,8 @@
 +        //       tested OK on 64-bit ubuntu 10.4
          if (!BN_rshift(this, this, shift))
              throw bignum_error(&quot;CBigNum:operator&gt;&gt;= : BN_rshift failed&quot;);
-         return *this;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,12 +3,21 @@
+         return *this;
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,12 +3,21 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -95,7 +98,8 @@
 +	g++ -c $(CFLAGS) -DGUI -o $@ $&lt;
  
  cryptopp/obj/%.o: cryptopp/%.cpp
- 	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,6 +16,7 @@ static const CBigNum bnZero(0);
+ 	g++ -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_SSE2 -o $@ $&lt;
+</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,6 +16,7 @@ static const CBigNum bnZero(0);
  static const CBigNum bnOne(1);
  static const CBigNum bnFalse(0);
  static const CBigNum bnTrue(1);
@@ -394,7 +398,8 @@
 +                break;
  
 -            case OP_2ROT:
--            {</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -136,6 +136,20 @@ enum opcodetype
+-            {
+</code></pre></details><details><summary><code>script.h</code></summary><pre><code>@@ -136,6 +136,20 @@ enum opcodetype
      OP_CHECKMULTISIG,
      OP_CHECKMULTISIGVERIFY,
  
@@ -441,7 +446,8 @@
 -
      case OP_INVALIDOPCODE          : return &quot;OP_INVALIDOPCODE&quot;;
      default:
-         return &quot;UNKNOWN_OPCODE&quot;;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+         return &quot;UNKNOWN_OPCODE&quot;;
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -451,7 +457,8 @@
 +static const char* pszSubVer = &quot;&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -474,7 +481,8 @@
 +VIProductVersion 0.3.6.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details>
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/17b2740/">← Fredrik Roubert: simplified makefile.unix with wx-config…</a><a rel="next" href="../../commits/872d60f/">fixed makefile.vc →</a></nav>
 </main>
 <footer class="sf"><div class="in">

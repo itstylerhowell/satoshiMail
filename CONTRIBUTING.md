@@ -26,7 +26,7 @@ python tools/satoshipedia/build_wiki.py tools/satoshipedia   # → tools/satoshi
 
 # rebuild the single-file app (picks up wiki.json) and the static site
 python tools/render_page.py                      # → satoshi-mail.html
-python tools/build_site.py satoshi-mail.html site --base-url https://satoshimail.pages.dev/
+python tools/build_site.py satoshi-mail.html site --base-url https://satoshimail.vercel.app/
 ```
 
 Open `site/index.html` through a local server (`python -m http.server -d site`) to test.

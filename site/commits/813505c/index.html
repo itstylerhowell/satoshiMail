@@ -6,20 +6,20 @@
 <title>added a subset of… (r114, 813505c) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 813505c to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/813505c/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/813505c/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="added a subset of… (r114, 813505c) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 813505c to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/813505c/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/813505c/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="added a subset of… (r114, 813505c) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 813505c to Bitcoin, 27 July 2010: added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3, thanks BlackEye for figuring out the alignment problem", "url": "https://satoshimail.pages.dev/commits/813505c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-27T18:14:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/813505cc1313b7e191b787f93e573acb91fa1464"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "added a subset of Crypto++ 5.6.0 with…", "item": "https://satoshimail.pages.dev/commits/813505c/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "added a subset of Crypto++ 5.6.0 with 48% faster ASM SHA-256, combined speedup 2.5x faster vs 0.3.3, thanks BlackEye for figuring out the alignment problem", "url": "https://satoshimail.vercel.app/commits/813505c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-27T18:14:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/813505cc1313b7e191b787f93e573acb91fa1464"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "added a subset of Crypto++ 5.6.0 with…", "item": "https://satoshimail.vercel.app/commits/813505c/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -108,7 +110,8 @@
 +If this compilation is used in object code form in an application
 +software, acknowledgement of the author is not required but would be
 +appreciated. The contribution of any useful modifications or extensions
-+to Wei Dai is not required but would also be appreciated.</code></pre></details><details><summary><code>cryptopp/Readme.txt</code></summary><pre><code>@@ -0,0 +1,429 @@
++to Wei Dai is not required but would also be appreciated.
+</code></pre></details><details><summary><code>cryptopp/Readme.txt</code></summary><pre><code>@@ -0,0 +1,429 @@
 +Crypto++: a C++ Class Library of Cryptographic Schemes
 +Version 5.6.0 (3/15/2009)
 +
@@ -407,7 +410,8 @@
 +    - relaxed some restrictions in the license
 +
 +4.2 - added support for longer HMAC keys
-+    - added MD4 (which is not secure so use for compatibility purposes only)</code></pre></details><details><summary><code>cryptopp/config.h</code></summary><pre><code>@@ -0,0 +1,455 @@
++    - added MD4 (which is not secure so use for compatibility purposes only)
+</code></pre></details><details><summary><code>cryptopp/config.h</code></summary><pre><code>@@ -0,0 +1,455 @@
 +#ifndef CRYPTOPP_CONFIG_H
 +#define CRYPTOPP_CONFIG_H
 +
@@ -706,7 +710,8 @@
 +
 +// how to allocate 16-byte aligned memory (for SSE2)
 +#if defined(CRYPTOPP_MSVC6PP_OR_LATER)
-+	#define CRYPTOPP_MM_MALLOC_AVAILABLE</code></pre></details><details><summary><code>cryptopp/cpu.cpp</code></summary><pre><code>@@ -0,0 +1,199 @@
++	#define CRYPTOPP_MM_MALLOC_AVAILABLE
+</code></pre></details><details><summary><code>cryptopp/cpu.cpp</code></summary><pre><code>@@ -0,0 +1,199 @@
 +// cpu.cpp - written and placed in the public domain by Wei Dai
 +
 +#include &quot;pch.h&quot;
@@ -905,7 +910,8 @@
 +
 +NAMESPACE_END
 +
-+#endif</code></pre></details><details><summary><code>cryptopp/cpu.h</code></summary><pre><code>@@ -0,0 +1,263 @@
++#endif
+</code></pre></details><details><summary><code>cryptopp/cpu.h</code></summary><pre><code>@@ -0,0 +1,263 @@
 +#ifndef CRYPTOPP_CPU_H
 +#define CRYPTOPP_CPU_H
 +
@@ -1168,7 +1174,8 @@
 +
 +NAMESPACE_END
 +
-+#endif</code></pre></details><details><summary><code>cryptopp/cryptlib.h</code></summary><pre><code>@@ -0,0 +1,1668 @@
++#endif
+</code></pre></details><details><summary><code>cryptopp/cryptlib.h</code></summary><pre><code>@@ -0,0 +1,1668 @@
 +// cryptlib.h - written and placed in the public domain by Wei Dai
 +/*! \file
 + 	This file contains the declarations for the abstract base
@@ -1467,7 +1474,8 @@
 +		if (!GetValue(name, value))
 +			throw InvalidArgument(std::string(className) + &quot;: missing required parameter &#x27;&quot; + name + &quot;&#x27;&quot;);
 +	}
-+</code></pre></details><details><summary><code>cryptopp/iterhash.h</code></summary><pre><code>@@ -0,0 +1,29 @@
++
+</code></pre></details><details><summary><code>cryptopp/iterhash.h</code></summary><pre><code>@@ -0,0 +1,29 @@
 +#ifndef CRYPTOPP_ITERHASH_H
 +#define CRYPTOPP_ITERHASH_H
 +
@@ -1496,7 +1504,8 @@
 +
 +NAMESPACE_END
 +
-+#endif</code></pre></details><details><summary><code>cryptopp/misc.h</code></summary><pre><code>@@ -0,0 +1,1134 @@
++#endif
+</code></pre></details><details><summary><code>cryptopp/misc.h</code></summary><pre><code>@@ -0,0 +1,1134 @@
 +#ifndef CRYPTOPP_MISC_H
 +#define CRYPTOPP_MISC_H
 +
@@ -1533,7 +1542,8 @@
 +#endif
 +
 +#ifdef __BORLANDC__
-+#include &lt;mem.h&gt;</code></pre></details><details><summary><code>cryptopp/pch.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/secblock.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/simple.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/smartptr.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/stdcpp.h</code></summary><pre><code></code></pre></details><details><summary><code>main.cpp</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code></code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code></code></pre></details><details><summary><code>sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>sha.h</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
++#include &lt;mem.h&gt;
+</code></pre></details><details><summary><code>cryptopp/pch.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/secblock.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/sha.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/simple.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/smartptr.h</code></summary><pre><code></code></pre></details><details><summary><code>cryptopp/stdcpp.h</code></summary><pre><code></code></pre></details><details><summary><code>main.cpp</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code></code></pre></details><details><summary><code>makefile.osx</code></summary><pre><code></code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code></code></pre></details><details><summary><code>sha.cpp</code></summary><pre><code></code></pre></details><details><summary><code>sha.h</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/9f35575/">← tcatm&#x27;s cached SHA256 state idea, about 70% faster…</a><a rel="next" href="../../commits/f79751c/">better IsInitialBlockDownload →</a></nav>
 </main>
 <footer class="sf"><div class="in">

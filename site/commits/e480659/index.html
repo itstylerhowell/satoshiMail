@@ -6,20 +6,20 @@
 <title>all builds are now with… (r66) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit e480659 to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/e480659/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/e480659/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="all builds are now with… (r66) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit e480659 to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/e480659/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/e480659/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="all builds are now with… (r66) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit e480659 to Bitcoin, 17 February 2010: all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language translation file locale/<lang>/LC_MESSAGES/bitcoin.mo -- version 0.2.2", "url": "https://satoshimail.pages.dev/commits/e480659/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-17T17:22:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e4806597650d8a17f1da7a5b5501eb367ea786fc"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "all builds are now with…", "item": "https://satoshimail.pages.dev/commits/e480659/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "all builds are now with wxWidgets-2.9.0, we are now using UTF-8, added support for language translation file locale/<lang>/LC_MESSAGES/bitcoin.mo -- version 0.2.2", "url": "https://satoshimail.vercel.app/commits/e480659/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-17T17:22:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e4806597650d8a17f1da7a5b5501eb367ea786fc"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "all builds are now with…", "item": "https://satoshimail.vercel.app/commits/e480659/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -92,7 +94,8 @@
  bjam toolset=gcc --build-type=complete stage
 -or
 + or
- bjam toolset=msvc --build-type=complete stage</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -20,15 +20,11 @@ sudo apt-get install libdb4.7-dev
+ bjam toolset=msvc --build-type=complete stage
+</code></pre></details><details><summary><code>build-unix.txt</code></summary><pre><code>@@ -20,15 +20,11 @@ sudo apt-get install libdb4.7-dev
  sudo apt-get install libdb4.7++-dev
  sudo apt-get install libboost-dev
  
@@ -143,12 +146,14 @@
 +cd /usr/local/boost_1_42_0
  su
  ./bootstrap.sh
- ./bjam install</code></pre></details><details><summary><code>locale/readme.txt</code></summary><pre><code>@@ -0,0 +1,5 @@
+ ./bjam install
+</code></pre></details><details><summary><code>locale/readme.txt</code></summary><pre><code>@@ -0,0 +1,5 @@
 +put bitcoin.po and bitcoin.mo files at:
 +locale/&lt;langcode&gt;/LC_MESSAGES/bitcoin.mo and .po
 +
 +.po is the sourcefile
-+.mo is the compiled translation</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1460,27 +1460,13 @@ bool ScanMessageStart(Stream&amp; s)
++.mo is the compiled translation
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1460,27 +1460,13 @@ bool ScanMessageStart(Stream&amp; s)
  
  bool CheckDiskSpace(int64 nAdditionalBytes)
  {
@@ -223,7 +228,8 @@
 +        return _(&quot;Invalid bitcoin address&quot;);
  
      return SendMoney(scriptPubKey, nValue, wtxNew);
- }</code></pre></details><details><summary><code>makefile</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -3,27 +3,30 @@
+ }
+</code></pre></details><details><summary><code>makefile</code></summary><pre><code></code></pre></details><details><summary><code>makefile.mingw</code></summary><pre><code>@@ -3,27 +3,30 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -265,7 +271,8 @@
 +DEBUGFLAGS=-g -D__WXDEBUG__
  CFLAGS=-mthreads -O0 -w -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
  HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
- </code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,17 +3,6 @@
+ 
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -3,17 +3,6 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -297,7 +304,8 @@
 +DEBUGFLAGS=-g -D__WXDEBUG__
  CFLAGS=-O0 -Wno-invalid-offsetof -Wformat $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
  HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
- </code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -1,88 +0,0 @@
+ 
+</code></pre></details><details><summary><code>makefile.unix.wx2.8</code></summary><pre><code>@@ -1,88 +0,0 @@
 -# Copyright (c) 2009-2010 Satoshi Nakamoto
 -# Distributed under the MIT/X11 software license, see the accompanying
 -# file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -385,7 +393,8 @@
 -
 -clean:
 -	-rm obj/*
--	-rm headers.h.gch</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -3,26 +3,31 @@
+-	-rm headers.h.gch
+</code></pre></details><details><summary><code>makefile.unix.wx2.9</code></summary><pre><code></code></pre></details><details><summary><code>makefile.vc</code></summary><pre><code>@@ -3,26 +3,31 @@
  # file license.txt or http://www.opensource.org/licenses/mit-license.php.
  
  
@@ -431,7 +440,8 @@
 +CFLAGS=/c /nologo /Ob0 /MDd /EHsc /GR /Zm300 $(DEBUGFLAGS) $(WXDEFS) $(INCLUDEPATHS)
  HEADERS=headers.h strlcpy.h serialize.h uint256.h util.h key.h bignum.h base58.h script.h db.h net.h irc.h main.h rpc.h uibase.h ui.h
  
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -441,7 +451,8 @@
 +static const char* pszSubVer = &quot;.0&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -229,8 +229,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -229,8 +229,8 @@ CMainFrame::CMainFrame(wxWindow* parent) : CMainFrameBase(parent)
      m_staticTextBalance-&gt;SetSize(140, 17);
      // &amp; underlines don&#x27;t work on the toolbar buttons on gtk
      m_toolBar-&gt;ClearTools();
@@ -740,7 +751,8 @@
  
          //
 @@ -1402,12 +1404,12 @@ void CTxDetailsDialog::OnButtonOK(wxCommandEvent&amp; event)
- COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -16,12 +16,12 @@ extern int fMinimizeOnClose;
+ COptionsDialog::COptionsDialog(wxWindow* parent) : COptionsDialogBase(parent)
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -16,12 +16,12 @@ extern int fMinimizeOnClose;
  
  
  
@@ -758,7 +770,8 @@
 +int ThreadSafeMessageBox(const string&amp; message, const string&amp; caption=&quot;Message&quot;, int style=wxOK, wxWindow* parent=NULL, int x=-1, int y=-1);
  
  
- </code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,6 +1,3 @@
+ 
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -1,6 +1,3 @@
 -// Copyright (c) 2009-2010 Satoshi Nakamoto
 -// Distributed under the MIT/X11 software license, see the accompanying
 -// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -798,7 +811,8 @@
 +	m_staticTextMain = new wxStaticText( this, wxID_ANY, _(&quot;Copyright (c) 2009-2010 Satoshi Nakamoto.\n\nThis is experimental software.  Do not rely on it for actual financial transactions.\n\nDistributed under the MIT/X11 software license, see the accompanying file \nlicense.txt or http://www.opensource.org/licenses/mit-license.php.\n\nThis product includes software developed by the OpenSSL Project for use in the \nOpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by \nEric Young (eay@cryptsoft.com).&quot;), wxDefaultPosition, wxDefaultSize, 0 );
  	m_staticTextMain-&gt;Wrap( -1 );
  	bSizer631-&gt;Add( m_staticTextMain, 0, wxALL, 5 );
- 	</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,6 +1,3 @@
+ 	
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -1,6 +1,3 @@
 -// Copyright (c) 2009-2010 Satoshi Nakamoto
 -// Distributed under the MIT/X11 software license, see the accompanying
 -// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -813,7 +827,8 @@
 -		wxStaticText* m_staticText71;
  		wxButton* m_buttonOK;
  		wxButton* m_buttonCancel;
- 		wxButton* m_buttonApply;</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2173,7 +2173,7 @@
+ 		wxButton* m_buttonApply;
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code>@@ -2173,7 +2173,7 @@
                                                          &lt;property name=&quot;font&quot;&gt;&lt;/property&gt;
                                                          &lt;property name=&quot;hidden&quot;&gt;0&lt;/property&gt;
                                                          &lt;property name=&quot;id&quot;&gt;wxID_ANY&lt;/property&gt;
@@ -948,7 +963,8 @@
 +                                                &lt;property name=&quot;label&quot;&gt;Copyright (c) 2009-2010 Satoshi Nakamoto.&amp;#x0A;&amp;#x0A;This is experimental software.  Do not rely on it for actual financial transactions.&amp;#x0A;&amp;#x0A;Distributed under the MIT/X11 software license, see the accompanying file &amp;#x0A;license.txt or http://www.opensource.org/licenses/mit-license.php.&amp;#x0A;&amp;#x0A;This product includes software developed by the OpenSSL Project for use in the &amp;#x0A;OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by &amp;#x0A;Eric Young (eay@cryptsoft.com).&lt;/property&gt;
                                                  &lt;property name=&quot;maximum_size&quot;&gt;&lt;/property&gt;
                                                  &lt;property name=&quot;minimum_size&quot;&gt;&lt;/property&gt;
-                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -90,7 +90,7 @@ void RandAddSeedPerfmon()
+                                                 &lt;property name=&quot;name&quot;&gt;m_staticTextMain&lt;/property&gt;
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -90,7 +90,7 @@ void RandAddSeedPerfmon()
      unsigned char pdata[250000];
      memset(pdata, 0, sizeof(pdata));
      unsigned long nSize = sizeof(pdata);
@@ -974,7 +990,8 @@
 +    GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
  #else
      // might not be thread safe, uses wxString
-     //const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -340,10 +340,11 @@ void skipspaces(T&amp; it)
+     //const char* pszModule = wxStandardPaths::Get().GetExecutablePath().mb_str();
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -340,10 +340,11 @@ void skipspaces(T&amp; it)
          ++it;
  }
  
@@ -989,7 +1006,8 @@
 +}
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/2b63e68/">← fix mingw makefile to use correct wxWidgets include, this…</a><a rel="next" href="../../commits/c6ab3cf/">safer wxGetTranslation wrapper →</a></nav>
 </main>
 <footer class="sf"><div class="in">

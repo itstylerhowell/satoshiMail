@@ -6,20 +6,20 @@
 <title>run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit cb420a1 to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/cb420a1/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/cb420a1/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit cb420a1 to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/cb420a1/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/cb420a1/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="run as daemon without GUI, hooked… (r70) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit cb420a1 to Bitcoin, 23 February 2010: run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI, fork to daemonize, rpc getinfo, getconnectioncount, getbalance, getgenerate, setgenerate, -- version 0.2.6", "url": "https://satoshimail.pages.dev/commits/cb420a1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-23T22:01:39Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/cb420a1dfc23d3c11c5281ed8f7ae003c2f61594"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "run as daemon without GUI, hooked…", "item": "https://satoshimail.pages.dev/commits/cb420a1/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "run as daemon without GUI, hooked wxApp::Initialize to ignore gtk-init-check failure if no GUI, fork to daemonize, rpc getinfo, getconnectioncount, getbalance, getgenerate, setgenerate, -- version 0.2.6", "url": "https://satoshimail.vercel.app/commits/cb420a1/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-02-23T22:01:39Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/cb420a1dfc23d3c11c5281ed8f7ae003c2f61594"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "run as daemon without GUI, hooked…", "item": "https://satoshimail.vercel.app/commits/cb420a1/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -76,7 +78,8 @@
 +        txNew.vout[0].nValue = 50 * COIN;
          CBigNum bnPubKey;
          bnPubKey.SetHex(&quot;0x5F1DF16B2B704C8A578D0BBAF74D385CDE12C11EE50455F3C438EF4C3FBCF649B6DE611FEAE06279A60939E028A8D65C10B73071A6F16719274855FEB0FD8A6704&quot;);
-         txNew.vout[0].scriptPubKey = CScript() &lt;&lt; bnPubKey &lt;&lt; OP_CHECKSIG;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1384,6 +1384,9 @@ public:
+         txNew.vout[0].scriptPubKey = CScript() &lt;&lt; bnPubKey &lt;&lt; OP_CHECKSIG;
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -1384,6 +1384,9 @@ public:
      CPrivKey vchPrivKey;
      int64 nTimeCreated;
      int64 nTimeExpires;
@@ -93,7 +96,8 @@
 +        READWRITE(strComment);
      )
  };
- </code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -66,6 +66,17 @@ Value getblocknumber(const Array&amp; params)
+ 
+</code></pre></details><details><summary><code>rpc.cpp</code></summary><pre><code>@@ -66,6 +66,17 @@ Value getblocknumber(const Array&amp; params)
  }
  
  
@@ -287,7 +291,8 @@
 +        if (strMethod == &quot;setgenerate&quot;       &amp;&amp; n &gt; 1) ConvertTo&lt;boost::int64_t&gt;(params[1]);
          if (strMethod == &quot;sendtoaddress&quot;     &amp;&amp; n &gt; 1) ConvertTo&lt;double&gt;(params[1]);
          if (strMethod == &quot;listtransactions&quot;  &amp;&amp; n &gt; 0) ConvertTo&lt;boost::int64_t&gt;(params[0]);
-         if (strMethod == &quot;listtransactions&quot;  &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+         if (strMethod == &quot;listtransactions&quot;  &amp;&amp; n &gt; 1) ConvertTo&lt;bool&gt;(params[1]);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -295,7 +300,8 @@
 +static const int VERSION = 206;
  static const char* pszSubVer = &quot;.0&quot;;
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -26,6 +26,20 @@ int fMinimizeOnClose = true;
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -26,6 +26,20 @@ int fMinimizeOnClose = true;
  
  
  
@@ -440,7 +446,8 @@
 -
      if (!fDebug &amp;&amp; !pszSetDataDir[0])
          ShrinkDebugFile();
-     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,6 +13,7 @@ bool fPrintToDebugger = false;
+     printf(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -13,6 +13,7 @@ bool fPrintToDebugger = false;
  char pszSetDataDir[MAX_PATH] = &quot;&quot;;
  bool fShutdown = false;
  bool fDaemon = false;
@@ -457,14 +464,16 @@
 +    if (wxTheApp &amp;&amp; !fDaemon)
          wxMessageBox(pszMessage, &quot;Error&quot;, wxOK | wxICON_ERROR);
      throw;
-     //DebugBreak();</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -121,6 +121,7 @@ extern bool fPrintToDebugger;
+     //DebugBreak();
+</code></pre></details><details><summary><code>util.h</code></summary><pre><code>@@ -121,6 +121,7 @@ extern bool fPrintToDebugger;
  extern char pszSetDataDir[MAX_PATH];
  extern bool fShutdown;
  extern bool fDaemon;
 +extern bool fCommandLine;
  
  void RandAddSeed();
- void RandAddSeedPerfmon();</code></pre></details>
+ void RandAddSeedPerfmon();
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/0184604/">← transaction filter tabs instead of view-&gt;show generated --…</a><a rel="next" href="../../commits/c243012/">GUI-less build target bitcoind that links to wxBase and… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

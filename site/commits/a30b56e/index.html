@@ -6,20 +6,20 @@
 <title>fix openssl linkage problems… (r103) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit a30b56e to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/a30b56e/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/a30b56e/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="fix openssl linkage problems… (r103) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit a30b56e to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/a30b56e/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/a30b56e/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="fix openssl linkage problems… (r103) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit a30b56e to Bitcoin, 15 July 2010: fix openssl linkage problems, disable minimize to tray on Linux because it has too many…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems including a CPU peg bug", "url": "https://satoshimail.pages.dev/commits/a30b56e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-15T00:18:45Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a30b56ebe76ffff9f9cc8a6667186179413c6349"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix openssl linkage problems, disable…", "item": "https://satoshimail.pages.dev/commits/a30b56e/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "fix openssl linkage problems, disable minimize to tray on Linux because it has too many problems including a CPU peg bug", "url": "https://satoshimail.vercel.app/commits/a30b56e/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-07-15T00:18:45Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/a30b56ebe76ffff9f9cc8a6667186179413c6349"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "fix openssl linkage problems, disable…", "item": "https://satoshimail.vercel.app/commits/a30b56e/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +                    nFileVersion = 300;
              }
              else if (strType == &quot;setting&quot;)
-             {</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -158,6 +158,10 @@ bool Wait(int nSeconds)
+             {
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -158,6 +158,10 @@ bool Wait(int nSeconds)
  
  void ThreadIRCSeed(void* parg)
  {
@@ -59,7 +62,8 @@
 +        return;
      printf(&quot;ThreadIRCSeed started\n&quot;);
      int nErrorWait = 10;
-     int nRetryWait = 10;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2610,6 +2610,9 @@ void BitcoinMiner()
+     int nRetryWait = 10;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -2610,6 +2610,9 @@ void BitcoinMiner()
                      CTransaction&amp; tx = (*mi).second;
                      if (tx.IsCoinBase() || !tx.IsFinal())
                          continue;
@@ -77,14 +81,16 @@
 +                    nBlockSize += nTxSize;
                      vfAlreadyAdded[n] = true;
                      fFoundSomething = true;
-                 }</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -15,6 +15,7 @@ class CWalletTx;
+                 }
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -15,6 +15,7 @@ class CWalletTx;
  class CKeyItem;
  
  static const unsigned int MAX_SIZE = 0x02000000;
 +static const unsigned int MAX_BLOCK_SIZE = 1000000;
  static const int64 COIN = 100000000;
  static const int64 CENT = 1000000;
- static const int COINBASE_MATURITY = 100;</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -23,8 +23,8 @@ LIBS= \
+ static const int COINBASE_MATURITY = 100;
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -23,8 +23,8 @@ LIBS= \
   -Wl,-Bstatic \
     -l boost_system -l boost_filesystem \
     -l db_cxx \
@@ -93,7 +99,8 @@
 + -Wl,-Bdynamic \
     -l gthread-2.0
  
- WXDEFS=-D__WXGTK__ -DNOPCH</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+ WXDEFS=-D__WXGTK__ -DNOPCH
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 301;
@@ -101,7 +108,8 @@
 +static const char* pszSubVer = &quot;.1&quot;;
  
  
- </code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -375,13 +375,12 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
+ 
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -375,13 +375,12 @@ void CMainFrame::OnIconize(wxIconizeEvent&amp; event)
      // to get rid of the deprecated warning.  Just ignore it.
      if (!event.Iconized())
          fClosedToTray = false;
@@ -141,7 +149,8 @@
 +#endif
      pframeMain-&gt;Show(true);  // have to show first to get taskbar button to hide
      if (fMinimizeToTray &amp;&amp; pframeMain-&gt;IsIconized())
-         fClosedToTray = true;</code></pre></details>
+         fClosedToTray = true;
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6e5d67e/">← switched from wxStandardPaths to GetDefaultDataDir, fixes…</a><a rel="next" href="../../commits/d01eaf0/">version 0.3.1 rc1 →</a></nav>
 </main>
 <footer class="sf"><div class="in">

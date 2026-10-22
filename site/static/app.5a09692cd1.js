@@ -799,7 +799,7 @@ function renderAbout() {
     <p class="lead">Every message here was cross-checked on 20 October 2026 against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" target="_blank" rel="noopener">Blocktrainer's Satoshi Nakamoto archive</a> (4,236 entries, with German translations): all of its entries are also here. Where it gives a different date, that is noted on the <a href="#sources">Sources</a> page.</p>
     <p class="lead">It was also checked against <a href="https://satoshin.name/" target="_blank" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive (567 of Satoshi's BitcoinTalk posts and mailing-list emails): every one is here too. All sources are listed under Settings → Archive → <a href="#sources">Sources</a>.</p>
     <p class="lead">One 2014 P2P Foundation post carries the Institute's note about its uncertain authenticity and is shown with that note. Times are in UTC.</p>
-    <p class="lead">Stars and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On the website, visits are counted with Cloudflare Web Analytics, which uses no cookies. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Nicholas Bohm's emails (COPA v Wright exhibit NB1); the forum's saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
+    <p class="lead">Stars and settings are stored only in this browser. Compose is just for fun: no emails or drafts are ever written, sent or saved. On the website, visits are counted with Vercel Web Analytics, which uses no cookies and doesn't record what you search for. Data: Satoshi Nakamoto Institute${META.commit ? `, source ${esc(META.commit)} (${esc(META.commitDate)})` : ""}; nakamoto-archive; Nicholas Bohm's emails (COPA v Wright exhibit NB1); the forum's saved staff topics; Bitcoin Core; bitcoin.org; cross-checked with Blocktrainer and satoshin.name. An independent reader, not affiliated with any email provider.</p>
   </div></div>`;
 }
 
@@ -3069,7 +3069,7 @@ function renderUpdates() {
     <p class="lead muted">See also <a href="#about">About this archive</a> and <a href="#sources">Sources</a>.</p>
   </div></div>`;
 }
-const SITE_URL = "https://satoshimail.pages.dev/", CONTACT_EMAIL = "itstylerhowell@gmail.com";
+const SITE_URL = "https://satoshimail.vercel.app/", CONTACT_EMAIL = "itstylerhowell@gmail.com";
 /* ═════════════ Verify (#verify, #verify~t/<thread>/<i>, #verify~c/<commit>) ═════════════
    Every message and commit has a SHA-256 fingerprint of its exact contents; each version of the archive's
    list of fingerprints (its manifest) is timestamped in Bitcoin with OpenTimestamps (tools/timestamp.py and

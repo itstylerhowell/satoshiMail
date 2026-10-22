@@ -6,20 +6,20 @@
 <title>filter out duplicate getblocks and… (r49) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit e2c2648 to Bitcoin, 14 December 2009: filter out duplicate getblocks and don&#x27;t relay inv messages during initial block download…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/e2c2648/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/e2c2648/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="filter out duplicate getblocks and… (r49) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit e2c2648 to Bitcoin, 14 December 2009: filter out duplicate getblocks and don&#x27;t relay inv messages during initial block download…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/e2c2648/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/e2c2648/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="filter out duplicate getblocks and… (r49) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit e2c2648 to Bitcoin, 14 December 2009: filter out duplicate getblocks and don&#x27;t relay inv messages during initial block download…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "filter out duplicate getblocks and don't relay inv messages during initial block download -- 0.2 rc2", "url": "https://satoshimail.pages.dev/commits/e2c2648/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-14T02:12:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e2c2648c14f4b87d331dbc30f0f2bd4aab9ce7e6"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "filter out duplicate getblocks and…", "item": "https://satoshimail.pages.dev/commits/e2c2648/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "filter out duplicate getblocks and don't relay inv messages during initial block download -- 0.2 rc2", "url": "https://satoshimail.vercel.app/commits/e2c2648/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-14T02:12:01Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e2c2648c14f4b87d331dbc30f0f2bd4aab9ce7e6"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "filter out duplicate getblocks and…", "item": "https://satoshimail.vercel.app/commits/e2c2648/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -121,7 +123,8 @@
 -
  
          //
-         // Message: addr</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -40,6 +40,23 @@ CAddress addrProxy(&quot;127.0.0.1:9050&quot;);
+         // Message: addr
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -40,6 +40,23 @@ CAddress addrProxy(&quot;127.0.0.1:9050&quot;);
  
  
  
@@ -159,7 +162,8 @@
 +                else if (GetTime() - pnode-&gt;nLastRecv &gt; 90*60)
                  {
                      printf(&quot;socket inactivity timeout\n&quot;);
-                     pnode-&gt;fDisconnect = true;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -7,6 +7,7 @@ class CAddress;
+                     pnode-&gt;fDisconnect = true;
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -7,6 +7,7 @@ class CAddress;
  class CInv;
  class CRequestTracker;
  class CNode;
@@ -200,7 +204,8 @@
 +    void PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd);
      bool IsSubscribed(unsigned int nChannel);
      void Subscribe(unsigned int nChannel, unsigned int nHops=0);
-     void CancelSubscribe(unsigned int nChannel);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
+     void CancelSubscribe(unsigned int nChannel);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -20,7 +20,7 @@ class CDataStream;
  class CAutoFile;
  
  static const int VERSION = 200;
@@ -208,7 +213,8 @@
 +static const char* pszSubVer = &quot; rc2&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -42,7 +42,7 @@ Var StartMenuGroup
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -42,7 +42,7 @@ Var StartMenuGroup
  !insertmacro MUI_LANGUAGE English
  
  # Installer attributes
@@ -216,7 +222,8 @@
 +OutFile bitcoin-0.2.0-win32-setup.exe
  InstallDir $PROGRAMFILES\Bitcoin
  CRCCheck on
- XPStyle on</code></pre></details>
+ XPStyle on
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/adb50ff/">← misc</a><a rel="next" href="../../commits/312c2c4/">a few header changes for freebsd from madhatter →</a></nav>
 </main>
 <footer class="sf"><div class="in">

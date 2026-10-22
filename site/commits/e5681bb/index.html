@@ -6,20 +6,20 @@
 <title>more addr message error checking… (r83) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit e5681bb to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/e5681bb/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/e5681bb/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="more addr message error checking… (r83) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit e5681bb to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/e5681bb/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/e5681bb/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="more addr message error checking… (r83) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit e5681bb to Bitcoin, 15 June 2010: more addr message error checking -- version 0.2.11. 4 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "more addr message error checking -- version 0.2.11", "url": "https://satoshimail.pages.dev/commits/e5681bb/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-15T18:26:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e5681bb12154bae75977d091190e924d8e6984cd"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "more addr message error checking --…", "item": "https://satoshimail.pages.dev/commits/e5681bb/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "more addr message error checking -- version 0.2.11", "url": "https://satoshimail.vercel.app/commits/e5681bb/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-15T18:26:32Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e5681bb12154bae75977d091190e924d8e6984cd"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "more addr message error checking --…", "item": "https://satoshimail.vercel.app/commits/e5681bb/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -59,7 +61,8 @@
 +                    // receiver rejects addr messages larger than 1000
                      if (vAddr.size() &gt;= 1000)
                      {
-                         pto-&gt;PushMessage(&quot;addr&quot;, vAddr);</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -968,9 +968,9 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
+                         pto-&gt;PushMessage(&quot;addr&quot;, vAddr);
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -968,9 +968,9 @@ bool OpenNetworkConnection(const CAddress&amp; addrConnect)
      if (addrLocalHost.IsRoutable() &amp;&amp; !fUseProxy)
      {
          // Advertise our address
@@ -71,7 +74,8 @@
 +        pnode-&gt;PushMessage(&quot;addr&quot;, vAddr);
      }
  
-     // Get as many addresses as we can</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -289,16 +289,24 @@ public:
+     // Get as many addresses as we can
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -289,16 +289,24 @@ public:
  
      bool IsRoutable() const
      {
@@ -110,7 +114,8 @@
 +        if (addr.IsValid() &amp;&amp; !setAddrKnown.count(addr))
              vAddrToSend.push_back(addr);
      }
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -118,7 +123,8 @@
 +static const int VERSION = 211;
  static const char* pszSubVer = &quot;.0&quot;;
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/bed005b/">← revert makefile.unix from -02 back to -00 to fix compile…</a><a rel="next" href="../../commits/6a4a355/">German translation by DataWraith →</a></nav>
 </main>
 <footer class="sf"><div class="in">

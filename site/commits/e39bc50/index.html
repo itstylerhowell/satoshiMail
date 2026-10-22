@@ -6,20 +6,20 @@
 <title>misc exit code, updated setup.nsi (r46) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit e39bc50 to Bitcoin, 13 December 2009: misc exit code, updated setup.nsi. 5 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/e39bc50/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/e39bc50/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="misc exit code, updated setup.nsi (r46) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit e39bc50 to Bitcoin, 13 December 2009: misc exit code, updated setup.nsi. 5 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/e39bc50/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/e39bc50/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="misc exit code, updated setup.nsi (r46) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit e39bc50 to Bitcoin, 13 December 2009: misc exit code, updated setup.nsi. 5 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc exit code, updated setup.nsi", "url": "https://satoshimail.pages.dev/commits/e39bc50/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-13T00:13:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e39bc50eb4dd4f0a34ee4c264af83043f13543dd"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc exit code, updated setup.nsi", "item": "https://satoshimail.pages.dev/commits/e39bc50/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc exit code, updated setup.nsi", "url": "https://satoshimail.vercel.app/commits/e39bc50/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-12-13T00:13:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/e39bc50eb4dd4f0a34ee4c264af83043f13543dd"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc exit code, updated setup.nsi", "item": "https://satoshimail.vercel.app/commits/e39bc50/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -48,7 +50,8 @@
 +    printf(&quot;nFileVersion = %d\n&quot;, nFileVersion);
      printf(&quot;fShowGenerated = %d\n&quot;, fShowGenerated);
      printf(&quot;fGenerateBitcoins = %d\n&quot;, fGenerateBitcoins);
-     printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -929,7 +929,7 @@ void ThreadOpenConnections2(void* parg)
+     printf(&quot;nTransactionFee = %&quot;PRI64d&quot;\n&quot;, nTransactionFee);
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -929,7 +929,7 @@ void ThreadOpenConnections2(void* parg)
                  // Only try the old stuff if we don&#x27;t have enough connections
                  if (vNodes.size() &gt;= 2 &amp;&amp; nSinceLastSeen &gt; 7 * 24 * 60 * 60)
                      continue;
@@ -82,7 +85,8 @@
 +                return;
              if (GetTime() - nThreadSocketHandlerHeartbeat &lt; 60)
                  continue;
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -92,7 +96,8 @@
 +static const char* pszSubVer = &quot; rc1&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,12 +7,12 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,12 +7,12 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -162,7 +167,8 @@
      !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
      !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
  FunctionEnd
--</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -394,6 +394,14 @@ CMainFrame::~CMainFrame()
+-
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -394,6 +394,14 @@ CMainFrame::~CMainFrame()
      ptaskbaricon = NULL;
  }
  
@@ -205,7 +211,8 @@
 +        ExitThread(0);
      }
  }
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/651d335/">← misc</a><a rel="next" href="../../commits/e899779/">restrict file permissions on linux to the user only →</a></nav>
 </main>
 <footer class="sf"><div class="in">

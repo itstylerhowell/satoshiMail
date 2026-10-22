@@ -7,7 +7,7 @@ With **Satoshipedia**, an encyclopedia of his correspondents and Bitcoin's first
 Founded and made by **Tyler Howell** ([@TylerHowell88](https://x.com/TylerHowell88)).
 Open source under the [MIT license](LICENSE). **Beta:** still in development.
 
-Live site: <https://satoshimail.pages.dev/>
+Live site: <https://satoshimail.vercel.app/>
 
 ## What's in it
 
@@ -55,7 +55,7 @@ Requires Python 3.10+ (no third-party packages for these tools).
 python tools/satoshipedia/build_wiki.py tools/satoshipedia   # articles.py → wiki.json (checks every link)
 python tools/satoshipedia/assemble.py                         # template_v6.html + css/js + site/data/archive.json
                                                               #   → tools/mail_template.html and satoshi-mail.html
-python tools/build_site.py satoshi-mail.html site --base-url https://satoshimail.pages.dev/
+python tools/build_site.py satoshi-mail.html site --base-url https://satoshimail.vercel.app/
 ```
 
 `satoshi-mail.html` is the whole app in one file. `python tools/render_page.py` rebuilds it from
@@ -70,19 +70,18 @@ archive, see `tools/extra_sources.py`.
 cd tests && npm install && node test.js ../satoshi-mail.html && node ask_test.js ../satoshi-mail.html
 ```
 
-## Deploy on Cloudflare Pages
+## Deploy on Vercel
 
-* **Git (recommended):** Workers & Pages → Create → Pages → Connect to Git → this repository.
-  Framework preset: None. Build command: leave empty. Build output directory: `site`.
-  Every push deploys, including the timestamp proofs the GitHub Action commits.
-* **Upload:** Workers & Pages → Create → Pages → Upload assets → drag in the `site` folder.
-* **CLI:** `npx wrangler pages deploy site --project-name satoshimail`
-* **Analytics:** in the Pages project, Metrics → Web Analytics → Enable. No code needed.
+* **Git:** import this repository in Vercel (Add New → Project). `vercel.json` sets everything:
+  no build step, the output directory is `site`, plus the security and cache headers.
+* **CLI:** `npx vercel deploy --prod` from the repository root.
+* **Analytics:** in the Vercel project, open Analytics and click Enable. Every page already has the
+  plain-HTML Web Analytics script (`build_site.py --analytics none` leaves it out).
 
-`site/_headers` sets the caching and security headers on Cloudflare. `vercel.json` only redirects the
-old satoshimail.vercel.app address to the Cloudflare one.
+It also runs on Cloudflare Pages: output directory `site`, no build command, built with `--analytics none`;
+`site/_headers` carries the headers there.
 
-If the site lives anywhere other than `https://satoshimail.pages.dev/`, rebuild with that
+If the site lives anywhere other than `https://satoshimail.vercel.app/`, rebuild with that
 `--base-url` so canonical links, the sitemap and share cards point to the right place.
 
 ## Sources

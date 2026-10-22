@@ -6,20 +6,20 @@
 <title>use seed nodes as fallback if IRC… (r85) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 24ba1b6 to Bitcoin, 18 June 2010: use seed nodes as fallback if IRC fails or with TOR -- version 0.2.12. 4 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/24ba1b6/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/24ba1b6/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="use seed nodes as fallback if IRC… (r85) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 24ba1b6 to Bitcoin, 18 June 2010: use seed nodes as fallback if IRC fails or with TOR -- version 0.2.12. 4 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/24ba1b6/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/24ba1b6/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="use seed nodes as fallback if IRC… (r85) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 24ba1b6 to Bitcoin, 18 June 2010: use seed nodes as fallback if IRC fails or with TOR -- version 0.2.12. 4 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "use seed nodes as fallback if IRC fails or with TOR -- version 0.2.12", "url": "https://satoshimail.pages.dev/commits/24ba1b6/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-18T03:14:24Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/24ba1b64e93baafba2657ba7d8b63c759c3439ce"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "use seed nodes as fallback if IRC…", "item": "https://satoshimail.pages.dev/commits/24ba1b6/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "use seed nodes as fallback if IRC fails or with TOR -- version 0.2.12", "url": "https://satoshimail.vercel.app/commits/24ba1b6/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-06-18T03:14:24Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/24ba1b64e93baafba2657ba7d8b63c759c3439ce"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "use seed nodes as fallback if IRC…", "item": "https://satoshimail.vercel.app/commits/24ba1b6/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -114,7 +116,8 @@
 +                    uint256 hashRand = inv.hash ^ hashSalt;
                      hashRand = Hash(BEGIN(hashRand), END(hashRand));
                      bool fTrickleWait = ((hashRand &amp; 3) != 0);
- </code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -223,14 +223,12 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
+ 
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -223,14 +223,12 @@ bool GetMyExternalIP(unsigned int&amp; ipRet)
  
  
  
@@ -239,7 +242,8 @@
 +                    nRandomizer += 2 * 60 * 60;
  
                  // Last seen  Base retry frequency
-                 //   &lt;1 hour   10 min</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -24,7 +24,7 @@ enum
+                 //   &lt;1 hour   10 min
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -24,7 +24,7 @@ enum
  
  bool ConnectSocket(const CAddress&amp; addrConnect, SOCKET&amp; hSocketRet);
  bool GetMyExternalIP(unsigned int&amp; ipRet);
@@ -247,7 +251,8 @@
 +bool AddAddress(CAddress addr);
  void AddressCurrentlyConnected(const CAddress&amp; addr);
  CNode* FindNode(unsigned int ip);
- CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+ CNode* ConnectNode(CAddress addrConnect, int64 nTimeout=0);
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -257,7 +262,8 @@
 +static const char* pszSubVer = &quot;&quot;;
  
  
- </code></pre></details>
+ 
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/6a4a355/">← German translation by DataWraith</a><a rel="next" href="../../commits/68b973a/">fixed colors on ubuntu lucid, enabled -O2 in… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

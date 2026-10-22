@@ -6,20 +6,20 @@
 <title>Get local host IP on Linux… (r37) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 956468c to Bitcoin, 8 November 2009: Get local host IP on Linux, Shutdown() a little cleaner -- linux-0.1.6-test1 waypoint. 5…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/956468c/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/956468c/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="Get local host IP on Linux… (r37) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 956468c to Bitcoin, 8 November 2009: Get local host IP on Linux, Shutdown() a little cleaner -- linux-0.1.6-test1 waypoint. 5…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/956468c/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/956468c/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="Get local host IP on Linux… (r37) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 956468c to Bitcoin, 8 November 2009: Get local host IP on Linux, Shutdown() a little cleaner -- linux-0.1.6-test1 waypoint. 5…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Get local host IP on Linux, Shutdown() a little cleaner -- linux-0.1.6-test1 waypoint", "url": "https://satoshimail.pages.dev/commits/956468c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-08T04:24:52Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/956468c29adcbff83ab7c2e52d91f8e87b704853"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "Get local host IP on Linux, Shutdown()…", "item": "https://satoshimail.pages.dev/commits/956468c/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Get local host IP on Linux, Shutdown() a little cleaner -- linux-0.1.6-test1 waypoint", "url": "https://satoshimail.vercel.app/commits/956468c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-11-08T04:24:52Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/956468c29adcbff83ab7c2e52d91f8e87b704853"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "Get local host IP on Linux, Shutdown()…", "item": "https://satoshimail.vercel.app/commits/956468c/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +#include &lt;ifaddrs.h&gt;
  #include &lt;boost/filesystem.hpp&gt;
  #include &lt;boost/thread/thread.hpp&gt;
- #include &lt;boost/algorithm/string.hpp&gt;</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1215,7 +1215,7 @@ bool CBlock::AcceptBlock()
+ #include &lt;boost/algorithm/string.hpp&gt;
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -1215,7 +1215,7 @@ bool CBlock::AcceptBlock()
          return error(&quot;AcceptBlock() : block&#x27;s timestamp is too early&quot;);
  
      // Check that all transactions are finalized (starting around Dec 2009)
@@ -66,7 +69,8 @@
 +            addr.nTime = GetAdjustedTime() - 2 * 60 * 60;
              if (pfrom-&gt;fGetAddr)
                  addr.nTime -= 5 * 24 * 60 * 60;
-             AddAddress(addrdb, addr, false);</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -15,21 +15,24 @@ endif
+             AddAddress(addrdb, addr, false);
+</code></pre></details><details><summary><code>makefile.unix</code></summary><pre><code>@@ -15,21 +15,24 @@ endif
  
  
  
@@ -108,7 +112,8 @@
 +	obj/ui.o obj/uibase.o obj/sha.o obj/irc.o
  
  bitcoin: headers.h.gch $(OBJS)
- 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -842,20 +842,20 @@ void ThreadOpenConnections2(void* parg)
+ 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $(OBJS) $(LIBS)
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -842,20 +842,20 @@ void ThreadOpenConnections2(void* parg)
                  if (!addr.IsIPv4() || !addr.IsValid() || setConnected.count(addr.ip))
                      continue;
  
@@ -195,7 +200,8 @@
 +#endif
      printf(&quot;addrLocalHost = %s\n&quot;, addrLocalHost.ToString().c_str());
  
-     // Get our external IP address for incoming connections</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -387,17 +387,28 @@ CMainFrame::~CMainFrame()
+     // Get our external IP address for incoming connections
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -387,17 +387,28 @@ CMainFrame::~CMainFrame()
  void Shutdown(void* parg)
  {
      static CCriticalSection cs_Shutdown;
@@ -224,7 +230,8 @@
 +    }
  }
  
- void CMainFrame::OnClose(wxCloseEvent&amp; event)</code></pre></details>
+ void CMainFrame::OnClose(wxCloseEvent&amp; event)
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/b4e235f/">← ui tweaks, multiple xpm icon sizes</a><a rel="next" href="../../commits/70e7952/">monitor ThreadSocketHandler and terminate and restart if… →</a></nav>
 </main>
 <footer class="sf"><div class="in">

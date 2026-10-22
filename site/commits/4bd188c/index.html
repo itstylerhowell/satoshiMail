@@ -6,20 +6,20 @@
 <title>misc changes (r131, 4bd188c) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit 4bd188c to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/4bd188c/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/4bd188c/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="misc changes (r131, 4bd188c) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit 4bd188c to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/4bd188c/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/4bd188c/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="misc changes (r131, 4bd188c) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit 4bd188c to Bitcoin, 15 August 2010: misc changes. 8 files changed.">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc changes", "url": "https://satoshimail.pages.dev/commits/4bd188c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T21:05:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4bd188c4383d6e614e18f79dc337fbabe8464c82"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc changes", "item": "https://satoshimail.pages.dev/commits/4bd188c/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "misc changes", "url": "https://satoshimail.vercel.app/commits/4bd188c/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2010-08-15T21:05:16Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/4bd188c4383d6e614e18f79dc337fbabe8464c82"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "misc changes", "item": "https://satoshimail.vercel.app/commits/4bd188c/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -49,7 +51,8 @@
 +            wxMessageBox(_(&quot;Warning: -paytxfee is set very high.  This is the transaction fee you will pay if you send a transaction.&quot;), &quot;Bitcoin&quot;);
      }
  
-     //</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -538,7 +538,7 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+     //
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -538,7 +538,7 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
      // Check against previous transactions
      map&lt;uint256, CTxIndex&gt; mapUnused;
      int64 nFees = 0;
@@ -218,7 +221,8 @@
 +            if ((tmp.block.nNonce &amp; nMask) == 0)
              {
                  // Meter hashes/sec
-                 static int nCycleCounter;</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -613,7 +613,8 @@ public:
+                 static int nCycleCounter;
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -613,7 +613,8 @@ public:
  
  
      bool DisconnectInputs(CTxDB&amp; txdb);
@@ -227,7 +231,8 @@
 +                       CBlockIndex* pindexBlock, int64&amp; nFees, bool fBlock, bool fMiner, int64 nMinFee=0);
      bool ClientConnectInputs();
  
-     bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,12 +16,30 @@ static const CBigNum bnZero(0);
+     bool AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
+</code></pre></details><details><summary><code>script.cpp</code></summary><pre><code>@@ -16,12 +16,30 @@ static const CBigNum bnZero(0);
  static const CBigNum bnOne(1);
  static const CBigNum bnFalse(0);
  static const CBigNum bnTrue(1);
@@ -387,7 +392,8 @@
 +                    int nSigsCount = CastToBigNum(stacktop(-i)).getint();
                      if (nSigsCount &lt; 0 || nSigsCount &gt; nKeysCount)
                          return false;
-                     int isig = ++i;</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
+                     int isig = ++i;
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,8 +19,8 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -397,7 +403,8 @@
 +static const char* pszSubVer = &quot;.0&quot;;
  
  
- </code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
+ 
+</code></pre></details><details><summary><code>setup.nsi</code></summary><pre><code>@@ -7,7 +7,7 @@ RequestExecutionLevel highest
  
  # General Symbol Definitions
  !define REGKEY &quot;SOFTWARE\$(^Name)&quot;
@@ -420,7 +427,8 @@
 +VIProductVersion 0.3.9.0
  VIAddVersionKey ProductName Bitcoin
  VIAddVersionKey ProductVersion &quot;${VERSION}&quot;
- VIAddVersionKey CompanyName &quot;${COMPANY}&quot;</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -0,0 +1,419 @@
+ VIAddVersionKey CompanyName &quot;${COMPANY}&quot;
+</code></pre></details><details><summary><code>sha256.cpp</code></summary><pre><code>@@ -0,0 +1,419 @@
 +// Copyright (c) 2010 Satoshi Nakamoto
 +// Distributed under the MIT/X11 software license, see the accompanying
 +// file license.txt or http://www.opensource.org/licenses/mit-license.php.
@@ -719,7 +727,8 @@
 +        SHA256ROUND(h, a, b, c, d, e, f, g, 9, w9);
 +        SHA256ROUND(g, h, a, b, c, d, e, f, 10, w10);
 +        SHA256ROUND(f, g, h, a, b, c, d, e, 11, w11);
-+        SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -19,6 +19,14 @@ bool fCommandLine = false;
++        SHA256ROUND(e, f, g, h, a, b, c, d, 12, w12);
+</code></pre></details><details><summary><code>util.cpp</code></summary><pre><code>@@ -19,6 +19,14 @@ bool fCommandLine = false;
  
  
  
@@ -733,7 +742,8 @@
 +
  // Init openssl library multithreading support
  static boost::interprocess::interprocess_mutex** ppmutexOpenSSL;
- void locking_callback(int mode, int i, const char* file, int line)</code></pre></details>
+ void locking_callback(int mode, int i, const char* file, int line)
+</code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/7f71fd1/">← fix -datadir=./subdir relative path, autostart off by…</a><a rel="next" href="../../commits/d4c6b90/">fix for block 74638 overflow output transaction →</a></nav>
 </main>
 <footer class="sf"><div class="in">

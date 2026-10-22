@@ -6,20 +6,20 @@
 <title>addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit</title>
 <meta name="description" content="Satoshi Nakamoto&#x27;s commit dd51920 to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final…">
 <meta name="robots" content="max-image-preview:large">
-<link rel="canonical" href="https://satoshimail.pages.dev/commits/dd51920/">
+<link rel="canonical" href="https://satoshimail.vercel.app/commits/dd51920/">
 <meta name="theme-color" content="#f7931a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Satoshi Mail">
 <meta property="og:title" content="addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit">
 <meta property="og:description" content="Satoshi Nakamoto&#x27;s commit dd51920 to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final…">
-<meta property="og:url" content="https://satoshimail.pages.dev/commits/dd51920/">
-<meta property="og:image" content="https://satoshimail.pages.dev/og.png">
+<meta property="og:url" content="https://satoshimail.vercel.app/commits/dd51920/">
+<meta property="og:image" content="https://satoshimail.vercel.app/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@TylerHowell88">
 <meta name="twitter:title" content="addr relaying fixes, proxy option… (r18) – Satoshi Nakamoto commit">
 <meta name="twitter:description" content="Satoshi Nakamoto&#x27;s commit dd51920 to Bitcoin, 29 October 2009: addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final…">
-<meta name="twitter:image" content="https://satoshimail.pages.dev/og.png">
+<meta name="twitter:image" content="https://satoshimail.vercel.app/og.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
@@ -27,8 +27,10 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f7931a">
 <link rel="stylesheet" href="../../assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx locktime changes, fix hide unconfirmed generated", "url": "https://satoshimail.pages.dev/commits/dd51920/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T02:52:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dd519206a684c772a4a06ceecc87c665ad09d8be"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.pages.dev/commits/"}, {"@type": "ListItem", "position": 3, "name": "addr relaying fixes, proxy option and…", "item": "https://satoshimail.pages.dev/commits/dd51920/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "addr relaying fixes, proxy option and privacy patches, detect connect to self, non-final tx locktime changes, fix hide unconfirmed generated", "url": "https://satoshimail.vercel.app/commits/dd51920/", "codeRepository": "https://github.com/bitcoin/bitcoin", "programmingLanguage": "C++", "dateCreated": "2009-10-29T02:52:48Z", "author": {"@type": "Person", "name": "Satoshi Nakamoto"}, "sameAs": "https://github.com/bitcoin/bitcoin/commit/dd519206a684c772a4a06ceecc87c665ad09d8be"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Satoshi Mail", "item": "https://satoshimail.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Commits", "item": "https://satoshimail.vercel.app/commits/"}, {"@type": "ListItem", "position": 3, "name": "addr relaying fixes, proxy option and…", "item": "https://satoshimail.vercel.app/commits/dd51920/"}]}</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="sh"><div class="in">
@@ -70,7 +72,8 @@
 +cd \db\build_unix
  sh ../dist/configure --enable-mingw --enable-cxx
  make
- </code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -121,10 +121,12 @@ void CDB::Close()
+ 
+</code></pre></details><details><summary><code>db.cpp</code></summary><pre><code>@@ -121,10 +121,12 @@ void CDB::Close()
      pdb-&gt;close(0);
      delete pdb;
      pdb = NULL;
@@ -144,7 +147,8 @@
 +        RandAddSeedPerfmon();
          keyUser.MakeNewKey();
          if (!AddKey(keyUser))
-             return false;</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -5,6 +5,7 @@
+             return false;
+</code></pre></details><details><summary><code>headers.h</code></summary><pre><code>@@ -5,6 +5,7 @@
  #ifdef _MSC_VER
  #pragma warning(disable:4786)
  #pragma warning(disable:4804)
@@ -159,7 +163,8 @@
 +#include &quot;strlcpy.h&quot;
  #include &quot;serialize.h&quot;
  #include &quot;uint256.h&quot;
- #include &quot;util.h&quot;</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -163,6 +163,9 @@ void ThreadIRCSeed(void* parg)
+ #include &quot;util.h&quot;
+</code></pre></details><details><summary><code>irc.cpp</code></summary><pre><code>@@ -163,6 +163,9 @@ void ThreadIRCSeed(void* parg)
      int nErrorWait = 10;
      int nRetryWait = 10;
  
@@ -182,7 +187,8 @@
 +        else
              strMyName = strprintf(&quot;x%u&quot;, GetRand(1000000000));
  
- </code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -35,7 +35,7 @@ public:
+ 
+</code></pre></details><details><summary><code>key.h</code></summary><pre><code>@@ -35,7 +35,7 @@ public:
  };
  
  
@@ -190,7 +196,8 @@
 +// secure_allocator is defined in serialize.h
  typedef vector&lt;unsigned char, secure_allocator&lt;unsigned char&gt; &gt; CPrivKey;
  
- </code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -415,6 +415,10 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
+ 
+</code></pre></details><details><summary><code>main.cpp</code></summary><pre><code>@@ -415,6 +415,10 @@ bool CTransaction::AcceptTransaction(CTxDB&amp; txdb, bool fCheckInputs, bool* pfMis
      if (!CheckTransaction())
          return error(&quot;AcceptTransaction() : CheckTransaction failed&quot;);
  
@@ -376,7 +383,8 @@
 +            return error(&quot;SendMoney() : %s&quot;, strError.c_str());
          }
          if (!CommitTransactionSpent(wtxNew, key))
-         {</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -366,7 +366,7 @@ public:
+         {
+</code></pre></details><details><summary><code>main.h</code></summary><pre><code>@@ -366,7 +366,7 @@ public:
      int nVersion;
      vector&lt;CTxIn&gt; vin;
      vector&lt;CTxOut&gt; vout;
@@ -421,7 +429,8 @@
 +        nLinesDisplayed = 0;
      }
  
-     IMPLEMENT_SERIALIZE</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -17,8 +17,8 @@ endif
+     IMPLEMENT_SERIALIZE
+</code></pre></details><details><summary><code>makefile</code></summary><pre><code>@@ -17,8 +17,8 @@ endif
  
  
  
@@ -431,7 +440,8 @@
 +LIBPATHS=-L&quot;/db/build_unix&quot; -L&quot;/openssl/out&quot; -L&quot;/wxwidgets/lib/gcc_lib&quot;
  LIBS= \
   -l db_cxx \
-  -l eay32 \</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -8,6 +8,7 @@
+  -l eay32 \
+</code></pre></details><details><summary><code>net.cpp</code></summary><pre><code>@@ -8,6 +8,7 @@
  void ThreadMessageHandler2(void* parg);
  void ThreadSocketHandler2(void* parg);
  void ThreadOpenConnections2(void* parg);
@@ -730,7 +740,8 @@
 +        if (pnodeLocalHost-&gt;vfSubscribe[nChannel])
 +            pnode-&gt;PushMessage(&quot;subscribe&quot;, nChannel, nHops);
 +
-+    return true;</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -174,7 +174,7 @@ public:
++    return true;
+</code></pre></details><details><summary><code>net.h</code></summary><pre><code>@@ -174,7 +174,7 @@ public:
      {
          nServices = nServicesIn;
          memcpy(pchReserved, pchIPv4, sizeof(pchReserved));
@@ -973,7 +984,8 @@
 +    void DoDisconnect();
  };
  
- </code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
+ 
+</code></pre></details><details><summary><code>serialize.h</code></summary><pre><code>@@ -19,7 +19,7 @@ class CScript;
  class CDataStream;
  class CAutoFile;
  
@@ -981,7 +993,8 @@
 +static const int VERSION = 106;
  
  
- </code></pre></details><details><summary><code>strlcpy.h</code></summary><pre><code>@@ -0,0 +1,84 @@
+ 
+</code></pre></details><details><summary><code>strlcpy.h</code></summary><pre><code>@@ -0,0 +1,84 @@
 +/*
 + * Copyright (c) 1998 Todd C. Miller &lt;Todd.Miller@courtesan.com&gt;
 + *
@@ -1065,7 +1078,8 @@
 +    *d = &#x27;\0&#x27;;
 +
 +    return(dlen + (s - src)); /* count does not include NUL */
-+}</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -497,7 +497,7 @@ string SingleLine(const string&amp; strIn)
++}
+</code></pre></details><details><summary><code>ui.cpp</code></summary><pre><code>@@ -497,7 +497,7 @@ string SingleLine(const string&amp; strIn)
      return strOut;
  }
  
@@ -1364,7 +1378,8 @@
  {
      if (!Status())
          return false;
--    strStatus = str;</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -89,7 +89,7 @@ public:
+-    strStatus = str;
+</code></pre></details><details><summary><code>ui.h</code></summary><pre><code>@@ -89,7 +89,7 @@ public:
      void OnCrossThreadCall(wxCommandEvent&amp; event);
      void InsertLine(bool fNew, int nIndex, uint256 hashKey, string strSort, const wxString&amp; str1, const wxString&amp; str2, const wxString&amp; str3, const wxString&amp; str4, const wxString&amp; str5);
      bool DeleteLine(uint256 hashKey);
@@ -1399,7 +1414,8 @@
 +    char pszStatus[10000];
      bool fCanCancel;
      bool fAbort;
-     bool fSuccess;</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -380,7 +380,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
+     bool fSuccess;
+</code></pre></details><details><summary><code>uibase.cpp</code></summary><pre><code>@@ -380,7 +380,7 @@ COptionsDialogBase::COptionsDialogBase( wxWindow* parent, wxWindowID id, const w
  	bSizer69 = new wxBoxSizer( wxVERTICAL );
  	
  	
@@ -1500,7 +1516,8 @@
 +	m_textCtrlProxyPort-&gt;Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( COptionsDialogBase::OnKillFocusProxy ), NULL, this );
  	m_buttonOK-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonOK ), NULL, this );
  	m_buttonCancel-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonCancel ), NULL, this );
- 	m_buttonApply-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonApply ), NULL, this );</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -50,50 +50,52 @@
+ 	m_buttonApply-&gt;Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( COptionsDialogBase::OnButtonApply ), NULL, this );
+</code></pre></details><details><summary><code>uibase.h</code></summary><pre><code>@@ -50,50 +50,52 @@
  #define wxID_BUTTONCOPY 1006
  #define wxID_BUTTONCHANGE 1007
  #define wxID_TRANSACTIONFEE 1008
@@ -1525,7 +1542,8 @@
 -#define wxID_DEL8 1027
 -#define wxID_DEL9 1028
 -#define wxID_DEL10 1029
--#define wxID_DEL11 1030</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
+-#define wxID_DEL11 1030
+</code></pre></details><details><summary><code>uiproject.fbp</code></summary><pre><code></code></pre></details><details><summary><code>util.cpp</code></summary><pre><code></code></pre></details><details><summary><code>util.h</code></summary><pre><code></code></pre></details>
 <nav class="prevnext" aria-label="More commits"><a rel="prev" href="../../commits/fa2a033/">← fix display of new generated coins, fix assertion in…</a><a rel="next" href="../../commits/dc73b32/">CCriticalSection using wxWidgets instead of Windows OS calls →</a></nav>
 </main>
 <footer class="sf"><div class="in">
