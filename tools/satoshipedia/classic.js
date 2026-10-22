@@ -58,6 +58,7 @@ function gfootHtml() {
     ${L ? `<p>Last account activity: ${esc(longDay(L.m.d))} (${yrs} years ago) at satoshin@gmx.com. <a href="#t-${L.t.id}" data-clipmi="${L.i}">Details</a></p>` : ""}
     <p>Satoshi Mail view: <b>standard</b> | <a href="${basic}">basic HTML</a> &nbsp; <a href="#about">Learn more</a></p>
     <p>There will only ever be 21,000,000 bitcoins. Satoshi wrote ${fmtNum(SENT.filter(x => !x.m.w).length)} of these messages and ${fmtNum(COMMITS.length)} commits.</p>
+    <p>Contact and corrections: <a href="mailto:${CONTACT_EMAIL}?subject=Satoshi%20Mail">${CONTACT_EMAIL}</a> · <a href="#about">How Satoshi Mail is made</a></p>
     <p class="gf-links">©2008–2011 Satoshi Nakamoto · Satoshi Mail by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> · <a href="#sources">Sources</a> · <a href="#updates">Update log</a> · <a href="#verify">Verify</a></p>
   </footer>`;
 }
@@ -70,7 +71,7 @@ function gfootHtml() {
     <nav class="gb-acct" aria-label="Account"><b>satoshin@gmx.com</b><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="settings">Settings</button><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="help">Help</button><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="signout">Sign out</button></nav>
   </div>`);
   const brand = top.querySelector(".brand > span");
-  if (brand) brand.insertAdjacentHTML("beforeend", `<small class="by">by Satoshi Nakamoto</small>`);
+  if (brand) brand.insertAdjacentHTML("beforeend", `<small class="by">Satoshi Nakamoto’s mail, archived</small>`);
   const form = $("#searchform");
   if (form) form.insertAdjacentHTML("afterend", `<div class="gs-btns"><button class="gbtn" type="submit" form="searchform">Search Mail</button><button class="gbtn" type="button" data-act="gs-wiki">Search Satoshipedia</button><span class="gs-links"><button type="button" class="gblink" data-act="adv">Show search options</button><button type="button" class="gblink" data-act="random">I'm feeling lucky</button></span></div>`);
   gbarUpdate();

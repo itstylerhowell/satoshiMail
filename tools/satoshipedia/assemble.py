@@ -7,6 +7,7 @@ In a working folder with tools/, wiki/ and out/: writes out/mail_template.html a
 """
 import json, sys, pathlib
 
+CONTACT_EMAIL = "itstylerhowell@gmail.com"   # shown on About, in footers and on every Satoshipedia article
 SITE_URL = "https://satoshimail.pages.dev/"   # the public website (Cloudflare Pages); keep in step with build_site.py --base-url
 
 root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[2]).resolve()
@@ -47,7 +48,7 @@ ujson = json.dumps(json.load(open(tools / "updates.json")), ensure_ascii=False, 
 src = patch(src, '<script id="data" type="application/json">', f'<script id="wiki-data" type="application/json">{wjson}</script>\n<script id="updates-data" type="application/json">{ujson}</script>\n<script id="data" type="application/json">')
 
 # 6. encyclopedia script before boot, 7. boot through the combined router
-src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + f"const SITE_URL = {json.dumps(SITE_URL)};\n" + (tools / "verify.js").read_text() + (tools / "classic.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
+src = patch(src, "/* ═════════════ boot ═════════════ */\nrender(true);", (tools / "wiki.js").read_text() + (tools / "map.js").read_text() + (tools / "seo.js").read_text() + (tools / "ask.js").read_text() + (tools / "sources.js").read_text() + (tools / "feedback.js").read_text() + (tools / "updates.js").read_text() + f"const SITE_URL = {json.dumps(SITE_URL)}, CONTACT_EMAIL = {json.dumps(CONTACT_EMAIL)};\n" + (tools / "verify.js").read_text() + (tools / "classic.js").read_text() + "\n/* ═════════════ boot ═════════════ */\nrouteAll(true);")
 src = patch(src, '$("#rail").classList.remove("open"); render(true); });', '$("#rail").classList.remove("open"); routeAll(true); });')
 
 # inbox banner
@@ -283,6 +284,11 @@ src = patch(src, '<div class="ld-beta"><span class="beta-pill static">Beta</span
             f'<p class="ld-text">Loading satoshin@gmx.com&hellip;</p><p class="ld-basic"><a href="{SITE_URL}conversations/">Load basic HTML</a> (for slow connections)</p>')
 
 src = patch(src, '<a href="#wiki">Satoshipedia</a>, in the dock below.', '<a href="#wiki">Satoshipedia</a>, linked at the top of the page.')
+# Quality: About gets "Why I built it", the editorial policy and contact; the archive framing is explicit
+ED = (tools / "editorial.html").read_text().replace("{EMAIL}", CONTACT_EMAIL)
+src = patch(src, '<p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>', '<p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>\n    ' + ED)
+src = patch(src, 'You are logged in as <b>Satoshi Nakamoto</b>.', 'This is an archive, shown as <b>Satoshi Nakamoto</b>’s inbox.')
+
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).
 import re as _re

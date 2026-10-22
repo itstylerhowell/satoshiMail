@@ -366,9 +366,9 @@ dict(
 In December 2015 ''Wired'' and ''Gizmodo'' suggested that Wright might be Satoshi.[^wp] On 2 May 2016 a post on his website associated him with Satoshi.[^wp-wright] [[gavin-andresen|Gavin Andresen]] and [[jon-matonis|Jon Matonis]] backed the claim; [[jeff-garzik|Jeff Garzik]] and [[peter-todd|Peter Todd]] disputed it.[^wp] In April 2019 he registered US copyrights in the white paper and the v0.1 code, and he sued people who accused him of lying about inventing Bitcoin.[^wp-wright]
 
 == COPA v Wright ==
-The Crypto Open Patent Alliance (COPA) sued Wright in London's High Court. After a five-week trial, Mr Justice Mellor ruled in March 2024 that Wright is not Satoshi Nakamoto. The written judgment, released on 20 May 2024, found that the documents he relied on were forgeries and that he had “lied to the court extensively and repeatedly”.[^wp-wright] See [[copa-v-wright|COPA v Wright]] for the case and the judgment, and [[kleiman-v-wright|Kleiman v. Wright]] for the earlier US case. In December 2024 he received a suspended prison sentence for contempt of court, for violating a court order related to his claims.[^wp]
+The Crypto Open Patent Alliance (COPA) sued Wright in London's High Court. After a five-week trial, Mr Justice Mellor ruled in March 2024 that Wright is not Satoshi Nakamoto. The written judgment, released on 20 May 2024, found that the documents he relied on were forgeries and that he had “lied to the Court extensively and repeatedly”.[^wp-wright][^copa] See [[copa-v-wright|COPA v Wright]] for the case and the judgment, and [[kleiman-v-wright|Kleiman v. Wright]] for the earlier US case. In December 2024 he received a suspended prison sentence for contempt of court, for violating a court order related to his claims.[^wp]
 """,
- refs={}, see=["identity-of-satoshi-nakamoto", "media-investigations"],
+ refs={"copa": "[https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/1198 Crypto Open Patent Alliance v Craig Steven Wright [2024] EWHC 1198 (Ch)], judgment of Mellor J, 20 May 2024.", }, see=["identity-of-satoshi-nakamoto", "media-investigations"],
 ),
 
 # ─────────────────────────── Topics ───────────────────────────
@@ -523,9 +523,9 @@ dict(
  aliases=[], label=None,
  info=[("Date", "12 January 2009"), ("Block", "170"), ("Amount", "10 BTC"), ("From", "Satoshi Nakamoto"), ("To", "Hal Finney")],
  body="""
-The '''first bitcoin transaction''' was a payment of 10 bitcoins from Satoshi to [[hal-finney|Hal Finney]], included in block 170 on 12 January 2009.[^wp-history] Finney had been running [[bitcoin-v0-1|v0.1]] since its release, and the two were exchanging bug reports at the time ({{label:hal-finney|their emails}}).
+The '''first bitcoin transaction''' was a payment of 10 bitcoins from Satoshi to [[hal-finney|Hal Finney]], included in block 170 on 12 January 2009.[^wp-history][^b170] Finney had been running [[bitcoin-v0-1|v0.1]] since its release, and the two were exchanging bug reports at the time ({{label:hal-finney|their emails}}).
 """,
- refs={}, see=["hal-finney", "bitcoin-v0-1"],
+ refs={"b170": "[https://blockstream.info/block-height/170 Block 170], the Bitcoin blockchain (Blockstream block explorer).", }, see=["hal-finney", "bitcoin-v0-1"],
 ),
 dict(
  slug="cryptography-mailing-list", title="Cryptography mailing list", kind="topic", img="icon:forward_to_inbox",
@@ -753,7 +753,7 @@ dict(
  short="What Satoshi's spelling, punctuation and posting times reveal, measured from the archive.",
  featured=True, aliases=[], label=None, info=[("Measured from", "Satoshi's messages in this archive")],
  body="""
-Satoshi's writing has been studied closely for clues to his identity. Analyses point to British spellings, double-spaced sentences and a long daily gap in posting.[^wp] The figures below are computed live from the messages in this archive.
+Satoshi's writing has been studied closely for clues to his identity. Analyses point to British spellings, double-spaced sentences and a long daily gap in posting.[^wp] The figures below are computed live from the messages in this archive, which come from the Satoshi Nakamoto Institute's collection of his writing.[^sni]
 
 == Posting hours ==
 An analysis of his forum posts found a steep decline to almost none between 5 and 11 a.m. GMT.[^wp] His dated messages in this archive show a similar gap:
@@ -780,9 +780,9 @@ dict(
  body="""
 Estimates of the bitcoins in Satoshi's possession range from 750,000 to 1.1 million; the wallet has been untouched since 2010.[^wp] Another estimate puts what he mined at about one million.[^wp-bitcoin]
 
-Moving the earliest bitcoins mined, or signing a message with the key associated with them, has been proposed as proof of being Satoshi ([[identity-of-satoshi-nakamoto]]).[^wp] His 10-bitcoin payment to Hal Finney was the [[first-bitcoin-transaction|first bitcoin transaction]].[^wp-history]
+Moving the earliest bitcoins mined, or signing a message with the key associated with them, has been proposed as proof of being Satoshi ([[identity-of-satoshi-nakamoto]]).[^wp] The first of those blocks, the genesis block, is block 0.[^b0] His 10-bitcoin payment to Hal Finney was the [[first-bitcoin-transaction|first bitcoin transaction]].[^wp-history]
 """,
- refs={}, see=["identity-of-satoshi-nakamoto", "supply-cap"],
+ refs={"b0": "[https://blockstream.info/block-height/0 Block 0, the genesis block], the Bitcoin blockchain (Blockstream block explorer).", }, see=["identity-of-satoshi-nakamoto", "supply-cap"],
 ),
 dict(
  slug="monuments-to-satoshi", title="Monuments to Satoshi", kind="topic", img="icon:account_balance",

@@ -338,6 +338,22 @@ function renderWikiMissing(slug) {
   const res = wikiSearch(slug.replace(/[-~]/g, " "));
   $("#wkmain").innerHTML = `<h1 class="wk-h1">Article not found</h1><p class="wk-from">Satoshipedia has no article called “${esc(slug)}”.</p>${res.length ? `<p>Did you mean:</p><ul class="wk-list">${res.slice(0, 5).map(a => listRow(a)).join("")}</ul>` : `<p><a href="#wiki~all">Browse all articles</a>.</p>`}`;
 }
+// the archive messages and commits an article relies on, linked in Satoshi Mail and at their original source
+function wkPrimary(a) {
+  if (!a.primary || !a.primary.length) return "";
+  const items = a.primary.map(x => {
+    if (x.c) {
+      const c = BY_COMMIT.get(x.c); if (!c) return "";
+      return `<li><a href="#t-${c.id}">${esc(c.s)}</a>, commit by Satoshi Nakamoto, ${esc(longDay(c.d))}. <a class="ext" href="${esc(c.u)}" target="_blank" rel="noopener">Original on GitHub</a></li>`;
+    }
+    const t = BY_ID.get(x.t); if (!t) return "";
+    const si = x.i != null ? x.i : Math.max(0, t.m.findIndex(m => m.s));
+    const m = t.m[si], orig = m.su || m.u || t.su || t.u;
+    return `<li><a href="#t-${t.id}">${esc(t.t)}</a>, ${esc(srcName(t))}, ${esc(longDay(m.d))}.${orig ? ` <a class="ext" href="${esc(orig)}" target="_blank" rel="noopener">Original source</a>` : ""}</li>`;
+  }).join("");
+  return `<h2 id="primary-sources">Primary sources</h2><p class="wk-note">The messages and commits this article draws on, in Satoshi Mail and where they were first published.</p><ol class="wk-refs wk-prim">${items}</ol>`;
+}
+const wkEditorial = a => `<p class="wk-ed">Published by Tyler Howell for Satoshi Mail. Written with AI assistance from the sources listed above and checked against them. Last updated ${esc(WIKI.updated)}. Spotted an error? Email <a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Satoshipedia: " + a.title)}">${CONTACT_EMAIL}</a> (<a href="#about" data-scroll-about="editorial">how articles are made</a>).</p>`;
 function renderWikiArticle(a) {
   const st = personStats(a);
   const toc = a.sections.filter(s => s.lvl === 2);
@@ -362,6 +378,8 @@ function renderWikiArticle(a) {
     ${archive}
     ${a.see.length ? `<h2 id="see-also">See also</h2><ul class="wk-see">${a.see.map(s => `<li>${wl(s)}</li>`).join("")}</ul>` : ""}
     ${a.refs.length ? `<h2 id="references">References</h2><ol class="wk-refs">${a.refs.map((r, i) => `<li id="cite-${i + 1}">${r}</li>`).join("")}</ol>` : ""}
+    ${wkPrimary(a)}
+    ${wkEditorial(a)}
     <div class="wk-cats"><b>Categories:</b>${a.cats.map(c => `<a href="#wiki~cat~${catSlug(c)}">${esc(c)}</a>`).join("<span aria-hidden=\"true\">·</span>")}</div>
   </article>`;
   resolveLinks($("#wkmain"));

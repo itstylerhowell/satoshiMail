@@ -185,3 +185,11 @@ button[data-act="details"]::before { content: "show details"; }
   .brand .by { display: none; }
   .wc-src { display: none; }
 }
+
+/* About: why, editorial policy, contact */
+.ed { margin: 18px 0 0; max-width: 72ch; font: 14px/1.55 Arial, sans-serif; }
+.ed h3 { font: 700 15px Arial, sans-serif; margin: 0 0 6px; }
+.ed ul { padding-left: 20px; margin: 0; }
+.ed li { margin-bottom: 6px; }
+.ed-sig { color: var(--gm-mute); font-style: italic; }
+.ed-addr { user-select: all; }

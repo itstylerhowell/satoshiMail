@@ -3,6 +3,18 @@
   "updates": [
     {
       "date": "2026-10-22",
+      "title": "Sources, editors and contact",
+      "items": [
+        "Every Satoshipedia article now ends with its primary sources: the messages and commits it draws on, linked in Satoshi Mail and where they were first published.",
+        "Articles now say who publishes them and how they're written, when they were last updated, and where to send corrections.",
+        "Four articles that cited only Wikipedia now also cite the court judgment or the Bitcoin blockchain itself.",
+        "The About page explains why Satoshi Mail exists and how it's made, and gives an email address for contact and corrections.",
+        "The inbox is now clearly labelled as an archive presented as Satoshi's inbox."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-22",
       "title": "New home at satoshimail.pages.dev",
       "items": [
         "Satoshi Mail now runs on Cloudflare Pages at satoshimail.pages.dev. Old satoshimail.vercel.app links forward to the same page here."

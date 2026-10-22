@@ -26,7 +26,7 @@ ALLOWED_HOSTS = {"nakamotoinstitute.org", "satoshi.nakamotoinstitute.org", "gith
                  "www.blocktrainer.de", "satoshin.name",
                  # primary sources, allowed from 21 October 2026: court records, the forum, correspondents' own copies
                  "caselaw.nationalarchives.gov.uk", "www.judiciary.uk", "www.govinfo.gov", "storage.courtlistener.com",
-                 "bitcoindefense.org", "bitcointalk.org", "riski.wiki", "www.dropbox.com", "gwern.net"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
+                 "bitcoindefense.org", "bitcointalk.org", "riski.wiki", "www.dropbox.com", "gwern.net", "blockstream.info"}  # Blocktrainer and satoshin.name added as sources on 20 October 2026 at the owner's request
 
 
 def check_hosts(where, text):
@@ -85,6 +85,11 @@ def inline(text, ctx):
                           and (not opts.get("date") or day(msg["d"]) == opts["date"])]
                     if not ok:
                         ERRORS.append(f"{ctx['article']}: no message {opts} in {title!r}")
+                # every message an article relies on becomes one of its primary sources
+                if ctx.get("primary") is not None:
+                    mi = ok[0] if opts and ok else None
+                    if not any(x.get("t") == t["id"] for x in ctx["primary"]):
+                        ctx["primary"].append({"t": t["id"], "i": mi})
             a = f'<a class="ml" data-src="{attr(src)}" data-title="{attr(title)}"'
             if opts.get("from"):
                 a += f' data-from="{attr(opts["from"])}"'
@@ -93,8 +98,11 @@ def inline(text, ctx):
             return stash(a + f">{esc(label)}</a>")
         if kind == "commit":
             pre, label = parts[0], parts[1]
-            if not any(c["sha"].startswith(pre) for c in COMMITS):
+            cm = next((c for c in COMMITS if c["sha"].startswith(pre)), None)
+            if not cm:
                 ERRORS.append(f"{ctx['article']}: no commit {pre}")
+            elif ctx.get("primary") is not None and not any(x.get("c") == cm["id"] for x in ctx["primary"]):
+                ctx["primary"].append({"c": cm["id"]})
             return stash(f'<a class="cl" data-sha="{attr(pre)}">{esc(label)}</a>')
         if kind == "search":
             return stash(f'<a class="xl" href="#search-{attr(quote(parts[0], safe=""))}">{esc(parts[1])}</a>')
@@ -202,7 +210,7 @@ def blocks(body, ctx):
 
 articles = []
 for a in ARTICLES:
-    ctx = {"article": a["slug"], "refs": [], "refdefs": a.get("refs", {})}
+    ctx = {"article": a["slug"], "refs": [], "refdefs": a.get("refs", {}), "primary": []}
     lead, sections = blocks(a["body"], ctx)
     info = [[esc(k), inline(v, {"article": a["slug"], "refs": None, "refdefs": {}})] for k, v in a.get("info", [])]
     refs_html = []
@@ -217,10 +225,11 @@ for a in ARTICLES:
         "caption": a.get("caption"), "cats": a["cats"], "short": a["short"],
         "featured": bool(a.get("featured")), "aliases": a.get("aliases", []), "label": a.get("label"),
         "info": info, "lead": lead, "sections": sections, "refs": refs_html, "see": a.get("see", []),
+        "primary": ctx["primary"],
     })
 
 dyk = [inline(x, {"article": "main-page", "refs": None, "refdefs": {}}) for x in DID_YOU_KNOW]
-out = {"articles": sorted(articles, key=lambda a: a["title"].lower()), "dyk": dyk, "updated": "20 October 2026"}
+out = {"articles": sorted(articles, key=lambda a: a["title"].lower()), "dyk": dyk, "updated": f"{dt.date.today().day} {dt.date.today():%B %Y}"}
 (HERE / "wiki.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 words = sum(len(re.sub(r"<[^>]+>", " ", a["lead"] + "".join(s["html"] for s in a["sections"])).split()) for a in articles)
 print(f"{len(articles)} articles, {words:,} words, {len(dyk)} DYK, {len(json.dumps(out)) / 1e3:.0f} KB")

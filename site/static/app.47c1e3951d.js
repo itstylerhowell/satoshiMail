@@ -449,7 +449,7 @@ function renderList() {
     const nP = THREADS.filter(t => t.k === "p" && inFolder(t, "inbox") && !isRead(t)).length;
     const nX = THREADS.filter(t => t.k === "x" && inFolder(t, "inbox") && !isRead(t)).length;
     const hasX = THREADS.some(t => t.k === "x");
-    head = (ST.bannerClosed || r.page > 1 ? "" : `<div class="banner" role="note">${ic("info")}<p>You are logged in as <b>Satoshi Nakamoto</b>. These are real emails and forum posts, archived by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>.<br><span class="sub">${fmtNum(SENT.length)} messages by Satoshi in ${THREADS.length} conversations, ${shortDate(FIRST_ACTIVE)} – ${shortDate(LAST_ACTIVE)}${COMMITS.length ? `, plus <a href="#commits">${COMMITS.length} code commits</a>` : ""}.${THREADS.some(t => t.k === "x") ? ` Private email from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a> is under <a href="#inbox-private">Private</a>.` : ""} Who's who and what happened is in <a href="#wiki">Satoshipedia</a>, linked at the top of the page.</span></p><button class="ib sm" data-act="closebanner" aria-label="Dismiss">${ic("close")}</button></div>`) +
+    head = (ST.bannerClosed || r.page > 1 ? "" : `<div class="banner" role="note">${ic("info")}<p>This is an archive, shown as <b>Satoshi Nakamoto</b>’s inbox. These are real emails and forum posts, archived by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>.<br><span class="sub">${fmtNum(SENT.length)} messages by Satoshi in ${THREADS.length} conversations, ${shortDate(FIRST_ACTIVE)} – ${shortDate(LAST_ACTIVE)}${COMMITS.length ? `, plus <a href="#commits">${COMMITS.length} code commits</a>` : ""}.${THREADS.some(t => t.k === "x") ? ` Private email from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a> is under <a href="#inbox-private">Private</a>.` : ""} Who's who and what happened is in <a href="#wiki">Satoshipedia</a>, linked at the top of the page.</span></p><button class="ib sm" data-act="closebanner" aria-label="Dismiss">${ic("close")}</button></div>`) +
       `<div class="tabs" role="tablist">
         <a class="tab${r.tab === "primary" ? " on" : ""}" href="#inbox" role="tab" aria-selected="${r.tab === "primary"}">${ic("inbox", r.tab === "primary" ? "fill" : "")}<span class="tl">Primary<small>Mailing lists</small></span>${nE ? `<span class="pill">${nE} new</span>` : ""}</a>
         <a class="tab${r.tab === "forums" ? " on" : ""}" href="#inbox-forums" role="tab" aria-selected="${r.tab === "forums"}">${ic("forum", r.tab === "forums" ? "fill" : "")}<span class="tl">Forums<small>BitcoinTalk, P2P Foundation</small></span>${nP ? `<span class="pill">${nP} new</span>` : ""}</a>
@@ -771,6 +771,28 @@ function renderAbout() {
     <p class="lead made-by-lead">Founded and made by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>). Satoshi Mail is open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" target="_blank" rel="noopener">source code on GitHub</a>.</p>
     <p class="lead made-by-lead">Inspired by <a href="https://x.com/lukeigel" target="_blank" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" target="_blank" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" target="_blank" rel="noopener">Jmail</a>.</p>
     <p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>
+    <section class="ed" id="why">
+<h3>Why I built Satoshi Mail</h3>
+<p>Satoshi Nakamoto's emails and forum posts are some of the most important writing in Bitcoin's history, but they're spread across archives, PDF exhibits and old mailing lists. I built Satoshi Mail so anyone can read them the way he would have: in one inbox, in order, with the replies around them. It was inspired by Luke Igel and Riley Walz's Jmail. It's open source, and every message links back to where it came from.</p>
+<p class="ed-sig">— Tyler Howell, founder (<a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a>)</p>
+</section>
+<section class="ed" id="editorial">
+<h3>How Satoshi Mail is made</h3>
+<ul>
+<li><b>Messages are copied exactly, never rewritten.</b> They come from the Satoshi Nakamoto Institute, nakamoto-archive, the Bitcoin Core repository, bitcoin.org, and correspondents' own copies filed as court evidence. Each one links to its original.</li>
+<li><b>Everything is cross-checked</b> against Blocktrainer's archive and satoshin.name. Dates are corrected only from a correspondent's own copy, and the date as originally sent is kept beside it.</li>
+<li><b>Other people's privacy comes first.</b> Private addresses, phone numbers and similar details of people who wrote to Satoshi are removed.</li>
+<li><b>Satoshipedia</b> is written with AI assistance, from the sources listed at the end of each article, and published by Tyler Howell. Quotations come from the archive. On Satoshi's identity it reports who has been named, by whom and how they responded, without taking a side.</li>
+<li><b>Anyone can verify the archive.</b> Every message has a SHA-256 fingerprint, and the list of fingerprints is timestamped in the Bitcoin blockchain (see <a href="#verify" data-ed-verify>Verify</a>).</li>
+<li><b>Corrections are welcome</b> and are listed in the <a href="#updates" data-ed-updates>Update log</a>.</li>
+<li><b>Independent.</b> No ads, no sponsors, no tracking cookies. Satoshi Mail isn't affiliated with Google, the Satoshi Nakamoto Institute or any other source.</li>
+</ul>
+</section>
+<section class="ed" id="contact">
+<h3>Contact and corrections</h3>
+<p>Found a mistake, a missing message or a broken link? Email <a href="mailto:itstylerhowell@gmail.com?subject=Satoshi%20Mail">itstylerhowell@gmail.com</a> (address: <span class="ed-addr">itstylerhowell@gmail.com</span>) or post to <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">@TylerHowell88</a> on X.</p>
+</section>
+
     <p class="lead"><b>Satoshi Mail is in beta.</b> It is still in development, so features may change, move or not work yet. <button class="linkbtn" data-act="beta">What this means</button> · <button class="linkbtn" data-act="feedback">Send feedback</button></p>
     <p class="lead">A mail-style reader for every mailing-list and forum thread Satoshi Nakamoto took part in, as collected by the <a href="https://nakamotoinstitute.org/" target="_blank" rel="noopener">Satoshi Nakamoto Institute</a>. Other participants' messages are kept so each conversation reads in full.</p>
     <p class="lead">Inbox → Primary holds the mailing lists (Cryptography, bitcoin-list, p2p-research); Forums holds BitcoinTalk and P2P Foundation. The Private tab holds his private correspondence with Hal Finney, Martti Malmi, Mike Hearn, Dustin Trammell, Adam Back, Wei Dai and others, from <a href="https://github.com/lugaxker/nakamoto-archive" target="_blank" rel="noopener">nakamoto-archive</a>, grouped into conversations by correspondent and subject; dates marked * are approximate: the source gives only the day, or none, in which case the message is shown at the date of the message it follows (≈). Sent lists every message Satoshi wrote, and Commits holds his 203 commits to Bitcoin's source code from github.com/bitcoin/bitcoin, each with its diff. Topics come from The Quotable Satoshi.</p>
@@ -1565,6 +1587,22 @@ function renderWikiMissing(slug) {
   const res = wikiSearch(slug.replace(/[-~]/g, " "));
   $("#wkmain").innerHTML = `<h1 class="wk-h1">Article not found</h1><p class="wk-from">Satoshipedia has no article called “${esc(slug)}”.</p>${res.length ? `<p>Did you mean:</p><ul class="wk-list">${res.slice(0, 5).map(a => listRow(a)).join("")}</ul>` : `<p><a href="#wiki~all">Browse all articles</a>.</p>`}`;
 }
+// the archive messages and commits an article relies on, linked in Satoshi Mail and at their original source
+function wkPrimary(a) {
+  if (!a.primary || !a.primary.length) return "";
+  const items = a.primary.map(x => {
+    if (x.c) {
+      const c = BY_COMMIT.get(x.c); if (!c) return "";
+      return `<li><a href="#t-${c.id}">${esc(c.s)}</a>, commit by Satoshi Nakamoto, ${esc(longDay(c.d))}. <a class="ext" href="${esc(c.u)}" target="_blank" rel="noopener">Original on GitHub</a></li>`;
+    }
+    const t = BY_ID.get(x.t); if (!t) return "";
+    const si = x.i != null ? x.i : Math.max(0, t.m.findIndex(m => m.s));
+    const m = t.m[si], orig = m.su || m.u || t.su || t.u;
+    return `<li><a href="#t-${t.id}">${esc(t.t)}</a>, ${esc(srcName(t))}, ${esc(longDay(m.d))}.${orig ? ` <a class="ext" href="${esc(orig)}" target="_blank" rel="noopener">Original source</a>` : ""}</li>`;
+  }).join("");
+  return `<h2 id="primary-sources">Primary sources</h2><p class="wk-note">The messages and commits this article draws on, in Satoshi Mail and where they were first published.</p><ol class="wk-refs wk-prim">${items}</ol>`;
+}
+const wkEditorial = a => `<p class="wk-ed">Published by Tyler Howell for Satoshi Mail. Written with AI assistance from the sources listed above and checked against them. Last updated ${esc(WIKI.updated)}. Spotted an error? Email <a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Satoshipedia: " + a.title)}">${CONTACT_EMAIL}</a> (<a href="#about" data-scroll-about="editorial">how articles are made</a>).</p>`;
 function renderWikiArticle(a) {
   const st = personStats(a);
   const toc = a.sections.filter(s => s.lvl === 2);
@@ -1589,6 +1627,8 @@ function renderWikiArticle(a) {
     ${archive}
     ${a.see.length ? `<h2 id="see-also">See also</h2><ul class="wk-see">${a.see.map(s => `<li>${wl(s)}</li>`).join("")}</ul>` : ""}
     ${a.refs.length ? `<h2 id="references">References</h2><ol class="wk-refs">${a.refs.map((r, i) => `<li id="cite-${i + 1}">${r}</li>`).join("")}</ol>` : ""}
+    ${wkPrimary(a)}
+    ${wkEditorial(a)}
     <div class="wk-cats"><b>Categories:</b>${a.cats.map(c => `<a href="#wiki~cat~${catSlug(c)}">${esc(c)}</a>`).join("<span aria-hidden=\"true\">·</span>")}</div>
   </article>`;
   resolveLinks($("#wkmain"));
@@ -3030,7 +3070,7 @@ function renderUpdates() {
     <p class="lead muted">See also <a href="#about">About this archive</a> and <a href="#sources">Sources</a>.</p>
   </div></div>`;
 }
-const SITE_URL = "https://satoshimail.pages.dev/";
+const SITE_URL = "https://satoshimail.pages.dev/", CONTACT_EMAIL = "itstylerhowell@gmail.com";
 /* ═════════════ Verify (#verify, #verify~t/<thread>/<i>, #verify~c/<commit>) ═════════════
    Every message and commit has a SHA-256 fingerprint of its exact contents; each version of the archive's
    list of fingerprints (its manifest) is timestamped in Bitcoin with OpenTimestamps (tools/timestamp.py and
@@ -3221,6 +3261,7 @@ function gfootHtml() {
     ${L ? `<p>Last account activity: ${esc(longDay(L.m.d))} (${yrs} years ago) at satoshin@gmx.com. <a href="#t-${L.t.id}" data-clipmi="${L.i}">Details</a></p>` : ""}
     <p>Satoshi Mail view: <b>standard</b> | <a href="${basic}">basic HTML</a> &nbsp; <a href="#about">Learn more</a></p>
     <p>There will only ever be 21,000,000 bitcoins. Satoshi wrote ${fmtNum(SENT.filter(x => !x.m.w).length)} of these messages and ${fmtNum(COMMITS.length)} commits.</p>
+    <p>Contact and corrections: <a href="mailto:${CONTACT_EMAIL}?subject=Satoshi%20Mail">${CONTACT_EMAIL}</a> · <a href="#about">How Satoshi Mail is made</a></p>
     <p class="gf-links">©2008–2011 Satoshi Nakamoto · Satoshi Mail by <a href="https://x.com/TylerHowell88" target="_blank" rel="noopener">Tyler Howell</a> · <a href="#sources">Sources</a> · <a href="#updates">Update log</a> · <a href="#verify">Verify</a></p>
   </footer>`;
 }
@@ -3233,7 +3274,7 @@ function gfootHtml() {
     <nav class="gb-acct" aria-label="Account"><b>satoshin@gmx.com</b><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="settings">Settings</button><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="help">Help</button><span class="sep" aria-hidden="true">|</span><button type="button" class="gblink" data-act="signout">Sign out</button></nav>
   </div>`);
   const brand = top.querySelector(".brand > span");
-  if (brand) brand.insertAdjacentHTML("beforeend", `<small class="by">by Satoshi Nakamoto</small>`);
+  if (brand) brand.insertAdjacentHTML("beforeend", `<small class="by">Satoshi Nakamoto’s mail, archived</small>`);
   const form = $("#searchform");
   if (form) form.insertAdjacentHTML("afterend", `<div class="gs-btns"><button class="gbtn" type="submit" form="searchform">Search Mail</button><button class="gbtn" type="button" data-act="gs-wiki">Search Satoshipedia</button><span class="gs-links"><button type="button" class="gblink" data-act="adv">Show search options</button><button type="button" class="gblink" data-act="random">I'm feeling lucky</button></span></div>`);
   gbarUpdate();

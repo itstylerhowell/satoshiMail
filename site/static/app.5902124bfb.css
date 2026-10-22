@@ -796,6 +796,11 @@ body.in-wiki .dialog { z-index: 81; }
 .cj-acts { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 16px; }
 @media (prefers-reduced-motion: no-preference) { .cj h2 { animation: cjin 260ms var(--ease-out) both; } @keyframes cjin { from { opacity: 0; transform: translateY(6px); } } }
 
+/* article editorial line and primary sources */
+.wk-ed { margin: 22px 0 6px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.wk-note { color: var(--ink-3); font-size: 13px; margin: 0 0 6px; }
+.wk-prim li { margin-bottom: 4px; }
+
 
 /* ═════════════ Satoshi Map ═════════════
    Layout: the same pop-up window as Satoshipedia. Connections = a radial "clock" of everyone Satoshi
@@ -1566,4 +1571,12 @@ button[data-act="details"]::before { content: "show details"; }
   .brand .by { display: none; }
   .wc-src { display: none; }
 }
+
+/* About: why, editorial policy, contact */
+.ed { margin: 18px 0 0; max-width: 72ch; font: 14px/1.55 Arial, sans-serif; }
+.ed h3 { font: 700 15px Arial, sans-serif; margin: 0 0 6px; }
+.ed ul { padding-left: 20px; margin: 0; }
+.ed li { margin-bottom: 6px; }
+.ed-sig { color: var(--gm-mute); font-style: italic; }
+.ed-addr { user-select: all; }
 

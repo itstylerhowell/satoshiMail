@@ -370,3 +370,8 @@ body.in-wiki .dialog { z-index: 81; }
 .cj .cj-note { font-size: 12.5px; color: var(--ink-3); }
 .cj-acts { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 16px; }
 @media (prefers-reduced-motion: no-preference) { .cj h2 { animation: cjin 260ms var(--ease-out) both; } @keyframes cjin { from { opacity: 0; transform: translateY(6px); } } }
+
+/* article editorial line and primary sources */
+.wk-ed { margin: 22px 0 6px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.wk-note { color: var(--ink-3); font-size: 13px; margin: 0 0 6px; }
+.wk-prim li { margin-bottom: 4px; }

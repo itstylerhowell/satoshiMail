@@ -81,3 +81,9 @@ table.terms { width: 100%; border-collapse: collapse; font-size: 14px; line-heig
 table.terms th { text-align: left; font-size: 12px; color: var(--ink-3); padding: 6px 10px; border-bottom: 2px solid var(--line); }
 table.terms td { vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
 table.terms code { font-size: 12.5px; }
+
+/* Satoshipedia editorial line; About sections */
+.edline { margin: 22px 0 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--sat-bg); font-size: 14px; line-height: 1.5; }
+.ed ul { padding-left: 20px; }
+.ed li { margin-bottom: 6px; }
+.ed-sig { color: var(--ink-3); font-style: italic; }

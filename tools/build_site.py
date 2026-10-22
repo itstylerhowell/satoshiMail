@@ -36,6 +36,7 @@ HERE = Path(__file__).resolve().parent
 BUILD_DATE = dt.date.today().isoformat()
 SITE_NAME = "Satoshi Mail"
 REPO_URL = "https://github.com/itstylerhowell/satoshiMail"
+CONTACT_EMAIL = "itstylerhowell@gmail.com"   # keep in step with tools/satoshipedia/assemble.py
 GOOGLE_VERIFY = ""   # Google Search Console → HTML tag → the content="…" value
 VERIFY_REFRESH_JS = r"""
 <script>
@@ -268,6 +269,7 @@ class Site:
 <footer class="sf"><div class="in">
   <p><b>Beta:</b> Satoshi Mail (SatoshiMail) is still in development. Founded and made by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell (@TylerHowell88)</a>. Open source under the MIT license: <a href="https://github.com/itstylerhowell/satoshiMail" rel="noopener">source on GitHub</a>.</p>
   <p>Inspired by <a href="https://x.com/lukeigel" rel="noopener">Luke Igel (@lukeigel)</a> and <a href="https://x.com/rtwlz" rel="noopener">Riley Walz (@rtwlz)</a>’s creation of <a href="https://jmail.world/" rel="noopener">Jmail</a>.</p>
+  <p>Contact and corrections: <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> · <a href="{up}about/#editorial">How Satoshi Mail is made</a></p>
   <p>Sources: <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>, <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>, <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>, <a href="https://bitcoin.org/" rel="noopener">bitcoin.org</a>; cross-checked with <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>. Satoshipedia text draws on Wikipedia (CC BY-SA 4.0). <a href="{up}about/">About</a> · <a href="{up}updates/">Update log</a> · <a href="{up}verify/">Verify</a></p>
 </div></footer>
 </body>
@@ -543,6 +545,20 @@ class Site:
             see = f'<h2 id="see-also">See also</h2><ul>{see_items}</ul>' if a["see"] else ""
             ref_items = "".join('<li id="cite-%d">%s</li>' % (i + 1, r) for i, r in enumerate(a["refs"]))
             refs = f'<h2 id="references">References</h2><ol class="refs">{ref_items}</ol>' if a["refs"] else ""
+            prim = []
+            for x in a.get("primary", []):
+                if x.get("c"):
+                    c = next((c for c in self.commits if c["id"] == x["c"]), None)
+                    if c: prim.append(f'<li><a href="{up}{self.commit_path(c)}">{esc(c["s"])}</a>, commit by Satoshi Nakamoto, {long_day(c["d"])}. <a href="{esc(c["u"])}" rel="noopener">Original on GitHub</a></li>')
+                else:
+                    t = self.by_id.get(x["t"])
+                    if not t: continue
+                    si = x["i"] if x.get("i") is not None else next((k for k, m in enumerate(t["m"]) if m.get("s")), 0)
+                    m = t["m"][si]; orig = m.get("su") or m.get("u") or t.get("su") or t.get("u")
+                    prim.append(f'<li><a href="{up}{self.conv_path(t)}">{esc(t["t"])}</a>, {esc(self.src_long(t))}, {long_day(m["d"])}.' + (f' <a href="{esc(orig)}" rel="noopener">Original source</a>' if orig else "") + "</li>")
+            prim_html = (f'<h2 id="primary-sources">Primary sources</h2><p class="muted">The messages and commits this article draws on, in Satoshi Mail and where they were first published.</p><ol class="refs">{"".join(prim)}</ol>' if prim else "")
+            editorial = (f'<p class="edline">Published by <a href="https://x.com/TylerHowell88" rel="noopener">Tyler Howell</a> for Satoshi Mail. Written with AI assistance from the sources listed above and checked against them. '
+                         f'Last updated {esc(self.W["updated"])}. Spotted an error? Email <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> (<a href="{up}about/#editorial">how articles are made</a>).</p>')
             body = f"""<article class="wiki">
 <h1>{esc(a['title'])}</h1>
 <p class="from">From Satoshipedia, the Satoshi Mail encyclopedia</p>
@@ -553,6 +569,8 @@ class Site:
 {arch}
 {see}
 {refs}
+{prim_html}
+{editorial}
 <p class="cats">Categories: {" · ".join(esc(c) for c in a["cats"])}</p>
 </article>"""
             title = f"{a['title']} – Satoshipedia"
@@ -562,7 +580,7 @@ class Site:
             desc = clip(html.unescape(lead_txt))
             ld = {"@context": "https://schema.org", "@type": "Article", "headline": a["title"], "description": a["short"],
                   "url": self.base + path, "inLanguage": "en", "dateModified": BUILD_DATE,
-                  "author": {"@type": "Organization", "name": "Satoshipedia"}, "publisher": FOUNDER,
+                  "author": {"@type": "Organization", "name": "Satoshipedia", "url": self.base + "satoshipedia/"}, "publisher": FOUNDER, "editor": FOUNDER,
                   "isPartOf": {"@type": "WebSite", "name": SITE_NAME, "url": self.base}, "image": self.base + "og.png"}
             if a["kind"] == "person":
                 ld["about"] = {"@type": "Person", "name": a["title"]}
@@ -673,6 +691,9 @@ class Site:
 <li><a href="../#map">Satoshi Map</a>: everyone he corresponded with, and his timeline from 2008 to 2011.</li></ul>
 <h2>Sources</h2>
 <p>Emails and forum posts from the <a href="https://satoshi.nakamotoinstitute.org/" rel="noopener">Satoshi Nakamoto Institute</a>; private correspondence from <a href="https://github.com/lugaxker/nakamoto-archive" rel="noopener">nakamoto-archive</a>; commits from <a href="https://github.com/bitcoin/bitcoin" rel="noopener">Bitcoin Core</a>; the white paper from <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener">bitcoin.org</a>. The archive was cross-checked against <a href="https://www.blocktrainer.de/en/satoshi-nakamoto-full-archive" rel="noopener">Blocktrainer's archive</a> and <a href="https://satoshin.name/" rel="noopener">satoshin.name</a>, the Satoshi Nakamoto Archive: every message in either is also here. Satoshipedia's articles were written with AI assistance and cite their sources, including Wikipedia (CC BY-SA 4.0).</p>"""
+        ed = (HERE / "satoshipedia" / "editorial.html").read_text(encoding="utf-8").replace("{EMAIL}", CONTACT_EMAIL)
+        ed = ed.replace('href="#verify" data-ed-verify', 'href="../verify/"').replace('href="#updates" data-ed-updates', 'href="../updates/"').replace("<h3>", "<h2>").replace("</h3>", "</h2>")
+        body += ed
         body += self.licenses_html()
         self.write("about/", self.page("about/", "About Satoshi Mail – Satoshi Nakamoto's emails, posts and commits",
                    clip(TAGLINE), body, [("About", "about/")], [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Satoshi Mail", "url": self.base + "about/"}],
@@ -722,7 +743,8 @@ class Site:
              "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": self.base + "data/archive.json"}]},
             {"@context": "https://schema.org", **FOUNDER},
             {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "alternateName": SITE_ALT, "url": self.base,
-             "logo": {"@type": "ImageObject", "url": self.base + "logo-512.png", "width": 512, "height": 512}, "founder": FOUNDER, "sameAs": [REPO_URL]},
+             "logo": {"@type": "ImageObject", "url": self.base + "logo-512.png", "width": 512, "height": 512}, "founder": FOUNDER, "sameAs": [REPO_URL, "https://x.com/TylerHowell88"],
+             "email": CONTACT_EMAIL, "contactPoint": {"@type": "ContactPoint", "contactType": "corrections and feedback", "email": CONTACT_EMAIL, "url": self.base + "about/#contact"}},
         ]
         ld_html = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
         extra = f"""<meta name="robots" content="max-image-preview:large">
