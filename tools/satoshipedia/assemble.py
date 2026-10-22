@@ -281,13 +281,20 @@ src = patch(src, '${ic("edit")} Compose</button>', '${ic("edit")} Compose Mail</
 src = patch(src, '  $("#main").innerHTML = toolbar(pg) + `<div class="scroll" id="scroller">${head}<div class="list">${items.map(x => x.c ? commitRow(x.c) : rowHtml(x.t, x)).join("")}</div>${empty}</div>`;',
             '  $("#main").innerHTML = (model.kind === "inbox" && (r.page || 1) === 1 ? clipHtml() : "") + toolbar(pg) + `<div class="scroll" id="scroller">${head}<div class="list">${items.map(x => x.c ? commitRow(x.c) : rowHtml(x.t, x)).join("")}</div>${empty}${gfootHtml()}</div>`;')
 src = patch(src, '<div class="ld-beta"><span class="beta-pill static">Beta</span>In development</div>',
-            f'<p class="ld-text">Loading satoshin@gmx.com&hellip;</p><p class="ld-basic"><a href="{SITE_URL}conversations/">Load basic HTML</a> (for slow connections)</p>')
+            f'<p class="ld-text">Loading <span id="ldacct">satoshin@gmx.com</span>&hellip;</p><script>try{{var a=(JSON.parse(localStorage.getItem("satoshi-mail-v2")||"{{}}")||{{}}).acct;if(/^[a-z0-9._-]+@[a-z0-9.-]+$/i.test(a||""))document.getElementById("ldacct").textContent=a}}catch(e){{}}</script><p class="ld-basic"><a href="{SITE_URL}conversations/">Load basic HTML</a> (for slow connections)</p>')
 
 src = patch(src, '<a href="#wiki">Satoshipedia</a>, in the dock below.', '<a href="#wiki">Satoshipedia</a>, linked at the top of the page.')
 # Quality: About gets "Why I built it", the editorial policy and contact; the archive framing is explicit
 ED = (tools / "editorial.html").read_text().replace("{EMAIL}", CONTACT_EMAIL)
 src = patch(src, '<p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>', '<p class="lead">What’s new: see the <a href="#updates">Update log</a>.</p>\n    ' + ED)
 src = patch(src, 'You are logged in as <b>Satoshi Nakamoto</b>.', 'This is an archive, shown as <b>Satoshi Nakamoto</b>’s inbox.')
+
+# no select-all, no "Add star" for selections, no row checkboxes: starring one conversation at a time stays
+src = patch(src, '`<span class="selwrap"><input type="checkbox" class="cbx" data-act="selall" aria-label="Select all" ${allOn ? "checked" : ""}><button class="ib sm" data-act="selmenu" aria-label="Select options">${ic("arrow_drop_down")}</button></span>`', '""')
+src = patch(src, 'any ? b("starsel", "star", "Add star")', 'any ? ""')
+src = patch(src, '<span class="cb"><input type="checkbox" class="cbx" data-act="check" data-id="${t.id}" ${checked ? "checked" : ""} aria-label="Select conversation"></span>', '<span class="cb"></span>')
+src = patch(src, '<tr><td><kbd>x</kbd> <kbd>s</kbd></td><td>Select / star</td></tr>', '<tr><td><kbd>s</kbd></td><td>Star</td></tr>')
+src = patch(src, '    case "x": if (inList && curId) { H(); SELECTED.has(curId) ? SELECTED.delete(curId) : SELECTED.add(curId); render(); } break;\n', '')
 
 # Ask Google Fonts for only the Material Symbols the app can show, instead of the whole font: every string in
 # the page or its data that is an icon name (material_symbols_names.txt, from google/material-design-icons).

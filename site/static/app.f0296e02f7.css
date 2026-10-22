@@ -1567,7 +1567,8 @@ button[data-act="details"]::before { content: "show details"; }
 @media (max-width: 640px) {
   .gbar { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; white-space: nowrap; justify-content: flex-start; }
   .gb-apps, .gb-acct { flex-wrap: nowrap; }
-  .gb-acct b, .gb-acct .sep:first-of-type { display: none; }
+  .gb-acct .sep:first-of-type { display: none; }
+  .gb-me b { font-weight: 400; }
   .brand .by { display: none; }
   .wc-src { display: none; }
 }
@@ -1579,4 +1580,21 @@ button[data-act="details"]::before { content: "show details"; }
 .ed li { margin-bottom: 6px; }
 .ed-sig { color: var(--gm-mute); font-style: italic; }
 .ed-addr { user-select: all; }
+
+/* the account switcher */
+.gb-me { display: inline-flex; align-items: baseline; gap: 4px; border: 0; background: none; padding: 0; font: inherit; color: var(--gm-ink); cursor: pointer; }
+.gb-me:hover b { text-decoration: underline; }
+.gb-me span { font-size: 10px; color: var(--gm-mute); }
+.acct-mi { display: grid !important; grid-template-columns: 16px minmax(0, 1fr); gap: 6px; align-items: start; text-align: left; min-width: 280px; }
+.acct-mi small { display: block; color: var(--ink-3); font-size: 12px; font-weight: 400; }
+.acct-mi.on b { color: var(--ink); }
+.acct-tick { color: #dd4b39; font-weight: 700; }
+.acct-note { margin: 6px 16px 4px; font-size: 11.5px; color: var(--ink-3); max-width: 280px; }
+
+/* no checkboxes: rows are star, sender, subject, date (phones keep their own two-line layout) */
+.row .cb { display: none; }
+@media (min-width: 641px) {
+  .row { grid-template-columns: 30px minmax(0, 200px) minmax(0, 1fr) 100px; padding-left: 8px; }
+  .row .date { grid-column: 4; }
+}
 

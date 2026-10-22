@@ -3,6 +3,15 @@
   "updates": [
     {
       "date": "2026-10-22",
+      "title": "Switch between Satoshi's addresses",
+      "items": [
+        "Click the address at the top right to switch between the three Satoshi used: satoshi@anonymousspeech.com, satoshi@vistomail.com and satoshin@gmx.com. The footer's “Last account activity” follows along. It's just for fun; the archive stays the same.",
+        "The select-all checkbox, row checkboxes and “Add star” for selections are gone. Star any conversation with its own star."
+      ],
+      "commits": []
+    },
+    {
+      "date": "2026-10-22",
       "title": "Sources, editors and contact",
       "items": [
         "Every Satoshipedia article now ends with its primary sources: the messages and commits it draws on, linked in Satoshi Mail and where they were first published.",
